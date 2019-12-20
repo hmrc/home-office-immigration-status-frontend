@@ -1,0 +1,50 @@
+@import play.api.Configuration
+
+@import gov.uk.hmrc.homeofficesettledstatus.controllers.routes.HomeOfficeSettledStatusFrontendController
+@import gov.uk.hmrc.homeofficesettledstatus.models.HomeOfficeSettledStatusFrontendModel
+
+@this(mainTemplate: main_template)
+
+@(homeOfficeSettledStatusFrontendForm : Form[HomeOfficeSettledStatusFrontendModel])(implicit request: Request[_], messages: Messages, config: Configuration)
+
+@mainTemplate(title = Messages("end.title"), bodyClasses = None) {
+
+        <h1 class="heading-xlarge">@Messages("end.label")</h1>
+
+
+        <dl class="govuk-check-your-answers cya-questions-short">
+            <div>
+                <dt class="cya-question">
+                    @Messages("end.header.parameters")
+                </dt>
+                <dd class="cya-answer" journeyId="name">
+                    @homeOfficeSettledStatusFrontendForm("name").value
+                </dd>
+                <dd class="cya-change">
+                    <a href="#">
+                      @Messages("end.link.change")
+                      <span class="visuallyhidden">@Messages("end.header.parameters")</span>
+                    </a>
+                </dd>
+            </div>
+            <div>
+                <dt class="cya-question">
+                    @Messages("end.header.contactDetails")
+                </dt>
+                <dd class="cya-answer" journeyId="contactDetails">
+                    @if(homeOfficeSettledStatusFrontendForm("emailAddress").value){<span class="display-block">}@homeOfficeSettledStatusFrontendForm("emailAddress").value @if(homeOfficeSettledStatusFrontendForm("emailAddress").value){</span>}
+                    @if(homeOfficeSettledStatusFrontendForm("telephoneNumber").value){<span class="display-block">}@homeOfficeSettledStatusFrontendForm("telephoneNumber").value @if(homeOfficeSettledStatusFrontendForm("telephoneNumber").value){</span>}
+                </dd>
+                <dd class="cya-change">
+                    <a href="#">
+                      @Messages("end.link.change")
+                      <span class="visuallyhidden">@Messages("end.header.contactDetails")</span>
+                    </a>
+                </dd>
+            </div>
+        </dl>
+
+        <a href="#" class="button form-field--submit" href="@HomeOfficeSettledStatusFrontendController.showStart()" role="button">@Messages("button.submit")</a>
+
+
+}

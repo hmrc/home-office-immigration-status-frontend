@@ -1,0 +1,85 @@
+@import layouts.GovUkTemplate
+@import uk.gov.hmrc.play.views.html.layouts.{Head, HeaderNav, Footer, FooterLinks, ServiceInfo, MainContentHeader, MainContent}
+@import uk.gov.hmrc.play.views.html.helpers.ReportAProblemLink
+@import play.api.Configuration
+@import play.twirl.api.HtmlFormat
+
+@this(layoutsHead: Head, layoutsHeaderNav: HeaderNav, layoutsFooter: Footer, layoutsFooterLinks: FooterLinks,
+ layoutsServiceInfo: ServiceInfo, layoutsMainContentHeader: MainContentHeader, layoutsMainContent: MainContent, helpersReportAProblemLink: ReportAProblemLink, govUkTemplate: GovUkTemplate)
+
+@(title: String,
+        mainClass: Option[String] = None,
+        mainDataAttributes: Option[Html] = None,
+        bodyClasses: Option[String] = None,
+        sidebar: Html = HtmlFormat.empty,
+        contentHeader: Option[Html] = None,
+        mainContent: Html = HtmlFormat.empty,
+        serviceInfoContent: Html = HtmlFormat.empty,
+        scriptElem: Option[Html] = None,
+        gaCode: Seq[String] = Seq.empty)(implicit messages: Messages, configuration: Configuration)
+
+@head = {
+@layoutsHead(
+    linkElem = None,
+    headScripts = None)
+    <meta name="format-detection" content="telephone=no"/>
+}
+
+@titleWithSuffix = @{ title + " - " + Messages("servicename.titleSuffix") }
+
+@headerNavLinks = {}
+
+@insideHeader = {
+@layoutsHeaderNav(
+    navTitle = Some(Messages("app.name")),
+    navTitleLink = None,
+    showBetaLink = false,
+    navLinks = Some(headerNavLinks))
+}
+
+@afterHeader = {}
+
+@gaJS = {
+@gaCode.map(Html(_))
+}
+
+@bodyEnd = {
+@layoutsFooter(analyticsToken = Some(configuration.get[String]("google-analytics.token")),
+    analyticsHost = configuration.get[String]("google-analytics.host"),
+    ssoUrl = None,
+    scriptElem = scriptElem,
+    gaCalls = None,
+    analyticsAdditionalJs = Some(gaJS))
+}
+
+@footerTop = {}
+@footerLinks = {}
+
+@serviceInfo = {
+@layoutsServiceInfo(
+    betaBanner = HtmlFormat.empty,
+    includeGridWrapper = false,
+    Some(serviceInfoContent))
+}
+
+@mainContentHeader = {
+@if(contentHeader.isDefined) {
+    @layoutsMainContentHeader(contentHeader.get)
+}
+}
+
+@getHelpForm = @{
+    helpersReportAProblemLink(configuration.get[String]("reportAProblemPartialUrl"), configuration.get[String]("reportAProblemNonJSUrl"))
+}
+
+@content = {
+@layoutsMainContent(article = mainContent,
+    mainClass = mainClass,
+    mainDataAttributes = mainDataAttributes,
+    mainContentHeader = mainContentHeader,
+    serviceInfo = serviceInfo,
+    getHelpForm = getHelpForm,
+    sidebar = sidebar)
+}
+
+@govUkTemplate(Some(titleWithSuffix), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(layoutsFooterLinks()), nav = true)(content)

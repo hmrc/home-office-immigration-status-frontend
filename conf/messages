@@ -1,0 +1,40 @@
+# Validation errors
+error.prefix=Error:
+error.end.heading=There is a problem
+error.postcode.invalid=You can only enter these characters: A-Z 0-9
+error.telephone.invalid=You can only enter these characters: 0-9 ( ) space
+error.string.invalid=You can only enter these characters: a-z A-Z 0-9 ,.() - ! @ space
+error.maxLength=You can only enter up to {0} characters
+error.email=Enter a valid email address
+
+# Service specific messages
+app.name=New Shiny Service 26
+servicename.titleSuffix=New Shiny Service 26 - GOV.UK
+
+# Start page
+start.title=New Shiny Service 26
+start.label=New Shiny Service 26
+start.intro=Describe purpose of your service / journey
+start.helpdesklink.text1=Contact the online services helpdesk
+start.helpdesklink.text2=if you need help.
+
+# MyForm page
+newshinyservice26frontendform.title=New Shiny Service 26 NewShinyService26FrontendForm
+newshinyservice26frontendform.label=Enter your 1st parameter
+newshinyservice26frontendform.description=This could be random characters.
+newshinyservice26frontendform.name.label=Name
+newshinyservice26frontendform.telephoneNumber.label=Telephone number
+newshinyservice26frontendform.emailAddress.label=Email address
+
+# end page
+end.title=New Shiny Service 26 end
+end.label=Check your answers
+end.link.change=Edit
+end.header.parameters=Parameters
+end.header.contactDetails=Contact details
+end.name=Name:
+end.telephoneNumber=Telephone number:
+end.emailAddress=Email address:
+
+button.continue=Continue
+button.submit=Submit

@@ -1,0 +1,4 @@
+@(form: Form[_])(implicit messages: Messages)
+@if(form.hasErrors){
+    @Messages("error.prefix")
+}
