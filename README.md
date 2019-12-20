@@ -1,7 +1,5 @@
 # Home Office Settled Status Frontend
 
-[ ![Download](https://api.bintray.com/packages/hmrc/releases/new-shiny-service-26-frontend/images/download.svg) ](https://bintray.com/hmrc/releases/new-shiny-service-26-frontend/_latestVersion)
-
 ## Running the tests
 
     sbt test it:test
