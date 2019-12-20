@@ -1,5 +1,7 @@
 # Home Office Settled Status Frontend
 
+Web application providing internal HMRC staff with an interface to check customer's settled status and rights to public funds.
+
 ## Running the tests
 
     sbt test it:test
