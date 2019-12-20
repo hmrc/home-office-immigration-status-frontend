@@ -25,8 +25,9 @@ class HomeOfficeSettledStatusConnector @Inject()(appConfig: AppConfig, http: Htt
       http.GET[HttpResponse](new URL(baseUrl + "/home-office-settled-status/dosmth").toExternalForm)
     }
 
-  def postSmth(
-    model: HomeOfficeSettledStatusFrontendModel)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] =
+  def postSmth(model: HomeOfficeSettledStatusFrontendModel)(
+    implicit hc: HeaderCarrier,
+    ec: ExecutionContext): Future[HttpResponse] =
     monitor(s"ConsumedAPI-home-office-settled-status-smth-POST") {
       http.POST[HomeOfficeSettledStatusFrontendModel, HttpResponse](
         new URL(baseUrl + "/home-office-settled-status/dosmth").toExternalForm,
