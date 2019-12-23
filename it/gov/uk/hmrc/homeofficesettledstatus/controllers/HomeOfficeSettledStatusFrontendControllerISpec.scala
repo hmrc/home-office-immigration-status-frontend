@@ -32,7 +32,7 @@ class HomeOfficeSettledStatusFrontendControllerISpec extends BaseISpec {
         journeyState.set(Start, Nil)
         val result = controller.showStart(FakeRequest())
         status(result) shouldBe 303
-        redirectLocation(result) shouldBe Some("/home-office-settled-status")
+        redirectLocation(result) shouldBe Some("/check-settled-status")
       }
 
       "display start page" in {
