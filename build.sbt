@@ -5,7 +5,7 @@ import uk.gov.hmrc.SbtAutoBuildPlugin
 lazy val scoverageSettings = {
   import scoverage.ScoverageKeys
   Seq(
-    // Semicolon-separated list of regexs matching classes to exclude
+    // Semicolon-separated list of regexes matching classes to exclude
     ScoverageKeys.coverageExcludedPackages := """uk\.gov\.hmrc\.BuildInfo;.*\.Routes;.*\.RoutesPrefix;.*Filters?;MicroserviceAuditConnector;Module;GraphiteStartUp;.*\.Reverse[^.]*""",
     ScoverageKeys.coverageMinimum := 80.00,
     ScoverageKeys.coverageFailOnMinimum := false,
@@ -17,15 +17,15 @@ lazy val scoverageSettings = {
 lazy val compileDeps = Seq(
   ws,
   "uk.gov.hmrc" %% "bootstrap-play-26" % "1.3.0",
-  "uk.gov.hmrc" %% "govuk-template" % "5.44.0-play-26",
-  "uk.gov.hmrc" %% "play-ui" % "8.3.0-play-26",
-  "uk.gov.hmrc" %% "auth-client" % "2.31.0-play-26",
+  "uk.gov.hmrc" %% "govuk-template" % "5.48.0-play-26",
+  "uk.gov.hmrc" %% "play-ui" % "8.6.0-play-26",
+  "uk.gov.hmrc" %% "auth-client" % "2.32.1-play-26",
   "uk.gov.hmrc" %% "play-partials" % "6.9.0-play-26",
   "uk.gov.hmrc" %% "agent-kenshoo-monitoring" % "4.0.0",
   "uk.gov.hmrc" %% "agent-mtd-identifiers" % "0.17.0-play-26",
-  "uk.gov.hmrc" %% "play-fsm" % "0.48.0-play-26",
+  "uk.gov.hmrc" %% "play-fsm" % "0.49.0-play-26",
   "uk.gov.hmrc" %% "domain" % "5.6.0-play-26",
-  "uk.gov.hmrc" %% "mongo-caching" % "6.6.0-play-26"
+  "uk.gov.hmrc" %% "mongo-caching" % "6.8.0-play-26"
 )
 
 def testDeps(scope: String) = Seq(
@@ -38,7 +38,7 @@ def testDeps(scope: String) = Seq(
 
 val jettyVersion = "9.2.24.v20180105"
 
-val jettyOverrides = Set(
+val jettyOverrides = Seq(
   "org.eclipse.jetty" % "jetty-server" % jettyVersion % IntegrationTest,
   "org.eclipse.jetty" % "jetty-servlet" % jettyVersion % IntegrationTest,
   "org.eclipse.jetty" % "jetty-security" % jettyVersion % IntegrationTest,
@@ -91,6 +91,6 @@ inConfig(IntegrationTest)(scalafmtCoreSettings)
 
 def oneForkedJvmPerTest(tests: Seq[TestDefinition]) = {
   tests.map { test =>
-    new Group(test.name, Seq(test), SubProcess(ForkOptions(runJVMOptions = Seq(s"-Dtest.name=${test.name}"))))
+    new Group(test.name, Seq(test), SubProcess(ForkOptions().withRunJVMOptions(Vector(s"-Dtest.name=${test.name}"))))
   }
 }
