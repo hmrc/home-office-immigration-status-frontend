@@ -27,7 +27,11 @@ object HomeOfficeSettledStatusFrontendJourneyModel extends JourneyModel {
 
   object State {
     case object Start extends State
-    case class End(name: String, postcode: Option[String], telephone: Option[String], emailAddress: Option[String])
+    case class End(
+      name: String,
+      postcode: Option[String],
+      telephone: Option[String],
+      emailAddress: Option[String])
         extends State
     case object SomeError extends State with IsError
   }
@@ -40,7 +44,8 @@ object HomeOfficeSettledStatusFrontendJourneyModel extends JourneyModel {
     }
 
     def submitStart(humanId: String)(formData: HomeOfficeSettledStatusFrontendModel) = Transition {
-      case Start => goto(End(formData.name, formData.postcode, formData.telephoneNumber, formData.emailAddress))
+      case Start =>
+        goto(End(formData.name, formData.postcode, formData.telephoneNumber, formData.emailAddress))
     }
   }
 

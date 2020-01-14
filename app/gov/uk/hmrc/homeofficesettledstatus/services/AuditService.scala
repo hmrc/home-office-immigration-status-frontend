@@ -41,7 +41,10 @@ class AuditService @Inject()(val auditConnector: AuditConnector) {
 
   def sendHomeOfficeSettledStatusFrontendSomethingHappened(
     model: HomeOfficeSettledStatusFrontendModel,
-    agentReference: Arn)(implicit hc: HeaderCarrier, request: Request[Any], ec: ExecutionContext): Unit =
+    agentReference: Arn)(
+    implicit hc: HeaderCarrier,
+    request: Request[Any],
+    ec: ExecutionContext): Unit =
     auditEvent(
       HomeOfficeSettledStatusFrontendEvent.HomeOfficeSettledStatusFrontendSomethingHappened,
       "new-shiny-service-26-frontend-something-happened",
@@ -65,14 +68,22 @@ class AuditService @Inject()(val auditConnector: AuditConnector) {
   private[services] def createEvent(
     event: HomeOfficeSettledStatusFrontendEvent,
     transactionName: String,
-    details: (String, Any)*)(implicit hc: HeaderCarrier, request: Request[Any], ec: ExecutionContext): DataEvent = {
+    details: (String, Any)*)(
+    implicit hc: HeaderCarrier,
+    request: Request[Any],
+    ec: ExecutionContext): DataEvent = {
 
     val detail = hc.toAuditDetails(details.map(pair => pair._1 -> pair._2.toString): _*)
     val tags = hc.toAuditTags(transactionName, request.path)
-    DataEvent(auditSource = "new-shiny-service-26-frontend", auditType = event.toString, tags = tags, detail = detail)
+    DataEvent(
+      auditSource = "new-shiny-service-26-frontend",
+      auditType = event.toString,
+      tags = tags,
+      detail = detail)
   }
 
-  private[services] def send(events: DataEvent*)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] =
+  private[services] def send(
+    events: DataEvent*)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] =
     Future {
       events.foreach { event =>
         Try(auditConnector.sendEvent(event))

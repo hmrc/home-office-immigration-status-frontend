@@ -16,19 +16,20 @@ import gov.uk.hmrc.homeofficesettledstatus.wiring.AppConfig
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.test.UnitSpec
 
-class BaseISpec extends UnitSpec with GuiceOneAppPerSuite with WireMockSupport with AuthStubs with DataStreamStubs with MetricsTestSupport {
+class BaseISpec
+    extends UnitSpec with GuiceOneAppPerSuite with WireMockSupport with AuthStubs
+    with DataStreamStubs with MetricsTestSupport {
 
   override implicit lazy val app: Application = appBuilder.build()
 
-  protected def appBuilder: GuiceApplicationBuilder = {
+  protected def appBuilder: GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .configure(
-        "metrics.enabled" -> true,
-        "auditing.enabled" -> true,
+        "metrics.enabled"                -> true,
+        "auditing.enabled"               -> true,
         "auditing.consumer.baseUri.host" -> wireMockHost,
         "auditing.consumer.baseUri.port" -> wireMockPort)
       .overrides(bind[AppConfig].toInstance(TestAppConfig(wireMockBaseUrlAsString, wireMockPort)))
-  }
 
   override def commonStubs(): Unit = {
     givenCleanMetricRegistry()
@@ -49,6 +50,7 @@ class BaseISpec extends UnitSpec with GuiceOneAppPerSuite with WireMockSupport w
 
   protected def htmlEscapedMessage(key: String): String = HtmlFormat.escape(Messages(key)).toString
 
-  implicit def hc(implicit request: FakeRequest[_]): HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+  implicit def hc(implicit request: FakeRequest[_]): HeaderCarrier =
+    HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
 }

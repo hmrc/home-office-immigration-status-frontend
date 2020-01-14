@@ -9,7 +9,8 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext, Future}
 
 @Singleton
-class TestHomeOfficeSettledStatusFrontendJourneyService extends HomeOfficeSettledStatusFrontendJourneyService {
+class TestHomeOfficeSettledStatusFrontendJourneyService
+    extends HomeOfficeSettledStatusFrontendJourneyService {
 
   @volatile
   private var state: Option[StateAndBreadcrumbs] = None
@@ -39,5 +40,6 @@ class TestHomeOfficeSettledStatusFrontendJourneyService extends HomeOfficeSettle
 
 private class TestAgentInvitationJourneyModule extends AbstractModule {
   override def configure(): Unit =
-    bind(classOf[HomeOfficeSettledStatusFrontendJourneyService]).to(classOf[TestHomeOfficeSettledStatusFrontendJourneyService])
+    bind(classOf[HomeOfficeSettledStatusFrontendJourneyService])
+      .to(classOf[TestHomeOfficeSettledStatusFrontendJourneyService])
 }

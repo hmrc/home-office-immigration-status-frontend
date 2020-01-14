@@ -39,12 +39,13 @@ class ViewsSpec @Inject()(govUkWrapper: govuk_wrapper, mainTemplate: main_templa
 
   implicit val lang: Lang = Lang("eng")
 
-  private val filledForm = HomeOfficeSettledStatusFrontendController.HomeOfficeSettledStatusFrontendForm.fill(
-    HomeOfficeSettledStatusFrontendModel(
-      name = "My contact name",
-      postcode = Some("AA1 1AA"),
-      telephoneNumber = Some("9876543210"),
-      emailAddress = Some("my@email.com")))
+  private val filledForm =
+    HomeOfficeSettledStatusFrontendController.HomeOfficeSettledStatusFrontendForm.fill(
+      HomeOfficeSettledStatusFrontendModel(
+        name = "My contact name",
+        postcode = Some("AA1 1AA"),
+        telephoneNumber = Some("9876543210"),
+        emailAddress = Some("my@email.com")))
 
   "error_template view" should {
     "render title, heading and message" in new App {
@@ -91,7 +92,10 @@ class ViewsSpec @Inject()(govUkWrapper: govuk_wrapper, mainTemplate: main_templa
       content should include(Messages("start.helpdesklink.text2"))
 
       val html2 = new start_page(mainTemplate, input, form, errorSummary)
-        .f(HomeOfficeSettledStatusFrontendForm)(FakeRequest(), MessagesImpl(lang, stubMessagesApi()), app.configuration)
+        .f(HomeOfficeSettledStatusFrontendForm)(
+          FakeRequest(),
+          MessagesImpl(lang, stubMessagesApi()),
+          app.configuration)
       contentAsString(html2) shouldBe (content)
     }
   }
@@ -130,7 +134,10 @@ class ViewsSpec @Inject()(govUkWrapper: govuk_wrapper, mainTemplate: main_templa
         Some("my-custom-body-class"),
         Some("my-custom-main-class"),
         Some(Html("My custom script"))
-      )(Html("My custom main content HTML"))(MessagesImpl(lang, stubMessagesApi()), FakeRequest(), app.configuration)
+      )(Html("My custom main content HTML"))(
+        MessagesImpl(lang, stubMessagesApi()),
+        FakeRequest(),
+        app.configuration)
       contentAsString(html2) shouldBe (content)
     }
   }

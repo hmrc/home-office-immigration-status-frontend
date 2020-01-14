@@ -46,7 +46,9 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
   errorSummary: ErrorSummary,
   mainTemplate: main_template,
   override val journeyService: HomeOfficeSettledStatusFrontendJourneyService,
-  controllerComponents: MessagesControllerComponents)(implicit val configuration: Configuration, ec: ExecutionContext)
+  controllerComponents: MessagesControllerComponents)(
+  implicit val configuration: Configuration,
+  ec: ExecutionContext)
     extends FrontendController(controllerComponents) with I18nSupport with AuthActions
     with JourneyController[HeaderCarrier] with JourneyIdSupport[HeaderCarrier] {
 
@@ -80,14 +82,18 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
 
   override def renderState(state: State, breadcrumbs: List[State], formWithErrors: Option[Form[_]])(
     implicit request: Request[_]): Result = state match {
-    case Start  => Ok(new start_page(mainTemplate, input, form, errorSummary)(HomeOfficeSettledStatusFrontendForm))
+    case Start =>
+      Ok(
+        new start_page(mainTemplate, input, form, errorSummary)(
+          HomeOfficeSettledStatusFrontendForm))
     case _: End => Ok(new end(mainTemplate)(HomeOfficeSettledStatusFrontendForm))
   }
 
   override implicit def context(implicit rh: RequestHeader): HeaderCarrier =
     appendJourneyId(super.hc)
 
-  override def amendContext(headerCarrier: HeaderCarrier)(key: String, value: String): HeaderCarrier =
+  override def amendContext(
+    headerCarrier: HeaderCarrier)(key: String, value: String): HeaderCarrier =
     headerCarrier.withExtraHeaders(key -> value)
 }
 

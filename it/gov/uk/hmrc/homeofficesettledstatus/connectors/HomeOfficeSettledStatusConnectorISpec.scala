@@ -26,9 +26,9 @@ class HomeOfficeSettledStatusConnectorISpec extends BaseISpec {
     "getSmth" should {
 
       "return 200" in {
-        stubFor(get(urlEqualTo(s"/home-office-settled-status/dosmth"))
-          .willReturn(
-            aResponse()
+        stubFor(
+          get(urlEqualTo(s"/home-office-settled-status/dosmth"))
+            .willReturn(aResponse()
               .withStatus(Status.OK)
               .withBody(Json.obj("foo" -> "bar").toString())))
 
@@ -46,9 +46,9 @@ class HomeOfficeSettledStatusConnectorISpec extends BaseISpec {
       }
 
       "throw an exception if the response is 400" in {
-        stubFor(get(urlEqualTo(s"/home-office-settled-status/dosmth"))
-          .willReturn(
-            aResponse()
+        stubFor(
+          get(urlEqualTo(s"/home-office-settled-status/dosmth"))
+            .willReturn(aResponse()
               .withStatus(Status.BAD_REQUEST)))
 
         intercept[BadRequestException] {
@@ -60,9 +60,9 @@ class HomeOfficeSettledStatusConnectorISpec extends BaseISpec {
     "postSmth" should {
 
       "return 201" in {
-        stubFor(post(urlEqualTo(s"/home-office-settled-status/dosmth"))
-          .willReturn(
-            aResponse()
+        stubFor(
+          post(urlEqualTo(s"/home-office-settled-status/dosmth"))
+            .willReturn(aResponse()
               .withStatus(Status.CREATED)))
 
         val response: HttpResponse = await(connector.postSmth(model))
@@ -79,9 +79,9 @@ class HomeOfficeSettledStatusConnectorISpec extends BaseISpec {
       }
 
       "throw an exception if the response is 400" in {
-        stubFor(post(urlEqualTo(s"/home-office-settled-status/dosmth"))
-          .willReturn(
-            aResponse()
+        stubFor(
+          post(urlEqualTo(s"/home-office-settled-status/dosmth"))
+            .willReturn(aResponse()
               .withStatus(Status.BAD_REQUEST)))
 
         intercept[BadRequestException] {

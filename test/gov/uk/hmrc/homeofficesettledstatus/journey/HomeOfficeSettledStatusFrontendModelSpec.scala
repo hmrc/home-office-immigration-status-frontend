@@ -40,7 +40,8 @@ class HomeOfficeSettledStatusFrontendModelSpec extends UnitSpec with StateMatche
   "HomeOfficeSettledStatusFrontendModel" when {
     "at state Start" should {
       "transition to End when Start submitted a form" in {
-        given(Start) when submitStart("001.H")(HomeOfficeSettledStatusFrontendModel("Henry", None, None, None)) should thenGo(
+        given(Start) when submitStart("001.H")(
+          HomeOfficeSettledStatusFrontendModel("Henry", None, None, None)) should thenGo(
           End("Henry", None, None, None))
       }
     }

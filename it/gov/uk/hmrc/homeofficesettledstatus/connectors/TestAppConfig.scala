@@ -10,5 +10,5 @@ case class TestAppConfig(wireMockBaseUrl: String, wireMockPort: Int) extends App
   override val someBoolean: Boolean = false
   override val authBaseUrl: String = wireMockBaseUrl
   override val serviceBaseUrl: String = wireMockBaseUrl
-  override  val mongoSessionExpiryTime: Int = wireMockPort
+  override val mongoSessionExpiryTime: Int = wireMockPort
 }

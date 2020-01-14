@@ -34,7 +34,10 @@ trait MongoSessionStore[T] {
   def getSessionId(implicit hc: HeaderCarrier): Option[String] =
     hc.sessionId.map(_.value)
 
-  def get(implicit reads: Reads[T], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[String, Option[T]]] =
+  def get(
+    implicit reads: Reads[T],
+    hc: HeaderCarrier,
+    ec: ExecutionContext): Future[Either[String, Option[T]]] =
     getSessionId match {
       case Some(sessionId) ⇒
         cacheRepository
@@ -64,15 +67,19 @@ trait MongoSessionStore[T] {
         Right(None)
     }
 
-  def store(
-    newSession: T)(implicit writes: Writes[T], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[String, Unit]] =
+  def store(newSession: T)(
+    implicit writes: Writes[T],
+    hc: HeaderCarrier,
+    ec: ExecutionContext): Future[Either[String, Unit]] =
     getSessionId match {
       case Some(sessionId) ⇒
         cacheRepository
           .createOrUpdate(Id(sessionId), sessionName, Json.toJson(newSession))
           .map[Either[String, Unit]] { dbUpdate ⇒
             if (dbUpdate.writeResult.inError) {
-              Left(dbUpdate.writeResult.errmsg.getOrElse("unknown error during inserting session data in mongo"))
+              Left(
+                dbUpdate.writeResult.errmsg.getOrElse(
+                  "unknown error during inserting session data in mongo"))
             } else {
               Right(())
             }

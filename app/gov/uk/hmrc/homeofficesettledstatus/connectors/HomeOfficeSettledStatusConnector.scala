@@ -29,7 +29,10 @@ import gov.uk.hmrc.homeofficesettledstatus.wiring.AppConfig
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class HomeOfficeSettledStatusConnector @Inject()(appConfig: AppConfig, http: HttpGet with HttpPost, metrics: Metrics)
+class HomeOfficeSettledStatusConnector @Inject()(
+  appConfig: AppConfig,
+  http: HttpGet with HttpPost,
+  metrics: Metrics)
     extends HttpAPIMonitor {
 
   val baseUrl: String = appConfig.serviceBaseUrl

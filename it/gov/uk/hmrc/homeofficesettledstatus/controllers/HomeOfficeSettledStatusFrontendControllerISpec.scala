@@ -53,7 +53,8 @@ class HomeOfficeSettledStatusFrontendControllerISpec extends BaseISpec {
             "telephoneNumber" -> "00000000001",
             "emailAddress"    -> "henry@example.com"))
         status(result) shouldBe 303
-        redirectLocation(result) shouldBe Some(routes.HomeOfficeSettledStatusFrontendController.showEnd().url)
+        redirectLocation(result) shouldBe Some(
+          routes.HomeOfficeSettledStatusFrontendController.showEnd().url)
       }
     }
 

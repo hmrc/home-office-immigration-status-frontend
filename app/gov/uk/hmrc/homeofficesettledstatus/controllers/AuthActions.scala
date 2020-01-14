@@ -33,7 +33,8 @@ trait AuthActions extends AuthorisedFunctions {
     ec: ExecutionContext): Future[Result] =
     withEnrolledFor("HMRC-AS-AGENT", "AgentReferenceNumber") {
       case Some(arn) => body(Arn(arn))
-      case None      => Future.failed(InsufficientEnrolments("AgentReferenceNumber identifier not found"))
+      case None =>
+        Future.failed(InsufficientEnrolments("AgentReferenceNumber identifier not found"))
     }
 
   protected def withAuthorisedAsClient[A](body: MtdItId => Future[Result])(
@@ -45,7 +46,8 @@ trait AuthActions extends AuthorisedFunctions {
       case None          => Future.failed(InsufficientEnrolments("MTDITID identifier not found"))
     }
 
-  protected def withEnrolledFor[A](serviceName: String, identifierKey: String)(body: Option[String] => Future[Result])(
+  protected def withEnrolledFor[A](serviceName: String, identifierKey: String)(
+    body: Option[String] => Future[Result])(
     implicit request: Request[A],
     hc: HeaderCarrier,
     ec: ExecutionContext): Future[Result] =
