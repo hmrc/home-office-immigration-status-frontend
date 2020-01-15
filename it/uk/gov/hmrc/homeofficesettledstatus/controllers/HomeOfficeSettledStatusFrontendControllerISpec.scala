@@ -44,6 +44,21 @@ class HomeOfficeSettledStatusFrontendControllerISpec extends BaseISpec {
     }
 
     "POST /start" should {
+
+      "redirect to stride authorisation frontend" in {
+        journeyState.set(Start, Nil)
+        givenRequestIsNotAuthorised("SessionRecordNotFound")
+        val result = controller.submitStart(
+          fakeRequest.withFormUrlEncodedBody(
+            "name"            -> "Henry",
+            "postcode"        -> "",
+            "telephoneNumber" -> "00000000001",
+            "emailAddress"    -> "henry@example.com"))
+        status(result) shouldBe 303
+        redirectLocation(result) shouldBe Some(
+          "/stride/sign-in?successURL=%2F&origin=home-office-settled-status-frontend")
+      }
+
       "redirect to end page" in {
         journeyState.set(Start, Nil)
         givenAuthorisedForStride("TBC", "000")

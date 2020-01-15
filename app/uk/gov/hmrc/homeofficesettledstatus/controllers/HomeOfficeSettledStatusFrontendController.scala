@@ -62,7 +62,7 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
   }
 
   val AsStrideUser: WithAuthorised[String] = { implicit request: Request[Any] =>
-    authorisedWithStrideGroup(appConfig.authorisedStrideGroup)
+    authorisedWithStrideGroup(appConfig.authorisedStrideGroup, journeyId)
   }
 
   val showStart = actionShowStateWhenAuthorised(AsHuman) {

@@ -23,7 +23,7 @@ class AuthActionsISpec extends BaseISpec {
     import scala.concurrent.ExecutionContext.Implicits.global
 
     def withAuthorisedWithStrideGroup[A](group: String): Result =
-      await(super.authorisedWithStrideGroup(group) { pid =>
+      await(super.authorisedWithStrideGroup(group, Some("journeyId")) { pid =>
         Future.successful(Ok(pid))
       })
 

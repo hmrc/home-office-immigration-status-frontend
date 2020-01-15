@@ -16,13 +16,14 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.controllers
 
+import play.api.Logger
 import play.api.mvc.Results.Forbidden
 import play.api.mvc.{Request, Result}
-import play.api.{Logger, Mode}
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.credentials
+import uk.gov.hmrc.homeofficesettledstatus.support.CallOps
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 
@@ -30,12 +31,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait AuthActions extends AuthorisedFunctions with AuthRedirects {
 
-  private lazy val isDevEnv =
-    if (env.mode.equals(Mode.Test)) false
-    else config.getString("run.mode").forall(Mode.Dev.toString.equals)
-
-  protected def authorisedWithStrideGroup[A](authorisedStrideGroup: String)(
-    body: String => Future[Result])(
+  protected def authorisedWithStrideGroup[A](
+    authorisedStrideGroup: String,
+    journeyId: Option[String])(body: String => Future[Result])(
     implicit
     request: Request[A],
     hc: HeaderCarrier,
@@ -52,7 +50,8 @@ trait AuthActions extends AuthorisedFunctions with AuthRedirects {
   def handleFailure(implicit request: Request[_]): PartialFunction[Throwable, Result] = {
 
     case _: NoActiveSession ⇒
-      toStrideLogin(if (isDevEnv) s"http://${request.host}${request.path}" else s"${request.path}")
+      val continueUrl = CallOps.localFriendlyUrl(env, config)(request.uri, request.host)
+      toStrideLogin(continueUrl)
 
     case _: UnsupportedAuthProvider ⇒
       Logger.warn(s"user logged in with unsupported auth provider")
