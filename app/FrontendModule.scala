@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import gov.uk.hmrc.homeofficesettledstatus.connectors.FrontendAuthConnector
 import com.google.inject.AbstractModule
 import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.auth.core.AuthConnector
+import uk.gov.hmrc.homeofficesettledstatus.connectors.FrontendAuthConnector
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 

@@ -51,9 +51,9 @@
 
     <logger name="uk.gov.hmrc.audit" level="ERROR"/>
 
-    <logger name="gov.uk.hmrc.homeofficesettledstatus" level="INFO"/>
+    <logger name="uk.gov.hmrc.homeofficesettledstatus" level="INFO"/>
 
-    <logger name="gov.uk.hmrc.homeofficesettledstatus.repository" level="ERROR"/>
+    <logger name="uk.gov.hmrc.homeofficesettledstatus.repository" level="ERROR"/>
 
     <logger name="akka" level="ERROR"/>
 

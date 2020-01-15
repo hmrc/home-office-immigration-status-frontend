@@ -1,7 +1,7 @@
 # microservice specific routes
 
-GET         /                       @gov.uk.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.showStart
-GET         /start                  @gov.uk.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.showStart
-POST        /start                  @gov.uk.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.submitStart
-GET         /end                    @gov.uk.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.showEnd
+GET         /                       @uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.showStart
+GET         /start                  @uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.showStart
+POST        /start                  @uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.submitStart
+GET         /end                    @uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.showEnd
 

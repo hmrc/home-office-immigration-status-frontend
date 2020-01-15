@@ -1,0 +1,84 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.homeofficesettledstatus.controllers.routes.HomeOfficeSettledStatusFrontendController
+@import play.api.Configuration
+@import uk.gov.hmrc.homeofficesettledstatus.models.HomeOfficeSettledStatusFrontendModel
+@import uk.gov.hmrc.play.views.html.helpers.{ErrorSummary, FormWithCSRF, Input}
+
+@this(mainTemplate: main_template, input: Input, form: FormWithCSRF, errorSummary: ErrorSummary)
+
+@(homeOfficeSettledStatusFrontendForm : Form[HomeOfficeSettledStatusFrontendModel])(implicit request: Request[_], messages: Messages, config: Configuration)
+
+@mainTemplate(title = Messages("start.title"), bodyClasses = None) {
+
+    <h1 class="heading-xlarge">@Messages("start.label")</h1>
+
+    <p>@Messages("start.intro")</p>
+
+    <p>
+        <a href="https://www.gov.uk/government/organisations/hm-revenue-customs/contact/online-services-helpdesk">@Messages("start.helpdesklink.text1")</a> @Messages("start.helpdesklink.text2")
+    </p>
+
+    <p>
+        <a class="button button-start button--get-started" name="start" href="@HomeOfficeSettledStatusFrontendController.showStart()" role="button">Start now</a>
+    </p>
+
+    @if(homeOfficeSettledStatusFrontendForm.hasErrors){
+        @errorSummary(Messages("error.summary.heading"), homeOfficeSettledStatusFrontendForm, Seq.empty, Some("newShinyService26FrontendForm"))
+    }
+
+    @form(
+        action = HomeOfficeSettledStatusFrontendController.submitStart,
+        'class -> "form js-form") {
+
+        <h1 class="heading-xlarge">@Messages("newshinyservice26frontendform.label")</h1>
+
+        <p>@Messages("newshinyservice26frontendform.description")</p>
+
+        <div class="form-group">
+        @input(
+            homeOfficeSettledStatusFrontendForm("name"),
+            '_label -> Messages("newshinyservice26frontendform.name.label"),
+            '_inputClass -> "input--medium input--cleared",
+            '_labelClass -> "heading-medium soft--ends"
+        )
+        </div>
+
+        <div class="form-group">
+        @input(
+            homeOfficeSettledStatusFrontendForm("emailAddress"),
+            '_label -> Messages("newshinyservice26frontendform.emailAddress.label"),
+            '_inputClass -> "input--medium input--cleared",
+            '_labelClass -> "heading-medium soft--ends"
+        )
+        </div>
+
+        <div class="form-group">
+        @input(
+            homeOfficeSettledStatusFrontendForm("telephoneNumber"),
+            '_label -> Messages("newshinyservice26frontendform.telephoneNumber.label"),
+            '_inputClass -> "input--medium input--cleared",
+            '_labelClass -> "heading-medium soft--ends"
+        )
+        </div>
+
+        <input type="hidden" name="parameter2" journeyId="parameter2" value="@homeOfficeSettledStatusFrontendForm("postcode").value">
+
+        <button class="button form-field--submit" type="submit" journeyId="continue">@Messages("button.submit")</button>
+
+    }
+}
