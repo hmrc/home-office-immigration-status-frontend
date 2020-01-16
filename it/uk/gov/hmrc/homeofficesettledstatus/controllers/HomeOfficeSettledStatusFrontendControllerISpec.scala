@@ -26,7 +26,7 @@ class HomeOfficeSettledStatusFrontendControllerISpec extends BaseISpec {
 
   "HomeOfficeSettledStatusFrontendController" when {
 
-    "GET /start" should {
+    "GET /" should {
 
       "display the start page" in {
         journeyState.set(Start, Nil)

@@ -1,4 +1,4 @@
-->         /check-settled-status               app.Routes
+->         /check-settled-status app.Routes
 ->         /                     health.Routes
 ->         /template             template.Routes
 

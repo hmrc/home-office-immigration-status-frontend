@@ -31,10 +31,10 @@ import uk.gov.hmrc.homeofficesettledstatus.views.html.{main_template, start_page
 import uk.gov.hmrc.homeofficesettledstatus.wiring.AppConfig
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import uk.gov.hmrc.play.fsm.JourneyController
+import uk.gov.hmrc.play.fsm.{JourneyController, JourneyIdSupport}
 import uk.gov.hmrc.play.views.html.helpers.{ErrorSummary, FormWithCSRF, Input}
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class HomeOfficeSettledStatusFrontendController @Inject()(
@@ -52,46 +52,51 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
   implicit val config: Configuration,
   ec: ExecutionContext)
     extends FrontendController(controllerComponents) with I18nSupport with AuthActions
-    with JourneyController[HeaderCarrier] {
+    with JourneyController[HeaderCarrier] with JourneyIdSupport[HeaderCarrier] {
 
   import HomeOfficeSettledStatusFrontendController._
   import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel._
 
-  override implicit def context(implicit rh: RequestHeader): HeaderCarrier = hc
+  val AsHuman: WithAuthorised[String] = { implicit request =>
+    withAuthorisedAsHuman
+  }
 
   val AsStrideUser: WithAuthorised[String] = { implicit request =>
     authorisedWithStrideGroup(appConfig.authorisedStrideGroup)
   }
 
   // GET /
-  val showStart: Action[AnyContent] = actionShowState {
-    case Start =>
-  }
+  val showStart: Action[AnyContent] =
+    actionShowStateWhenAuthorised(AsHuman) {
+      case Start =>
+    }
 
-  // GET /status-check-nino
+  // GET /check-with-nino
   val showStatusCheckByNino: Action[AnyContent] =
     actionShowStateWhenAuthorised(AsStrideUser) {
       case StatusCheckByNino =>
     }
 
-  // POST /status-check-nino
-  val confirmStatusCheckByNino: Action[AnyContent] = action { implicit request =>
-    whenAuthorisedWithForm(AsStrideUser)(StatusCheckByNinoRequestForm)(
-      Transitions.confirmStatusCheckByNino)
-  }
+  // POST /check-with-nino
+  val confirmStatusCheckByNino: Action[AnyContent] =
+    action { implicit request =>
+      whenAuthorisedWithForm(AsStrideUser)(StatusCheckByNinoRequestForm)(
+        Transitions.confirmStatusCheckByNino)
+    }
 
-  // GET /status-check-nino/confirm
+  // GET /check-with-nino/confirm
   val showConfirmStatusCheckByNino: Action[AnyContent] =
     actionShowStateWhenAuthorised(AsStrideUser) {
       case _: ConfirmStatusCheckByNino =>
     }
 
-  // POST /status-check-nino/confirm
-  val submitStatusCheckByNino: Action[AnyContent] = action { implicit request =>
-    whenAuthorised(AsStrideUser)(
-      Transitions.submitStatusCheckByNino(
-        homeOfficeSettledStatusProxyConnector.statusPublicFundsByNino(_)))(redirect)
-  }
+  // POST /check-with-nino/confirm
+  val submitStatusCheckByNino: Action[AnyContent] =
+    action { implicit request =>
+      whenAuthorised(AsStrideUser)(
+        Transitions.submitStatusCheckByNino(
+          homeOfficeSettledStatusProxyConnector.statusPublicFundsByNino(_)))(redirect)
+    }
 
   // GET /status-found
   val showStatusFound: Action[AnyContent] =
@@ -115,8 +120,9 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
       routes.HomeOfficeSettledStatusFrontendController.showStatusCheckByNino()
     case _: ConfirmStatusCheckByNino =>
       routes.HomeOfficeSettledStatusFrontendController.showConfirmStatusCheckByNino()
-    case _: StatusFound        => routes.HomeOfficeSettledStatusFrontendController.showStatusFound()
-    case _: StatusCheckFailure => routes.HomeOfficeSettledStatusFrontendController.showStart()
+    case _: StatusFound => routes.HomeOfficeSettledStatusFrontendController.showStatusFound()
+    case _: StatusCheckFailure =>
+      routes.HomeOfficeSettledStatusFrontendController.showStatusCheckFailure()
   }
 
   /**
@@ -132,6 +138,13 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
     case _ =>
       NotImplemented("Not yet implemented, sorry!")
   }
+
+  override implicit def context(implicit rh: RequestHeader): HeaderCarrier =
+    appendJourneyId(super.hc)
+
+  override def amendContext(
+    headerCarrier: HeaderCarrier)(key: String, value: String): HeaderCarrier =
+    headerCarrier.withExtraHeaders(key -> value)
 }
 
 object HomeOfficeSettledStatusFrontendController {
