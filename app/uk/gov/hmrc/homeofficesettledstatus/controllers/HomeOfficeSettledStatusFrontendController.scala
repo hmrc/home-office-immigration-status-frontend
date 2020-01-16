@@ -63,41 +63,52 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
     authorisedWithStrideGroup(appConfig.authorisedStrideGroup)
   }
 
+  // GET /
   val showStart: Action[AnyContent] = actionShowState {
     case Start =>
   }
 
+  // GET /status-check-nino
   val showStatusCheckByNino: Action[AnyContent] =
     actionShowStateWhenAuthorised(AsStrideUser) {
       case StatusCheckByNino =>
     }
 
+  // POST /status-check-nino
   val confirmStatusCheckByNino: Action[AnyContent] = action { implicit request =>
     whenAuthorisedWithForm(AsStrideUser)(StatusCheckByNinoRequestForm)(
       Transitions.confirmStatusCheckByNino)
   }
 
+  // GET /status-check-nino/confirm
   val showConfirmStatusCheckByNino: Action[AnyContent] =
     actionShowStateWhenAuthorised(AsStrideUser) {
       case _: ConfirmStatusCheckByNino =>
     }
 
+  // POST /status-check-nino/confirm
   val submitStatusCheckByNino: Action[AnyContent] = action { implicit request =>
     whenAuthorised(AsStrideUser)(
       Transitions.submitStatusCheckByNino(
         homeOfficeSettledStatusProxyConnector.statusPublicFundsByNino(_)))(redirect)
   }
 
+  // GET /status-found
   val showStatusFound: Action[AnyContent] =
     actionShowStateWhenAuthorised(AsStrideUser) {
       case _: StatusFound =>
     }
 
+  // GET /status-check-failure
   val showStatusCheckFailure: Action[AnyContent] =
     actionShowStateWhenAuthorised(AsStrideUser) {
       case _: StatusCheckFailure =>
     }
 
+  /**
+    * Function from the `State` to the `Call` (route),
+    * used by play-fsm internally to create redirects.
+    */
   override def getCallFor(state: State)(implicit request: Request[_]): Call = state match {
     case Start => routes.HomeOfficeSettledStatusFrontendController.showStart()
     case StatusCheckByNino =>
@@ -108,6 +119,10 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
     case _: StatusCheckFailure => routes.HomeOfficeSettledStatusFrontendController.showStart()
   }
 
+  /**
+    * Function from the `State` to the `Result`,
+    * used by play-fsm internally to render the actual content.
+    */
   override def renderState(state: State, breadcrumbs: List[State], formWithErrors: Option[Form[_]])(
     implicit request: Request[_]): Result = state match {
 
