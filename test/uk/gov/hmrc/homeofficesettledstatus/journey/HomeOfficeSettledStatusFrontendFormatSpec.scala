@@ -18,9 +18,6 @@ package uk.gov.hmrc.homeofficesettledstatus.journey
 
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State
-import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State.{End, Start}
-import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyStateFormats
-import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State.Start
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyStateFormats
 import uk.gov.hmrc.play.test.UnitSpec
@@ -35,19 +32,6 @@ class HomeOfficeSettledStatusFrontendFormatSpec extends UnitSpec {
         val state = Start
 
         val json = Json.parse("""{"state":"Start"}""")
-        Json.toJson(state) shouldBe json
-        json.as[State] shouldBe state
-      }
-      "End" in {
-        val state = End("Henry", Some("BN12 6BX"), Some("00000000001"), Some("henry@example.com"))
-
-        val json = Json.parse("""{"state":"End",
-                                |"properties":{
-                                | "name":"Henry",
-                                | "postcode":"BN12 6BX",
-                                | "telephone":"00000000001",
-                                | "emailAddress": "henry@example.com"
-                                |}}""".stripMargin)
         Json.toJson(state) shouldBe json
         json.as[State] shouldBe state
       }

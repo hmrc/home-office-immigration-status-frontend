@@ -28,61 +28,21 @@ class HomeOfficeSettledStatusFrontendControllerISpec extends BaseISpec {
 
     "GET /start" should {
 
-      "redirect to start page with journeyId" in {
-        journeyState.set(Start, Nil)
-        val result = controller.showStart(FakeRequest())
-        status(result) shouldBe 303
-        redirectLocation(result) shouldBe Some("/check-settled-status")
-      }
-
-      "display start page" in {
+      "display the start page" in {
         journeyState.set(Start, Nil)
         val result = controller.showStart(fakeRequest)
         status(result) shouldBe 200
         checkHtmlResultWithBodyText(result, htmlEscapedMessage("start.title"))
       }
-    }
 
-    "POST /start" should {
-
-      "redirect to stride authorisation frontend" in {
-        journeyState.set(Start, Nil)
-        givenRequestIsNotAuthorised("SessionRecordNotFound")
-        val result = controller.submitStart(
-          fakeRequest.withFormUrlEncodedBody(
-            "name"            -> "Henry",
-            "postcode"        -> "",
-            "telephoneNumber" -> "00000000001",
-            "emailAddress"    -> "henry@example.com"))
+      "redirect to the start page when elsewhere" in {
+        journeyState.set(StatusCheckByNino, Nil)
+        val result = controller.showStart(fakeRequest)
         status(result) shouldBe 303
-        redirectLocation(result) shouldBe Some(
-          "/stride/sign-in?successURL=%2F&origin=home-office-settled-status-frontend")
-      }
-
-      "redirect to end page" in {
-        journeyState.set(Start, Nil)
-        givenAuthorisedForStride("TBC", "000")
-        val result = controller.submitStart(
-          fakeRequest.withFormUrlEncodedBody(
-            "name"            -> "Henry",
-            "postcode"        -> "",
-            "telephoneNumber" -> "00000000001",
-            "emailAddress"    -> "henry@example.com"))
-        status(result) shouldBe 303
-        redirectLocation(result) shouldBe Some(
-          routes.HomeOfficeSettledStatusFrontendController.showEnd().url)
+        redirectLocation(result) shouldBe Some("/check-settled-status")
       }
     }
 
-    "GET /end" should {
-      "display start page" in {
-        journeyState.set(End("name", Some("postcode"), Some("telephone"), Some("email")), Nil)
-        givenAuthorisedForStride("TBC", "000")
-        val result = controller.showEnd(fakeRequest)
-        status(result) shouldBe 200
-        checkHtmlResultWithBodyText(result, htmlEscapedMessage("end.title"))
-      }
-    }
   }
 
 }

@@ -16,8 +16,11 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.journeys
 
-import uk.gov.hmrc.homeofficesettledstatus.models.HomeOfficeSettledStatusFrontendModel
+import uk.gov.hmrc.homeofficesettledstatus.models.{StatusCheckByNinoRequest, StatusCheckError, StatusCheckResponse, StatusCheckResult}
 import uk.gov.hmrc.play.fsm.JourneyModel
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 object HomeOfficeSettledStatusFrontendJourneyModel extends JourneyModel {
 
@@ -28,13 +31,15 @@ object HomeOfficeSettledStatusFrontendJourneyModel extends JourneyModel {
 
   object State {
     case object Start extends State
-    case class End(
-      name: String,
-      postcode: Option[String],
-      telephone: Option[String],
-      emailAddress: Option[String])
-        extends State
-    case object SomeError extends State with IsError
+
+    case object StatusCheckByNino extends State
+
+    case class ConfirmStatusCheckByNino(query: StatusCheckByNinoRequest) extends State
+
+    case class StatusFound(correlationId: String, result: StatusCheckResult) extends State
+
+    case class StatusCheckFailure(correlationId: String, error: StatusCheckError)
+        extends State with IsError
   }
 
   object Transitions {
@@ -44,10 +49,27 @@ object HomeOfficeSettledStatusFrontendJourneyModel extends JourneyModel {
       case _ => goto(Start)
     }
 
-    def submitStart(humanId: String)(formData: HomeOfficeSettledStatusFrontendModel) = Transition {
-      case Start =>
-        goto(End(formData.name, formData.postcode, formData.telephoneNumber, formData.emailAddress))
+    def showStatusCheckByNino(user: String) = Transition {
+      case _ => goto(StatusCheckByNino)
     }
+
+    def confirmStatusCheckByNino(user: String)(query: StatusCheckByNinoRequest) = Transition {
+      case StatusCheckByNino =>
+        goto(ConfirmStatusCheckByNino(query))
+    }
+
+    def submitStatusCheckByNino(
+      checkStatusByNino: StatusCheckByNinoRequest => Future[StatusCheckResponse])(user: String) =
+      Transition {
+        case ConfirmStatusCheckByNino(query) =>
+          checkStatusByNino(query).flatMap {
+            case StatusCheckResponse(correlationId, _, Some(result)) =>
+              goto(StatusFound(correlationId, result))
+
+            case StatusCheckResponse(correlationId, Some(error), None) =>
+              goto(StatusCheckFailure(correlationId, error))
+          }
+      }
   }
 
 }

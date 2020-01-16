@@ -31,9 +31,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait AuthActions extends AuthorisedFunctions with AuthRedirects {
 
-  protected def authorisedWithStrideGroup[A](
-    authorisedStrideGroup: String,
-    journeyId: Option[String])(body: String => Future[Result])(
+  protected def authorisedWithStrideGroup[A](authorisedStrideGroup: String)(
+    body: String => Future[Result])(
     implicit
     request: Request[A],
     hc: HeaderCarrier,

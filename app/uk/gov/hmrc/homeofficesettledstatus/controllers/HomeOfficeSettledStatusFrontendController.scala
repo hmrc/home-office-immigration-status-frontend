@@ -22,25 +22,25 @@ import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import play.api.{Configuration, Environment}
+import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficesettledstatus.connectors.{FrontendAuthConnector, HomeOfficeSettledStatusProxyConnector}
-import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State.{End, Start}
+import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State._
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyService
-import uk.gov.hmrc.homeofficesettledstatus.models.HomeOfficeSettledStatusFrontendModel
-import uk.gov.hmrc.homeofficesettledstatus.views.html.{end, main_template, start_page}
+import uk.gov.hmrc.homeofficesettledstatus.models.{StatusCheckByNinoRequest, StatusCheckRange}
+import uk.gov.hmrc.homeofficesettledstatus.views.html.{main_template, start_page}
 import uk.gov.hmrc.homeofficesettledstatus.wiring.AppConfig
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import uk.gov.hmrc.play.fsm.{JourneyController, JourneyIdSupport}
+import uk.gov.hmrc.play.fsm.JourneyController
 import uk.gov.hmrc.play.views.html.helpers.{ErrorSummary, FormWithCSRF, Input}
 
 import scala.concurrent.ExecutionContext
-import scala.util.Success
 
 @Singleton
 class HomeOfficeSettledStatusFrontendController @Inject()(
   appConfig: AppConfig,
   override val messagesApi: MessagesApi,
-  HomeOfficeSettledStatusConnector: HomeOfficeSettledStatusProxyConnector,
+  homeOfficeSettledStatusProxyConnector: HomeOfficeSettledStatusProxyConnector,
   val authConnector: FrontendAuthConnector,
   val env: Environment,
   input: Input,
@@ -52,67 +52,85 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
   implicit val config: Configuration,
   ec: ExecutionContext)
     extends FrontendController(controllerComponents) with I18nSupport with AuthActions
-    with JourneyController[HeaderCarrier] with JourneyIdSupport[HeaderCarrier] {
+    with JourneyController[HeaderCarrier] {
 
   import HomeOfficeSettledStatusFrontendController._
   import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel._
 
-  val AsHuman: WithAuthorised[String] = { implicit request =>
-    withAuthorisedAsHuman(_)
+  override implicit def context(implicit rh: RequestHeader): HeaderCarrier = hc
+
+  val AsStrideUser: WithAuthorised[String] = { implicit request =>
+    authorisedWithStrideGroup(appConfig.authorisedStrideGroup)
   }
 
-  val AsStrideUser: WithAuthorised[String] = { implicit request: Request[Any] =>
-    authorisedWithStrideGroup(appConfig.authorisedStrideGroup, journeyId)
-  }
-
-  val showStart = actionShowStateWhenAuthorised(AsHuman) {
+  val showStart: Action[AnyContent] = actionShowState {
     case Start =>
   }
 
-  val submitStart = action { implicit request =>
-    whenAuthorisedWithForm(AsStrideUser)(HomeOfficeSettledStatusFrontendForm)(
-      Transitions.submitStart)
+  val showStatusCheckByNino: Action[AnyContent] =
+    actionShowStateWhenAuthorised(AsStrideUser) {
+      case StatusCheckByNino =>
+    }
+
+  val confirmStatusCheckByNino: Action[AnyContent] = action { implicit request =>
+    whenAuthorisedWithForm(AsStrideUser)(StatusCheckByNinoRequestForm)(
+      Transitions.confirmStatusCheckByNino)
   }
 
-  val showEnd = action { implicit request =>
-    showStateWhenAuthorised(AsStrideUser) {
-      case _: End =>
-    }.andThen {
-      case Success(_) => journeyService.cleanBreadcrumbs()
+  val showConfirmStatusCheckByNino: Action[AnyContent] =
+    actionShowStateWhenAuthorised(AsStrideUser) {
+      case _: ConfirmStatusCheckByNino =>
     }
+
+  val submitStatusCheckByNino: Action[AnyContent] = action { implicit request =>
+    whenAuthorised(AsStrideUser)(
+      Transitions.submitStatusCheckByNino(
+        homeOfficeSettledStatusProxyConnector.statusPublicFundsByNino(_)))(redirect)
   }
+
+  val showStatusFound: Action[AnyContent] =
+    actionShowStateWhenAuthorised(AsStrideUser) {
+      case _: StatusFound =>
+    }
+
+  val showStatusCheckFailure: Action[AnyContent] =
+    actionShowStateWhenAuthorised(AsStrideUser) {
+      case _: StatusCheckFailure =>
+    }
 
   override def getCallFor(state: State)(implicit request: Request[_]): Call = state match {
-    case Start  => routes.HomeOfficeSettledStatusFrontendController.showStart()
-    case _: End => routes.HomeOfficeSettledStatusFrontendController.showEnd()
+    case Start => routes.HomeOfficeSettledStatusFrontendController.showStart()
+    case StatusCheckByNino =>
+      routes.HomeOfficeSettledStatusFrontendController.showStatusCheckByNino()
+    case _: ConfirmStatusCheckByNino =>
+      routes.HomeOfficeSettledStatusFrontendController.showConfirmStatusCheckByNino()
+    case _: StatusFound        => routes.HomeOfficeSettledStatusFrontendController.showStatusFound()
+    case _: StatusCheckFailure => routes.HomeOfficeSettledStatusFrontendController.showStart()
   }
 
   override def renderState(state: State, breadcrumbs: List[State], formWithErrors: Option[Form[_]])(
     implicit request: Request[_]): Result = state match {
+
     case Start =>
-      Ok(
-        new start_page(mainTemplate, input, form, errorSummary)(
-          HomeOfficeSettledStatusFrontendForm))
-    case _: End => Ok(new end(mainTemplate)(HomeOfficeSettledStatusFrontendForm))
+      Ok(new start_page(mainTemplate, input, form, errorSummary)())
+
+    case _ =>
+      NotImplemented("Not yet implemented, sorry!")
   }
-
-  override implicit def context(implicit rh: RequestHeader): HeaderCarrier =
-    appendJourneyId(super.hc)
-
-  override def amendContext(
-    headerCarrier: HeaderCarrier)(key: String, value: String): HeaderCarrier =
-    headerCarrier.withExtraHeaders(key -> value)
 }
 
 object HomeOfficeSettledStatusFrontendController {
 
-  import uk.gov.hmrc.homeofficesettledstatus.controllers.FieldMappings._
+  import FormFieldMappings._
 
-  val HomeOfficeSettledStatusFrontendForm = Form[HomeOfficeSettledStatusFrontendModel](
+  val StatusCheckByNinoRequestForm = Form[StatusCheckByNinoRequest](
     mapping(
-      "name"            -> validName,
-      "postcode"        -> optional(postcode),
-      "telephoneNumber" -> telephoneNumber,
-      "emailAddress"    -> emailAddress)(HomeOfficeSettledStatusFrontendModel.apply)(
-      HomeOfficeSettledStatusFrontendModel.unapply))
+      "dateOfBirth" -> dateOfBirthMapping,
+      "familyName"  -> trimmedUppercaseText,
+      "givenName"   -> trimmedUppercaseText,
+      "nino" -> uppercaseNormalizedText
+        .verifying(validNino())
+        .transform(Nino.apply, (n: Nino) => n.toString),
+      "range" -> ignored[Option[StatusCheckRange]](None)
+    )(StatusCheckByNinoRequest.apply)(StatusCheckByNinoRequest.unapply))
 }

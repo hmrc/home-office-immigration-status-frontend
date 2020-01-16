@@ -16,16 +16,12 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.journey
 
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State.{End, Start}
-import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.Transitions._
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.{State, Transition}
+import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State._
+import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.Transitions._
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyService
 import uk.gov.hmrc.homeofficesettledstatus.models.HomeOfficeSettledStatusFrontendModel
-import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State
-import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State.Start
-import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyService
-import uk.gov.hmrc.homeofficesettledstatus.models.HomeOfficeSettledStatusFrontendModel
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -45,9 +41,7 @@ class HomeOfficeSettledStatusFrontendModelSpec extends UnitSpec with StateMatche
   "HomeOfficeSettledStatusFrontendModel" when {
     "at state Start" should {
       "transition to End when Start submitted a form" in {
-        given(Start) when submitStart("001.H")(
-          HomeOfficeSettledStatusFrontendModel("Henry", None, None, None)) should thenGo(
-          End("Henry", None, None, None))
+        given(Start) when showStatusCheckByNino("someUserId") should thenGo(StatusCheckByNino)
       }
     }
   }

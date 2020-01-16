@@ -1,7 +1,11 @@
 # microservice specific routes
 
-GET         /                       @uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.showStart
-GET         /start                  @uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.showStart
-POST        /start                  @uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.submitStart
-GET         /end                    @uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.showEnd
+GET         /                            @uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.showStart
+GET         /status-check-nino           @uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.showStatusCheckByNino
+POST        /status-check-nino           @uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.confirmStatusCheckByNino
+GET         /status-check-nino/confirm   @uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.showConfirmStatusCheckByNino
+POST        /status-check-nino/confirm   @uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.submitStatusCheckByNino
+GET         /status-found                @uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.showStatusFound
+GET         /status-check-failure        @uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.showStatusCheckFailure
+
 

@@ -25,10 +25,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController
-import uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.HomeOfficeSettledStatusFrontendForm
-import uk.gov.hmrc.homeofficesettledstatus.models.HomeOfficeSettledStatusFrontendModel
-import uk.gov.hmrc.homeofficesettledstatus.views.html._
-import uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController
 import uk.gov.hmrc.homeofficesettledstatus.models.HomeOfficeSettledStatusFrontendModel
 import uk.gov.hmrc.homeofficesettledstatus.views.html.{error_template, govuk_wrapper, main_template, start_page}
 import uk.gov.hmrc.play.config.{AssetsConfig, GTMConfig, OptimizelyConfig}
@@ -41,14 +37,6 @@ class ViewsSpec @Inject()(govUkWrapper: govuk_wrapper, mainTemplate: main_templa
     extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar {
 
   implicit val lang: Lang = Lang("eng")
-
-  private val filledForm =
-    HomeOfficeSettledStatusFrontendController.HomeOfficeSettledStatusFrontendForm.fill(
-      HomeOfficeSettledStatusFrontendModel(
-        name = "My contact name",
-        postcode = Some("AA1 1AA"),
-        telephoneNumber = Some("9876543210"),
-        emailAddress = Some("my@email.com")))
 
   "error_template view" should {
     "render title, heading and message" in new App {
@@ -80,7 +68,6 @@ class ViewsSpec @Inject()(govUkWrapper: govuk_wrapper, mainTemplate: main_templa
       val errorSummary = new ErrorSummary()
       val html = new start_page(mainTemplate, input, form, errorSummary)
         .render(
-          homeOfficeSettledStatusFrontendForm = HomeOfficeSettledStatusFrontendForm,
           request = FakeRequest(),
           messages = MessagesImpl(lang, stubMessagesApi()),
           config = app.configuration
@@ -95,10 +82,7 @@ class ViewsSpec @Inject()(govUkWrapper: govuk_wrapper, mainTemplate: main_templa
       content should include(Messages("start.helpdesklink.text2"))
 
       val html2 = new start_page(mainTemplate, input, form, errorSummary)
-        .f(HomeOfficeSettledStatusFrontendForm)(
-          FakeRequest(),
-          MessagesImpl(lang, stubMessagesApi()),
-          app.configuration)
+        .f()(FakeRequest(), MessagesImpl(lang, stubMessagesApi()), app.configuration)
       contentAsString(html2) shouldBe (content)
     }
   }

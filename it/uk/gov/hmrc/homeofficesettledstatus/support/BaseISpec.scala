@@ -1,5 +1,6 @@
 package uk.gov.hmrc.homeofficesettledstatus.support
 
+import akka.stream.Materializer
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.i18n.{Lang, Messages, MessagesApi}
@@ -9,17 +10,14 @@ import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.homeofficesettledstatus.connectors.TestAppConfig
+import uk.gov.hmrc.homeofficesettledstatus.stubs.{AuthStubs, DataStreamStubs}
+import uk.gov.hmrc.homeofficesettledstatus.wiring.AppConfig
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.homeofficesettledstatus.connectors.TestAppConfig
-import uk.gov.hmrc.homeofficesettledstatus.stubs.{AuthStubs, DataStreamStubs}
-import uk.gov.hmrc.homeofficesettledstatus.wiring.AppConfig
-import uk.gov.hmrc.homeofficesettledstatus.connectors.TestAppConfig
-import uk.gov.hmrc.homeofficesettledstatus.stubs.{AuthStubs, DataStreamStubs}
-import uk.gov.hmrc.homeofficesettledstatus.wiring.AppConfig
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.test.UnitSpec
 
-class BaseISpec
+abstract class BaseISpec
     extends UnitSpec with GuiceOneAppPerSuite with WireMockSupport with AuthStubs
     with DataStreamStubs with MetricsTestSupport {
 
@@ -39,7 +37,7 @@ class BaseISpec
     givenAuditConnector()
   }
 
-  protected implicit val materializer = app.materializer
+  protected implicit val materializer: Materializer = app.materializer
 
   protected def checkHtmlResultWithBodyText(result: Result, expectedSubstring: String): Unit = {
     status(result) shouldBe 200
