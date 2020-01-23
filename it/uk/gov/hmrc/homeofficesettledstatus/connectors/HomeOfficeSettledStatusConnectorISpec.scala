@@ -14,7 +14,7 @@ class HomeOfficeSettledStatusConnectorISpec extends BaseISpec with HomeOfficeSet
   private lazy val connector: HomeOfficeSettledStatusProxyConnector =
     app.injector.instanceOf[HomeOfficeSettledStatusProxyConnector]
 
-  val request = StatusCheckByNinoRequest("2001-01-31", "Jane", "Doe", Nino("RJ301829A"))
+  val request = StatusCheckByNinoRequest("2001-01-31", "JANE", "DOE", Nino("RJ301829A"))
 
   "HomeOfficeSettledStatusProxyConnector" when {
 
@@ -22,22 +22,19 @@ class HomeOfficeSettledStatusConnectorISpec extends BaseISpec with HomeOfficeSet
 
       "return status when range provided" in {
         givenStatusCheckResultWithRangeExample()
-        val request = StatusCheckByNinoRequest(
-          "2001-01-31",
-          "Jane",
-          "Doe",
-          Nino("RJ301829A"),
-          Some(StatusCheckRange(Some("2019-07-15"), Some("2019-04-15"))))
+        val request2 =
+          request.copy(
+            statusCheckRange = Some(StatusCheckRange(Some("2019-07-15"), Some("2019-04-15"))))
 
         val result: StatusCheckResponse =
-          await(connector.statusPublicFundsByNino(request))
+          await(connector.statusPublicFundsByNino(request2))
 
         result.result shouldBe defined
         result.error shouldBe None
       }
 
       "return status when no range provided" in {
-        givenStatusCheckResultNoRangeExample()
+        givenStatusCheckSucceeds()
 
         val result: StatusCheckResponse =
           await(connector.statusPublicFundsByNino(request))

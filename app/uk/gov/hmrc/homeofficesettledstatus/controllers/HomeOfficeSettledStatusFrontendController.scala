@@ -27,14 +27,15 @@ import uk.gov.hmrc.homeofficesettledstatus.connectors.{FrontendAuthConnector, Ho
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State._
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyService
 import uk.gov.hmrc.homeofficesettledstatus.models.{StatusCheckByNinoRequest, StatusCheckRange}
-import uk.gov.hmrc.homeofficesettledstatus.views.html.{main_template, start_page}
+import uk.gov.hmrc.homeofficesettledstatus.views.LayoutComponents
+import uk.gov.hmrc.homeofficesettledstatus.views.html.{StatusCheckByNinoPage, StatusFoundPage}
 import uk.gov.hmrc.homeofficesettledstatus.wiring.AppConfig
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.fsm.{JourneyController, JourneyIdSupport}
-import uk.gov.hmrc.play.views.html.helpers.{ErrorSummary, FormWithCSRF, Input}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
+import scala.util.Success
 
 @Singleton
 class HomeOfficeSettledStatusFrontendController @Inject()(
@@ -43,14 +44,9 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
   homeOfficeSettledStatusProxyConnector: HomeOfficeSettledStatusProxyConnector,
   val authConnector: FrontendAuthConnector,
   val env: Environment,
-  input: Input,
-  form: FormWithCSRF,
-  errorSummary: ErrorSummary,
-  mainTemplate: main_template,
   override val journeyService: HomeOfficeSettledStatusFrontendJourneyService,
-  controllerComponents: MessagesControllerComponents)(
-  implicit val config: Configuration,
-  ec: ExecutionContext)
+  controllerComponents: MessagesControllerComponents,
+  layoutComponents: LayoutComponents)(implicit val config: Configuration, ec: ExecutionContext)
     extends FrontendController(controllerComponents) with I18nSupport with AuthActions
     with JourneyController[HeaderCarrier] with JourneyIdSupport[HeaderCarrier] {
 
@@ -67,8 +63,12 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
 
   // GET /
   val showStart: Action[AnyContent] =
-    actionShowStateWhenAuthorised(AsHuman) {
-      case Start =>
+    action { implicit request =>
+      whenAuthorised(AsStrideUser)(Transitions.start)(display)
+        .andThen {
+          // reset navigation history
+          case Success(_) => journeyService.cleanBreadcrumbs()
+        }
     }
 
   // GET /check-with-nino
@@ -78,24 +78,12 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
     }
 
   // POST /check-with-nino
-  val confirmStatusCheckByNino: Action[AnyContent] =
-    action { implicit request =>
-      whenAuthorisedWithForm(AsStrideUser)(StatusCheckByNinoRequestForm)(
-        Transitions.confirmStatusCheckByNino)
-    }
-
-  // GET /check-with-nino/confirm
-  val showConfirmStatusCheckByNino: Action[AnyContent] =
-    actionShowStateWhenAuthorised(AsStrideUser) {
-      case _: ConfirmStatusCheckByNino =>
-    }
-
-  // POST /check-with-nino/confirm
   val submitStatusCheckByNino: Action[AnyContent] =
     action { implicit request =>
-      whenAuthorised(AsStrideUser)(
+      whenAuthorisedWithForm(AsStrideUser)(StatusCheckByNinoRequestForm)(
         Transitions.submitStatusCheckByNino(
-          homeOfficeSettledStatusProxyConnector.statusPublicFundsByNino(_)))(redirect)
+          homeOfficeSettledStatusProxyConnector.statusPublicFundsByNino(_))
+      )
     }
 
   // GET /status-found
@@ -118,12 +106,15 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
     case Start => routes.HomeOfficeSettledStatusFrontendController.showStart()
     case StatusCheckByNino =>
       routes.HomeOfficeSettledStatusFrontendController.showStatusCheckByNino()
-    case _: ConfirmStatusCheckByNino =>
-      routes.HomeOfficeSettledStatusFrontendController.showConfirmStatusCheckByNino()
     case _: StatusFound => routes.HomeOfficeSettledStatusFrontendController.showStatusFound()
     case _: StatusCheckFailure =>
       routes.HomeOfficeSettledStatusFrontendController.showStatusCheckFailure()
   }
+
+  import uk.gov.hmrc.play.fsm.OptionalFormOps._
+
+  val statusCheckByNinoPage = new StatusCheckByNinoPage(layoutComponents)
+  val statusFoundPage = new StatusFoundPage(layoutComponents)
 
   /**
     * Function from the `State` to the `Result`,
@@ -133,7 +124,15 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
     implicit request: Request[_]): Result = state match {
 
     case Start =>
-      Ok(new start_page(mainTemplate, input, form, errorSummary)())
+      Redirect(getCallFor(StatusCheckByNino))
+
+    case StatusCheckByNino =>
+      Ok(
+        statusCheckByNinoPage(
+          formWithErrors.or(StatusCheckByNinoRequestForm),
+          routes.HomeOfficeSettledStatusFrontendController.submitStatusCheckByNino()))
+
+    case StatusFound(correlationId, query, result) => Ok(statusFoundPage(query, result))
 
     case _ =>
       NotImplemented("Not yet implemented, sorry!")
@@ -154,8 +153,8 @@ object HomeOfficeSettledStatusFrontendController {
   val StatusCheckByNinoRequestForm = Form[StatusCheckByNinoRequest](
     mapping(
       "dateOfBirth" -> dateOfBirthMapping,
-      "familyName"  -> trimmedUppercaseText,
-      "givenName"   -> trimmedUppercaseText,
+      "familyName"  -> trimmedUppercaseName.verifying(validName("familyName", 3)),
+      "givenName"   -> trimmedUppercaseName.verifying(validName("givenName", 1)),
       "nino" -> uppercaseNormalizedText
         .verifying(validNino())
         .transform(Nino.apply, (n: Nino) => n.toString),

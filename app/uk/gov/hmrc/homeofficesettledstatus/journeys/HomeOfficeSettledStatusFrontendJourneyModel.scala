@@ -27,25 +27,30 @@ object HomeOfficeSettledStatusFrontendJourneyModel extends JourneyModel {
   sealed trait State
   sealed trait IsError
 
-  override val root: State = State.Start
+  override val root: State = State.StatusCheckByNino
 
   object State {
     case object Start extends State
 
     case object StatusCheckByNino extends State
 
-    case class ConfirmStatusCheckByNino(query: StatusCheckByNinoRequest) extends State
+    case class StatusFound(
+      correlationId: String,
+      query: StatusCheckByNinoRequest,
+      result: StatusCheckResult)
+        extends State
 
-    case class StatusFound(correlationId: String, result: StatusCheckResult) extends State
-
-    case class StatusCheckFailure(correlationId: String, error: StatusCheckError)
+    case class StatusCheckFailure(
+      correlationId: String,
+      query: StatusCheckByNinoRequest,
+      error: StatusCheckError)
         extends State with IsError
   }
 
   object Transitions {
     import State._
 
-    def start = Transition {
+    def start(user: String) = Transition {
       case _ => goto(Start)
     }
 
@@ -53,21 +58,18 @@ object HomeOfficeSettledStatusFrontendJourneyModel extends JourneyModel {
       case _ => goto(StatusCheckByNino)
     }
 
-    def confirmStatusCheckByNino(user: String)(query: StatusCheckByNinoRequest) = Transition {
-      case StatusCheckByNino =>
-        goto(ConfirmStatusCheckByNino(query))
-    }
-
     def submitStatusCheckByNino(
-      checkStatusByNino: StatusCheckByNinoRequest => Future[StatusCheckResponse])(user: String) =
+      checkStatusByNino: StatusCheckByNinoRequest => Future[StatusCheckResponse])(user: String)(
+      query: StatusCheckByNinoRequest) =
       Transition {
-        case ConfirmStatusCheckByNino(query) =>
+        case StatusCheckByNino =>
           checkStatusByNino(query).flatMap {
-            case StatusCheckResponse(correlationId, _, Some(result)) =>
-              goto(StatusFound(correlationId, result))
+            case StatusCheckResponse(correlationId, Some(error), _) =>
+              goto(StatusCheckFailure(correlationId, query, error))
 
-            case StatusCheckResponse(correlationId, Some(error), None) =>
-              goto(StatusCheckFailure(correlationId, error))
+            case StatusCheckResponse(correlationId, _, Some(result)) =>
+              goto(StatusFound(correlationId, query, result))
+
           }
       }
   }

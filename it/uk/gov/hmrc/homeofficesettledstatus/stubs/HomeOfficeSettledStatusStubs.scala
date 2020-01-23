@@ -11,8 +11,8 @@ trait HomeOfficeSettledStatusStubs {
   val requestBodyWithRange: String =
     """{
       |  "dateOfBirth": "2001-01-31",
-      |  "familyName": "Jane",
-      |  "givenName": "Doe",
+      |  "familyName": "JANE",
+      |  "givenName": "DOE",
       |  "nino": "RJ301829A",
       |  "statusCheckRange": {
       |    "endDate": "2019-07-15",
@@ -23,16 +23,16 @@ trait HomeOfficeSettledStatusStubs {
   val validRequestBody: String =
     """{
       |  "dateOfBirth": "2001-01-31",
-      |  "familyName": "Jane",
-      |  "givenName": "Doe",
+      |  "familyName": "JANE",
+      |  "givenName": "DOE",
       |  "nino": "RJ301829A"
       |}""".stripMargin
 
   val invalidNinoRequestBody: String =
     """{
       |  "dateOfBirth": "2001-01-31",
-      |  "familyName": "Jane",
-      |  "givenName": "Doe",
+      |  "familyName": "JANE",
+      |  "givenName": "DOE",
       |  "nino": "invailid"
       |}""".stripMargin
 
@@ -54,7 +54,7 @@ trait HomeOfficeSettledStatusStubs {
       |  }
       |}""".stripMargin
 
-  def givenStatusCheckResultNoRangeExample(): StubMapping =
+  def givenStatusCheckSucceeds(): StubMapping =
     givenStatusPublicFundsByNinoStub(200, validRequestBody, responseBodyWithStatus)
 
   def givenStatusCheckResultWithRangeExample(): StubMapping =

@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.controllers
 
-import org.joda.time.format.DateTimeFormat
 import play.api.data.Forms.{mapping, text}
 import play.api.data.Mapping
 import play.api.data.validation.Constraint
@@ -25,22 +24,13 @@ import scala.util.control.NonFatal
 
 object DateFieldHelper {
 
-  def validateDate(value: String): Boolean = if (parseDate(value)) true else false
-
-  val dateTimeFormat = DateTimeFormat.forPattern("yyyy-MM-dd")
-
-  def parseDate(date: String): Boolean =
-    try {
-      dateTimeFormat.parseDateTime(date)
-      true
-    } catch {
-      case _: Throwable => false
-    }
+  def validateDate(value: String): Boolean =
+    if (value.matches("""^(1|2)(0|9)[0-9][0-9]-[0-1X][1-9X]-[0-3X][0-9X]$""")) true else false
 
   def parseDateIntoFields(date: String): Option[(String, String, String)] =
     try {
-      val l = dateTimeFormat.parseLocalDate(date)
-      Some((l.getYear.toString, l.getMonthOfYear.toString, l.getDayOfMonth.toString))
+      val ydm: Array[String] = date.split("-")
+      if (ydm.length >= 3) Some((ydm(0), ydm(1), ydm(2))) else None
     } catch {
       case NonFatal(_) => None
     }
@@ -49,25 +39,26 @@ object DateFieldHelper {
     case (y, m, d) =>
       if (y.isEmpty || m.isEmpty || d.isEmpty) ""
       else {
+        val year = if (y.length == 2) "19" + y else y
         val month = if (m.length == 1) "0" + m else m
         val day = if (d.length == 1) "0" + d else d
-        s"$y-$month-$day"
+        s"$year-$month-$day"
       }
   }
 
   val validDobDateFormat: Constraint[String] =
     ValidateHelper
-      .validateField("error.date-of-birth.required", "error.date-of-birth.invalid-format")(
-        vatRegistrationDate => validateDate(vatRegistrationDate))
+      .validateField("error.dateOfBirth.required", "error.dateOfBirth.invalid-format")(date =>
+        validateDate(date))
 
   def dateFieldsMapping(constraintDate: Constraint[String]): Mapping[String] =
     mapping(
       "year" -> text
-        .verifying("error.year.invalid-format", y => y.isEmpty || y.matches("^[0-9]{1,4}$")),
+        .verifying("error.year.invalid-format", y => y.nonEmpty && y.matches("^[0-9]{2,4}$")),
       "month" -> text
-        .verifying("error.month.invalid-format", m => m.isEmpty || m.matches("^[0-9X]{1,2}$")),
+        .verifying("error.month.invalid-format", m => m.nonEmpty && m.matches("^[0-9X]{1,2}$")),
       "day" -> text
-        .verifying("error.day.invalid-format", d => d.isEmpty || d.matches("^[0-9X]{1,2}$"))
+        .verifying("error.day.invalid-format", d => d.nonEmpty && d.matches("^[0-9X]{1,2}$"))
     )(formatDateFromFields)(parseDateIntoFields).verifying(constraintDate)
 
 }

@@ -16,26 +16,22 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.views
 
-import controllers.Assets
 import javax.inject.Inject
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Configuration
-import play.api.http.HttpErrorHandler
-import play.api.i18n.{Lang, Messages, MessagesImpl}
+import play.api.i18n.{Lang, MessagesImpl}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController
-import uk.gov.hmrc.homeofficesettledstatus.models.HomeOfficeSettledStatusFrontendModel
-import uk.gov.hmrc.homeofficesettledstatus.views.html.{error_template, govuk_wrapper, main_template, start_page}
+import uk.gov.hmrc.homeofficesettledstatus.views.html.{error_template, govuk_wrapper, main_template}
 import uk.gov.hmrc.play.config.{AssetsConfig, GTMConfig, OptimizelyConfig}
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.play.views.html.helpers.{ErrorSummary, FormWithCSRF, Input, ReportAProblemLink}
+import uk.gov.hmrc.play.views.html.helpers.ReportAProblemLink
 import uk.gov.hmrc.play.views.html.layouts._
 import views.html.layouts.GovUkTemplate
 
-class ViewsSpec @Inject()(govUkWrapper: govuk_wrapper, mainTemplate: main_template)
+class ViewsSpec @Inject()(govUkWrapper: govuk_wrapper, layoutComponents: LayoutComponents)
     extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar {
 
   implicit val lang: Lang = Lang("eng")
@@ -59,32 +55,6 @@ class ViewsSpec @Inject()(govUkWrapper: govuk_wrapper, mainTemplate: main_templa
       val html2 =
         new error_template(govUkWrapper)
           .f(pageTitle, heading, message)(MessagesImpl(lang, stubMessagesApi()), app.configuration)
-      contentAsString(html2) shouldBe (content)
-    }
-  }
-
-  "start view" should {
-    "render title and messages" in new App {
-      val input = new Input()
-      val form = new FormWithCSRF()
-      val errorSummary = new ErrorSummary()
-      val html = new start_page(mainTemplate, input, form, errorSummary)
-        .render(
-          request = FakeRequest(),
-          messages = MessagesImpl(lang, stubMessagesApi()),
-          config = app.configuration
-        )
-      val content = contentAsString(html)
-
-      implicit val messagesProvider = MessagesImpl(lang, stubMessagesApi())
-      content should include(Messages("start.title"))
-      content should include(Messages("start.label"))
-      content should include(Messages("start.intro"))
-      content should include(Messages("start.helpdesklink.text1"))
-      content should include(Messages("start.helpdesklink.text2"))
-
-      val html2 = new start_page(mainTemplate, input, form, errorSummary)
-        .f()(FakeRequest(), MessagesImpl(lang, stubMessagesApi()), app.configuration)
       contentAsString(html2) shouldBe (content)
     }
   }

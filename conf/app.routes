@@ -2,9 +2,7 @@
 
 GET         /                            @uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.showStart
 GET         /check-with-nino             @uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.showStatusCheckByNino
-POST        /check-with-nino             @uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.confirmStatusCheckByNino
-GET         /check-with-nino/confirm     @uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.showConfirmStatusCheckByNino
-POST        /check-with-nino/confirm     @uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.submitStatusCheckByNino
+POST        /check-with-nino             @uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.submitStatusCheckByNino
 GET         /status-found                @uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.showStatusFound
 GET         /status-check-failure        @uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.showStatusCheckFailure
 

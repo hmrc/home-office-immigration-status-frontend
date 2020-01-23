@@ -1,40 +1,33 @@
 # Validation errors
+error.summary.heading=There is a problem
 error.prefix=Error:
-error.end.heading=There is a problem
-error.postcode.invalid=You can only enter these characters: A-Z 0-9
-error.telephone.invalid=You can only enter these characters: 0-9 ( ) space
-error.string.invalid=You can only enter these characters: a-z A-Z 0-9 ,.() - ! @ space
-error.maxLength=You can only enter up to {0} characters
 error.email=Enter a valid email address
+error.dateOfBirth.required=Enter date of birth
+error.year.invalid-format=Enter a year of birth
+error.day.invalid-format=Enter a day of birth
+error.month.invalid-format=Enter a month of birth
+error.nino.required=Enter a National Insurance number
+error.nino.invalid-format=Enter a National Insurance number
+error.familyName.required=Enter a family name
+error.familyName.invalid-format=Enter a family name
+error.givenName.required=Enter a first name
+error.givenName.invalid-format=Enter a first name
 
 # Service specific messages
-app.name=New Shiny Service 26
-servicename.titleSuffix=New Shiny Service 26 - GOV.UK
+app.name=Check Settled Status
+app.titleSuffix=Check Settled Status - GOV.UK
 
-# Start page
-start.title=New Shiny Service 26
-start.label=New Shiny Service 26
-start.intro=Describe purpose of your service / journey
-start.helpdesklink.text1=Contact the online services helpdesk
-start.helpdesklink.text2=if you need help.
+# Lookup page
+lookup.title=Enter the following details
+lookup.nino.label=National Insurance number
+lookup.nino.hint=For example, ‘QQ 12 34 56 C’.
+lookup.givenName.label=First name
+lookup.familyName.label=Family name
+lookup.dateOfBirth.label=Date of birth
+lookup.dateOfBirth.hint=For example, 31 3 1980
 
-# MyForm page
-newshinyservice26frontendform.title=New Shiny Service 26 NewShinyService26FrontendForm
-newshinyservice26frontendform.label=Enter your 1st parameter
-newshinyservice26frontendform.description=This could be random characters.
-newshinyservice26frontendform.name.label=Name
-newshinyservice26frontendform.telephoneNumber.label=Telephone number
-newshinyservice26frontendform.emailAddress.label=Email address
-
-# end page
-end.title=New Shiny Service 26 end
-end.label=Check your answers
-end.link.change=Edit
-end.header.parameters=Parameters
-end.header.contactDetails=Contact details
-end.name=Name:
-end.telephoneNumber=Telephone number:
-end.emailAddress=Email address:
+# Confirm page
+confirm.title=
 
 button.continue=Continue
 button.submit=Submit

@@ -39,7 +39,7 @@ class StatusCheckByNinoRequestFormSpec extends UnitSpec {
 
   val formInput2 = Map(
     "dateOfBirth.year"  -> "1970",
-    "dateOfBirth.month" -> "1",
+    "dateOfBirth.month" -> "01",
     "dateOfBirth.day"   -> "31",
     "familyName"        -> "KOWALSKI",
     "givenName"         -> "JAN",
