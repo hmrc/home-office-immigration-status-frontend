@@ -20,7 +20,7 @@ lib
 lib_managed
 log
 logs
-modules
+/modules
 /out
 precompiled
 /.project
