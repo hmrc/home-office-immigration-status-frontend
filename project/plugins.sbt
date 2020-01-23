@@ -1,5 +1,6 @@
-resolvers += Resolver.url("HMRC Sbt Plugin Releases", url("https://dl.bintray.com/hmrc/sbt-plugin-releases"))(
-  Resolver.ivyStylePatterns)
+resolvers += Resolver.url(
+  "HMRC Sbt Plugin Releases",
+  url("https://dl.bintray.com/hmrc/sbt-plugin-releases"))(Resolver.ivyStylePatterns)
 resolvers += "HMRC Releases" at "https://dl.bintray.com/hmrc/releases"
 
 addSbtPlugin("uk.gov.hmrc" % "sbt-auto-build" % "2.5.0")
@@ -16,3 +17,4 @@ addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.6.0")
 
 addSbtPlugin("com.lucidchart" % "sbt-scalafmt" % "1.16")
 
+addSbtPlugin("org.irundaia.sbt" % "sbt-sassify" % "1.4.12")

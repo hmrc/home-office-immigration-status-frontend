@@ -16,10 +16,12 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.views
 
+import controllers.Assets
 import javax.inject.Inject
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Configuration
+import play.api.http.HttpErrorHandler
 import play.api.i18n.{Lang, Messages, MessagesImpl}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._

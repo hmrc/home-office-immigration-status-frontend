@@ -8,4 +8,4 @@ POST        /check-with-nino/confirm     @uk.gov.hmrc.homeofficesettledstatus.co
 GET         /status-found                @uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.showStatusFound
 GET         /status-check-failure        @uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.showStatusCheckFailure
 
-
+GET         /assets/*file                controllers.Assets.at(path="/public", file)

@@ -34,10 +34,20 @@
         scriptElem: Option[Html] = None,
         gaCode: Seq[String] = Seq.empty)(implicit messages: Messages, configuration: Configuration)
 
+
+@headScripts = {
+    <link href="@routes.Assets.at("stylesheets/styles.css")" media="screen" rel="stylesheet" type="text/css">
+}
+
+@scriptElement = {
+    <script src="@routes.Assets.at("javascripts/scripts.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/ga-events.js")" type="text/javascript"></script>
+}
+
 @head = {
 @layoutsHead(
     linkElem = None,
-    headScripts = None)
+    headScripts = Some(headScripts))
     <meta name="format-detection" content="telephone=no"/>
 }
 
@@ -53,7 +63,14 @@
     navLinks = Some(headerNavLinks))
 }
 
-@afterHeader = {}
+@afterHeader = {
+    <div class="beta-banner internal-beta-banner">
+        <p>
+            <strong class="phase-tag">ALPHA</strong>
+            <span>This is a new service. Your <a id="feedback-link" href="n8n8l9g1j5c1s3i6@@hmrcdigital.slack.com" data-sso="false" data-journey-click="other-global:Click:Feedback">feedback</a> will help us to improve it.</span>
+        </p>
+    </div>
+}
 
 @gaJS = {
 @gaCode.map(Html(_))
@@ -63,7 +80,7 @@
 @layoutsFooter(analyticsToken = Some(configuration.get[String]("google-analytics.token")),
     analyticsHost = configuration.get[String]("google-analytics.host"),
     ssoUrl = None,
-    scriptElem = scriptElem,
+    scriptElem = Some(scriptElement),
     gaCalls = None,
     analyticsAdditionalJs = Some(gaJS))
 }
@@ -71,21 +88,12 @@
 @footerTop = {}
 @footerLinks = {}
 
-@serviceInfo = {
-@layoutsServiceInfo(
-    betaBanner = HtmlFormat.empty,
-    includeGridWrapper = false,
-    Some(serviceInfoContent))
-}
+@serviceInfo = {}
 
 @mainContentHeader = {
 @if(contentHeader.isDefined) {
     @layoutsMainContentHeader(contentHeader.get)
 }
-}
-
-@getHelpForm = @{
-    helpersReportAProblemLink(configuration.get[String]("reportAProblemPartialUrl"), configuration.get[String]("reportAProblemNonJSUrl"))
 }
 
 @content = {
@@ -94,7 +102,6 @@
     mainDataAttributes = mainDataAttributes,
     mainContentHeader = mainContentHeader,
     serviceInfo = serviceInfo,
-    getHelpForm = getHelpForm,
     sidebar = sidebar)
 }
 
