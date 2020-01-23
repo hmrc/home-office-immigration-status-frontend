@@ -26,8 +26,11 @@ lookup.familyName.label=Family name
 lookup.dateOfBirth.label=Date of birth
 lookup.dateOfBirth.hint=For example, 31 3 1980
 
-# Confirm page
-confirm.title=
+# Status page
+status-found.title=
+
+#Error page
+status-check-failure.title=
 
 button.continue=Continue
 button.submit=Submit

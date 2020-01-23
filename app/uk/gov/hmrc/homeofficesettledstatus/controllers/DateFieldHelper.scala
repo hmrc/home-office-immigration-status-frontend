@@ -53,12 +53,12 @@ object DateFieldHelper {
 
   def dateFieldsMapping(constraintDate: Constraint[String]): Mapping[String] =
     mapping(
-      "year" -> text
-        .verifying("error.year.invalid-format", y => y.nonEmpty && y.matches("^[0-9]{2,4}$")),
-      "month" -> text
-        .verifying("error.month.invalid-format", m => m.nonEmpty && m.matches("^[0-9X]{1,2}$")),
+      "year" -> text,
+      //.verifying("error.year.invalid-format", y => y.nonEmpty && y.matches("^[0-9]{2,4}$")),
+      "month" -> text,
+      //.verifying("error.month.invalid-format", m => m.nonEmpty && m.matches("^[0-9X]{1,2}$")),
       "day" -> text
-        .verifying("error.day.invalid-format", d => d.nonEmpty && d.matches("^[0-9X]{1,2}$"))
+      //.verifying("error.day.invalid-format", d => d.nonEmpty && d.matches("^[0-9X]{1,2}$"))
     )(formatDateFromFields)(parseDateIntoFields).verifying(constraintDate)
 
 }

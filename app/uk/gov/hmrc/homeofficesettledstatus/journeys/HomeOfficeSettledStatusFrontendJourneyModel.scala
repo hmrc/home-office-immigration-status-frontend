@@ -69,7 +69,6 @@ object HomeOfficeSettledStatusFrontendJourneyModel extends JourneyModel {
 
             case StatusCheckResponse(correlationId, _, Some(result)) =>
               goto(StatusFound(correlationId, query, result))
-
           }
       }
   }

@@ -24,11 +24,11 @@ import play.api.mvc._
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficesettledstatus.connectors.{FrontendAuthConnector, HomeOfficeSettledStatusProxyConnector}
-import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State._
+import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State.{StatusCheckFailure, _}
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyService
 import uk.gov.hmrc.homeofficesettledstatus.models.{StatusCheckByNinoRequest, StatusCheckRange}
 import uk.gov.hmrc.homeofficesettledstatus.views.LayoutComponents
-import uk.gov.hmrc.homeofficesettledstatus.views.html.{StatusCheckByNinoPage, StatusFoundPage}
+import uk.gov.hmrc.homeofficesettledstatus.views.html.{StatusCheckByNinoPage, StatusCheckFailurePage, StatusFoundPage}
 import uk.gov.hmrc.homeofficesettledstatus.wiring.AppConfig
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -115,6 +115,7 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
 
   val statusCheckByNinoPage = new StatusCheckByNinoPage(layoutComponents)
   val statusFoundPage = new StatusFoundPage(layoutComponents)
+  val statusCheckFailurePage = new StatusCheckFailurePage(layoutComponents)
 
   /**
     * Function from the `State` to the `Result`,
@@ -134,8 +135,7 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
 
     case StatusFound(correlationId, query, result) => Ok(statusFoundPage(query, result))
 
-    case _ =>
-      NotImplemented("Not yet implemented, sorry!")
+    case StatusCheckFailure(correlationId, query, error) => Ok(statusCheckFailurePage(query, error))
   }
 
   override implicit def context(implicit rh: RequestHeader): HeaderCarrier =
