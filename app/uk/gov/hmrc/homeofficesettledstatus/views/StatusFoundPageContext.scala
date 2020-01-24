@@ -27,4 +27,12 @@ case class StatusFoundPageContext(
   val hasStatus: Boolean = statusCheckResult.mostRecentStatus.immigrationStatus != "NONE"
 
   val statusToken: String = if (hasStatus) "success" else "error"
+
+  val statusLabel: String => String = {
+    case "LTR"  => "Leave To Remain"
+    case "ILR"  => "Indefinite Leave To Remain"
+    case "TLTR" => "Temporary Leave To Remain"
+    case "NONE" => "None"
+    case other  => other
+  }
 }

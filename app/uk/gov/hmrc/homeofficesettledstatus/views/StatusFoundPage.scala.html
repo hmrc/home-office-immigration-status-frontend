@@ -55,56 +55,59 @@
   </div>
   <br>
   <br>
-  <h1 class="govuk-heading-xl">@context.statusCheckResult.fullName</h1>
-  <table class="govuk-table">
-   <thead class="govuk-table__head">
-    <tr class="govuk-table__row">
-     <th scope="col" class="govuk-table__header govuk-!-width-one-half">Status</th>
-     <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Start Date</th>
-     <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Expiry Date</th>
+
+  <h1 id="full-name" class="govuk-heading-xl">@context.statusCheckResult.fullName</h1>
+
+  <table>
+   <thead>
+    <tr>
+     <th>Status</th>
+     <th>Start Date</th>
+     <th>Expiry Date</th>
     </tr>
    </thead>
-   <tbody class="govuk-table__body">
-    <tr class="govuk-table__row">
-     <th scope="row" class="govuk-table__header">Leave to Remain</th>
-     <td class="govuk-table__cell">26-02-2015</td>
-     <td class="govuk-table__cell">19-03-2020</td>
-    </tr>
+   <tbody>
+
+    @for(status <- context.statusCheckResult.statuses) {
+     <tr>
+      <th>@context.statusLabel(status.immigrationStatus)</th>
+      <td>@status.statusStartDate.getOrElse("-")</td>
+      <td>@status.statusEndDate.getOrElse("-")</td>
+     </tr>
+    }
+
    </tbody>
   </table>
+
   <br>
-  <dl class="govuk-summary-list govuk-summary-list">
-   <div class="govuk-summary-list__row">
-    <dt class="govuk-summary-list__key">
+
+  <dl>
+
+   <div>
+    <dt>
      NINO
     </dt>
-    <dd class="govuk-summary-list__value">
-     QD542361A
+    <dd id="nino">
+     @context.statusCheckByNinoRequest.nino.toString()
     </dd>
    </div>
-   <div class="govuk-summary-list__row">
-    <dt class="govuk-summary-list__key">
-     Address
-    </dt>
-    <dd class="govuk-summary-list__value">
-     Flat 36, Oakley House, 103 Sloane Street, London
-     SW1X 9PP
-    </dd>
+   <div>
 
    </div>
-   <div class="govuk-summary-list__row">
-    <dt class="govuk-summary-list__key">
+   <div>
+    <dt>
      Date of birth
     </dt>
-    <dd class="govuk-summary-list__value">
-     04 - 10 - 1954
+    <dd id="date-of-birth">
+    @context.statusCheckByNinoRequest.dateOfBirth
     </dd>
    </div>
-   <div class="govuk-summary-list__row">
-    <dt class="govuk-summary-list__key">
+
+   <div>
+    <dt>
      Nationality
     </dt>
-    <dd class="govuk-summary-list__value">
+    <dd id="nationality">
      CHE
     </dd>
 
