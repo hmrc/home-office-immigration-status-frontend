@@ -16,18 +16,111 @@
 
 @import uk.gov.hmrc.homeofficesettledstatus.controllers.routes.HomeOfficeSettledStatusFrontendController
 @import play.api.Configuration
-@import uk.gov.hmrc.homeofficesettledstatus.models.StatusCheckByNinoRequest
-@import uk.gov.hmrc.homeofficesettledstatus.models.StatusCheckResult
 @import uk.gov.hmrc.play.views.html.helpers.{ErrorSummary, FormWithCSRF, Input}
 @import uk.gov.hmrc.play.views.html.helpers.DateFieldsFreeInlineLegend
 @import uk.gov.hmrc.homeofficesettledstatus.views.LayoutComponents
+@import uk.gov.hmrc.homeofficesettledstatus.views.StatusFoundPageContext
 
 @this(layout: LayoutComponents)
 
-@(statusCheckByNinoRequest: StatusCheckByNinoRequest, statusCheckResult:StatusCheckResult)(implicit request: Request[_], messages: Messages, config: Configuration)
+@(context: StatusFoundPageContext)(implicit request: Request[_], messages: Messages, config: Configuration)
 
-@layout.mainTemplate(title = Messages("start.title"), bodyClasses = Some("full-width")) {
+@sidebarLinks = {
+  <h2 class="govuk-heading-m">Search Again</h2>
 
+  <p class="govuk-body">To start a new search click here.</p>
+
+  <form action="@context.searchAgainCall.url" method="get" novalidate="">
+
+   <input type="hidden" name="answers-checked" value="true">
+
+   <button class="govuk-button" data-module="govuk-button">
+    Search again
+   </button>
+
+  </form>
+}
+
+
+@layout.mainTemplate(title = Messages("start.title"), bodyClasses = None, sidebarLinks = Some(sidebarLinks)) {
+
+
+  <div class="govuk-panel hoss-panel--@context.statusToken">
+   <h1 class="govuk-panel__title">
+    Right to public funds
+   </h1>
+   <div class="govuk-panel__body">
+    <strong>True</strong>
+   </div>
+  </div>
+  <br>
+  <br>
+  <h1 class="govuk-heading-xl">Lawrence Velazquez</h1>
+  <table class="govuk-table">
+   <thead class="govuk-table__head">
+    <tr class="govuk-table__row">
+     <th scope="col" class="govuk-table__header govuk-!-width-one-half">Status</th>
+     <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Start Date</th>
+     <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Expiry Date</th>
+    </tr>
+   </thead>
+   <tbody class="govuk-table__body">
+    <tr class="govuk-table__row">
+     <th scope="row" class="govuk-table__header">Leave to Remain</th>
+     <td class="govuk-table__cell">26-02-2015</td>
+     <td class="govuk-table__cell">19-03-2020</td>
+    </tr>
+   </tbody>
+  </table>
+  <br>
+  <dl class="govuk-summary-list govuk-summary-list">
+   <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">
+     NINO
+    </dt>
+    <dd class="govuk-summary-list__value">
+     QD542361A
+    </dd>
+   </div>
+   <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">
+     Address
+    </dt>
+    <dd class="govuk-summary-list__value">
+     Flat 36, Oakley House, 103 Sloane Street, London
+     SW1X 9PP
+    </dd>
+
+   </div>
+   <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">
+     Date of birth
+    </dt>
+    <dd class="govuk-summary-list__value">
+     04 - 10 - 1954
+    </dd>
+   </div>
+   <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">
+     Nationality
+    </dt>
+    <dd class="govuk-summary-list__value">
+     CHE
+    </dd>
+
+   </div>
+  </dl>
+
+  <details class="govuk-details" data-module="govuk-details">
+   <summary class="govuk-details__summary">
+    <span class="govuk-details__summary-text">
+     Facial Image (click to show)
+    </span>
+   </summary>
+   <div>
+    <img src="/public/images/velazquez.jpeg" alt="Image of customer returned from Home Office API." width="50%" height="50%">
+   </div>
+  </details>
 
 
 

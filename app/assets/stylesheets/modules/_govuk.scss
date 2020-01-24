@@ -1,0 +1,114 @@
+.govuk-panel {
+  font-family: "GDS Transport", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  font-size: 16px;
+  font-size: 1rem;
+  line-height: 1.25;
+  box-sizing: border-box;
+  margin-bottom: 15px;
+  padding: 35px;
+  border: 5px solid transparent;
+  text-align: center;
+}
+
+@media print {
+  .govuk-panel {
+    font-family: sans-serif;
+  }
+}
+
+@media (min-width: 40.0625em) {
+  .govuk-panel {
+    font-size: 19px;
+    font-size: 1.1875rem;
+    line-height: 1.31579;
+  }
+}
+
+@media print {
+  .govuk-panel {
+    font-size: 14pt;
+    line-height: 1.15;
+  }
+}
+
+@media (max-width: 40.0525em) {
+  .govuk-panel {
+    padding: 25px;
+  }
+}
+
+.govuk-panel--confirmation {
+  color: #ffffff;
+  background: #00703c;
+}
+
+.govuk-panel__title {
+  margin-top: 0;
+  margin-bottom: 30px;
+  font-family: "GDS Transport", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 700;
+  font-size: 32px;
+  font-size: 2rem;
+  line-height: 1.09375;
+}
+
+@media print {
+  .govuk-panel__title {
+    font-family: sans-serif;
+  }
+}
+
+@media (min-width: 40.0625em) {
+  .govuk-panel__title {
+    font-size: 48px;
+    font-size: 3rem;
+    line-height: 1.04167;
+  }
+}
+
+@media print {
+  .govuk-panel__title {
+    font-size: 32pt;
+    line-height: 1.15;
+  }
+}
+
+.govuk-panel__title:last-child {
+  margin-bottom: 0;
+}
+
+.govuk-panel__body {
+  font-family: "GDS Transport", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  font-size: 24px;
+  font-size: 1.5rem;
+  line-height: 1.04167;
+}
+
+@media print {
+  .govuk-panel__body {
+    font-family: sans-serif;
+  }
+}
+
+@media (min-width: 40.0625em) {
+  .govuk-panel__body {
+    font-size: 36px;
+    font-size: 2.25rem;
+    line-height: 1.11111;
+  }
+}
+
+@media print {
+  .govuk-panel__body {
+    font-size: 24pt;
+    line-height: 1.05;
+  }
+}

@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.homeofficesettledstatus.models
+package uk.gov.hmrc.homeofficesettledstatus.views
 
-import play.api.libs.json.Json
+import play.api.mvc.Call
+import uk.gov.hmrc.homeofficesettledstatus.models.{StatusCheckByNinoRequest, StatusCheckResult}
 
-case class ImmigrationStatus(
-  // Underlying Immigration Status
-  immigrationStatus: String,
-  // 'Right to public funds status
-  rightToPublicFunds: Boolean,
-  // Start date of the 'right to public fund' Status in ISO 8601 format
-  statusStartDate: Option[String] = None,
-  // Expiry date of the 'right to public fund' Status in ISO 8601 format
-  statusEndDate: Option[String] = None
-)
+case class StatusFoundPageContext(
+  statusCheckByNinoRequest: StatusCheckByNinoRequest,
+  statusCheckResult: StatusCheckResult,
+  searchAgainCall: Call) {
 
-object ImmigrationStatus {
-  implicit val formats = Json.format[ImmigrationStatus]
+  val hasStatus: Boolean = statusCheckResult.mostRecentStatus.immigrationStatus != "NONE"
+
+  val statusToken: String = if (hasStatus) "success" else "error"
 }

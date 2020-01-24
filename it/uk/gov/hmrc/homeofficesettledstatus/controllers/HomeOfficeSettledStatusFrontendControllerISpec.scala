@@ -82,12 +82,10 @@ class HomeOfficeSettledStatusFrontendControllerISpec
         val expectedQuery =
           StatusCheckByNinoRequest("2001-01-31", "JANE", "DOE", Nino("RJ301829A"))
         val expectedResult = StatusCheckResult(
-          Some("2001-01-31"),
-          Some("string"),
-          Some("Jane Doe"),
-          Some(
-            List(
-              ImmigrationStatus(Some("ILR"), Some(true), Some("2018-01-31"), Some("2018-12-12")))))
+          "2001-01-31",
+          "string",
+          "Jane Doe",
+          List(ImmigrationStatus("ILR", true, Some("2018-01-31"), Some("2018-12-12"))))
         journeyState.get shouldBe Some(
           (
             StatusFound("sjdfhks123", expectedQuery, expectedResult),

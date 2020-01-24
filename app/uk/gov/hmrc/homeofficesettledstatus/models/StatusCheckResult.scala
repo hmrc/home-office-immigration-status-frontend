@@ -20,14 +20,20 @@ import play.api.libs.json.Json
 
 case class StatusCheckResult(
   // Date of birth of person being checked in ISO 8601 format
-  dateOfBirth: Option[String] = None,
+  dateOfBirth: String,
   // Image of the person being checked
-  facialImage: Option[String] = None,
+  facialImage: String,
   // Full name of person being checked
-  fullName: Option[String] = None,
+  fullName: String,
   // 'Right to public fund' statuses
-  statuses: Option[List[ImmigrationStatus]] = None
-)
+  statuses: List[ImmigrationStatus]
+) {
+
+  def mostRecentStatus: ImmigrationStatus =
+    statuses.headOption.getOrElse(
+      ImmigrationStatus(immigrationStatus = "NONE", rightToPublicFunds = false))
+
+}
 
 object StatusCheckResult {
   implicit val formats = Json.format[StatusCheckResult]

@@ -27,7 +27,7 @@ import uk.gov.hmrc.homeofficesettledstatus.connectors.{FrontendAuthConnector, Ho
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State.{StatusCheckFailure, _}
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyService
 import uk.gov.hmrc.homeofficesettledstatus.models.{StatusCheckByNinoRequest, StatusCheckRange}
-import uk.gov.hmrc.homeofficesettledstatus.views.LayoutComponents
+import uk.gov.hmrc.homeofficesettledstatus.views.{LayoutComponents, StatusFoundPageContext}
 import uk.gov.hmrc.homeofficesettledstatus.views.html.{StatusCheckByNinoPage, StatusCheckFailurePage, StatusFoundPage}
 import uk.gov.hmrc.homeofficesettledstatus.wiring.AppConfig
 import uk.gov.hmrc.http.HeaderCarrier
@@ -133,9 +133,16 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
           formWithErrors.or(StatusCheckByNinoRequestForm),
           routes.HomeOfficeSettledStatusFrontendController.submitStatusCheckByNino()))
 
-    case StatusFound(correlationId, query, result) => Ok(statusFoundPage(query, result))
+    case StatusFound(correlationId, query, result) =>
+      Ok(
+        statusFoundPage(
+          StatusFoundPageContext(
+            query,
+            result,
+            routes.HomeOfficeSettledStatusFrontendController.showStart())))
 
-    case StatusCheckFailure(correlationId, query, error) => Ok(statusCheckFailurePage(query, error))
+    case StatusCheckFailure(correlationId, query, error) =>
+      Ok(statusCheckFailurePage(query, error))
   }
 
   override implicit def context(implicit rh: RequestHeader): HeaderCarrier =
