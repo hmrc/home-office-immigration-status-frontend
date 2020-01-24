@@ -85,7 +85,7 @@ class HomeOfficeSettledStatusFrontendControllerISpec
           "2001-01-31",
           "string",
           "Jane Doe",
-          List(ImmigrationStatus("ILR", true, Some("2018-01-31"), Some("2018-12-12"))))
+          List(ImmigrationStatus("ILR", true, Some("2018-12-12"), Some("2018-01-31"))))
         journeyState.get shouldBe Some(
           (
             StatusFound("sjdfhks123", expectedQuery, expectedResult),
