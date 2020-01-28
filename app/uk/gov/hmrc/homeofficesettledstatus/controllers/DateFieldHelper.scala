@@ -16,16 +16,47 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.controllers
 
-import play.api.data.Forms.{mapping, text}
+import play.api.data.Forms.{mapping, of}
 import play.api.data.Mapping
+import play.api.data.format.Formats._
 import play.api.data.validation.Constraint
 
+import scala.annotation.tailrec
+import scala.util.Try
 import scala.util.control.NonFatal
 
 object DateFieldHelper {
 
-  def validateDate(value: String): Boolean =
-    if (value.matches("""^(1|2)(0|9)[0-9][0-9]-[0-1X][1-9X]-[0-3X][0-9X]$""")) true else false
+  def validateDate(value: String): Boolean = {
+    val parts = value.split("-")
+    parts.size == 3 && isValidYear(parts(0)) && isValidMonth(parts(1)) && isValidDay(
+      parts(2),
+      toInt(parts(1)),
+      toInt(parts(0)))
+  }
+
+  def isValidYear(year: String) = year.matches("""^\d\d\d\d$""") && toInt(year) >= 1900
+
+  def isValidMonth(month: String) =
+    if (month.contains("X")) month == "XX" else isInRange(toInt(month), 1, 12)
+
+  def isValidDay(day: String, month: Int, year: Int) =
+    if (day.contains("X")) day == "XX"
+    else
+      month match {
+        case 4 | 6 | 9 | 11 => isInRange(toInt(day), 1, 30)
+        case 2              => isInRange(toInt(day), 1, if (isLeapYear(year)) 29 else 28)
+        case _              => isInRange(toInt(day), 1, 31)
+      }
+
+  def isLeapYear(year: Int): Boolean =
+    (year % 4 == 0) && (year % 100 != 0) || (year % 400 == 0)
+
+  @tailrec
+  def toInt(s: String): Int =
+    if (s.startsWith("0")) toInt(s.drop(1)) else Try(s.toInt).toOption.getOrElse(-1)
+
+  def isInRange(value: Int, minInc: Int, maxInc: Int): Boolean = value >= minInc && value <= maxInc
 
   def parseDateIntoFields(date: String): Option[(String, String, String)] =
     try {
@@ -53,12 +84,9 @@ object DateFieldHelper {
 
   def dateFieldsMapping(constraintDate: Constraint[String]): Mapping[String] =
     mapping(
-      "year" -> text,
-      //.verifying("error.year.invalid-format", y => y.nonEmpty && y.matches("^[0-9]{2,4}$")),
-      "month" -> text,
-      //.verifying("error.month.invalid-format", m => m.nonEmpty && m.matches("^[0-9X]{1,2}$")),
-      "day" -> text
-      //.verifying("error.day.invalid-format", d => d.nonEmpty && d.matches("^[0-9X]{1,2}$"))
+      "year"  -> of[String],
+      "month" -> of[String].transform[String](_.toUpperCase, identity),
+      "day"   -> of[String].transform[String](_.toUpperCase, identity)
     )(formatDateFromFields)(parseDateIntoFields).verifying(constraintDate)
 
 }

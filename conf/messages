@@ -3,6 +3,7 @@ error.summary.heading=There is a problem
 error.prefix=Error:
 error.email=Enter a valid email address
 error.dateOfBirth.required=Enter date of birth
+error.dateOfBirth.invalid-format=Enter date of birth
 error.year.invalid-format=Enter a year of birth
 error.day.invalid-format=Enter a day of birth
 error.month.invalid-format=Enter a month of birth

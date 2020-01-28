@@ -26,7 +26,7 @@
 
 @(statusCheckByNinoRequest: StatusCheckByNinoRequest, statusCheckError:StatusCheckError)(implicit request: Request[_], messages: Messages, config: Configuration)
 
-@layout.mainTemplate(title = Messages("start.title"), bodyClasses = Some("full-width")) {
+@layout.mainTemplate(title = Messages("app.titleSuffix"), bodyClasses = Some("full-width")) {
 
     <h1 class="heading-xlarge margin-bottom-10">@Messages("status-check-failure.title")</h1>
 

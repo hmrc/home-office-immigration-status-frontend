@@ -16,12 +16,12 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.controllers
 
-import play.api.data.Forms.{of, optional, text}
+import play.api.data.Forms.of
 import play.api.data.Mapping
 import play.api.data.format.Formats._
-import play.api.data.validation.{Constraint, Constraints, Invalid, Valid, ValidationError}
-import DateFieldHelper._
+import play.api.data.validation._
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.homeofficesettledstatus.controllers.DateFieldHelper._
 
 object FormFieldMappings {
 
