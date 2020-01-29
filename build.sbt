@@ -25,7 +25,8 @@ lazy val compileDeps = Seq(
   "uk.gov.hmrc" %% "agent-mtd-identifiers" % "0.17.0-play-26",
   "uk.gov.hmrc" %% "play-fsm" % "0.49.0-play-26",
   "uk.gov.hmrc" %% "domain" % "5.6.0-play-26",
-  "uk.gov.hmrc" %% "mongo-caching" % "6.8.0-play-26"
+  "uk.gov.hmrc" %% "mongo-caching" % "6.8.0-play-26",
+  "uk.gov.hmrc" %% "json-encryption"  % "4.5.0-play-26"
 )
 
 def testDeps(scope: String) = Seq(

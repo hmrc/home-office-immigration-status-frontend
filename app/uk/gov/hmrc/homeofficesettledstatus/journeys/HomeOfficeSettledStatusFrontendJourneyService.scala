@@ -20,11 +20,14 @@ import com.google.inject.ImplementedBy
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.cache.repository.CacheRepository
+import uk.gov.hmrc.crypto.{ApplicationCrypto, CompositeSymmetricCrypto, Protected}
+import uk.gov.hmrc.crypto.json.{JsonDecryptor, JsonEncryptor}
 import uk.gov.hmrc.homeofficesettledstatus.repository.{SessionCache, SessionCacheRepository}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.fsm.PersistentJourneyService
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 @ImplementedBy(classOf[MongoDBCachedHomeOfficeSettledStatusFrontendJourneyService])
 trait HomeOfficeSettledStatusFrontendJourneyService
@@ -41,16 +44,22 @@ trait HomeOfficeSettledStatusFrontendJourneyService
 
 @Singleton
 class MongoDBCachedHomeOfficeSettledStatusFrontendJourneyService @Inject()(
-  _cacheRepository: SessionCacheRepository)
+  _cacheRepository: SessionCacheRepository,
+  applicationCrypto: ApplicationCrypto)
     extends HomeOfficeSettledStatusFrontendJourneyService {
 
   case class PersistentState(state: model.State, breadcrumbs: List[model.State])
+
+  implicit val crypto: CompositeSymmetricCrypto = applicationCrypto.JsonCrypto
 
   implicit val formats1: Format[model.State] =
     HomeOfficeSettledStatusFrontendJourneyStateFormats.formats
   implicit val formats2: Format[PersistentState] = Json.format[PersistentState]
 
-  final val cache = new SessionCache[PersistentState] {
+  implicit val encryptionFormat: JsonEncryptor[PersistentState] = new JsonEncryptor()
+  implicit val decryptionFormat: JsonDecryptor[PersistentState] = new JsonDecryptor()
+
+  final val cache = new SessionCache[Protected[PersistentState]] {
 
     override val sessionName: String = journeyKey
     override val cacheRepository: CacheRepository = _cacheRepository
@@ -63,12 +72,33 @@ class MongoDBCachedHomeOfficeSettledStatusFrontendJourneyService @Inject()(
   override protected def fetch(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext): Future[Option[StateAndBreadcrumbs]] =
-    cache.fetch.map(_.map(ps => (ps.state, ps.breadcrumbs)))
+    cache.fetch
+      .map(_.map { protectedEntry =>
+        val entry = protectedEntry.decryptedValue
+        (entry.state, entry.breadcrumbs)
+      })
+      .transform {
+        case Success(value) => Success(value)
+        case Failure(error) =>
+          error.printStackTrace()
+          Failure(error)
+      }
 
   override protected def save(state: StateAndBreadcrumbs)(
     implicit hc: HeaderCarrier,
-    ec: ExecutionContext): Future[StateAndBreadcrumbs] =
-    cache.save(PersistentState(state._1, state._2)).map(_ => state)
+    ec: ExecutionContext): Future[StateAndBreadcrumbs] = {
+    val entry = PersistentState(state._1, state._2)
+    val protectedEntry = Protected(entry)
+    cache
+      .save(protectedEntry)
+      .map(_ => state)
+      .transform {
+        case Success(value) => Success(value)
+        case Failure(error) =>
+          error.printStackTrace()
+          Failure(error)
+      }
+  }
 
   override def clear(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] =
     cache.delete().map(_ => ())

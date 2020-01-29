@@ -73,8 +73,8 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
 
   // GET /check-with-nino
   val showStatusCheckByNino: Action[AnyContent] =
-    actionShowStateWhenAuthorised(AsStrideUser) {
-      case StatusCheckByNino =>
+    action { implicit request =>
+      whenAuthorised(AsStrideUser)(Transitions.showStatusCheckByNino)(display)
     }
 
   // POST /check-with-nino
