@@ -29,6 +29,8 @@ lookup.dateOfBirth.hint=For example, 31 3 1980
 
 # Status page
 status-found.title=
+status-found.right-to-public-funds.true=True
+status-found.right-to-public-funds.false=False
 
 #Error page
 status-check-failure.title=
@@ -37,5 +39,6 @@ button.continue=Continue
 button.submit=Submit
 
 # Global errors
+global.error.500.title=Check Settled Status - GOV.UK
 global.error.500.heading=Sorry, there is a problem with the service
 global.error.500.message=Try again later.

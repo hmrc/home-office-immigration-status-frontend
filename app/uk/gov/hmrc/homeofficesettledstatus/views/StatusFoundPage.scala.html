@@ -50,7 +50,7 @@
     Right to public funds
    </h1>
    <div class="govuk-panel__body">
-    <strong>True</strong>
+    <strong>@context.rightToPublicFundsMessage</strong>
    </div>
   </div>
   <br>
@@ -70,7 +70,7 @@
 
     @for(status <- context.statusCheckResult.statuses) {
      <tr>
-      <th>@context.statusLabel(status.immigrationStatus)</th>
+      <th>@context.statusMessage(status.immigrationStatus)</th>
       <td>@status.statusStartDate.getOrElse("-")</td>
       <td>@status.statusEndDate.getOrElse("-")</td>
      </tr>

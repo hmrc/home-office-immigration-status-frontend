@@ -16,23 +16,30 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.views
 
+import play.api.i18n.Messages
 import play.api.mvc.Call
-import uk.gov.hmrc.homeofficesettledstatus.models.{StatusCheckByNinoRequest, StatusCheckResult}
+import uk.gov.hmrc.homeofficesettledstatus.models.{ImmigrationStatus, StatusCheckByNinoRequest, StatusCheckResult}
 
 case class StatusFoundPageContext(
   statusCheckByNinoRequest: StatusCheckByNinoRequest,
   statusCheckResult: StatusCheckResult,
   searchAgainCall: Call) {
 
-  val hasStatus: Boolean = statusCheckResult.mostRecentStatus.immigrationStatus != "NONE"
+  val currentStatus: ImmigrationStatus = statusCheckResult.mostRecentStatus
+
+  val hasStatus: Boolean = currentStatus.immigrationStatus != "NONE"
 
   val statusToken: String = if (hasStatus) "success" else "error"
 
-  val statusLabel: String => String = {
+  val statusMessage: String => String = {
     case "LTR"  => "Leave To Remain"
     case "ILR"  => "Indefinite Leave To Remain"
     case "TLTR" => "Temporary Leave To Remain"
     case "NONE" => "None"
     case other  => other
   }
+
+  def rightToPublicFundsMessage(implicit messages: Messages): String =
+    if (currentStatus.rightToPublicFunds) messages("status-found.right-to-public-funds.true")
+    else messages("status-found.right-to-public-funds.false")
 }
