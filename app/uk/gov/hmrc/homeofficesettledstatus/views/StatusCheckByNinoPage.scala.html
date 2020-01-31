@@ -31,7 +31,7 @@
 
 @layout.mainTemplate(title = Messages("app.titleSuffix"), bodyClasses = Some("full-width")) {
 
-    <h1 class="heading-xlarge margin-bottom-10">@Messages("lookup.title")</h1>
+    <h1 class="heading-xlarge">@Messages("lookup.title")</h1>
 
     @if(statusCheckForm.hasErrors){
         @layout.errorSummary(Messages("error.summary.heading"), statusCheckForm, Seq.empty, Some("lookup"))
@@ -80,9 +80,7 @@
              )
           </div>
 
-          <div class="form-group">
-             <button class="button" type="submit" id="continue">@Messages("button.continue")</button>
-         </div>
+          <button class="button" type="submit" id="continue">@Messages("button.continue")</button>
 
 
     }

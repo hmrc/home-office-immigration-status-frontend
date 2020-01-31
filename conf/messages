@@ -1,3 +1,9 @@
+# Generic content
+generic.nino=National Insurance Number
+generic.dob=Date of birth
+generic.nationality=Nationality
+generic.searchAgain=Search again
+
 # Validation errors
 error.summary.heading=There is a problem
 error.prefix=Error:
@@ -15,8 +21,9 @@ error.givenName.required=Enter a first name
 error.givenName.invalid-format=Enter a first name
 
 # Service specific messages
-app.name=Check Settled Status
-app.titleSuffix=Check Settled Status - GOV.UK
+app.name=Check settled status
+app.hasSettledStatus=has settled status
+app.titleSuffix=Check settled status - GOV.UK
 
 # Lookup page
 lookup.title=Enter the following details
@@ -29,8 +36,9 @@ lookup.dateOfBirth.hint=For example, 31 3 1980
 
 # Status page
 status-found.title=
-status-found.right-to-public-funds.true=True
-status-found.right-to-public-funds.false=False
+status-found.status=Status
+status-found.startDate=Start date
+status-found.expiryDate=Expiry date
 
 #Error page
 status-check-failure.title=

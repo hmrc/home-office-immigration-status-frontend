@@ -31,10 +31,10 @@ case class StatusFoundPageContext(
 
   val statusToken: String = if (hasStatus) "success" else "error"
 
-  val statusMessage: String => String = {
-    case "LTR"  => "Leave To Remain"
-    case "ILR"  => "Indefinite Leave To Remain"
-    case "TLTR" => "Temporary Leave To Remain"
+  val statusLabel: String => String = {
+    case "LTR"  => "Leave to remain"
+    case "ILR"  => "Indefinite leave to remain"
+    case "TLTR" => "Temporary leave To remain"
     case "NONE" => "None"
     case other  => other
   }
