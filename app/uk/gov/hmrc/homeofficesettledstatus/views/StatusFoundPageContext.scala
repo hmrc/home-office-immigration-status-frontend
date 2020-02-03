@@ -34,7 +34,7 @@ case class StatusFoundPageContext(
   val statusLabel: String => String = {
     case "LTR"  => "Leave to remain"
     case "ILR"  => "Indefinite leave to remain"
-    case "TLTR" => "Temporary leave To remain"
+    case "TLTR" => "Temporary leave to remain"
     case "NONE" => "None"
     case other  => other
   }
