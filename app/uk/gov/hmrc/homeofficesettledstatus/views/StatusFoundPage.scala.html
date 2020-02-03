@@ -26,105 +26,61 @@
 @(context: StatusFoundPageContext)(implicit request: Request[_], messages: Messages, config: Configuration)
 
 @sidebarLinks = {
-  <h2 class="govuk-heading-m">Search Again</h2>
-
-  <p class="govuk-body">To start a new search click here.</p>
-
-  <form action="@context.searchAgainCall.url" method="get" novalidate="">
-
-   <input type="hidden" name="answers-checked" value="true">
-
-   <button class="govuk-button" data-module="govuk-button">
-    Search again
-   </button>
-
-  </form>
+  
 }
 
+@layout.mainTemplate(title = Messages("start.title"), bodyClasses = None, sidebarLinks = Some(sidebarLinks), mainClass = Some("full-width")) {
 
-@layout.mainTemplate(title = Messages("app.titleSuffix"), bodyClasses = None, sidebarLinks = Some(sidebarLinks)) {
+  <div class="grid-row">
+    <div class="column-two-thirds">
+      <h1 id="full-name" class="heading-xlarge">@context.statusCheckResult.fullName @messages("app.hasSettledStatus")</h1>
 
+      <table class="form-group">
+        <thead>
+          <tr>
+            <th scope="col">@messages("generic.nino")</th>
+            <th scope="col">@messages("generic.dob")</th>
+            <th scope="col">@messages("generic.nationality")</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for(status <- context.statusCheckResult.statuses) {
+            <tr>
+              <th scope="row">@context.statusCheckByNinoRequest.nino.toString()</th>
+              <td>@context.statusCheckByNinoRequest.dateOfBirth</td>
+              <td>CHE</td>
+            </tr>
+          }
+        </tbody>
+      </table>
 
-  <div class="govuk-panel hoss-panel--@context.statusToken">
-   <h1 class="govuk-panel__title">
-    Right to public funds
-   </h1>
-   <div class="govuk-panel__body">
-    <strong>@context.rightToPublicFundsMessage</strong>
-   </div>
+      <table class="form-group">
+        <thead>
+          <tr>
+            <th scope="col">@messages("status-found.status")</th>
+            <th scope="col">@messages("status-found.startDate")</th>
+            <th scope="col">@messages("status-found.expiryDate")</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for(status <- context.statusCheckResult.statuses) {
+            <tr>
+              <th scope="row">@context.statusLabel(status.immigrationStatus)</th>
+              <td>@status.statusStartDate.getOrElse("-")</td>
+              <td>@status.statusEndDate.getOrElse("-")</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      <p>
+        <form action="@context.searchAgainCall.url" method="get" novalidate="">
+         <input type="hidden" name="answers-checked" value="true">
+         <button class="govuk-button" data-module="govuk-button">Search again</button>
+        </form>
+      </p>
+    </div>
   </div>
-  <br>
-  <br>
-
-  <h1 id="full-name" class="govuk-heading-xl">@context.statusCheckResult.fullName</h1>
-
-  <table>
-   <thead>
-    <tr>
-     <th>Status</th>
-     <th>Start Date</th>
-     <th>Expiry Date</th>
-    </tr>
-   </thead>
-   <tbody>
-
-    @for(status <- context.statusCheckResult.statuses) {
-     <tr>
-      <th>@context.statusMessage(status.immigrationStatus)</th>
-      <td>@status.statusStartDate.getOrElse("-")</td>
-      <td>@status.statusEndDate.getOrElse("-")</td>
-     </tr>
-    }
-
-   </tbody>
-  </table>
-
-  <br>
-
-  <dl>
-
-   <div>
-    <dt>
-     NINO
-    </dt>
-    <dd id="nino">
-     @context.statusCheckByNinoRequest.nino.toString()
-    </dd>
-   </div>
-   <div>
-
-   </div>
-   <div>
-    <dt>
-     Date of birth
-    </dt>
-    <dd id="date-of-birth">
-    @context.statusCheckByNinoRequest.dateOfBirth
-    </dd>
-   </div>
-
-   <div>
-    <dt>
-     Nationality
-    </dt>
-    <dd id="nationality">
-     CHE
-    </dd>
-
-   </div>
-  </dl>
-
-  <details class="govuk-details" data-module="govuk-details">
-   <summary class="govuk-details__summary">
-    <span class="govuk-details__summary-text">
-     Facial Image (click to show)
-    </span>
-   </summary>
-   <div>
-    <img src="/public/images/velazquez.jpeg" alt="Image of customer returned from Home Office API." width="50%" height="50%">
-   </div>
-  </details>
-
 
 
 }
