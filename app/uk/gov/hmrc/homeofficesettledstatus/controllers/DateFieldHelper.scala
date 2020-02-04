@@ -60,7 +60,7 @@ object DateFieldHelper {
 
   def parseDateIntoFields(date: String): Option[(String, String, String)] =
     try {
-      val ydm: Array[String] = date.split("-")
+      val ydm: Array[String] = date.split('-') ++ Array("", "")
       if (ydm.length >= 3) Some((ydm(0), ydm(1), ydm(2))) else None
     } catch {
       case NonFatal(_) => None
@@ -68,11 +68,11 @@ object DateFieldHelper {
 
   val formatDateFromFields: (String, String, String) => String = {
     case (y, m, d) =>
-      if (y.isEmpty || m.isEmpty || d.isEmpty) ""
+      if (y.isEmpty) ""
       else {
         val year = if (y.length == 2) "19" + y else y
-        val month = if (m.length == 1) "0" + m else m
-        val day = if (d.length == 1) "0" + d else d
+        val month = if (m.isEmpty) "XX" else if (m.length == 1) "0" + m else m
+        val day = if (d.isEmpty) "XX" else if (d.length == 1) "0" + d else d
         s"$year-$month-$day"
       }
   }

@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.controllers
 
-import uk.gov.hmrc.homeofficesettledstatus.controllers.DateFieldHelper.validateDate
+import uk.gov.hmrc.homeofficesettledstatus.controllers.DateFieldHelper.{formatDateFromFields, parseDateIntoFields, validateDate}
 import uk.gov.hmrc.play.test.UnitSpec
 
 class DateFieldHelperSpec extends UnitSpec {
@@ -55,6 +55,21 @@ class DateFieldHelperSpec extends UnitSpec {
       validateDate("2222-XX-07") shouldBe true
       validateDate("2222-XX-XX") shouldBe true
       validateDate("1900-12-XX") shouldBe true
+    }
+    "format date from fields" in {
+      formatDateFromFields("", "", "") shouldBe ""
+      formatDateFromFields("2019", "", "") shouldBe "2019-XX-XX"
+      formatDateFromFields("2019", "05", "") shouldBe "2019-05-XX"
+      formatDateFromFields("2019", "", "17") shouldBe "2019-XX-17"
+      formatDateFromFields("2019", "7", "5") shouldBe "2019-07-05"
+      formatDateFromFields("2019", "7", "") shouldBe "2019-07-XX"
+      formatDateFromFields("2019", "", "1") shouldBe "2019-XX-01"
+      formatDateFromFields("", "11", "30") shouldBe ""
+    }
+    "parse date into fields" in {
+      parseDateIntoFields("2019-01-17") shouldBe Some("2019", "01", "17")
+      parseDateIntoFields("2019") shouldBe Some("2019", "", "")
+      parseDateIntoFields("2019-01") shouldBe Some("2019", "01", "")
     }
   }
 
