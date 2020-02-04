@@ -31,11 +31,17 @@ case class StatusFoundPageContext(
 
   val statusToken: String = if (hasStatus) "success" else "error"
 
-  val statusLabel: String => String = {
-    case "LTR"  => "Leave to remain"
-    case "ILR"  => "Indefinite leave to remain"
-    case "TLTR" => "Temporary leave to remain"
-    case "NONE" => "None"
+  def statusLabel(implicit messages: Messages) = currentStatus match {
+    case s if s.immigrationStatus == "LTR" => messages("app.hasPreSettledStatus")
+    case s if s.immigrationStatus == "ILR" => messages("app.hasSettledStatus")
+    case _                                 => messages("app.hasNoStatus")
+  }
+
+  def immigrationStatusLabel(status: String)(implicit messages: Messages): String = status match {
+    case "LTR"  => messages("app.status.LTR")
+    case "ILR"  => messages("app.status.ILR")
+    case "ETLR" => messages("app.status.ETLR")
+    case "NONE" => messages("app.status.NONE")
     case other  => other
   }
 

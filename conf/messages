@@ -21,9 +21,15 @@ error.givenName.required=Enter a first name
 error.givenName.invalid-format=Enter a first name
 
 # Service specific messages
+app.titleSuffix=Check settled status - GOV.UK
 app.name=Check settled status
 app.hasSettledStatus=has settled status
-servicename.titleSuffix=Check settled status - GOV.UK
+app.hasPreSettledStatus=has pre settled status
+app.hasNoStatus=got no status
+app.status.LTR=Leave to remain
+app.status.ILR=Indefinite leave to remain
+app.status.ETLR=Temporary leave to remain
+app.status.NONE=None
 
 # Lookup page
 lookup.title=Enter the customer''s details
@@ -41,7 +47,7 @@ status-found.startDate=Start date
 status-found.expiryDate=Expiry date
 
 #Error page
-status-check-failure.title=Lookup failed
+status-check-failure.title=No match found
 
 multiple-matches-found.title=More than one match found
 

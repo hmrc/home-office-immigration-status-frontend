@@ -33,7 +33,7 @@
 
   <div class="grid-row">
     <div class="column-two-thirds">
-      <h1 id="full-name" class="heading-xlarge">@context.statusCheckResult.fullName @messages("app.hasSettledStatus")</h1>
+      <h1 id="full-name" class="heading-xlarge">@context.statusCheckResult.fullName @context.statusLabel</h1>
 
       <table class="form-group">
         <thead>
@@ -46,7 +46,7 @@
         <tbody>
             <tr>
               <th scope="row">@context.statusCheckByNinoRequest.nino.toString()</th>
-              <td>@context.statusCheckByNinoRequest.dateOfBirth</td>
+              <td>@context.statusCheckResult.dateOfBirth</td>
               <td>CHE</td>
             </tr>
         </tbody>
@@ -63,7 +63,7 @@
         <tbody>
           @for(status <- context.statusCheckResult.statuses) {
             <tr>
-              <th scope="row">@context.statusLabel(status.immigrationStatus)</th>
+              <th scope="row">@context.immigrationStatusLabel(status.immigrationStatus)</th>
               <td>@status.statusStartDate.getOrElse("-")</td>
               <td>@status.statusEndDate.getOrElse("-")</td>
             </tr>
