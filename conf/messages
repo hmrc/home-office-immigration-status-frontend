@@ -23,10 +23,10 @@ error.givenName.invalid-format=Enter a first name
 # Service specific messages
 app.name=Check settled status
 app.hasSettledStatus=has settled status
-app.titleSuffix=Check settled status - GOV.UK
+servicename.titleSuffix=Check settled status - GOV.UK
 
 # Lookup page
-lookup.title=Enter the following details
+lookup.title=Enter the customer''s details
 lookup.nino.label=National Insurance number
 lookup.nino.hint=For example, ‘QQ 12 34 56 C’.
 lookup.givenName.label=First name
@@ -35,13 +35,13 @@ lookup.dateOfBirth.label=Date of birth
 lookup.dateOfBirth.hint=For example, 31 3 1980
 
 # Status page
-status-found.title=
+status-found.title=Lookup results
 status-found.status=Status
 status-found.startDate=Start date
 status-found.expiryDate=Expiry date
 
 #Error page
-status-check-failure.title=
+status-check-failure.title=Lookup failed
 
 button.continue=Continue
 button.submit=Submit

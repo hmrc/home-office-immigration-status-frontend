@@ -29,7 +29,7 @@
   
 }
 
-@layout.mainTemplate(title = Messages("start.title"), bodyClasses = None, sidebarLinks = Some(sidebarLinks), mainClass = Some("full-width")) {
+@layout.mainTemplate(title = Messages("status-found.title"), bodyClasses = None, sidebarLinks = Some(sidebarLinks), mainClass = Some("full-width")) {
 
   <div class="grid-row">
     <div class="column-two-thirds">
@@ -44,13 +44,11 @@
           </tr>
         </thead>
         <tbody>
-          @for(status <- context.statusCheckResult.statuses) {
             <tr>
               <th scope="row">@context.statusCheckByNinoRequest.nino.toString()</th>
               <td>@context.statusCheckByNinoRequest.dateOfBirth</td>
               <td>CHE</td>
             </tr>
-          }
         </tbody>
       </table>
 
