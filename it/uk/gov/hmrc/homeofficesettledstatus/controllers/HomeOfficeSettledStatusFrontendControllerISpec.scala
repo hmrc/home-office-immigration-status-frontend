@@ -106,10 +106,43 @@ class HomeOfficeSettledStatusFrontendControllerISpec
         val result = controller.submitStatusCheckByNino(request)
         status(result) shouldBe 303
         redirectLocation(result) shouldBe Some("/check-settled-status/check-with-nino")
-        journeyState.set(StatusCheckByNino, List(Start))
       }
-    }
 
+      "submit the lookup query and show status check failure" in {
+        journeyState.set(StatusCheckByNino, List(Start))
+        givenAuthorisedForStride("TBC", "StrideUserId")
+        givenStatusCheckErrorWhenStatusNotFound()
+        val request = fakeRequest
+          .withFormUrlEncodedBody(
+            "dateOfBirth.year"  -> "2001",
+            "dateOfBirth.month" -> "01",
+            "dateOfBirth.day"   -> "31",
+            "familyName"        -> "Jane",
+            "givenName"         -> "Doe",
+            "nino"              -> "RJ301829A")
+        val result = controller.submitStatusCheckByNino(request)
+        status(result) shouldBe 303
+        redirectLocation(result) shouldBe Some("/check-settled-status/status-check-failure")
+      }
+
+      "submit the lookup query and show multiple matches found" in {
+        journeyState.set(StatusCheckByNino, List(Start))
+        givenAuthorisedForStride("TBC", "StrideUserId")
+        givenStatusCheckErrorWhenConflict()
+        val request = fakeRequest
+          .withFormUrlEncodedBody(
+            "dateOfBirth.year"  -> "2001",
+            "dateOfBirth.month" -> "01",
+            "dateOfBirth.day"   -> "31",
+            "familyName"        -> "Jane",
+            "givenName"         -> "Doe",
+            "nino"              -> "RJ301829A")
+        val result = controller.submitStatusCheckByNino(request)
+        status(result) shouldBe 303
+        redirectLocation(result) shouldBe Some("/check-settled-status/multiple-matches-found")
+      }
+
+    }
   }
 
 }

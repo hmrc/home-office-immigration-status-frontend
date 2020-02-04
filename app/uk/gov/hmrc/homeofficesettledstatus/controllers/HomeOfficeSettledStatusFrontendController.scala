@@ -28,7 +28,7 @@ import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFront
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyService
 import uk.gov.hmrc.homeofficesettledstatus.models.{StatusCheckByNinoRequest, StatusCheckRange}
 import uk.gov.hmrc.homeofficesettledstatus.views.{LayoutComponents, StatusFoundPageContext}
-import uk.gov.hmrc.homeofficesettledstatus.views.html.{StatusCheckByNinoPage, StatusCheckFailurePage, StatusFoundPage}
+import uk.gov.hmrc.homeofficesettledstatus.views.html.{MultipleMatchesFoundPage, StatusCheckByNinoPage, StatusCheckFailurePage, StatusFoundPage}
 import uk.gov.hmrc.homeofficesettledstatus.wiring.AppConfig
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -98,6 +98,12 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
       case _: StatusCheckFailure =>
     }
 
+  // GET /multiple-matches-found
+  val showMultipleMatchesFound: Action[AnyContent] =
+    actionShowStateWhenAuthorised(AsStrideUser) {
+      case _: MultipleMatchesFound =>
+    }
+
   /**
     * Function from the `State` to the `Call` (route),
     * used by play-fsm internally to create redirects.
@@ -109,6 +115,8 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
     case _: StatusFound => routes.HomeOfficeSettledStatusFrontendController.showStatusFound()
     case _: StatusCheckFailure =>
       routes.HomeOfficeSettledStatusFrontendController.showStatusCheckFailure()
+    case _: MultipleMatchesFound =>
+      routes.HomeOfficeSettledStatusFrontendController.showMultipleMatchesFound()
   }
 
   import uk.gov.hmrc.play.fsm.OptionalFormOps._
@@ -116,6 +124,7 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
   val statusCheckByNinoPage = new StatusCheckByNinoPage(layoutComponents)
   val statusFoundPage = new StatusFoundPage(layoutComponents)
   val statusCheckFailurePage = new StatusCheckFailurePage(layoutComponents)
+  val multipleMatchesFoundPage = new MultipleMatchesFoundPage(layoutComponents)
 
   /**
     * Function from the `State` to the `Result`,
@@ -143,6 +152,9 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
 
     case StatusCheckFailure(correlationId, query, error) =>
       Ok(statusCheckFailurePage(query, error))
+
+    case MultipleMatchesFound(correlationId, query) =>
+      Ok(multipleMatchesFoundPage(query))
   }
 
   override implicit def context(implicit rh: RequestHeader): HeaderCarrier =

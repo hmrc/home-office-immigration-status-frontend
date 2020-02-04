@@ -43,6 +43,8 @@ status-found.expiryDate=Expiry date
 #Error page
 status-check-failure.title=Lookup failed
 
+multiple-matches-found.title=More than one match found
+
 button.continue=Continue
 button.submit=Submit
 
