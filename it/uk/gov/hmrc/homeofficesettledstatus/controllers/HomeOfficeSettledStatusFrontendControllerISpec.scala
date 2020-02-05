@@ -40,6 +40,20 @@ class HomeOfficeSettledStatusFrontendControllerISpec
         journeyState.get shouldBe Some((Start, Nil))
       }
 
+      "redirect to the clean lookup page when on status-check-failure" in {
+        val existingQuery = StatusCheckByNinoRequest("2001-01-31", "JANE", "DOE", Nino("RJ301829A"))
+        journeyState.set(
+          StatusCheckFailure(
+            "123",
+            existingQuery,
+            StatusCheckError(errCode = Some("ERR_NOT_FOUND"))),
+          List(StatusCheckByNino(), Start))
+        givenAuthorisedForStride("TBC", "StrideUserId")
+        val result = controller.showStart(fakeRequest)
+        status(result) shouldBe 303
+        redirectLocation(result) shouldBe Some("/check-settled-status/check-with-nino")
+      }
+
       "redirect to the lookup page when elsewhere" in {
         journeyState.set(StatusCheckByNino(), Nil)
         givenAuthorisedForStride("TBC", "StrideUserId")
@@ -52,13 +66,33 @@ class HomeOfficeSettledStatusFrontendControllerISpec
 
     "GET /check-with-nino" should {
 
-      "display the lookup page" in {
+      "display the clean lookup page" in {
         journeyState.set(StatusCheckByNino(), List(Start))
         givenAuthorisedForStride("TBC", "StrideUserId")
         val result = controller.showStatusCheckByNino(fakeRequest)
         status(result) shouldBe 200
         checkHtmlResultWithBodyText(result, htmlEscapedMessage("lookup.title"))
         journeyState.get shouldBe Some((StatusCheckByNino(), List(Start)))
+      }
+
+      "display the lookup page filled with existing query parameters" in {
+        val existingQuery = StatusCheckByNinoRequest("2001-01-31", "JANE", "DOE", Nino("RJ301829A"))
+        journeyState.set(
+          StatusCheckFailure(
+            "123",
+            existingQuery,
+            StatusCheckError(errCode = Some("ERR_NOT_FOUND"))),
+          List(StatusCheckByNino(), Start))
+        givenAuthorisedForStride("TBC", "StrideUserId")
+        val result = controller.showStatusCheckByNino(fakeRequest)
+        status(result) shouldBe 200
+        checkHtmlResultWithBodyText(result, htmlEscapedMessage("lookup.title"))
+        checkHtmlResultWithBodyText(result, s"""value="${existingQuery.nino.toString()}"""")
+        checkHtmlResultWithBodyText(result, s"""value="${existingQuery.givenName}"""")
+        checkHtmlResultWithBodyText(result, s"""value="${existingQuery.familyName}"""")
+        checkHtmlResultWithBodyText(result, "value=\"2001\"")
+        checkHtmlResultWithBodyText(result, "value=\"01\"")
+        checkHtmlResultWithBodyText(result, "value=\"31\"")
       }
     }
 
@@ -142,40 +176,49 @@ class HomeOfficeSettledStatusFrontendControllerISpec
         redirectLocation(result) shouldBe Some("/check-settled-status/multiple-matches-found")
       }
 
-      "go back to the search form and fill with existing query parameters" in {
-        val existingQuery = StatusCheckByNinoRequest("2001-01-31", "JANE", "DOE", Nino("RJ301829A"))
-        journeyState.set(
-          StatusCheckFailure(
-            "123",
-            existingQuery,
-            StatusCheckError(errCode = Some("ERR_NOT_FOUND"))),
-          List(StatusCheckByNino(), Start))
+    }
+
+    "GET /status-found" should {
+
+      "display status found page" in {
+        val query =
+          StatusCheckByNinoRequest("2001-01-31", "JANE", "DOE", Nino("RJ301829A"))
+        val queryResult = StatusCheckResult(
+          "2001-01-31",
+          "string",
+          "Jane Doe",
+          List(ImmigrationStatus("ILR", true, Some("2018-12-12"), Some("2018-01-31"))))
+        journeyState
+          .set(StatusFound("sjdfhks123", query, queryResult), List(StatusCheckByNino(), Start))
         givenAuthorisedForStride("TBC", "StrideUserId")
-        val result = controller.showStatusCheckByNino(fakeRequest)
+        val result = controller.showStatusFound(fakeRequest)
         status(result) shouldBe 200
-        checkHtmlResultWithBodyText(result, htmlEscapedMessage("lookup.title"))
-        checkHtmlResultWithBodyText(result, s"""value="${existingQuery.nino.toString()}"""")
-        checkHtmlResultWithBodyText(result, s"""value="${existingQuery.givenName}"""")
-        checkHtmlResultWithBodyText(result, s"""value="${existingQuery.familyName}"""")
-        checkHtmlResultWithBodyText(result, "value=\"2001\"")
-        checkHtmlResultWithBodyText(result, "value=\"01\"")
-        checkHtmlResultWithBodyText(result, "value=\"31\"")
+        checkHtmlResultWithBodyText(result, htmlEscapedMessage("status-found.title"))
+        checkHtmlResultWithBodyText(result, query.nino.formatted)
+        checkHtmlResultWithBodyText(result, queryResult.fullName)
+        checkHtmlResultWithBodyText(result, queryResult.dateOfBirth)
       }
+    }
 
-      "go back to the search form and clear query fields" in {
-        val existingQuery = StatusCheckByNinoRequest("2001-01-31", "JANE", "DOE", Nino("RJ301829A"))
-        journeyState.set(
-          StatusCheckFailure(
-            "123",
-            existingQuery,
-            StatusCheckError(errCode = Some("ERR_NOT_FOUND"))),
-          List(StatusCheckByNino(), Start))
+    "GET /status-check-failure" should {
+
+      "display not found page" in {
+        val query =
+          StatusCheckByNinoRequest("2001-01-31", "JANE", "DOE", Nino("RJ301829A"))
+        val queryError = StatusCheckError(errCode = Some("ERR_NOT_FOUND"))
+        journeyState
+          .set(
+            StatusCheckFailure("sjdfhks123", query, queryError),
+            List(StatusCheckByNino(), Start))
         givenAuthorisedForStride("TBC", "StrideUserId")
-        val result = controller.showStart(fakeRequest)
-        status(result) shouldBe 303
-        redirectLocation(result) shouldBe Some("/check-settled-status/check-with-nino")
+        val result = controller.showStatusCheckFailure(fakeRequest)
+        status(result) shouldBe 200
+        checkHtmlResultWithBodyText(result, htmlEscapedMessage("status-check-failure.title"))
+        checkHtmlResultWithBodyText(result, query.nino.formatted)
+        checkHtmlResultWithBodyText(result, query.givenName)
+        checkHtmlResultWithBodyText(result, query.familyName)
+        checkHtmlResultWithBodyText(result, query.dateOfBirth)
       }
-
     }
   }
 
