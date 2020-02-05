@@ -24,7 +24,7 @@
 
 @this(layout: LayoutComponents)
 
-@(statusCheckByNinoRequest: StatusCheckByNinoRequest)(implicit request: Request[_], messages: Messages, config: Configuration)
+@(query: StatusCheckByNinoRequest)(implicit request: Request[_], messages: Messages, config: Configuration)
 
 @layout.mainTemplate(title = Messages("multiple-matches-found.title"), bodyClasses = Some("full-width")) {
 

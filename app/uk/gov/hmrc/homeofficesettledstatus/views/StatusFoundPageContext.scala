@@ -21,11 +21,11 @@ import play.api.mvc.Call
 import uk.gov.hmrc.homeofficesettledstatus.models.{ImmigrationStatus, StatusCheckByNinoRequest, StatusCheckResult}
 
 case class StatusFoundPageContext(
-  statusCheckByNinoRequest: StatusCheckByNinoRequest,
-  statusCheckResult: StatusCheckResult,
+  query: StatusCheckByNinoRequest,
+  result: StatusCheckResult,
   searchAgainCall: Call) {
 
-  val currentStatus: ImmigrationStatus = statusCheckResult.mostRecentStatus
+  val currentStatus: ImmigrationStatus = result.mostRecentStatus
 
   val hasStatus: Boolean = currentStatus.immigrationStatus != "NONE"
 

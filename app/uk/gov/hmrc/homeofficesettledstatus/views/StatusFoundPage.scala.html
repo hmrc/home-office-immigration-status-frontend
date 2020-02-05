@@ -33,7 +33,7 @@
 
   <div class="grid-row">
     <div class="column-two-thirds">
-      <h1 id="full-name" class="heading-xlarge">@context.statusCheckResult.fullName @context.statusLabel</h1>
+      <h1 id="full-name" class="heading-xlarge">@context.result.fullName @context.statusLabel</h1>
 
       <table class="form-group">
         <thead>
@@ -45,8 +45,8 @@
         </thead>
         <tbody>
             <tr>
-              <th scope="row">@context.statusCheckByNinoRequest.nino.toString()</th>
-              <td>@context.statusCheckResult.dateOfBirth</td>
+              <th scope="row">@context.query.nino.toString()</th>
+              <td>@context.result.dateOfBirth</td>
               <td>CHE</td>
             </tr>
         </tbody>
@@ -61,7 +61,7 @@
           </tr>
         </thead>
         <tbody>
-          @for(status <- context.statusCheckResult.statuses) {
+          @for(status <- context.result.statuses) {
             <tr>
               <th scope="row">@context.immigrationStatusLabel(status.immigrationStatus)</th>
               <td>@status.statusStartDate.getOrElse("-")</td>
@@ -74,7 +74,7 @@
       <p>
         <form action="@context.searchAgainCall.url" method="get" novalidate="">
          <input type="hidden" name="answers-checked" value="true">
-         <button class="govuk-button" data-module="govuk-button">Search again</button>
+         <button class="govuk-button" data-module="govuk-button">@messages("generic.searchAgain")</button>
         </form>
       </p>
     </div>

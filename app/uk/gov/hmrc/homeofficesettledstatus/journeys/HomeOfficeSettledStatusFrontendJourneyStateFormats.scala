@@ -24,10 +24,12 @@ import uk.gov.hmrc.play.fsm.JsonStateFormats
 object HomeOfficeSettledStatusFrontendJourneyStateFormats extends JsonStateFormats[State] {
 
   val statusFound = Json.format[StatusFound]
+  val statusCheckByNino = Json.format[StatusCheckByNino]
   val statusCheckFailure = Json.format[StatusCheckFailure]
   val multipleMatchesFound = Json.format[MultipleMatchesFound]
 
   override val serializeStateProperties: PartialFunction[State, JsValue] = {
+    case s: StatusCheckByNino    => statusCheckByNino.writes(s)
     case s: StatusFound          => statusFound.writes(s)
     case s: StatusCheckFailure   => statusCheckFailure.writes(s)
     case s: MultipleMatchesFound => multipleMatchesFound.writes(s)
@@ -36,7 +38,7 @@ object HomeOfficeSettledStatusFrontendJourneyStateFormats extends JsonStateForma
   override def deserializeState(stateName: String, properties: JsValue): JsResult[State] =
     stateName match {
       case "Start"                => JsSuccess(Start)
-      case "StatusCheckByNino"    => JsSuccess(StatusCheckByNino)
+      case "StatusCheckByNino"    => statusCheckByNino.reads(properties)
       case "StatusFound"          => statusFound.reads(properties)
       case "StatusCheckFailure"   => statusCheckFailure.reads(properties)
       case "MultipleMatchesFound" => multipleMatchesFound.reads(properties)

@@ -1,8 +1,11 @@
 # Generic content
 generic.nino=National Insurance Number
+generic.givenName=First Name
+generic.familyName=Family Name
 generic.dob=Date of birth
 generic.nationality=Nationality
 generic.searchAgain=Search again
+generic.change=Change
 
 # Validation errors
 error.summary.heading=There is a problem

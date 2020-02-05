@@ -61,10 +61,12 @@ object DateFieldHelper {
   def parseDateIntoFields(date: String): Option[(String, String, String)] =
     try {
       val ydm: Array[String] = date.split('-') ++ Array("", "")
-      if (ydm.length >= 3) Some((ydm(0), ydm(1), ydm(2))) else None
+      if (ydm.length >= 3) Some((ydm(0), removeWildcard(ydm(1)), removeWildcard(ydm(2)))) else None
     } catch {
       case NonFatal(_) => None
     }
+
+  def removeWildcard(s: String): String = if (s.toUpperCase == "XX") "" else s
 
   val formatDateFromFields: (String, String, String) => String = {
     case (y, m, d) =>

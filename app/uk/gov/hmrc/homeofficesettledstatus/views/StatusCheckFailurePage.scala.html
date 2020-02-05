@@ -24,11 +24,63 @@
 
 @this(layout: LayoutComponents)
 
-@(statusCheckByNinoRequest: StatusCheckByNinoRequest, statusCheckError:StatusCheckError)(implicit request: Request[_], messages: Messages, config: Configuration)
+@(query: StatusCheckByNinoRequest, statusCheckError:StatusCheckError, changeCall: Call, searchAgainCall: Call)(implicit request: Request[_], messages: Messages, config: Configuration)
 
 @layout.mainTemplate(title = Messages("status-check-failure.title"), bodyClasses = Some("full-width")) {
 
+    <div class="grid-row">
+        <div class="column-two-thirds">
+
     <h1 class="heading-xlarge">@Messages("status-check-failure.title")</h1>
 
+   <p>
+    A match has not been found using the details given, this may be for a number of reasons including:</p>
 
+   <ul class="list list-bullet">
+    <li>The customer has not applied for settled status</li>
+    <li>The details are incorrect</li>
+   </ul>
+
+   <p>If you typed the details, check they are correct and perform the search again.
+   </p>
+
+
+   <h2 class="heading-medium">Personal details</h2>
+
+    <table class="form-group">
+        <tbody>
+            <tr>
+                <th scope="row">@messages("generic.nino")</th>
+                <td>@query.nino.toString()</td>
+                <td><a class="govuk-link" href="@changeCall.url">@messages("generic.change")</a></td>
+            </tr>
+            <tr>
+                <th scope="row">@messages("generic.givenName")</th>
+                <td colspan="2">@query.givenName</td>
+            </tr>
+            <tr>
+                <th scope="row">@messages("generic.familyName")</th>
+                <td colspan="2">@query.familyName</td>
+            </tr>
+            <tr>
+                <th scope="row">@messages("generic.dob")</th>
+                <td colspan="2">@query.dateOfBirth</td>
+            </tr>
+        </tbody>
+    </table>
+
+   <p>
+    If the details are correct, <a href="#" class="govuk-link">contact the TBC Helpline</a> if you need to speak to someone.
+   </p>
+
+   <p>To start a new search click here.</p>
+
+   <p>
+     <form action="@searchAgainCall.url" method="get" novalidate="">
+      <input type="hidden" name="answers-checked" value="true">
+      <button class="govuk-button" data-module="govuk-button">@messages("generic.searchAgain")</button>
+     </form>
+   </p>
+        </div>
+    </div>
 }

@@ -41,7 +41,7 @@ class HomeOfficeSettledStatusFrontendControllerISpec
       }
 
       "redirect to the lookup page when elsewhere" in {
-        journeyState.set(StatusCheckByNino, Nil)
+        journeyState.set(StatusCheckByNino(), Nil)
         givenAuthorisedForStride("TBC", "StrideUserId")
         val result = controller.showStart(fakeRequest)
         status(result) shouldBe 303
@@ -53,19 +53,19 @@ class HomeOfficeSettledStatusFrontendControllerISpec
     "GET /check-with-nino" should {
 
       "display the lookup page" in {
-        journeyState.set(StatusCheckByNino, List(Start))
+        journeyState.set(StatusCheckByNino(), List(Start))
         givenAuthorisedForStride("TBC", "StrideUserId")
         val result = controller.showStatusCheckByNino(fakeRequest)
         status(result) shouldBe 200
         checkHtmlResultWithBodyText(result, htmlEscapedMessage("lookup.title"))
-        journeyState.get shouldBe Some((StatusCheckByNino, List(Start)))
+        journeyState.get shouldBe Some((StatusCheckByNino(), List(Start)))
       }
     }
 
     "POST /check-with-nino" should {
 
       "submit the lookup query and redirect to the confirmation page if request details pass validation" in {
-        journeyState.set(StatusCheckByNino, List(Start))
+        journeyState.set(StatusCheckByNino(), List(Start))
         givenAuthorisedForStride("TBC", "StrideUserId")
         givenStatusCheckSucceeds()
         val request = fakeRequest
@@ -89,11 +89,11 @@ class HomeOfficeSettledStatusFrontendControllerISpec
         journeyState.get shouldBe Some(
           (
             StatusFound("sjdfhks123", expectedQuery, expectedResult),
-            List(StatusCheckByNino, Start)))
+            List(StatusCheckByNino(), Start)))
       }
 
       "submit the lookup query and redisplay the form with errors if request details fails validation" in {
-        journeyState.set(StatusCheckByNino, List(Start))
+        journeyState.set(StatusCheckByNino(), List(Start))
         givenAuthorisedForStride("TBC", "StrideUserId")
         val request = fakeRequest
           .withFormUrlEncodedBody(
@@ -109,7 +109,7 @@ class HomeOfficeSettledStatusFrontendControllerISpec
       }
 
       "submit the lookup query and show status check failure" in {
-        journeyState.set(StatusCheckByNino, List(Start))
+        journeyState.set(StatusCheckByNino(), List(Start))
         givenAuthorisedForStride("TBC", "StrideUserId")
         givenStatusCheckErrorWhenStatusNotFound()
         val request = fakeRequest
@@ -126,7 +126,7 @@ class HomeOfficeSettledStatusFrontendControllerISpec
       }
 
       "submit the lookup query and show multiple matches found" in {
-        journeyState.set(StatusCheckByNino, List(Start))
+        journeyState.set(StatusCheckByNino(), List(Start))
         givenAuthorisedForStride("TBC", "StrideUserId")
         givenStatusCheckErrorWhenConflict()
         val request = fakeRequest

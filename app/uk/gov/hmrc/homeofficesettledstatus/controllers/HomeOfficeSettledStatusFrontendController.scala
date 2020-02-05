@@ -110,7 +110,7 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
     */
   override def getCallFor(state: State)(implicit request: Request[_]): Call = state match {
     case Start => routes.HomeOfficeSettledStatusFrontendController.showStart()
-    case StatusCheckByNino =>
+    case _: StatusCheckByNino =>
       routes.HomeOfficeSettledStatusFrontendController.showStatusCheckByNino()
     case _: StatusFound => routes.HomeOfficeSettledStatusFrontendController.showStatusFound()
     case _: StatusCheckFailure =>
@@ -134,26 +134,30 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
     implicit request: Request[_]): Result = state match {
 
     case Start =>
-      Redirect(getCallFor(StatusCheckByNino))
+      Redirect(getCallFor(StatusCheckByNino()))
 
-    case StatusCheckByNino =>
+    case StatusCheckByNino(maybeQuery) =>
       Ok(
         statusCheckByNinoPage(
-          formWithErrors.or(StatusCheckByNinoRequestForm),
-          routes.HomeOfficeSettledStatusFrontendController.submitStatusCheckByNino()))
+          formWithErrors.or(
+            maybeQuery
+              .map(query => StatusCheckByNinoRequestForm.fill(query))
+              .getOrElse(StatusCheckByNinoRequestForm)),
+          routes.HomeOfficeSettledStatusFrontendController.submitStatusCheckByNino()
+        ))
 
-    case StatusFound(correlationId, query, result) =>
+    case StatusFound(_, query, result) =>
+      Ok(statusFoundPage(StatusFoundPageContext(query, result, getCallFor(Start))))
+
+    case StatusCheckFailure(_, query, error) =>
       Ok(
-        statusFoundPage(
-          StatusFoundPageContext(
-            query,
-            result,
-            routes.HomeOfficeSettledStatusFrontendController.showStart())))
+        statusCheckFailurePage(
+          query,
+          error,
+          getCallFor(StatusCheckByNino(Some(query))),
+          getCallFor(Start)))
 
-    case StatusCheckFailure(correlationId, query, error) =>
-      Ok(statusCheckFailurePage(query, error))
-
-    case MultipleMatchesFound(correlationId, query) =>
+    case MultipleMatchesFound(_, query) =>
       Ok(multipleMatchesFoundPage(query))
   }
 

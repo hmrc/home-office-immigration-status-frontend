@@ -27,12 +27,12 @@ object HomeOfficeSettledStatusFrontendJourneyModel extends JourneyModel {
   sealed trait State
   sealed trait IsError
 
-  override val root: State = State.StatusCheckByNino
+  override val root: State = State.Start
 
   object State {
     case object Start extends State
 
-    case object StatusCheckByNino extends State
+    case class StatusCheckByNino(maybeQuery: Option[StatusCheckByNinoRequest] = None) extends State
 
     case class StatusFound(
       correlationId: String,
@@ -58,14 +58,15 @@ object HomeOfficeSettledStatusFrontendJourneyModel extends JourneyModel {
     }
 
     def showStatusCheckByNino(user: String) = Transition {
-      case _ => goto(StatusCheckByNino)
+      case StatusCheckFailure(_, query, _) => goto(StatusCheckByNino(Some(query)))
+      case _                               => goto(StatusCheckByNino())
     }
 
     def submitStatusCheckByNino(
       checkStatusByNino: StatusCheckByNinoRequest => Future[StatusCheckResponse])(user: String)(
       query: StatusCheckByNinoRequest) =
       Transition {
-        case StatusCheckByNino =>
+        case _: StatusCheckByNino =>
           checkStatusByNino(query).flatMap {
 
             case StatusCheckResponse(correlationId, Some(error), _) =>

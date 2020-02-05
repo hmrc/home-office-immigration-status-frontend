@@ -70,6 +70,9 @@ class DateFieldHelperSpec extends UnitSpec {
       parseDateIntoFields("2019-01-17") shouldBe Some("2019", "01", "17")
       parseDateIntoFields("2019") shouldBe Some("2019", "", "")
       parseDateIntoFields("2019-01") shouldBe Some("2019", "01", "")
+      parseDateIntoFields("2019-01-XX") shouldBe Some("2019", "01", "")
+      parseDateIntoFields("2019-XX-XX") shouldBe Some("2019", "", "")
+      parseDateIntoFields("2019-XX-31") shouldBe Some("2019", "", "31")
     }
   }
 
