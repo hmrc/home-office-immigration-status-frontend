@@ -43,9 +43,7 @@ object FormFieldMappings {
         case i @ Invalid(_) =>
           i
         case Valid =>
-          if (fieldValue.matches("^[a-zA-Z -']"))
-            Valid
-          else if (fieldValue.length >= minLenInc)
+          if (fieldValue.length >= minLenInc)
             Valid
           else
             Invalid(ValidationError(s"error.$fieldName.invalid-format"))
