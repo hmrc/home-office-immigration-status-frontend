@@ -4,7 +4,7 @@ import play.api.Application
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.homeofficesettledstatus.models.{ImmigrationStatus, StatusCheckByNinoRequest, StatusCheckResult}
+import uk.gov.hmrc.homeofficesettledstatus.models.{ImmigrationStatus, StatusCheckByNinoRequest, StatusCheckError, StatusCheckResult}
 import uk.gov.hmrc.homeofficesettledstatus.stubs.HomeOfficeSettledStatusStubs
 import uk.gov.hmrc.homeofficesettledstatus.support.BaseISpec
 import uk.gov.hmrc.http.HeaderCarrier
@@ -64,7 +64,7 @@ class HomeOfficeSettledStatusFrontendControllerISpec
 
     "POST /check-with-nino" should {
 
-      "submit the lookup query and redirect to the confirmation page if request details pass validation" in {
+      "submit the lookup query and redirect to the status found if request details pass validation" in {
         journeyState.set(StatusCheckByNino(), List(Start))
         givenAuthorisedForStride("TBC", "StrideUserId")
         givenStatusCheckSucceeds()
@@ -140,6 +140,40 @@ class HomeOfficeSettledStatusFrontendControllerISpec
         val result = controller.submitStatusCheckByNino(request)
         status(result) shouldBe 303
         redirectLocation(result) shouldBe Some("/check-settled-status/multiple-matches-found")
+      }
+
+      "go back to the search form and fill with existing query parameters" in {
+        val existingQuery = StatusCheckByNinoRequest("2001-01-31", "JANE", "DOE", Nino("RJ301829A"))
+        journeyState.set(
+          StatusCheckFailure(
+            "123",
+            existingQuery,
+            StatusCheckError(errCode = Some("ERR_NOT_FOUND"))),
+          List(StatusCheckByNino(), Start))
+        givenAuthorisedForStride("TBC", "StrideUserId")
+        val result = controller.showStatusCheckByNino(fakeRequest)
+        status(result) shouldBe 200
+        checkHtmlResultWithBodyText(result, htmlEscapedMessage("lookup.title"))
+        checkHtmlResultWithBodyText(result, s"""value="${existingQuery.nino.toString()}"""")
+        checkHtmlResultWithBodyText(result, s"""value="${existingQuery.givenName}"""")
+        checkHtmlResultWithBodyText(result, s"""value="${existingQuery.familyName}"""")
+        checkHtmlResultWithBodyText(result, "value=\"2001\"")
+        checkHtmlResultWithBodyText(result, "value=\"01\"")
+        checkHtmlResultWithBodyText(result, "value=\"31\"")
+      }
+
+      "go back to the search form and clear query fields" in {
+        val existingQuery = StatusCheckByNinoRequest("2001-01-31", "JANE", "DOE", Nino("RJ301829A"))
+        journeyState.set(
+          StatusCheckFailure(
+            "123",
+            existingQuery,
+            StatusCheckError(errCode = Some("ERR_NOT_FOUND"))),
+          List(StatusCheckByNino(), Start))
+        givenAuthorisedForStride("TBC", "StrideUserId")
+        val result = controller.showStart(fakeRequest)
+        status(result) shouldBe 303
+        redirectLocation(result) shouldBe Some("/check-settled-status/check-with-nino")
       }
 
     }
