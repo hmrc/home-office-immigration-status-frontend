@@ -50,20 +50,20 @@
     <table class="form-group">
         <tbody>
             <tr>
-                <th scope="row">@messages("generic.nino")</th>
+                <th scope="row" class="bold">@messages("generic.nino")</th>
                 <td>@query.nino.formatted</td>
                 <td><a class="govuk-link" href="@changeCall.url">@messages("generic.change")</a></td>
             </tr>
             <tr>
-                <th scope="row">@messages("generic.givenName")</th>
+                <th scope="row" class="bold">@messages("generic.givenName")</th>
                 <td colspan="2">@query.givenName</td>
             </tr>
             <tr>
-                <th scope="row">@messages("generic.familyName")</th>
+                <th scope="row" class="bold">@messages("generic.familyName")</th>
                 <td colspan="2">@query.familyName</td>
             </tr>
             <tr>
-                <th scope="row">@messages("generic.dob")</th>
+                <th scope="row" class="bold">@messages("generic.dob")</th>
                 <td colspan="2">@query.dateOfBirth</td>
             </tr>
         </tbody>

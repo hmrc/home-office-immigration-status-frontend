@@ -35,41 +35,35 @@
     <div class="column-two-thirds">
       <h1 id="full-name" class="heading-xlarge">@context.result.fullName @context.statusLabel</h1>
 
-      <table class="form-group">
-        <thead>
-          <tr>
-            <th scope="col">@messages("generic.nino")</th>
-            <th scope="col">@messages("generic.dob")</th>
-            <th scope="col">@messages("generic.nationality")</th>
-          </tr>
-        </thead>
-        <tbody>
-            <tr>
-              <th scope="row">@context.query.nino.formatted</th>
-              <td>@context.result.dateOfBirth</td>
-              <td>CHE</td>
-            </tr>
-        </tbody>
-      </table>
 
-      <table class="form-group">
-        <thead>
-          <tr>
-            <th scope="col">@messages("status-found.status")</th>
-            <th scope="col">@messages("status-found.startDate")</th>
-            <th scope="col">@messages("status-found.expiryDate")</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for(status <- context.result.statuses) {
-            <tr>
-              <th scope="row">@context.immigrationStatusLabel(status.immigrationStatus)</th>
-              <td>@status.statusStartDate.getOrElse("-")</td>
-              <td>@status.statusEndDate.getOrElse("-")</td>
-            </tr>
-          }
-        </tbody>
-      </table>
+        <table class="form-group">
+            <tbody>
+                <tr>
+                    <th scope="row" class="bold">@messages("generic.nino")</th>
+                    <td class="text-left">@context.query.nino.formatted</td>
+                </tr>
+                <tr>
+                    <th scope="row" class="bold">@messages("generic.dob")</th>
+                    <td>@context.result.dateOfBirth</td>
+                </tr>
+                <tr>
+                    <th scope="row" class="bold">@messages("generic.nationality")</th>
+                    <td>Switzerland</td>
+                </tr>
+                <tr>
+                    <th scope="row" class="bold">@messages("status-found.status")</th>
+                    <td>@context.immigrationStatusLabel(context.currentStatus.immigrationStatus)</td>
+                </tr>
+                <tr>
+                    <th scope="row" class="bold">@messages("status-found.startDate")</th>
+                    <td>@context.currentStatus.statusStartDate</td>
+                </tr>
+                <tr>
+                    <th scope="row" class="bold">@messages("status-found.expiryDate")</th>
+                    <td>@context.currentStatus.statusEndDate</td>
+                </tr>
+            </tbody>
+        </table>
 
       <p>
         <form action="@context.searchAgainCall.url" method="get" novalidate="">
