@@ -37,13 +37,15 @@ object FormFieldMappings {
   val trimmedUppercaseName: Mapping[String] = of[String]
     .transform[String](_.trim.take(64).toUpperCase, identity)
 
+  val allowedNameCharacters: Set[Char] = Set('-', '\'', ' ')
+
   def validName(fieldName: String, minLenInc: Int): Constraint[String] =
     Constraint[String] { fieldValue: String =>
       Constraints.nonEmpty(errorMessage = s"error.$fieldName.required")(fieldValue) match {
-        case i @ Invalid(_) =>
-          i
+        case i @ Invalid(_) => i
         case Valid =>
-          if (fieldValue.length >= minLenInc)
+          if (fieldValue.length >= minLenInc && fieldValue.forall(
+                ch => Character.isLetter(ch) || allowedNameCharacters.contains(ch)))
             Valid
           else
             Invalid(ValidationError(s"error.$fieldName.invalid-format"))

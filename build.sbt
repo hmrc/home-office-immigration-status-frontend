@@ -18,12 +18,12 @@ lazy val compileDeps = Seq(
   ws,
   "uk.gov.hmrc" %% "bootstrap-play-26" % "1.3.0",
   "uk.gov.hmrc" %% "govuk-template" % "5.48.0-play-26",
-  "uk.gov.hmrc" %% "play-ui" % "8.6.0-play-26",
-  "uk.gov.hmrc" %% "auth-client" % "2.32.1-play-26",
+  "uk.gov.hmrc" %% "play-ui" % "8.8.0-play-26",
+  "uk.gov.hmrc" %% "auth-client" % "2.32.2-play-26",
   "uk.gov.hmrc" %% "play-partials" % "6.9.0-play-26",
   "uk.gov.hmrc" %% "agent-kenshoo-monitoring" % "4.0.0",
   "uk.gov.hmrc" %% "agent-mtd-identifiers" % "0.17.0-play-26",
-  "uk.gov.hmrc" %% "play-fsm" % "0.49.0-play-26",
+  "uk.gov.hmrc" %% "play-fsm" % "0.50.0-play-26",
   "uk.gov.hmrc" %% "domain" % "5.6.0-play-26",
   "uk.gov.hmrc" %% "mongo-caching" % "6.8.0-play-26",
   "uk.gov.hmrc" %% "json-encryption"  % "4.5.0-play-26"
@@ -33,8 +33,8 @@ def testDeps(scope: String) = Seq(
   "uk.gov.hmrc" %% "hmrctest" % "3.9.0-play-26" % scope,
   "org.scalatest" %% "scalatest" % "3.0.8" % scope,
   "org.mockito" % "mockito-core" % "3.1.0" % scope,
-  "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % scope,
-  "com.github.tomakehurst" % "wiremock" % "2.25.1" % scope
+  "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.3" % scope,
+  "com.github.tomakehurst" % "wiremock" % "2.26.0" % scope
 )
 
 val jettyVersion = "9.2.24.v20180105"
