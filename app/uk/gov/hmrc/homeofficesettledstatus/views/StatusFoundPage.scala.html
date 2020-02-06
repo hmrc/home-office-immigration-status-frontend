@@ -20,6 +20,7 @@
 @import uk.gov.hmrc.play.views.html.helpers.DateFieldsFreeInlineLegend
 @import uk.gov.hmrc.homeofficesettledstatus.views.LayoutComponents
 @import uk.gov.hmrc.homeofficesettledstatus.views.StatusFoundPageContext
+@import uk.gov.hmrc.homeofficesettledstatus.views.DateFormat
 
 @this(layout: LayoutComponents)
 
@@ -44,7 +45,7 @@
                 </tr>
                 <tr>
                     <th scope="row" class="bold">@messages("generic.dob")</th>
-                    <td>@context.result.dateOfBirth</td>
+                    <td>@DateFormat.format(context.result.dateOfBirth)</td>
                 </tr>
                 <tr>
                     <th scope="row" class="bold">@messages("generic.nationality")</th>
@@ -56,11 +57,11 @@
                 </tr>
                 <tr>
                     <th scope="row" class="bold">@messages("status-found.startDate")</th>
-                    <td>@context.currentStatus.statusStartDate</td>
+                    <td>@context.currentStatus.statusStartDate.map(DateFormat.format).getOrElse("")</td>
                 </tr>
                 <tr>
                     <th scope="row" class="bold">@messages("status-found.expiryDate")</th>
-                    <td>@context.currentStatus.statusEndDate</td>
+                    <td>@context.currentStatus.statusEndDate.map(DateFormat.format).getOrElse("")</td>
                 </tr>
             </tbody>
         </table>

@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.homeofficesettledstatus.models
+package uk.gov.hmrc.homeofficesettledstatus.views
 
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
-import play.api.libs.json.Json
+import play.api.i18n.Messages
 
-case class ImmigrationStatus(
-  // Underlying Immigration Status
-  immigrationStatus: String,
-  // 'Right to public funds status
-  rightToPublicFunds: Boolean,
-  // Start date of the 'right to public fund' Status in ISO 8601 format
-  statusStartDate: Option[LocalDate] = None,
-  // Expiry date of the 'right to public fund' Status in ISO 8601 format
-  statusEndDate: Option[LocalDate] = None
-)
+object DateFormat {
 
-object ImmigrationStatus {
-  implicit val formats = Json.format[ImmigrationStatus]
+  val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
+
+  def format(date: LocalDate)(implicit messages: Messages): String =
+    date.format(formatter.withLocale(messages.lang.locale))
+
 }

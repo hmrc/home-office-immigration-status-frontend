@@ -1,5 +1,7 @@
 package uk.gov.hmrc.homeofficesettledstatus.controllers
 
+import java.time.{LocalDate, LocalDateTime}
+
 import play.api.Application
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -116,10 +118,16 @@ class HomeOfficeSettledStatusFrontendControllerISpec
         val expectedQuery =
           StatusCheckByNinoRequest("2001-01-31", "JANE", "DOE", Nino("RJ301829A"))
         val expectedResult = StatusCheckResult(
-          "2001-01-31",
+          LocalDate.parse("2001-01-31"),
           "string",
           "Jane Doe",
-          List(ImmigrationStatus("ILR", true, Some("2018-12-12"), Some("2018-01-31"))))
+          List(
+            ImmigrationStatus(
+              "ILR",
+              true,
+              Some(LocalDate.parse("2018-12-12")),
+              Some(LocalDate.parse("2018-01-31"))))
+        )
         journeyState.get shouldBe Some(
           (
             StatusFound("sjdfhks123", expectedQuery, expectedResult),
@@ -184,10 +192,16 @@ class HomeOfficeSettledStatusFrontendControllerISpec
         val query =
           StatusCheckByNinoRequest("2001-01-31", "JANE", "DOE", Nino("RJ301829A"))
         val queryResult = StatusCheckResult(
-          "2001-01-31",
+          LocalDate.parse("2001-01-31"),
           "string",
           "Jane Doe",
-          List(ImmigrationStatus("ILR", true, Some("2018-12-12"), Some("2018-01-31"))))
+          List(
+            ImmigrationStatus(
+              "ILR",
+              true,
+              Some(LocalDate.parse("2018-12-12")),
+              Some(LocalDate.parse("2018-01-31"))))
+        )
         journeyState
           .set(StatusFound("sjdfhks123", query, queryResult), List(StatusCheckByNino(), Start))
         givenAuthorisedForStride("TBC", "StrideUserId")
@@ -196,7 +210,7 @@ class HomeOfficeSettledStatusFrontendControllerISpec
         checkHtmlResultWithBodyText(result, htmlEscapedMessage("status-found.title"))
         checkHtmlResultWithBodyText(result, query.nino.formatted)
         checkHtmlResultWithBodyText(result, queryResult.fullName)
-        checkHtmlResultWithBodyText(result, queryResult.dateOfBirth)
+        checkHtmlResultWithBodyText(result, "31 January 2001")
       }
     }
 

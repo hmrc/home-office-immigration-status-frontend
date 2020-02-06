@@ -16,11 +16,13 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.models
 
+import java.time.LocalDate
+
 import play.api.libs.json.Json
 
 case class StatusCheckResult(
   // Date of birth of person being checked in ISO 8601 format
-  dateOfBirth: String,
+  dateOfBirth: LocalDate,
   // Image of the person being checked
   facialImage: String,
   // Full name of person being checked
