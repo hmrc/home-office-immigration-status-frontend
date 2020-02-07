@@ -3,6 +3,7 @@ package uk.gov.hmrc.homeofficesettledstatus.controllers
 import play.api.mvc.Result
 import play.api.mvc.Results._
 import play.api.test.FakeRequest
+import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.homeofficesettledstatus.support.BaseISpec
@@ -41,10 +42,28 @@ class AuthActionsISpec extends BaseISpec {
       bodyOf(result) should include("StrideUserId")
     }
 
-    "throw Forbidden when client not enrolled for service" in {
+    "redirect to log in page when user not enrolled for the service" in {
       givenAuthorisedForStride("TBC", "StrideUserId")
 
-      status(TestController.withAuthorisedWithStrideGroup("OTHER")) shouldBe 403
+      val result = TestController.withAuthorisedWithStrideGroup("OTHER")
+      status(result) shouldBe 303
+      redirectLocation(result).get should include("/stride/sign-in")
+    }
+
+    "redirect to log in page when user not authenticated" in {
+      givenRequestIsNotAuthorised("SessionRecordNotFound")
+
+      val result = TestController.withAuthorisedWithStrideGroup("TBC")
+      status(result) shouldBe 303
+      redirectLocation(result).get should include("/stride/sign-in")
+    }
+
+    "redirect to log in page when user authenticated with different provider" in {
+      givenRequestIsNotAuthorised("UnsupportedAuthProvider")
+
+      val result = TestController.withAuthorisedWithStrideGroup("TBC")
+      status(result) shouldBe 303
+      redirectLocation(result).get should include("/stride/sign-in")
     }
   }
 

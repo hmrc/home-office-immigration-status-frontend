@@ -23,6 +23,7 @@ import com.kenshoo.play.metrics.Metrics
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import uk.gov.hmrc.agent.kenshoo.monitoring.HttpAPIMonitor
+import uk.gov.hmrc.homeofficesettledstatus.connectors.HomeOfficeSettledStatusProxyConnector.extractResponseBody
 import uk.gov.hmrc.homeofficesettledstatus.models.{StatusCheckByNinoRequest, StatusCheckResponse}
 import uk.gov.hmrc.homeofficesettledstatus.wiring.AppConfig
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpGet, HttpPost, NotFoundException, Upstream4xxResponse}
@@ -61,6 +62,10 @@ class HomeOfficeSettledStatusProxyConnector @Inject()(
         }
     }
 
+}
+
+object HomeOfficeSettledStatusProxyConnector {
+
   def extractResponseBody(message: String, prefix: String): String = {
     val pos = message.indexOf(prefix)
     val body =
@@ -68,5 +73,4 @@ class HomeOfficeSettledStatusProxyConnector @Inject()(
       else s"""{"error":{"errCode":"$message"}}"""
     body
   }
-
 }

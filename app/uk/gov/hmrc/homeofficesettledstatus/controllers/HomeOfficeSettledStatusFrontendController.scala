@@ -53,10 +53,6 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
   import HomeOfficeSettledStatusFrontendController._
   import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel._
 
-  val AsHuman: WithAuthorised[String] = { implicit request =>
-    withAuthorisedAsHuman
-  }
-
   val AsStrideUser: WithAuthorised[String] = { implicit request =>
     authorisedWithStrideGroup(appConfig.authorisedStrideGroup)
   }

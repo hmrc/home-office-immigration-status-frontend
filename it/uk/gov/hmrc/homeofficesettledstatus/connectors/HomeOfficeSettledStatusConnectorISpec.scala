@@ -94,4 +94,29 @@ class HomeOfficeSettledStatusConnectorISpec extends BaseISpec with HomeOfficeSet
     }
   }
 
+  val errorGenerator: HttpErrorFunctions = new HttpErrorFunctions {}
+
+  "extractResponseBody" should {
+    "return the json notFoundMessage if the prefix present" in {
+      val responseBody = """{"bar":"foo"}"""
+      val errorMessage = errorGenerator.notFoundMessage("GET", "/test/foo/bar", responseBody)
+      HomeOfficeSettledStatusProxyConnector
+        .extractResponseBody(errorMessage, "Response body: '") shouldBe responseBody
+    }
+
+    "return the json badRequestMessage if the prefix present" in {
+      val responseBody = """{"bar":"foo"}"""
+      val errorMessage = errorGenerator.badRequestMessage("GET", "/test/foo/bar", responseBody)
+      HomeOfficeSettledStatusProxyConnector
+        .extractResponseBody(errorMessage, "Response body '") shouldBe responseBody
+    }
+
+    "return the whole message if prefix missing" in {
+      val responseBody = """{"bar":"foo"}"""
+      val errorMessage = errorGenerator.notFoundMessage("GET", "/test/foo/bar", responseBody)
+      HomeOfficeSettledStatusProxyConnector
+        .extractResponseBody(errorMessage, "::: '") shouldBe s"""{"error":{"errCode":"$errorMessage"}}"""
+    }
+  }
+
 }

@@ -1,6 +1,6 @@
 package uk.gov.hmrc.homeofficesettledstatus.controllers
 
-import java.time.{LocalDate, LocalDateTime}
+import java.time.LocalDate
 
 import play.api.Application
 import play.api.test.FakeRequest

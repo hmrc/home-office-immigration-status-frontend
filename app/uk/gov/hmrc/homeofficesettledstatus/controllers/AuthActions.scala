@@ -53,17 +53,14 @@ trait AuthActions extends AuthorisedFunctions with AuthRedirects {
       toStrideLogin(continueUrl)
 
     case _: UnsupportedAuthProvider ⇒
-      Logger.warn(s"user logged in with unsupported auth provider")
-      Forbidden
+      Logger.warn(s"Logged in user with unsupported auth provider")
+      val continueUrl = CallOps.localFriendlyUrl(env, config)(request.uri, request.host)
+      toStrideLogin(continueUrl)
 
     case _: InsufficientEnrolments ⇒
       Logger.warn(s"Logged in user does not have required enrolments")
-      Forbidden
+      val continueUrl = CallOps.localFriendlyUrl(env, config)(request.uri, request.host)
+      toStrideLogin(continueUrl)
   }
-
-  def withAuthorisedAsHuman[A](body: String => Future[Result])(
-    implicit request: Request[A],
-    hc: HeaderCarrier,
-    ec: ExecutionContext): Future[Result] = body("You are a human")
 
 }
