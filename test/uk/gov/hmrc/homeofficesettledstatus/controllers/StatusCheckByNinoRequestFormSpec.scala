@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.controllers
 
+import play.api.data.FormError
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficesettledstatus.models.StatusCheckByNinoRequest
 import uk.gov.hmrc.play.test.UnitSpec
@@ -52,6 +53,103 @@ class StatusCheckByNinoRequestFormSpec extends UnitSpec {
 
       form.bind(formInput1).value shouldBe Some(formOutput)
       form.fill(formOutput).data shouldBe formInput2
+    }
+
+    "report error when NINO is missing" in {
+      val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
+      val input = formInput1.updated("nino", "")
+      form.bind(input).errors shouldBe List(FormError("nino", "error.nino.required"))
+    }
+
+    "report error when NINO is invalid" in {
+      val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
+      val input = formInput1.updated("nino", "invalid")
+      form.bind(input).errors shouldBe List(FormError("nino", "error.nino.invalid-format"))
+    }
+
+    "report error when givenName is missing" in {
+      val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
+      val input = formInput1.updated("givenName", "")
+      form.bind(input).errors shouldBe List(FormError("givenName", "error.givenName.required"))
+    }
+
+    "report error when givenName is invalid" in {
+      val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
+      val input = formInput1.updated("givenName", "11267162")
+      form.bind(input).errors shouldBe List(
+        FormError("givenName", "error.givenName.invalid-format"))
+    }
+
+    "report error when familyName is missing" in {
+      val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
+      val input = formInput1.updated("familyName", "")
+      form.bind(input).errors shouldBe List(FormError("familyName", "error.familyName.required"))
+    }
+
+    "report error when familyName is invalid" in {
+      val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
+      val input = formInput1.updated("familyName", "AB")
+      form.bind(input).errors shouldBe List(
+        FormError("familyName", "error.familyName.invalid-format"))
+    }
+
+    "report error when dateOfBirth.year is missing" in {
+      val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
+      val input = formInput1.updated("dateOfBirth.year", "")
+      form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.required"))
+    }
+
+    "report error when dateOfBirth.year is invalid" in {
+      val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
+      val input = formInput1.updated("dateOfBirth.year", "197B")
+      form.bind(input).errors shouldBe List(
+        FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
+    }
+
+    "report error when dateOfBirth.day is invalid - contains digit and wildcard" in {
+      val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
+      val input = formInput1.updated("dateOfBirth.day", "0X")
+      form.bind(input).errors shouldBe List(
+        FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
+    }
+
+    "report error when dateOfBirth.day is invalid - contains value out-of-scope" in {
+      val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
+      val input = formInput1.updated("dateOfBirth.day", "32")
+      form.bind(input).errors shouldBe List(
+        FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
+    }
+
+    "report error when dateOfBirth.month is invalid - contains digit and wildcard" in {
+      val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
+      val input = formInput1.updated("dateOfBirth.month", "1X")
+      form.bind(input).errors shouldBe List(
+        FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
+    }
+
+    "report error when dateOfBirth.month is invalid - contains value out-of-scope" in {
+      val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
+      val input = formInput1.updated("dateOfBirth.month", "13")
+      form.bind(input).errors shouldBe List(
+        FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
+    }
+
+    "allow empty dateOfBirth.day" in {
+      val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
+      val input = formInput1.updated("dateOfBirth.day", "")
+      form.bind(input).value shouldBe Some(formOutput.copy(dateOfBirth = "1970-01-XX"))
+    }
+
+    "allow empty dateOfBirth.month" in {
+      val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
+      val input = formInput1.updated("dateOfBirth.month", "")
+      form.bind(input).value shouldBe Some(formOutput.copy(dateOfBirth = "1970-XX-31"))
+    }
+
+    "allow empty dateOfBirth.day and empty dateOfBirth.month" in {
+      val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
+      val input = formInput1.updated("dateOfBirth.day", "").updated("dateOfBirth.month", "")
+      form.bind(input).value shouldBe Some(formOutput.copy(dateOfBirth = "1970-XX-XX"))
     }
   }
 }

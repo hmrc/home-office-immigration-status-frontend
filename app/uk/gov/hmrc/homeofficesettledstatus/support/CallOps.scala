@@ -22,18 +22,6 @@ import play.api.{Configuration, Environment, Mode}
 
 object CallOps {
 
-  def addParamsToUrl(url: String, params: (String, Option[String])*): String = {
-    val query = params collect { case (k, Some(v)) => s"$k=${URLEncoder.encode(v, "UTF-8")}" } mkString "&"
-    if (query.isEmpty) {
-      url
-    } else if (url.endsWith("?") || url.endsWith("&")) {
-      url + query
-    } else {
-      val join = if (url.contains("?")) "&" else "?"
-      url + join + query
-    }
-  }
-
   /**
     * Creates a URL string with localhost and port if running locally, for relative URLs
     * Absolute URLs are unaffected

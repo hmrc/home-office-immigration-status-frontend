@@ -36,6 +36,10 @@ class TestHomeOfficeSettledStatusFrontendJourneyService
       this.state = Some(state)
       state
     }
+
+  override def clear(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = Future {
+    this.state = None
+  }
 }
 
 private class TestAgentInvitationJourneyModule extends AbstractModule {

@@ -234,6 +234,37 @@ class HomeOfficeSettledStatusFrontendControllerISpec
         checkHtmlResultWithBodyText(result, query.dateOfBirth)
       }
     }
+
+    "GET /multiple-matches-found " should {
+
+      "display multiple matches found page if state is MultipleMatchesFound" in {
+        val query =
+          StatusCheckByNinoRequest("2001-01-31", "JANE", "DOE", Nino("RJ301829A"))
+        journeyState
+          .set(MultipleMatchesFound("sjdfhks123", query), List(StatusCheckByNino(), Start))
+        givenAuthorisedForStride("TBC", "StrideUserId")
+        val result = controller.showMultipleMatchesFound(fakeRequest)
+        status(result) shouldBe 200
+        checkHtmlResultWithBodyText(result, htmlEscapedMessage("multiple-matches-found.title"))
+      }
+
+      "redirect to the start page if state is empty" in {
+        journeyState.clear
+        givenAuthorisedForStride("TBC", "StrideUserId")
+        val result = controller.showMultipleMatchesFound(fakeRequest)
+        status(result) shouldBe 303
+        redirectLocation(result) shouldBe Some("/check-settled-status")
+      }
+
+      "redirect to the start page if state is StatusCheckByNino" in {
+        journeyState.set(StatusCheckByNino(), List(Start))
+        givenAuthorisedForStride("TBC", "StrideUserId")
+        val result = controller.showMultipleMatchesFound(fakeRequest)
+        status(result) shouldBe 303
+        redirectLocation(result) shouldBe Some("/check-settled-status")
+      }
+
+    }
   }
 
 }

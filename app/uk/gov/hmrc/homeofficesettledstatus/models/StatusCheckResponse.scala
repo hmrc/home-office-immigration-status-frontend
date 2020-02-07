@@ -30,13 +30,4 @@ case class StatusCheckResponse(
 
 object StatusCheckResponse {
   implicit val formats = Json.format[StatusCheckResponse]
-
-  def error(correlationId: String, errCode: String, fields: Option[List[(String, String)]] = None) =
-    StatusCheckResponse(
-      correlationId = correlationId,
-      error = Some(
-        StatusCheckError(
-          errCode = Some(errCode),
-          fields = fields.map(f => f.map { case (code, name) => ValidationError(code, name) })))
-    )
 }
