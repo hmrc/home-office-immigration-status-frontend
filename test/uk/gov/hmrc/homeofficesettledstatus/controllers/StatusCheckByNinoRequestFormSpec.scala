@@ -140,10 +140,11 @@ class StatusCheckByNinoRequestFormSpec extends UnitSpec {
       form.bind(input).value shouldBe Some(formOutput.copy(dateOfBirth = "1970-01-XX"))
     }
 
-    "allow empty dateOfBirth.month" in {
+    "report error when empty dateOfBirth.month " in {
       val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
       val input = formInput1.updated("dateOfBirth.month", "")
-      form.bind(input).value shouldBe Some(formOutput.copy(dateOfBirth = "1970-XX-31"))
+      form.bind(input).errors shouldBe List(
+        FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
     }
 
     "allow empty dateOfBirth.day and empty dateOfBirth.month" in {

@@ -29,7 +29,7 @@ object DateFieldHelper {
 
   def validateDate(value: String): Boolean = {
     val parts = value.split("-")
-    parts.size == 3 && isValidYear(parts(0)) && isValidMonth(parts(1)) && isValidDay(
+    parts.size == 3 && isValidYear(parts(0)) && isValidMonth(parts(1), parts(2)) && isValidDay(
       parts(2),
       toInt(parts(1)),
       toInt(parts(0)))
@@ -37,8 +37,8 @@ object DateFieldHelper {
 
   def isValidYear(year: String) = year.matches("""^\d\d\d\d$""") && toInt(year) >= 1900
 
-  def isValidMonth(month: String) =
-    if (month.contains("X")) month == "XX" else isInRange(toInt(month), 1, 12)
+  def isValidMonth(month: String, day: String) =
+    if (month.contains("X") && day == "XX") month == "XX" else isInRange(toInt(month), 1, 12)
 
   def isValidDay(day: String, month: Int, year: Int) =
     if (day.contains("X")) day == "XX"

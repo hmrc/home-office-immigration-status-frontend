@@ -47,12 +47,12 @@ class DateFieldHelperSpec extends UnitSpec {
       validateDate("2222-XX-1X") shouldBe false
       validateDate("1900-12-2X") shouldBe false
       validateDate("1900-12-X2") shouldBe false
+      validateDate("2222-XX-07") shouldBe false
     }
     "accept valid date string" in {
       validateDate("1970-01-01") shouldBe true
       validateDate("2001-12-31") shouldBe true
       validateDate("2999-06-07") shouldBe true
-      validateDate("2222-XX-07") shouldBe true
       validateDate("2222-XX-XX") shouldBe true
       validateDate("1900-12-XX") shouldBe true
     }
