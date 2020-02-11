@@ -39,32 +39,32 @@
         <dl class="govuk-check-your-answers cya-questions-long form-group">
             <div>
                 <dt class="cya-question">@messages("generic.nino")</dt>
-                <dd id="applicant" class="cya-answer">@context.query.nino.formatted</dd>
+                <dd id="nino" class="cya-answer">@context.query.nino.formatted</dd>
             </div>
 
             <div>
                 <dt class="cya-question">@messages("generic.dob")</dt>
-                <dd id="applicant" class="cya-answer">@DateFormat.format(context.result.dateOfBirth)</dd>
+                <dd id="dob" class="cya-answer">@DateFormat.format(context.result.dateOfBirth)</dd>
             </div>
 
             <div>
                 <dt class="cya-question">@messages("generic.nationality")</dt>
-                <dd id="applicant" class="cya-answer">Switzerland</dd>
+                <dd id="nationality" class="cya-answer">Switzerland</dd>
             </div>
 
             <div>
                 <dt class="cya-question">@messages("status-found.status")</dt>
-                <dd id="applicant" class="cya-answer">@context.immigrationStatusLabel(context.currentStatus.immigrationStatus)</dd>
+                <dd id="status" class="cya-answer">@context.immigrationStatusLabel(context.currentStatus.immigrationStatus)</dd>
             </div>
 
             <div>
                 <dt class="cya-question">@messages("status-found.startDate")</dt>
-                <dd id="applicant" class="cya-answer">@context.currentStatus.statusStartDate.map(DateFormat.format).getOrElse("")</dd>
+                <dd id="startDate" class="cya-answer">@context.currentStatus.statusStartDate.map(DateFormat.format).getOrElse("")</dd>
             </div>
 
             <div>
                 <dt class="cya-question">@messages("status-found.expiryDate")</dt>
-                <dd id="applicant" class="cya-answer">@context.currentStatus.statusEndDate.map(DateFormat.format).getOrElse("")</dd>
+                <dd id="expiryDate" class="cya-answer">@context.currentStatus.statusEndDate.map(DateFormat.format).getOrElse("")</dd>
             </div>
         </dl>
 
