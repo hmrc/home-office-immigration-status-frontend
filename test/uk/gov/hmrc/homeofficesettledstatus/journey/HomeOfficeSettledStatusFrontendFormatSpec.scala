@@ -100,12 +100,12 @@ class HomeOfficeSettledStatusFrontendFormatSpec extends UnitSpec {
         Json.toJson(state) shouldBe json
         json.as[State] shouldBe state
       }
+    }
 
-      "Unknown state should throw an exception" in {
-        val json = Json.parse("""{"state":"StrangeState","properties":{}}""")
-        an[JsResultException] shouldBe thrownBy {
-          json.as[State]
-        }
+    "throw an exception when unknown state" in {
+      val json = Json.parse("""{"state":"StrangeState","properties":{}}""")
+      an[JsResultException] shouldBe thrownBy {
+        json.as[State]
       }
     }
 
