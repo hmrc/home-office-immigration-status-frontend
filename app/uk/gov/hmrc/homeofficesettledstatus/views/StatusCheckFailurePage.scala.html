@@ -28,59 +28,55 @@
 
 @layout.mainTemplate(title = Messages("status-check-failure.title"), bodyClasses = Some("full-width")) {
 
-    <div class="grid-row">
-        <div class="column-two-thirds">
+  <div class="grid-row">
+    <div class="column-two-thirds">
 
-    <h1 class="heading-xlarge">@Messages("status-check-failure.title")</h1>
+      <h1 class="heading-xlarge">@Messages("status-check-failure.title")</h1>
 
-   <p>
-    A match has not been found using the details given, this may be for a number of reasons including:</p>
+      <p>@Messages("status-check-failure.listParagraph")</p>
+      <ul class="list list-bullet">
+        <li>@Messages("status-check-failure.list-item1")</li>
+        <li>@Messages("status-check-failure.list-item2")</li>
+      </ul>
 
-   <ul class="list list-bullet">
-    <li>The customer has not applied for settled status</li>
-    <li>The details are incorrect</li>
-   </ul>
+      <p>@Messages("status-check-failure.checkTryAgainParagraph")</p>
 
-   <p>If you typed the details, check they are correct and perform the search again.
-   </p>
+      <h2 class="heading-medium">@Messages("status-check-failure.heading2PersonalDetails")</h2>
 
-
-   <h2 class="heading-medium">Personal details</h2>
-
-    <table class="form-group">
-        <tbody>
-            <tr>
-                <th scope="row" class="bold">@messages("generic.nino")</th>
-                <td>@query.nino.formatted</td>
-                <td><a class="govuk-link" href="@changeCall.url">@messages("generic.change")</a></td>
-            </tr>
-            <tr>
-                <th scope="row" class="bold">@messages("generic.givenName")</th>
-                <td colspan="2">@query.givenName</td>
-            </tr>
-            <tr>
-                <th scope="row" class="bold">@messages("generic.familyName")</th>
-                <td colspan="2">@query.familyName</td>
-            </tr>
-            <tr>
-                <th scope="row" class="bold">@messages("generic.dob")</th>
-                <td colspan="2">@query.dateOfBirth</td>
-            </tr>
-        </tbody>
-    </table>
-
-   <p>
-    If the details are correct, <a href="#" class="govuk-link">contact the TBC Helpline</a> if you need to speak to someone.
-   </p>
-
-   <p>To start a new search click here.</p>
-
-   <p>
-     <form action="@searchAgainCall.url" method="get" novalidate="">
-      <input type="hidden" name="answers-checked" value="true">
-      <button class="govuk-button" data-module="govuk-button">@messages("generic.searchAgain")</button>
-     </form>
-   </p>
+      <dl class="govuk-check-your-answers cya-questions-long form-group">
+        <div>
+          <dt class="cya-question">@messages("generic.nino")</dt>
+          <dd id="applicant" class="cya-answer">@query.nino.formatted</dd>
+          <dd class="cya-change"><a href="@changeCall.url">@messages("generic.change")<span class="visually-hidden">@Messages("status-check-failure.checkHiddenText")</span></a></dd>
         </div>
+
+        <div>
+          <dt class="cya-question">@messages("generic.givenName")</dt>
+          <dd id="applicant" class="cya-answer">@query.givenName</dd>
+          <dd class="cya-change"></dd>
+        </div>
+
+        <div>
+          <dt class="cya-question">@messages("generic.familyName")</dt>
+          <dd id="applicant" class="cya-answer">@query.familyName</dd>
+          <dd class="cya-change"></dd>
+        </div>
+
+        <div>
+          <dt class="cya-question">@messages("generic.dob")</dt>
+          <dd id="applicant" class="cya-answer">@query.dateOfBirth</dd>
+          <dd class="cya-change"></dd>
+        </div>
+      </dl>
+
+      <p class="form-group">@Messages("status-check-failure.para-ifCorrect-part1")<a href="#" class="govuk-link">@Messages("status-check-failure.para-ifCorrect-link")</a>@Messages("status-check-failure.para-ifCorrect-part2")</p>
+
+      <p>
+       <form action="@searchAgainCall.url" method="get" novalidate="">
+        <input type="hidden" name="answers-checked" value="true">
+        <button class="govuk-button" data-module="govuk-button">@messages("generic.searchAgain")</button>
+       </form>
+      </p>
     </div>
+  </div>
 }
