@@ -49,8 +49,17 @@ status-found.status=Status
 status-found.startDate=Start date
 status-found.expiryDate=Expiry date
 
-#Error page
+# Failure page
 status-check-failure.title=No match found
+status-check-failure.heading2PersonalDetails=Personal details
+status-check-failure.listParagraph=A match has not been found using the details given, this may be for a number of reasons including:
+status-check-failure.list-item1=The customer has not applied for settled status
+status-check-failure.list-item2=The details are incorrect
+status-check-failure.checkTryAgainParagraph=If you typed the details, check they are correct and perform the search again.
+status-check-failure.checkHiddenText=your National Insurance Number
+status-check-failure.para-ifCorrect-part1=If the details are correct, 
+status-check-failure.para-ifCorrect-link=contact the TBC Helpline
+status-check-failure.para-ifCorrect-part2= if you need to speak to someone.
 
 multiple-matches-found.title=More than one match found
 
