@@ -120,7 +120,7 @@ trait HomeOfficeSettledStatusStubs {
         |  }
         |}""".stripMargin
 
-    givenStatusPublicFundsByNinoStub(422, validRequestBodyWith3MonthsDateRange, errorResponseBody)
+    givenStatusPublicFundsByNinoStub(400, validRequestBodyWith3MonthsDateRange, errorResponseBody)
 
   }
 
