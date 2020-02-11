@@ -18,7 +18,7 @@ package uk.gov.hmrc.homeofficesettledstatus.journey
 
 import java.time.LocalDate
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Format, JsResultException, Json}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State.{MultipleMatchesFound, Start, StatusCheckByNino, StatusCheckFailure, StatusFound}
@@ -99,6 +99,13 @@ class HomeOfficeSettledStatusFrontendFormatSpec extends UnitSpec {
           """{"state":"MultipleMatchesFound","properties":{"correlationId":"1234567890","query":{"dateOfBirth":"1956-05-08","familyName":"bar","givenName":"foo","nino":"RJ301829A"}}}""")
         Json.toJson(state) shouldBe json
         json.as[State] shouldBe state
+      }
+
+      "Unknown state should throw an exception" in {
+        val json = Json.parse("""{"state":"StrangeState","properties":{}}""")
+        an[JsResultException] shouldBe thrownBy {
+          json.as[State]
+        }
       }
     }
 

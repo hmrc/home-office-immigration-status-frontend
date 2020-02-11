@@ -59,6 +59,7 @@ class DateFieldHelperSpec extends UnitSpec {
     "format date from fields" in {
       formatDateFromFields("", "", "") shouldBe ""
       formatDateFromFields("2019", "", "") shouldBe "2019-XX-XX"
+      formatDateFromFields("96", "", "") shouldBe "1996-XX-XX"
       formatDateFromFields("2019", "05", "") shouldBe "2019-05-XX"
       formatDateFromFields("2019", "", "17") shouldBe "2019-XX-17"
       formatDateFromFields("2019", "7", "5") shouldBe "2019-07-05"
@@ -73,6 +74,8 @@ class DateFieldHelperSpec extends UnitSpec {
       parseDateIntoFields("2019-01-XX") shouldBe Some("2019", "01", "")
       parseDateIntoFields("2019-XX-XX") shouldBe Some("2019", "", "")
       parseDateIntoFields("2019-XX-31") shouldBe Some("2019", "", "31")
+      parseDateIntoFields("foo") shouldBe Some(("foo", "", ""))
+      parseDateIntoFields("2019-foo-bar") shouldBe Some(("2019", "foo", "bar"))
     }
   }
 
