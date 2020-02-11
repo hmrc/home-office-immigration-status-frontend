@@ -1,5 +1,7 @@
 package uk.gov.hmrc.homeofficesettledstatus.connectors
 
+import java.time.{LocalDate, ZoneId}
+
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficesettledstatus.models.{StatusCheckByNinoRequest, StatusCheckRange, StatusCheckResponse}
 import uk.gov.hmrc.homeofficesettledstatus.stubs.HomeOfficeSettledStatusStubs
@@ -14,7 +16,16 @@ class HomeOfficeSettledStatusConnectorISpec extends BaseISpec with HomeOfficeSet
   private lazy val connector: HomeOfficeSettledStatusProxyConnector =
     app.injector.instanceOf[HomeOfficeSettledStatusProxyConnector]
 
-  val request = StatusCheckByNinoRequest("2001-01-31", "JANE", "DOE", Nino("RJ301829A"))
+  val request = StatusCheckByNinoRequest(
+    "2001-01-31",
+    "JANE",
+    "DOE",
+    Nino("RJ301829A"),
+    Some(
+      StatusCheckRange(
+        Some(LocalDate.now(ZoneId.of("UTC")).minusMonths(3)),
+        Some(LocalDate.now(ZoneId.of("UTC")))))
+  )
 
   "HomeOfficeSettledStatusProxyConnector" when {
 
@@ -22,12 +33,9 @@ class HomeOfficeSettledStatusConnectorISpec extends BaseISpec with HomeOfficeSet
 
       "return status when range provided" in {
         givenStatusCheckResultWithRangeExample()
-        val request2 =
-          request.copy(
-            statusCheckRange = Some(StatusCheckRange(Some("2019-07-15"), Some("2019-04-15"))))
 
         val result: StatusCheckResponse =
-          await(connector.statusPublicFundsByNino(request2))
+          await(connector.statusPublicFundsByNino(request))
 
         result.result shouldBe defined
         result.error shouldBe None
@@ -77,7 +85,7 @@ class HomeOfficeSettledStatusConnectorISpec extends BaseISpec with HomeOfficeSet
       }
 
       "throw exception if other 4xx response" in {
-        givenStatusPublicFundsByNinoStub(401, validRequestBody, "")
+        givenStatusPublicFundsByNinoStub(401, validRequestBodyWith3MonthsDateRange, "")
 
         an[Upstream4xxResponse] shouldBe thrownBy {
           await(connector.statusPublicFundsByNino(request))
@@ -85,7 +93,7 @@ class HomeOfficeSettledStatusConnectorISpec extends BaseISpec with HomeOfficeSet
       }
 
       "throw exception if 5xx response" in {
-        givenStatusPublicFundsByNinoStub(500, validRequestBody, "")
+        givenStatusPublicFundsByNinoStub(500, validRequestBodyWith3MonthsDateRange, "")
 
         an[Upstream5xxResponse] shouldBe thrownBy {
           await(connector.statusPublicFundsByNino(request))

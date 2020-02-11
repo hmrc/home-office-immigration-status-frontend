@@ -1,5 +1,7 @@
 package uk.gov.hmrc.homeofficesettledstatus.stubs
 
+import java.time.{LocalDate, ZoneId}
+
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.mvc.Http.HeaderNames
@@ -8,25 +10,22 @@ import uk.gov.hmrc.homeofficesettledstatus.support.WireMockSupport
 trait HomeOfficeSettledStatusStubs {
   me: WireMockSupport =>
 
-  val requestBodyWithRange: String =
-    """{
-      |  "dateOfBirth": "2001-01-31",
-      |  "familyName": "JANE",
-      |  "givenName": "DOE",
-      |  "nino": "RJ301829A",
-      |  "statusCheckRange": {
-      |    "endDate": "2019-07-15",
-      |    "startDate": "2019-04-15"
-      |  }
-      |}""".stripMargin
+  def validRequestBodyWith3MonthsDateRange = {
+    val date = LocalDate.now(ZoneId.of("UTC"))
+    requestBodyWithRange(date.minusMonths(3).toString, date.toString)
+  }
 
-  val validRequestBody: String =
-    """{
-      |  "dateOfBirth": "2001-01-31",
-      |  "familyName": "JANE",
-      |  "givenName": "DOE",
-      |  "nino": "RJ301829A"
-      |}""".stripMargin
+  def requestBodyWithRange(startDate: String, endDate: String): String =
+    s"""{
+       |  "dateOfBirth": "2001-01-31",
+       |  "familyName": "JANE",
+       |  "givenName": "DOE",
+       |  "nino": "RJ301829A",
+       |  "statusCheckRange": {
+       |    "startDate": "$startDate",
+       |    "endDate": "$endDate"
+       |  }
+       |}""".stripMargin
 
   val invalidNinoRequestBody: String =
     """{
@@ -55,10 +54,16 @@ trait HomeOfficeSettledStatusStubs {
       |}""".stripMargin
 
   def givenStatusCheckSucceeds(): StubMapping =
-    givenStatusPublicFundsByNinoStub(200, validRequestBody, responseBodyWithStatus)
+    givenStatusPublicFundsByNinoStub(
+      200,
+      validRequestBodyWith3MonthsDateRange,
+      responseBodyWithStatus)
 
   def givenStatusCheckResultWithRangeExample(): StubMapping =
-    givenStatusPublicFundsByNinoStub(200, requestBodyWithRange, responseBodyWithStatus)
+    givenStatusPublicFundsByNinoStub(
+      200,
+      validRequestBodyWith3MonthsDateRange,
+      responseBodyWithStatus)
 
   def givenStatusCheckErrorWhenMissingInputField(): StubMapping = {
 
@@ -70,7 +75,7 @@ trait HomeOfficeSettledStatusStubs {
         |  }
         |}""".stripMargin
 
-    givenStatusPublicFundsByNinoStub(400, validRequestBody, errorResponseBody)
+    givenStatusPublicFundsByNinoStub(400, validRequestBodyWith3MonthsDateRange, errorResponseBody)
   }
 
   def givenStatusCheckErrorWhenStatusNotFound(): StubMapping = {
@@ -83,7 +88,7 @@ trait HomeOfficeSettledStatusStubs {
         |  }
         |}""".stripMargin
 
-    givenStatusPublicFundsByNinoStub(404, validRequestBody, errorResponseBody)
+    givenStatusPublicFundsByNinoStub(404, validRequestBodyWith3MonthsDateRange, errorResponseBody)
   }
 
   def givenStatusCheckErrorWhenConflict(): StubMapping = {
@@ -96,7 +101,7 @@ trait HomeOfficeSettledStatusStubs {
         |  }
         |}""".stripMargin
 
-    givenStatusPublicFundsByNinoStub(409, validRequestBody, errorResponseBody)
+    givenStatusPublicFundsByNinoStub(409, validRequestBodyWith3MonthsDateRange, errorResponseBody)
   }
 
   def givenStatusCheckErrorWhenDOBInvalid(): StubMapping = {
@@ -115,7 +120,7 @@ trait HomeOfficeSettledStatusStubs {
         |  }
         |}""".stripMargin
 
-    givenStatusPublicFundsByNinoStub(422, validRequestBody, errorResponseBody)
+    givenStatusPublicFundsByNinoStub(422, validRequestBodyWith3MonthsDateRange, errorResponseBody)
 
   }
 

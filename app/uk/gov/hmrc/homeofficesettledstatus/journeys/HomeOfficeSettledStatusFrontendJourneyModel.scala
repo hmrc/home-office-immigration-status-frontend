@@ -16,7 +16,9 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.journeys
 
-import uk.gov.hmrc.homeofficesettledstatus.models.{StatusCheckByNinoRequest, StatusCheckError, StatusCheckResponse, StatusCheckResult}
+import java.time.{LocalDate, ZoneId}
+
+import uk.gov.hmrc.homeofficesettledstatus.models.{StatusCheckByNinoRequest, StatusCheckError, StatusCheckRange, StatusCheckResponse, StatusCheckResult}
 import uk.gov.hmrc.play.fsm.JourneyModel
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -67,7 +69,15 @@ object HomeOfficeSettledStatusFrontendJourneyModel extends JourneyModel {
       query: StatusCheckByNinoRequest) =
       Transition {
         case _: StatusCheckByNino =>
-          checkStatusByNino(query).flatMap {
+          val extendedQuery = {
+            val startDate = query.statusCheckRange
+              .flatMap(_.startDate)
+              .getOrElse(LocalDate.now(ZoneId.of("UTC")).minusMonths(3))
+            val endDate =
+              query.statusCheckRange.flatMap(_.endDate).getOrElse(LocalDate.now(ZoneId.of("UTC")))
+            query.copy(statusCheckRange = Some(StatusCheckRange(Some(startDate), Some(endDate))))
+          }
+          checkStatusByNino(extendedQuery).flatMap {
 
             case StatusCheckResponse(correlationId, Some(error), _) =>
               if (error.errCode.contains("ERR_CONFLICT")) {
