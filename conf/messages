@@ -50,7 +50,7 @@ status-found.startDate=Start date
 status-found.expiryDate=Expiry date
 
 # Failure page
-status-check-failure.title=No match found
+status-check-failure.title=Unable to determine status
 status-check-failure.heading2PersonalDetails=Personal details
 status-check-failure.listParagraph=A match has not been found using the details given, this may be for a number of reasons including:
 status-check-failure.list-item1=The customer has not applied for settled status
