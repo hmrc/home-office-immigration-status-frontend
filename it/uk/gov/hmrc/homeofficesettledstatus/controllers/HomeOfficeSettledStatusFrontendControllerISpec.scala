@@ -118,15 +118,17 @@ class HomeOfficeSettledStatusFrontendControllerISpec
         val expectedQuery =
           StatusCheckByNinoRequest("2001-01-31", "JANE", "DOE", Nino("RJ301829A"))
         val expectedResult = StatusCheckResult(
-          LocalDate.parse("2001-01-31"),
-          "string",
-          "Jane Doe",
-          List(
+          fullName = "Jane Doe",
+          dateOfBirth = LocalDate.parse("2001-01-31"),
+          nationality = "IRL",
+          statuses = List(
             ImmigrationStatus(
-              "ILR",
-              true,
-              Some(LocalDate.parse("2018-12-12")),
-              Some(LocalDate.parse("2018-01-31"))))
+              statusStartDate = LocalDate.parse("2018-12-12"),
+              statusEndDate = Some(LocalDate.parse("2018-01-31")),
+              productType = "EUS",
+              immigrationStatus = "ILR",
+              noRecourseToPublicFunds = true
+            ))
         )
         journeyState.get shouldBe Some(
           (
@@ -191,25 +193,27 @@ class HomeOfficeSettledStatusFrontendControllerISpec
       "display status found page" in {
         val query =
           StatusCheckByNinoRequest("2001-01-31", "JANE", "DOE", Nino("RJ301829A"))
-        val queryResult = StatusCheckResult(
-          LocalDate.parse("2001-01-31"),
-          "string",
-          "Jane Doe",
-          List(
+        val expectedResult = StatusCheckResult(
+          fullName = "Jane Doe",
+          dateOfBirth = LocalDate.parse("2001-01-31"),
+          nationality = "IRL",
+          statuses = List(
             ImmigrationStatus(
-              "ILR",
-              true,
-              Some(LocalDate.parse("2018-12-12")),
-              Some(LocalDate.parse("2018-01-31"))))
+              statusStartDate = LocalDate.parse("2018-12-12"),
+              statusEndDate = Some(LocalDate.parse("2018-01-31")),
+              productType = "EUS",
+              immigrationStatus = "ILR",
+              noRecourseToPublicFunds = true
+            ))
         )
         journeyState
-          .set(StatusFound("sjdfhks123", query, queryResult), List(StatusCheckByNino(), Start))
+          .set(StatusFound("sjdfhks123", query, expectedResult), List(StatusCheckByNino(), Start))
         givenAuthorisedForStride("TBC", "StrideUserId")
         val result = controller.showStatusFound(fakeRequest)
         status(result) shouldBe 200
         checkHtmlResultWithBodyText(result, htmlEscapedMessage("status-found.title"))
         checkHtmlResultWithBodyText(result, query.nino.formatted)
-        checkHtmlResultWithBodyText(result, queryResult.fullName)
+        checkHtmlResultWithBodyText(result, expectedResult.fullName)
         checkHtmlResultWithBodyText(result, "31 January 2001")
       }
     }

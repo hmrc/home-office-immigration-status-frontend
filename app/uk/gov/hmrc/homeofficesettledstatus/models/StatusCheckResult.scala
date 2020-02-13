@@ -18,25 +18,26 @@ package uk.gov.hmrc.homeofficesettledstatus.models
 
 import java.time.LocalDate
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Format, Json}
 
 case class StatusCheckResult(
+  // <name of the migrant that has matched
+  fullName: String,
   // Date of birth of person being checked in ISO 8601 format
   dateOfBirth: LocalDate,
-  // Image of the person being checked
-  facialImage: String,
-  // Full name of person being checked
-  fullName: String,
-  // 'Right to public fund' statuses
+  // <the latest nationality that the matched migrant has provided to the Home Office
+  // (ICAO 3 letter acronym - ISO 3166-1)
+  nationality: String,
   statuses: List[ImmigrationStatus]
 ) {
 
-  def mostRecentStatus: ImmigrationStatus =
-    statuses.headOption.getOrElse(
-      ImmigrationStatus(immigrationStatus = "NONE", rightToPublicFunds = false))
+  val mostRecentStatus: Option[ImmigrationStatus] =
+    statuses
+      .sortBy(_.statusStartDate.toEpochDay * -1)
+      .headOption
 
 }
 
 object StatusCheckResult {
-  implicit val formats = Json.format[StatusCheckResult]
+  implicit val formats: Format[StatusCheckResult] = Json.format[StatusCheckResult]
 }

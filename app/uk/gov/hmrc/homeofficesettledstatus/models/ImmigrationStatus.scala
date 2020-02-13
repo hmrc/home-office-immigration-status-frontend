@@ -21,14 +21,16 @@ import java.time.LocalDate
 import play.api.libs.json.Json
 
 case class ImmigrationStatus(
-  // Underlying Immigration Status
+  // start date of this status
+  statusStartDate: LocalDate,
+  // end date of this status
+  statusEndDate: Option[LocalDate] = None,
+  // code representing the type of product that the status was associated with
+  productType: String,
+  // code representing the immigration status that is held
   immigrationStatus: String,
-  // 'Right to public funds status
-  rightToPublicFunds: Boolean,
-  // Start date of the 'right to public fund' Status in ISO 8601 format
-  statusStartDate: Option[LocalDate] = None,
-  // Expiry date of the 'right to public fund' Status in ISO 8601 format
-  statusEndDate: Option[LocalDate] = None
+  // right to public funds status for this person
+  noRecourseToPublicFunds: Boolean
 )
 
 object ImmigrationStatus {

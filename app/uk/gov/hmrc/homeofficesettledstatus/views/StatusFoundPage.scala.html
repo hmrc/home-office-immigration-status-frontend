@@ -54,17 +54,17 @@
 
             <div>
                 <dt class="cya-question">@messages("status-found.status")</dt>
-                <dd id="status" class="cya-answer">@context.immigrationStatusLabel(context.currentStatus.immigrationStatus)</dd>
+                <dd id="status" class="cya-answer">@context.immigrationStatusLabel(context.mostRecentStatus.immigrationStatus)</dd>
             </div>
 
             <div>
                 <dt class="cya-question">@messages("status-found.startDate")</dt>
-                <dd id="startDate" class="cya-answer">@context.currentStatus.statusStartDate.map(DateFormat.format).getOrElse("")</dd>
+                <dd id="startDate" class="cya-answer">@DateFormat.format(context.mostRecentStatus.statusStartDate)</dd>
             </div>
 
             <div>
                 <dt class="cya-question">@messages("status-found.expiryDate")</dt>
-                <dd id="expiryDate" class="cya-answer">@context.currentStatus.statusEndDate.map(DateFormat.format).getOrElse("")</dd>
+                <dd id="expiryDate" class="cya-answer">@context.mostRecentStatus.statusEndDate.map(DateFormat.format).getOrElse("")</dd>
             </div>
         </dl>
 

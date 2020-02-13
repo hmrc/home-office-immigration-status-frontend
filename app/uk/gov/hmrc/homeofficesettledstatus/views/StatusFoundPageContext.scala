@@ -25,27 +25,32 @@ case class StatusFoundPageContext(
   result: StatusCheckResult,
   searchAgainCall: Call) {
 
-  val currentStatus: ImmigrationStatus = result.mostRecentStatus
+  val EUS = "EUS"
+  val LTR = "LTR"
+  val ILR = "ILR"
 
-  val hasStatus: Boolean = currentStatus.immigrationStatus != "NONE"
+  val settledStatusSet: Set[String] = Set(ILR, LTR)
 
-  val statusToken: String = if (hasStatus) "success" else "error"
+  val mostRecentStatus: ImmigrationStatus = result.mostRecentStatus
+    .getOrElse(
+      throw new IllegalStateException("Expected user to have immigration status but got none"))
 
-  def statusLabel(implicit messages: Messages) = currentStatus match {
-    case s if s.immigrationStatus == "LTR" => messages("app.hasPreSettledStatus")
-    case s if s.immigrationStatus == "ILR" => messages("app.hasSettledStatus")
-    case _                                 => messages("app.hasNoStatus")
+  val hasStatus: Boolean = mostRecentStatus.productType == EUS &&
+    settledStatusSet.contains(mostRecentStatus.immigrationStatus)
+
+  val statusClass: String = if (hasStatus) "success" else "error"
+
+  def statusLabel(implicit messages: Messages) = mostRecentStatus match {
+    case s if s.productType == EUS && s.immigrationStatus == LTR =>
+      messages("app.hasPreSettledStatus")
+    case s if s.productType == EUS && s.immigrationStatus == ILR =>
+      messages("app.hasSettledStatus")
+    case _ => messages("app.hasNoStatus")
   }
 
   def immigrationStatusLabel(status: String)(implicit messages: Messages): String = status match {
-    case "LTR"  => messages("app.status.LTR")
-    case "ILR"  => messages("app.status.ILR")
-    case "ETLR" => messages("app.status.ETLR")
-    case "NONE" => messages("app.status.NONE")
-    case other  => other
+    case LTR   => messages("app.status.LTR")
+    case ILR   => messages("app.status.ILR")
+    case other => other
   }
-
-  def rightToPublicFundsMessage(implicit messages: Messages): String =
-    if (currentStatus.rightToPublicFunds) messages("status-found.right-to-public-funds.true")
-    else messages("status-found.right-to-public-funds.false")
 }
