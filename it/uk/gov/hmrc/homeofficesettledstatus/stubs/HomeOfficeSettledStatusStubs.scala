@@ -40,12 +40,13 @@ trait HomeOfficeSettledStatusStubs {
       |  "correlationId": "sjdfhks123",
       |  "result": {
       |    "dateOfBirth": "2001-01-31",
-      |    "facialImage": "string",
+      |    "nationality": "IRL",
       |    "fullName": "Jane Doe",
       |    "statuses": [
       |      {
+      |        "productType": "EUS",
       |        "immigrationStatus": "ILR",
-      |        "rightToPublicFunds": true,
+      |        "noRecourseToPublicFunds": true,
       |        "statusEndDate": "2018-01-31",
       |        "statusStartDate": "2018-12-12"
       |      }

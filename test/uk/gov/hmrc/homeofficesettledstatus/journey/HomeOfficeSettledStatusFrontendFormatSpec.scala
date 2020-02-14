@@ -64,14 +64,14 @@ class HomeOfficeSettledStatusFrontendFormatSpec extends UnitSpec {
           correlationId = "1234567890",
           query = StatusCheckByNinoRequest("1956-05-08", "bar", "foo", Nino("RJ301829A")),
           result = StatusCheckResult(
-            LocalDate.parse("1956-05-08"),
-            "string",
             "Foo Bar",
-            List(ImmigrationStatus("ILR", true, Some(LocalDate.parse("2001-01-01")), None)))
+            LocalDate.parse("1956-05-08"),
+            "IRL",
+            List(ImmigrationStatus(LocalDate.parse("2001-01-01"), None, "EUS", "ILR", true)))
         )
 
         val json = Json.parse(
-          """{"state":"StatusFound","properties":{"correlationId":"1234567890","query":{"dateOfBirth":"1956-05-08","familyName":"bar","givenName":"foo","nino":"RJ301829A"},"result":{"dateOfBirth":"1956-05-08","facialImage":"string","fullName":"Foo Bar","statuses":[{"immigrationStatus":"ILR","rightToPublicFunds":true,"statusStartDate":"2001-01-01"}]}}}""")
+          """{"state":"StatusFound","properties":{"correlationId":"1234567890","query":{"dateOfBirth":"1956-05-08","familyName":"bar","givenName":"foo","nino":"RJ301829A"},"result":{"fullName":"Foo Bar","dateOfBirth":"1956-05-08","nationality":"IRL","statuses":[{"statusStartDate":"2001-01-01","productType":"EUS","immigrationStatus":"ILR","noRecourseToPublicFunds":true}]}}}""")
         Json.toJson(state) shouldBe json
         json.as[State] shouldBe state
       }
@@ -80,7 +80,7 @@ class HomeOfficeSettledStatusFrontendFormatSpec extends UnitSpec {
         val state = StatusCheckFailure(
           correlationId = "1234567890",
           query = StatusCheckByNinoRequest("1956-05-08", "bar", "foo", Nino("RJ301829A")),
-          error = StatusCheckError(Some("FOO_ERROR"), Some(List(ValidationError("code1", "name1"))))
+          error = StatusCheckError("FOO_ERROR", Some(List(ValidationError("code1", "name1"))))
         )
 
         val json = Json.parse(
