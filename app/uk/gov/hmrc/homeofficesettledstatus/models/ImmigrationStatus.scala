@@ -34,5 +34,12 @@ case class ImmigrationStatus(
 )
 
 object ImmigrationStatus {
+
+  val EUS = "EUS"
+  val LTR = "LTR"
+  val ILR = "ILR"
+
+  val settledStatusSet: Set[String] = Set(ILR, LTR)
+
   implicit val formats = Json.format[ImmigrationStatus]
 }

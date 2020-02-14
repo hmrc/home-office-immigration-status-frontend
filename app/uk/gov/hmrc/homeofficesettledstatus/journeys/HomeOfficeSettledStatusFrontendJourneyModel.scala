@@ -18,7 +18,8 @@ package uk.gov.hmrc.homeofficesettledstatus.journeys
 
 import java.time.{LocalDate, ZoneId}
 
-import uk.gov.hmrc.homeofficesettledstatus.models.{StatusCheckByNinoRequest, StatusCheckError, StatusCheckRange, StatusCheckResponse, StatusCheckResult}
+import uk.gov.hmrc.homeofficesettledstatus.models.ImmigrationStatus.EUS
+import uk.gov.hmrc.homeofficesettledstatus.models._
 import uk.gov.hmrc.play.fsm.JourneyModel
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -77,6 +78,7 @@ object HomeOfficeSettledStatusFrontendJourneyModel extends JourneyModel {
               query.statusCheckRange.flatMap(_.endDate).getOrElse(LocalDate.now(ZoneId.of("UTC")))
             query.copy(statusCheckRange = Some(StatusCheckRange(Some(startDate), Some(endDate))))
           }
+
           checkStatusByNino(extendedQuery).flatMap {
 
             case StatusCheckResponse(correlationId, Some(error), _) =>
@@ -87,7 +89,12 @@ object HomeOfficeSettledStatusFrontendJourneyModel extends JourneyModel {
               }
 
             case StatusCheckResponse(correlationId, _, Some(result)) =>
-              goto(StatusFound(correlationId, query, result))
+              if (result.mostRecentStatus.exists(s =>
+                    s.productType == EUS && ImmigrationStatus.settledStatusSet.contains(
+                      s.immigrationStatus)))
+                goto(StatusFound(correlationId, query, result))
+              else
+                goto(StatusCheckFailure(correlationId, query, StatusCheckError("")))
           }
       }
   }

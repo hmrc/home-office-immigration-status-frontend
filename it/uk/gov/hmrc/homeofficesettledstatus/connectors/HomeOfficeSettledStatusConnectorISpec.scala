@@ -59,7 +59,7 @@ class HomeOfficeSettledStatusConnectorISpec extends BaseISpec with HomeOfficeSet
 
         result.result shouldBe None
         result.error shouldBe defined
-        result.error.get.errCode.get shouldBe "ERR_REQUEST_INVALID"
+        result.error.get.errCode shouldBe "ERR_REQUEST_INVALID"
       }
 
       "return check error when 404 response ERR_NOT_FOUND" in {
@@ -70,7 +70,7 @@ class HomeOfficeSettledStatusConnectorISpec extends BaseISpec with HomeOfficeSet
 
         result.result shouldBe None
         result.error shouldBe defined
-        result.error.get.errCode.get shouldBe "ERR_NOT_FOUND"
+        result.error.get.errCode shouldBe "ERR_NOT_FOUND"
       }
 
       "return check error when 400 response ERR_VALIDATION" in {
@@ -81,7 +81,7 @@ class HomeOfficeSettledStatusConnectorISpec extends BaseISpec with HomeOfficeSet
 
         result.result shouldBe None
         result.error shouldBe defined
-        result.error.get.errCode.get shouldBe "ERR_VALIDATION"
+        result.error.get.errCode shouldBe "ERR_VALIDATION"
       }
 
       "throw exception if other 4xx response" in {

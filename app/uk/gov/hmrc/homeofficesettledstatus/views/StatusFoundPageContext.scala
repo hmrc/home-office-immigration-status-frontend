@@ -19,24 +19,19 @@ package uk.gov.hmrc.homeofficesettledstatus.views
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import uk.gov.hmrc.homeofficesettledstatus.models.{ImmigrationStatus, StatusCheckByNinoRequest, StatusCheckResult}
+import ImmigrationStatus.{EUS, ILR, LTR}
 
 case class StatusFoundPageContext(
   query: StatusCheckByNinoRequest,
   result: StatusCheckResult,
   searchAgainCall: Call) {
 
-  val EUS = "EUS"
-  val LTR = "LTR"
-  val ILR = "ILR"
-
-  val settledStatusSet: Set[String] = Set(ILR, LTR)
-
   val mostRecentStatus: ImmigrationStatus = result.mostRecentStatus
     .getOrElse(
       throw new IllegalStateException("Expected user to have immigration status but got none"))
 
   val hasStatus: Boolean = mostRecentStatus.productType == EUS &&
-    settledStatusSet.contains(mostRecentStatus.immigrationStatus)
+    ImmigrationStatus.settledStatusSet.contains(mostRecentStatus.immigrationStatus)
 
   val statusClass: String = if (hasStatus) "success" else "error"
 

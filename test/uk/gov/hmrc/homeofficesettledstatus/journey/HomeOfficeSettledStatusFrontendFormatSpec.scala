@@ -80,7 +80,7 @@ class HomeOfficeSettledStatusFrontendFormatSpec extends UnitSpec {
         val state = StatusCheckFailure(
           correlationId = "1234567890",
           query = StatusCheckByNinoRequest("1956-05-08", "bar", "foo", Nino("RJ301829A")),
-          error = StatusCheckError(Some("FOO_ERROR"), Some(List(ValidationError("code1", "name1"))))
+          error = StatusCheckError("FOO_ERROR", Some(List(ValidationError("code1", "name1"))))
         )
 
         val json = Json.parse(
