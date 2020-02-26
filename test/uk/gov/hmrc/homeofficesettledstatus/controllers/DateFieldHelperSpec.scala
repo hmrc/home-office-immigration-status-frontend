@@ -55,6 +55,13 @@ class DateFieldHelperSpec extends UnitSpec {
       validateDate("2999-06-07") shouldBe true
       validateDate("2222-XX-XX") shouldBe true
       validateDate("1900-12-XX") shouldBe true
+      validateDate("2000-02-29") shouldBe true
+      validateDate("2020-02-29") shouldBe true
+      validateDate("2016-02-29") shouldBe true
+      validateDate("2012-02-29") shouldBe true
+      validateDate("2008-02-29") shouldBe true
+      validateDate("2004-02-29") shouldBe true
+      validateDate("2000-02-29") shouldBe true
     }
     "format date from fields" in {
       formatDateFromFields("", "", "") shouldBe ""
@@ -76,6 +83,7 @@ class DateFieldHelperSpec extends UnitSpec {
       parseDateIntoFields("2019-XX-31") shouldBe Some("2019", "", "31")
       parseDateIntoFields("foo") shouldBe Some(("foo", "", ""))
       parseDateIntoFields("2019-foo-bar") shouldBe Some(("2019", "foo", "bar"))
+      parseDateIntoFields("") shouldBe Some(("", "", ""))
     }
   }
 

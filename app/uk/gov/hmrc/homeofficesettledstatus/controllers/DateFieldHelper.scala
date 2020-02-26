@@ -23,7 +23,6 @@ import play.api.data.validation.Constraint
 
 import scala.annotation.tailrec
 import scala.util.Try
-import scala.util.control.NonFatal
 
 object DateFieldHelper {
 
@@ -60,7 +59,7 @@ object DateFieldHelper {
 
   def parseDateIntoFields(date: String): Option[(String, String, String)] = {
     val ydm: Array[String] = date.split('-') ++ Array("", "")
-    if (ydm.length >= 3) Some((ydm(0), removeWildcard(ydm(1)), removeWildcard(ydm(2)))) else None
+    Some((ydm(0), removeWildcard(ydm(1)), removeWildcard(ydm(2))))
   }
 
   def removeWildcard(s: String): String = if (s.toUpperCase == "XX") "" else s

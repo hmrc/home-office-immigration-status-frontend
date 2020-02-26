@@ -48,17 +48,7 @@ trait AuthActions extends AuthorisedFunctions with AuthRedirects {
 
   def handleFailure(implicit request: Request[_]): PartialFunction[Throwable, Result] = {
 
-    case _: NoActiveSession ⇒
-      val continueUrl = CallOps.localFriendlyUrl(env, config)(request.uri, request.host)
-      toStrideLogin(continueUrl)
-
-    case _: UnsupportedAuthProvider ⇒
-      Logger.warn(s"Logged in user with unsupported auth provider")
-      val continueUrl = CallOps.localFriendlyUrl(env, config)(request.uri, request.host)
-      toStrideLogin(continueUrl)
-
-    case _: InsufficientEnrolments ⇒
-      Logger.warn(s"Logged in user does not have required enrolments")
+    case _: AuthorisationException ⇒
       val continueUrl = CallOps.localFriendlyUrl(env, config)(request.uri, request.host)
       toStrideLogin(continueUrl)
   }
