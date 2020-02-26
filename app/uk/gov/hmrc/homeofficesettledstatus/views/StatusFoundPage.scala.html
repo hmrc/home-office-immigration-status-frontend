@@ -65,12 +65,7 @@
             </div>
         </dl>
 
-      <p>
-        <form action="@context.searchAgainCall.url" method="get" novalidate="">
-         <input type="hidden" name="answers-checked" value="true">
-         <button class="govuk-button" data-module="govuk-button">@messages("generic.searchAgain")</button>
-        </form>
-      </p>
+      <p><a class="button" role="button" href="@context.searchAgainCall.url">@messages("generic.searchAgain")</a></p>
     </div>
   </div>
 

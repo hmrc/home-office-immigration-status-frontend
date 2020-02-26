@@ -73,12 +73,7 @@
 
       <p class="form-group">@Messages("status-check-failure.para-ifCorrect-part1") <a href="#" class="govuk-link">@Messages("status-check-failure.para-ifCorrect-link")</a> @Messages("status-check-failure.para-ifCorrect-part2")</p>
 
-      <p>
-       <form action="@searchAgainCall.url" method="get" novalidate="">
-        <input type="hidden" name="answers-checked" value="true">
-        <button id="search" class="govuk-button" data-module="govuk-button">@messages("generic.searchAgain")</button>
-       </form>
-      </p>
+      <p><a class="button" role="button" href="@searchAgainCall.url">@messages("generic.searchAgain")</a></p>
     </div>
   </div>
 }
