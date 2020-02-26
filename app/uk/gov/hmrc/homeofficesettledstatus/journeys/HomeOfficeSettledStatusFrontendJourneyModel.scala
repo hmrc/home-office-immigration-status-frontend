@@ -82,13 +82,14 @@ object HomeOfficeSettledStatusFrontendJourneyModel extends JourneyModel {
             case StatusCheckResponse(correlationId, Some(error), _) =>
               goto(StatusCheckFailure(correlationId, query, error))
 
-            case StatusCheckResponse(correlationId, _, Some(result)) =>
-              if (result.mostRecentStatus.exists(s =>
-                    s.productType == EUS && ImmigrationStatus.settledStatusSet.contains(
-                      s.immigrationStatus)))
-                goto(StatusFound(correlationId, query, result))
-              else
-                goto(StatusCheckFailure(correlationId, query, StatusCheckError("")))
+            case StatusCheckResponse(correlationId, _, Some(result))
+                if result.mostRecentStatus.exists(s =>
+                  s.productType == EUS && ImmigrationStatus.settledStatusSet.contains(
+                    s.immigrationStatus)) =>
+              goto(StatusFound(correlationId, query, result))
+
+            case StatusCheckResponse(correlationId, _, _) =>
+              goto(StatusCheckFailure(correlationId, query, StatusCheckError("ERR_UNKNOWN")))
           }
       }
   }

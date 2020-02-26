@@ -6,15 +6,17 @@ import play.api.Application
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State.{Start, StatusCheckByNino, StatusFound}
 import uk.gov.hmrc.homeofficesettledstatus.models.{ImmigrationStatus, StatusCheckByNinoRequest, StatusCheckError, StatusCheckResult}
 import uk.gov.hmrc.homeofficesettledstatus.stubs.HomeOfficeSettledStatusStubs
 import uk.gov.hmrc.homeofficesettledstatus.support.BaseISpec
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.Duration
 
 class HomeOfficeSettledStatusFrontendControllerISpec
-    extends BaseISpec with HomeOfficeSettledStatusStubs {
+    extends BaseISpec with HomeOfficeSettledStatusStubs with JourneyStateHelpers {
 
   private lazy val controller: HomeOfficeSettledStatusFrontendController =
     app.injector.instanceOf[HomeOfficeSettledStatusFrontendController]
@@ -24,7 +26,8 @@ class HomeOfficeSettledStatusFrontendControllerISpec
     .overrides(new TestAgentInvitationJourneyModule)
     .build()
 
-  lazy val journeyState = app.injector.instanceOf[TestHomeOfficeSettledStatusFrontendJourneyService]
+  lazy val journeyState: TestHomeOfficeSettledStatusFrontendJourneyService =
+    app.injector.instanceOf[TestHomeOfficeSettledStatusFrontendJourneyService]
 
   import journeyState.model.State._
 
@@ -184,24 +187,8 @@ class HomeOfficeSettledStatusFrontendControllerISpec
 
     "GET /status-found" should {
 
-      "display status found page" in {
-        val query =
-          StatusCheckByNinoRequest("2001-01-31", "JANE", "DOE", Nino("RJ301829A"))
-        val expectedResult = StatusCheckResult(
-          fullName = "Jane Doe",
-          dateOfBirth = LocalDate.parse("2001-01-31"),
-          nationality = "IRL",
-          statuses = List(
-            ImmigrationStatus(
-              statusStartDate = LocalDate.parse("2018-12-12"),
-              statusEndDate = Some(LocalDate.parse("2018-01-31")),
-              productType = "EUS",
-              immigrationStatus = "ILR",
-              noRecourseToPublicFunds = true
-            ))
-        )
-        journeyState
-          .set(StatusFound("sjdfhks123", query, expectedResult), List(StatusCheckByNino(), Start))
+      "display status found page if current state is StatusFound" in {
+        val (query, expectedResult) = givenJourneyStateIsStatusFound
         givenAuthorisedForStride("TBC", "StrideUserId")
         val result = controller.showStatusFound(fakeRequest)
         status(result) shouldBe 200
@@ -209,6 +196,28 @@ class HomeOfficeSettledStatusFrontendControllerISpec
         checkHtmlResultWithBodyText(result, query.nino.formatted)
         checkHtmlResultWithBodyText(result, expectedResult.fullName)
         checkHtmlResultWithBodyText(result, "31 January 2001")
+      }
+
+      "redirect to start page if current state is Start" in {
+        journeyState.set(Start, Nil)
+        givenAuthorisedForStride("TBC", "StrideUserId")
+        val result = controller.showStatusFound(fakeRequest)
+        status(result) shouldBe 303
+        redirectLocation(result) shouldBe Some("/check-settled-status")
+      }
+
+      "redirect to start page if current state is StatusCheckFailure" in {
+        val query =
+          StatusCheckByNinoRequest("2001-01-31", "JANE", "DOE", Nino("RJ301829A"))
+        val queryError = StatusCheckError(errCode = "ERR_NOT_FOUND")
+        journeyState
+          .set(
+            StatusCheckFailure("sjdfhks123", query, queryError),
+            List(StatusCheckByNino(), Start))
+        givenAuthorisedForStride("TBC", "StrideUserId")
+        val result = controller.showStatusFound(fakeRequest)
+        status(result) shouldBe 303
+        redirectLocation(result) shouldBe Some("/check-settled-status")
       }
     }
 
@@ -231,7 +240,59 @@ class HomeOfficeSettledStatusFrontendControllerISpec
         checkHtmlResultWithBodyText(result, query.familyName)
         checkHtmlResultWithBodyText(result, query.dateOfBirth)
       }
+
+      "redirect to start page if current state is Start" in {
+        journeyState.set(Start, Nil)
+        givenAuthorisedForStride("TBC", "StrideUserId")
+        val result = controller.showStatusCheckFailure(fakeRequest)
+        status(result) shouldBe 303
+        redirectLocation(result) shouldBe Some("/check-settled-status")
+      }
+
+      "redirect to start page if current state is StatusFound" in {
+        givenJourneyStateIsStatusFound
+        givenAuthorisedForStride("TBC", "StrideUserId")
+        val result = controller.showStatusCheckFailure(fakeRequest)
+        status(result) shouldBe 303
+        redirectLocation(result) shouldBe Some("/check-settled-status")
+      }
     }
+  }
+
+}
+
+trait JourneyStateHelpers {
+
+  def journeyState: TestHomeOfficeSettledStatusFrontendJourneyService
+
+  def givenJourneyStateIsStatusFound(
+    implicit headerCarrier: HeaderCarrier,
+    timeout: Duration): (StatusCheckByNinoRequest, StatusCheckResult) = {
+    val query =
+      StatusCheckByNinoRequest("2001-01-31", "JANE", "DOE", Nino("RJ301829A"))
+    val expectedResult = StatusCheckResult(
+      fullName = "Jane Doe",
+      dateOfBirth = LocalDate.parse("2001-01-31"),
+      nationality = "IRL",
+      statuses = List(
+        ImmigrationStatus(
+          statusStartDate = LocalDate.parse("2018-12-12"),
+          productType = "EUS",
+          immigrationStatus = "ILR",
+          noRecourseToPublicFunds = true
+        ),
+        ImmigrationStatus(
+          statusStartDate = LocalDate.parse("2018-01-01"),
+          statusEndDate = Some(LocalDate.parse("2018-12-11")),
+          productType = "EUS",
+          immigrationStatus = "LTR",
+          noRecourseToPublicFunds = false
+        )
+      )
+    )
+    journeyState
+      .set(StatusFound("sjdfhks123", query, expectedResult), List(StatusCheckByNino(), Start))
+    (query, expectedResult)
   }
 
 }
