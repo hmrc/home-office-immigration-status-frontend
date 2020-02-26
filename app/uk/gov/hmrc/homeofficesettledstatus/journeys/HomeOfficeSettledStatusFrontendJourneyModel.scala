@@ -49,8 +49,6 @@ object HomeOfficeSettledStatusFrontendJourneyModel extends JourneyModel {
       error: StatusCheckError)
         extends State with IsError
 
-    case class MultipleMatchesFound(correlationId: String, query: StatusCheckByNinoRequest)
-        extends State with IsError
   }
 
   object Transitions {
@@ -82,11 +80,7 @@ object HomeOfficeSettledStatusFrontendJourneyModel extends JourneyModel {
           checkStatusByNino(extendedQuery).flatMap {
 
             case StatusCheckResponse(correlationId, Some(error), _) =>
-              if (error.errCode.contains("ERR_CONFLICT")) {
-                goto(MultipleMatchesFound(correlationId, query))
-              } else {
-                goto(StatusCheckFailure(correlationId, query, error))
-              }
+              goto(StatusCheckFailure(correlationId, query, error))
 
             case StatusCheckResponse(correlationId, _, Some(result)) =>
               if (result.mostRecentStatus.exists(s =>

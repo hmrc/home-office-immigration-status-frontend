@@ -26,22 +26,19 @@ object HomeOfficeSettledStatusFrontendJourneyStateFormats extends JsonStateForma
   val statusFound = Json.format[StatusFound]
   val statusCheckByNino = Json.format[StatusCheckByNino]
   val statusCheckFailure = Json.format[StatusCheckFailure]
-  val multipleMatchesFound = Json.format[MultipleMatchesFound]
 
   override val serializeStateProperties: PartialFunction[State, JsValue] = {
-    case s: StatusCheckByNino    => statusCheckByNino.writes(s)
-    case s: StatusFound          => statusFound.writes(s)
-    case s: StatusCheckFailure   => statusCheckFailure.writes(s)
-    case s: MultipleMatchesFound => multipleMatchesFound.writes(s)
+    case s: StatusCheckByNino  => statusCheckByNino.writes(s)
+    case s: StatusFound        => statusFound.writes(s)
+    case s: StatusCheckFailure => statusCheckFailure.writes(s)
   }
 
   override def deserializeState(stateName: String, properties: JsValue): JsResult[State] =
     stateName match {
-      case "Start"                => JsSuccess(Start)
-      case "StatusCheckByNino"    => statusCheckByNino.reads(properties)
-      case "StatusFound"          => statusFound.reads(properties)
-      case "StatusCheckFailure"   => statusCheckFailure.reads(properties)
-      case "MultipleMatchesFound" => multipleMatchesFound.reads(properties)
-      case _                      => JsError(s"Unknown state name $stateName")
+      case "Start"              => JsSuccess(Start)
+      case "StatusCheckByNino"  => statusCheckByNino.reads(properties)
+      case "StatusFound"        => statusFound.reads(properties)
+      case "StatusCheckFailure" => statusCheckFailure.reads(properties)
+      case _                    => JsError(s"Unknown state name $stateName")
     }
 }
