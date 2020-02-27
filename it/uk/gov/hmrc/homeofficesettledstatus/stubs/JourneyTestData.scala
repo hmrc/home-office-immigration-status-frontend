@@ -7,7 +7,7 @@ import uk.gov.hmrc.homeofficesettledstatus.models.{ImmigrationStatus, StatusChec
 
 trait JourneyTestData {
 
-  val correlationId: String = scala.util.Random.nextString(64)
+  val correlationId: String = scala.util.Random.alphanumeric.take(64).toString()
 
   val validQuery =
     StatusCheckByNinoRequest("2001-01-31", "JANE", "DOE", Nino("RJ301829A"))
