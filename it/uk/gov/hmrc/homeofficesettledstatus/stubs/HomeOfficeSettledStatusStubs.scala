@@ -7,7 +7,7 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.mvc.Http.HeaderNames
 import uk.gov.hmrc.homeofficesettledstatus.support.WireMockSupport
 
-trait HomeOfficeSettledStatusStubs {
+trait HomeOfficeSettledStatusStubs extends JourneyTestData {
   me: WireMockSupport =>
 
   def validRequestBodyWith3MonthsDateRange = {
@@ -36,23 +36,23 @@ trait HomeOfficeSettledStatusStubs {
       |}""".stripMargin
 
   val responseBodyWithStatus: String =
-    """{
-      |  "correlationId": "sjdfhks123",
-      |  "result": {
-      |    "dateOfBirth": "2001-01-31",
-      |    "nationality": "IRL",
-      |    "fullName": "Jane Doe",
-      |    "statuses": [
-      |      {
-      |        "productType": "EUS",
-      |        "immigrationStatus": "ILR",
-      |        "noRecourseToPublicFunds": true,
-      |        "statusEndDate": "2018-01-31",
-      |        "statusStartDate": "2018-12-12"
-      |      }
-      |    ]
-      |  }
-      |}""".stripMargin
+    s"""{
+       |  "correlationId": "$correlationId",
+       |  "result": {
+       |    "dateOfBirth": "2001-01-31",
+       |    "nationality": "IRL",
+       |    "fullName": "Jane Doe",
+       |    "statuses": [
+       |      {
+       |        "productType": "EUS",
+       |        "immigrationStatus": "ILR",
+       |        "noRecourseToPublicFunds": true,
+       |        "statusEndDate": "2018-01-31",
+       |        "statusStartDate": "2018-12-12"
+       |      }
+       |    ]
+       |  }
+       |}""".stripMargin
 
   def givenStatusCheckSucceeds(): StubMapping =
     givenStatusPublicFundsByNinoStub(
@@ -69,12 +69,12 @@ trait HomeOfficeSettledStatusStubs {
   def givenStatusCheckErrorWhenMissingInputField(): StubMapping = {
 
     val errorResponseBody: String =
-      """{
-        |  "correlationId": "sjdfhks123",
-        |  "error": {
-        |    "errCode": "ERR_REQUEST_INVALID"
-        |  }
-        |}""".stripMargin
+      s"""{
+         |  "correlationId": "$correlationId",
+         |  "error": {
+         |    "errCode": "ERR_REQUEST_INVALID"
+         |  }
+         |}""".stripMargin
 
     givenStatusPublicFundsByNinoStub(400, validRequestBodyWith3MonthsDateRange, errorResponseBody)
   }
@@ -82,12 +82,12 @@ trait HomeOfficeSettledStatusStubs {
   def givenStatusCheckErrorWhenStatusNotFound(): StubMapping = {
 
     val errorResponseBody: String =
-      """{
-        |  "correlationId": "sjdfhks123",
-        |  "error": {
-        |    "errCode": "ERR_NOT_FOUND"
-        |  }
-        |}""".stripMargin
+      s"""{
+         |  "correlationId": "$correlationId",
+         |  "error": {
+         |    "errCode": "ERR_NOT_FOUND"
+         |  }
+         |}""".stripMargin
 
     givenStatusPublicFundsByNinoStub(404, validRequestBodyWith3MonthsDateRange, errorResponseBody)
   }
@@ -95,12 +95,12 @@ trait HomeOfficeSettledStatusStubs {
   def givenStatusCheckErrorWhenConflict(): StubMapping = {
 
     val errorResponseBody: String =
-      """{
-        |  "correlationId": "sjdfhks123",
-        |  "error": {
-        |    "errCode": "ERR_CONFLICT"
-        |  }
-        |}""".stripMargin
+      s"""{
+         |  "correlationId": "$correlationId",
+         |  "error": {
+         |    "errCode": "ERR_CONFLICT"
+         |  }
+         |}""".stripMargin
 
     givenStatusPublicFundsByNinoStub(409, validRequestBodyWith3MonthsDateRange, errorResponseBody)
   }
@@ -108,18 +108,18 @@ trait HomeOfficeSettledStatusStubs {
   def givenStatusCheckErrorWhenDOBInvalid(): StubMapping = {
 
     val errorResponseBody: String =
-      """{
-        |  "correlationId": "sjdfhks123",
-        |  "error": {
-        |    "errCode": "ERR_VALIDATION",
-        |    "fields": [
-        |      {
-        |        "code": "ERR_INVALID_DOB",
-        |        "name": "dateOfBirth"
-        |      }
-        |    ]
-        |  }
-        |}""".stripMargin
+      s"""{
+         |  "correlationId": "$correlationId",
+         |  "error": {
+         |    "errCode": "ERR_VALIDATION",
+         |    "fields": [
+         |      {
+         |        "code": "ERR_INVALID_DOB",
+         |        "name": "dateOfBirth"
+         |      }
+         |    ]
+         |  }
+         |}""".stripMargin
 
     givenStatusPublicFundsByNinoStub(400, validRequestBodyWith3MonthsDateRange, errorResponseBody)
 

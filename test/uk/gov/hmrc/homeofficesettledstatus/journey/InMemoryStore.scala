@@ -16,18 +16,22 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.journey
 
-import uk.gov.hmrc.http.HeaderCarrier
+import java.util.concurrent.atomic.AtomicReference
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait TestStorage[S] {
+/**
+  * Basic in-memory store used to test journeys.
+  */
+trait InMemoryStore[S, C] {
 
-  @volatile
-  private var state: Option[S] = None
+  private val state = new AtomicReference[Option[S]](None)
 
-  def fetch(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[S]] =
-    Future.successful(state)
-  def save(newState: S)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[S] = Future {
-    state = Some(newState); newState
+  def fetch(implicit requestContext: C, ec: ExecutionContext): Future[Option[S]] =
+    Future.successful(state.get)
+
+  def save(newState: S)(implicit requestContext: C, ec: ExecutionContext): Future[S] = Future {
+    state.set(Some(newState))
+    newState
   }
 }

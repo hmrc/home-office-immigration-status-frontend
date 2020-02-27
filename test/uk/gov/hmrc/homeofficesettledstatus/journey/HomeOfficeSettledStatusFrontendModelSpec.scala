@@ -22,9 +22,8 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State._
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.Transitions._
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.{State, Transition, TransitionNotAllowed}
-import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyService
 import uk.gov.hmrc.homeofficesettledstatus.models._
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.homeofficesettledstatus.services.HomeOfficeSettledStatusFrontendJourneyService
 import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -33,7 +32,9 @@ import scala.concurrent.Future
 class HomeOfficeSettledStatusFrontendModelSpec
     extends UnitSpec with StateMatchers[State] with TestData {
 
-  implicit val hc: HeaderCarrier = HeaderCarrier()
+  // dummy journey context
+  case class DummyContext()
+  implicit val dummyContext: DummyContext = DummyContext()
 
   "HomeOfficeSettledStatusFrontendModel" when {
 
@@ -132,7 +133,9 @@ class HomeOfficeSettledStatusFrontendModelSpec
   }
 
   case class given(initialState: State)
-      extends HomeOfficeSettledStatusFrontendJourneyService with TestStorage[(State, List[State])] {
+      extends HomeOfficeSettledStatusFrontendJourneyService[DummyContext]
+      with InMemoryStore[(State, List[State]), DummyContext] {
+
     await(save((initialState, Nil)))
 
     def withBreadcrumbs(breadcrumbs: State*): this.type = {

@@ -39,7 +39,9 @@ trait AuthActions extends AuthorisedFunctions with AuthRedirects {
     ec: ExecutionContext): Future[Result] =
     authorised(Enrolment(authorisedStrideGroup) and AuthProviders(PrivilegedApplication))
       .retrieve(credentials) {
-        case Some(Credentials(authProviderId, _)) => body(authProviderId)
+        case Some(Credentials(authProviderId, _)) =>
+          body(authProviderId)
+
         case None =>
           Logger.warn("No credentials found for the user")
           Future.successful(Forbidden)

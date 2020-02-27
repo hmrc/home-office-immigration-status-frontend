@@ -4,7 +4,7 @@ import play.api.mvc.Result
 import play.api.mvc.Results._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.api.{Configuration, Environment}
+import play.api.{Application, Configuration, Environment}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.homeofficesettledstatus.support.BaseISpec
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
@@ -12,6 +12,8 @@ import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import scala.concurrent.Future
 
 class AuthActionsISpec extends BaseISpec {
+
+  override def fakeApplication: Application = appBuilder.build()
 
   object TestController extends AuthActions {
 

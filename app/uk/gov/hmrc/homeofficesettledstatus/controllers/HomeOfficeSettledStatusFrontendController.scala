@@ -25,8 +25,8 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficesettledstatus.connectors.{FrontendAuthConnector, HomeOfficeSettledStatusProxyConnector}
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State.{StatusCheckFailure, _}
-import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyService
 import uk.gov.hmrc.homeofficesettledstatus.models.{StatusCheckByNinoRequest, StatusCheckRange}
+import uk.gov.hmrc.homeofficesettledstatus.services.HomeOfficeSettledStatusFrontendJourneyServiceWithHeaderCarrier
 import uk.gov.hmrc.homeofficesettledstatus.views.html.{StatusCheckByNinoPage, StatusCheckFailurePage, StatusFoundPage}
 import uk.gov.hmrc.homeofficesettledstatus.views.{LayoutComponents, StatusFoundPageContext}
 import uk.gov.hmrc.homeofficesettledstatus.wiring.AppConfig
@@ -44,7 +44,7 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
   homeOfficeSettledStatusProxyConnector: HomeOfficeSettledStatusProxyConnector,
   val authConnector: FrontendAuthConnector,
   val env: Environment,
-  override val journeyService: HomeOfficeSettledStatusFrontendJourneyService,
+  override val journeyService: HomeOfficeSettledStatusFrontendJourneyServiceWithHeaderCarrier,
   controllerComponents: MessagesControllerComponents,
   layoutComponents: LayoutComponents)(implicit val config: Configuration, ec: ExecutionContext)
     extends FrontendController(controllerComponents) with I18nSupport with AuthActions
@@ -99,10 +99,12 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
     * used by play-fsm internally to create redirects.
     */
   override def getCallFor(state: State)(implicit request: Request[_]): Call = state match {
-    case Start => routes.HomeOfficeSettledStatusFrontendController.showStart()
+    case Start =>
+      routes.HomeOfficeSettledStatusFrontendController.showStart()
     case _: StatusCheckByNino =>
       routes.HomeOfficeSettledStatusFrontendController.showStatusCheckByNino()
-    case _: StatusFound => routes.HomeOfficeSettledStatusFrontendController.showStatusFound()
+    case _: StatusFound =>
+      routes.HomeOfficeSettledStatusFrontendController.showStatusFound()
     case _: StatusCheckFailure =>
       routes.HomeOfficeSettledStatusFrontendController.showStatusCheckFailure()
   }

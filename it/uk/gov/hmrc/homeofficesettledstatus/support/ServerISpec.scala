@@ -1,7 +1,7 @@
 package uk.gov.hmrc.homeofficesettledstatus.support
 
 import akka.stream.Materializer
-import org.scalatestplus.play.guice.{GuiceOneAppPerSuite, GuiceOneServerPerSuite}
+import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.Application
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.inject.bind
@@ -21,15 +21,21 @@ abstract class ServerISpec
     extends UnitSpec with GuiceOneServerPerSuite with WireMockSupport with AuthStubs
     with DataStreamStubs with MetricsTestSupport {
 
+  import scala.concurrent.duration._
+  override implicit val defaultTimeout: FiniteDuration = 180 seconds
+
   override implicit lazy val app: Application = appBuilder.build()
 
   protected def appBuilder: GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .configure(
-        "metrics.enabled"                -> true,
-        "auditing.enabled"               -> true,
-        "auditing.consumer.baseUri.host" -> wireMockHost,
-        "auditing.consumer.baseUri.port" -> wireMockPort)
+        "metrics.enabled"                      -> true,
+        "auditing.enabled"                     -> true,
+        "auditing.consumer.baseUri.host"       -> wireMockHost,
+        "auditing.consumer.baseUri.port"       -> wireMockPort,
+        "play.filters.csrf.method.whiteList.0" -> "POST",
+        "play.filters.csrf.method.whiteList.1" -> "GET"
+      )
       .overrides(bind[AppConfig].toInstance(TestAppConfig(wireMockBaseUrlAsString, wireMockPort)))
 
   override def commonStubs(): Unit = {

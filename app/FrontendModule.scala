@@ -17,7 +17,10 @@
 import com.google.inject.AbstractModule
 import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.auth.core.AuthConnector
+import uk.gov.hmrc.cache.repository.CacheMongoRepository
 import uk.gov.hmrc.homeofficesettledstatus.connectors.FrontendAuthConnector
+import uk.gov.hmrc.homeofficesettledstatus.repository.JourneyCacheRepository
+import uk.gov.hmrc.homeofficesettledstatus.services.{HomeOfficeSettledStatusFrontendJourneyServiceWithHeaderCarrier, MongoDBCachedHomeOfficeSettledStatusFrontendJourneyService}
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 
@@ -29,7 +32,14 @@ class FrontendModule(val environment: Environment, val configuration: Configurat
     Logger(getClass).info(s"Starting microservice : $appName : in mode : ${environment.mode}")
 
     bind(classOf[HttpGet]).to(classOf[DefaultHttpClient])
+
     bind(classOf[HttpPost]).to(classOf[DefaultHttpClient])
+
     bind(classOf[AuthConnector]).to(classOf[FrontendAuthConnector])
+
+    bind(classOf[CacheMongoRepository]).to(classOf[JourneyCacheRepository])
+
+    bind(classOf[HomeOfficeSettledStatusFrontendJourneyServiceWithHeaderCarrier])
+      .to(classOf[MongoDBCachedHomeOfficeSettledStatusFrontendJourneyService])
   }
 }

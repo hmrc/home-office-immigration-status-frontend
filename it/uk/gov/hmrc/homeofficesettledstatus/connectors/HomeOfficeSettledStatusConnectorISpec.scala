@@ -2,8 +2,11 @@ package uk.gov.hmrc.homeofficesettledstatus.connectors
 
 import java.time.{LocalDate, ZoneId}
 
+import play.api.Application
+import play.api.inject.bind
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficesettledstatus.models.{StatusCheckByNinoRequest, StatusCheckRange, StatusCheckResponse}
+import uk.gov.hmrc.homeofficesettledstatus.services.HomeOfficeSettledStatusFrontendJourneyService
 import uk.gov.hmrc.homeofficesettledstatus.stubs.HomeOfficeSettledStatusStubs
 import uk.gov.hmrc.homeofficesettledstatus.support.BaseISpec
 import uk.gov.hmrc.http._
@@ -12,6 +15,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class HomeOfficeSettledStatusConnectorISpec extends BaseISpec with HomeOfficeSettledStatusStubs {
   private implicit val hc: HeaderCarrier = HeaderCarrier()
+
+  override def fakeApplication: Application = appBuilder.build()
 
   private lazy val connector: HomeOfficeSettledStatusProxyConnector =
     app.injector.instanceOf[HomeOfficeSettledStatusProxyConnector]

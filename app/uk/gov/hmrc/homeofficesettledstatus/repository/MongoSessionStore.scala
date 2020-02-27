@@ -24,19 +24,18 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MongoSessionStore[T] {
+trait MongoSessionStore[T, C] {
 
   implicit def toFuture[A](a: A): Future[A] = Future.successful(a)
 
   val sessionName: String
   val cacheRepository: CacheRepository
 
-  def getSessionId(implicit hc: HeaderCarrier): Option[String] =
-    hc.sessionId.map(_.value)
+  def getSessionId(implicit requestContext: C): Option[String]
 
   def get(
     implicit reads: Reads[T],
-    hc: HeaderCarrier,
+    requestContext: C,
     ec: ExecutionContext): Future[Either[String, Option[T]]] =
     getSessionId match {
       case Some(sessionId) ⇒
@@ -69,7 +68,7 @@ trait MongoSessionStore[T] {
 
   def store(newSession: T)(
     implicit writes: Writes[T],
-    hc: HeaderCarrier,
+    requestContext: C,
     ec: ExecutionContext): Future[Either[String, Unit]] =
     getSessionId match {
       case Some(sessionId) ⇒
@@ -93,7 +92,7 @@ trait MongoSessionStore[T] {
         Left(s"no sessionId found in the HeaderCarrier to store in mongo")
     }
 
-  def delete()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[String, Unit]] =
+  def delete()(implicit requestContext: C, ec: ExecutionContext): Future[Either[String, Unit]] =
     getSessionId match {
       case Some(sessionId) ⇒
         cacheRepository

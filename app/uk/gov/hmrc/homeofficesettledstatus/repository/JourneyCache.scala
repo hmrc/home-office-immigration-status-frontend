@@ -22,9 +22,9 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait SessionCache[T] extends MongoSessionStore[T] {
+trait JourneyCache[T, C] extends MongoSessionStore[T, C] {
 
-  def fetch(implicit hc: HeaderCarrier, reads: Reads[T], ec: ExecutionContext): Future[Option[T]] =
+  def fetch(implicit requestContext: C, reads: Reads[T], ec: ExecutionContext): Future[Option[T]] =
     get.flatMap {
       case Right(cache) => cache
       case Left(error) =>
@@ -33,7 +33,7 @@ trait SessionCache[T] extends MongoSessionStore[T] {
     }
 
   def fetchAndClear(
-    implicit hc: HeaderCarrier,
+    implicit requestContext: C,
     reads: Reads[T],
     ec: ExecutionContext): Future[Option[T]] = {
     val result = for {
@@ -50,7 +50,7 @@ trait SessionCache[T] extends MongoSessionStore[T] {
   }
 
   def save(
-    input: T)(implicit hc: HeaderCarrier, writes: Writes[T], ec: ExecutionContext): Future[T] =
+    input: T)(implicit requestContext: C, writes: Writes[T], ec: ExecutionContext): Future[T] =
     store(input).flatMap {
       case Right(_) => input
       case Left(error) =>
@@ -58,7 +58,7 @@ trait SessionCache[T] extends MongoSessionStore[T] {
         Future.failed(new RuntimeException(error))
     }
 
-  def hardGet(implicit hc: HeaderCarrier, reads: Reads[T], ec: ExecutionContext): Future[T] =
+  def hardGet(implicit requestContext: C, reads: Reads[T], ec: ExecutionContext): Future[T] =
     fetch.map {
       case Some(entry) => entry
       case None =>

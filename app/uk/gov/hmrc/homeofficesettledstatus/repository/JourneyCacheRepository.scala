@@ -24,9 +24,8 @@ import uk.gov.hmrc.homeofficesettledstatus.wiring.AppConfig
 
 import scala.concurrent.ExecutionContext
 
-@Singleton
-class SessionCacheRepository @Inject()(appConfig: AppConfig, mongo: ReactiveMongoComponent)(
+class JourneyCacheRepository @Inject()(appConfig: AppConfig, mongo: ReactiveMongoComponent)(
   implicit ec: ExecutionContext)
-    extends CacheMongoRepository("sessions", appConfig.mongoSessionExpiryTime)(
+    extends CacheMongoRepository("journeys", appConfig.mongoSessionExpiryTime)(
       mongo.mongoConnector.db,
       ec)
