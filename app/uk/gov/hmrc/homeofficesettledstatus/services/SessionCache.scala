@@ -23,6 +23,9 @@ import uk.gov.hmrc.cache.repository.CacheRepository
 
 import scala.concurrent.{ExecutionContext, Future}
 
+/**
+  * Generic short-term session store based on mongo-caching.
+  */
 trait SessionCache[T, C] {
 
   val sessionName: String

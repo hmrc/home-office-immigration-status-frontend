@@ -25,7 +25,7 @@ import uk.gov.hmrc.play.fsm.PersistentJourneyService
 import scala.concurrent.{ExecutionContext, Future}
 
 /**
-  * Journey persistence service,
+  * Journey persistence service mixin,
   * stores encrypted serialized state using SessionCache.
   */
 trait MongoDBCachedJourneyService[RequestContext] extends PersistentJourneyService[RequestContext] {
