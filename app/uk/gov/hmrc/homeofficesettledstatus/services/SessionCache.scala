@@ -14,26 +14,42 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.homeofficesettledstatus.repository
+package uk.gov.hmrc.homeofficesettledstatus.services
 
 import play.api.Logger
 import play.api.libs.json._
 import uk.gov.hmrc.cache.model.Id
 import uk.gov.hmrc.cache.repository.CacheRepository
-import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MongoSessionStore[T, C] {
-
-  implicit def toFuture[A](a: A): Future[A] = Future.successful(a)
+trait SessionCache[T, C] {
 
   val sessionName: String
   val cacheRepository: CacheRepository
 
   def getSessionId(implicit requestContext: C): Option[String]
 
-  def get(
+  def fetch(implicit requestContext: C, reads: Reads[T], ec: ExecutionContext): Future[Option[T]] =
+    get.flatMap {
+      case Right(cache) => cache
+      case Left(error) =>
+        Logger.warn(error)
+        Future.failed(new RuntimeException(error))
+    }
+
+  def save(
+    input: T)(implicit requestContext: C, writes: Writes[T], ec: ExecutionContext): Future[T] =
+    store(input).flatMap {
+      case Right(_) => input
+      case Left(error) =>
+        Logger.warn(error)
+        Future.failed(new RuntimeException(error))
+    }
+
+  implicit def toFuture[A](a: A): Future[A] = Future.successful(a)
+
+  private def get(
     implicit reads: Reads[T],
     requestContext: C,
     ec: ExecutionContext): Future[Either[String, Option[T]]] =
@@ -66,7 +82,7 @@ trait MongoSessionStore[T, C] {
         Right(None)
     }
 
-  def store(newSession: T)(
+  private def store(newSession: T)(
     implicit writes: Writes[T],
     requestContext: C,
     ec: ExecutionContext): Future[Either[String, Unit]] =

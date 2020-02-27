@@ -20,7 +20,6 @@ import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.cache.repository.{CacheMongoRepository, CacheRepository}
 import uk.gov.hmrc.crypto.json.{JsonDecryptor, JsonEncryptor}
 import uk.gov.hmrc.crypto.{ApplicationCrypto, CompositeSymmetricCrypto, Protected}
-import uk.gov.hmrc.homeofficesettledstatus.repository.JourneyCache
 import uk.gov.hmrc.play.fsm.PersistentJourneyService
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,7 +45,7 @@ trait MongoDBCachedJourneyService[RequestContext] extends PersistentJourneyServi
   implicit lazy val encryptionFormat: JsonEncryptor[PersistentState] = new JsonEncryptor()
   implicit lazy val decryptionFormat: JsonDecryptor[PersistentState] = new JsonDecryptor()
 
-  final val cache = new JourneyCache[Protected[PersistentState], RequestContext] {
+  final val cache = new SessionCache[Protected[PersistentState], RequestContext] {
 
     override lazy val sessionName: String = journeyKey
     override lazy val cacheRepository: CacheRepository = cacheMongoRepository
