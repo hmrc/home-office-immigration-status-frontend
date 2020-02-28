@@ -33,7 +33,7 @@ case class StatusCheckResult(
 
   val mostRecentStatus: Option[ImmigrationStatus] =
     statuses
-      .sortBy(_.statusStartDate.toEpochDay * -1)
+      .sortBy(f = _.statusStartDate.toEpochDay * -1)
       .headOption
 
 }
