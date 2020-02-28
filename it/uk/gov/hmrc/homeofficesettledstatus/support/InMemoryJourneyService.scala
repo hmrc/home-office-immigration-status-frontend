@@ -1,8 +1,7 @@
-package uk.gov.hmrc.homeofficesettledstatus.controllers
+package uk.gov.hmrc.homeofficesettledstatus.support
 
 import java.util.concurrent.atomic.AtomicReference
 
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.fsm.PersistentJourneyService
 
 import scala.concurrent.{ExecutionContext, Future}

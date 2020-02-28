@@ -9,7 +9,6 @@ import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.homeofficesettledstatus.connectors.TestAppConfig
 import uk.gov.hmrc.homeofficesettledstatus.stubs.{AuthStubs, DataStreamStubs}
 import uk.gov.hmrc.homeofficesettledstatus.wiring.AppConfig
 import uk.gov.hmrc.http.HeaderCarrier
@@ -17,17 +16,23 @@ import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.test.UnitSpec
 
 abstract class BaseISpec
-    extends UnitSpec with GuiceOneAppPerSuite with WireMockSupport with AuthStubs
-    with DataStreamStubs with MetricsTestSupport {
+    extends UnitSpec with WireMockSupport with AuthStubs with DataStreamStubs
+    with MetricsTestSupport {
+
+  import scala.concurrent.duration._
+  override implicit val defaultTimeout: FiniteDuration = 5 seconds
 
   protected def appBuilder: GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .configure(
-        "metrics.enabled"                -> true,
-        "auditing.enabled"               -> true,
-        "auditing.consumer.baseUri.host" -> wireMockHost,
-        "auditing.consumer.baseUri.port" -> wireMockPort)
-      .bindings(bind[AppConfig].toInstance(TestAppConfig(wireMockBaseUrlAsString, wireMockPort)))
+        "metrics.enabled"                      -> true,
+        "auditing.enabled"                     -> true,
+        "auditing.consumer.baseUri.host"       -> wireMockHost,
+        "auditing.consumer.baseUri.port"       -> wireMockPort,
+        "play.filters.csrf.method.whiteList.0" -> "POST",
+        "play.filters.csrf.method.whiteList.1" -> "GET"
+      )
+      .overrides(bind[AppConfig].toInstance(TestAppConfig(wireMockBaseUrlAsString, wireMockPort)))
 
   override def commonStubs(): Unit = {
     givenCleanMetricRegistry()

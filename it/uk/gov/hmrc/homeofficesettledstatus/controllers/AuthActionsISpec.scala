@@ -6,31 +6,12 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.{Application, Configuration, Environment}
 import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.homeofficesettledstatus.support.BaseISpec
+import uk.gov.hmrc.homeofficesettledstatus.support.AppISpec
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 
 import scala.concurrent.Future
 
-class AuthActionsISpec extends BaseISpec {
-
-  override def fakeApplication: Application = appBuilder.build()
-
-  object TestController extends AuthActions {
-
-    override def authConnector: AuthConnector = app.injector.instanceOf[AuthConnector]
-    override def config: Configuration = app.injector.instanceOf[Configuration]
-    override def env: Environment = app.injector.instanceOf[Environment]
-
-    implicit val hc: HeaderCarrier = HeaderCarrier()
-    implicit val request = FakeRequest().withSession(SessionKeys.authToken -> "Bearer XYZ")
-    import scala.concurrent.ExecutionContext.Implicits.global
-
-    def withAuthorisedWithStrideGroup[A](group: String): Result =
-      await(super.authorisedWithStrideGroup(group) { pid =>
-        Future.successful(Ok(pid))
-      })
-
-  }
+class AuthActionsISpec extends AuthActionISpecSetup {
 
   "withAuthorisedWithStrideGroup" should {
 
@@ -67,6 +48,32 @@ class AuthActionsISpec extends BaseISpec {
       status(result) shouldBe 303
       redirectLocation(result).get should include("/stride/sign-in")
     }
+  }
+
+}
+
+trait AuthActionISpecSetup extends AppISpec {
+
+  override def fakeApplication: Application = appBuilder.build()
+
+  object TestController extends AuthActions {
+
+    override def authConnector: AuthConnector = app.injector.instanceOf[AuthConnector]
+
+    override def config: Configuration = app.injector.instanceOf[Configuration]
+
+    override def env: Environment = app.injector.instanceOf[Environment]
+
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+    implicit val request = FakeRequest().withSession(SessionKeys.authToken -> "Bearer XYZ")
+
+    import scala.concurrent.ExecutionContext.Implicits.global
+
+    def withAuthorisedWithStrideGroup[A](group: String): Result =
+      await(super.authorisedWithStrideGroup(group) { pid =>
+        Future.successful(Ok(pid))
+      })
+
   }
 
 }

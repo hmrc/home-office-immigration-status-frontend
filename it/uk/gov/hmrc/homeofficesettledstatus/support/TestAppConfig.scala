@@ -1,4 +1,4 @@
-package uk.gov.hmrc.homeofficesettledstatus.connectors
+package uk.gov.hmrc.homeofficesettledstatus.support
 
 import uk.gov.hmrc.homeofficesettledstatus.wiring.AppConfig
 

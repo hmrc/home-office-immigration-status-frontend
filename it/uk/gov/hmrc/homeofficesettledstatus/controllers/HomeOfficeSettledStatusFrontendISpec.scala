@@ -11,7 +11,7 @@ import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyStateFormats
 import uk.gov.hmrc.homeofficesettledstatus.services.{HomeOfficeSettledStatusFrontendJourneyService, MongoDBCachedJourneyService}
 import uk.gov.hmrc.homeofficesettledstatus.stubs.{HomeOfficeSettledStatusStubs, JourneyTestData}
-import uk.gov.hmrc.homeofficesettledstatus.support.ServerISpec
+import uk.gov.hmrc.homeofficesettledstatus.support.{ServerISpec, TestJourneyService}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 

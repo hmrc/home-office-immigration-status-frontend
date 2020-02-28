@@ -1,4 +1,4 @@
-package uk.gov.hmrc.homeofficesettledstatus.controllers
+package uk.gov.hmrc.homeofficesettledstatus.support
 
 import uk.gov.hmrc.play.fsm.PersistentJourneyService
 

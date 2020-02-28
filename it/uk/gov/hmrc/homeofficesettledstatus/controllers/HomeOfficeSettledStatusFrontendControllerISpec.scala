@@ -9,7 +9,7 @@ import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFront
 import uk.gov.hmrc.homeofficesettledstatus.models.{StatusCheckByNinoRequest, StatusCheckError, StatusCheckResult}
 import uk.gov.hmrc.homeofficesettledstatus.services.HomeOfficeSettledStatusFrontendJourneyServiceWithHeaderCarrier
 import uk.gov.hmrc.homeofficesettledstatus.stubs.{HomeOfficeSettledStatusStubs, JourneyTestData}
-import uk.gov.hmrc.homeofficesettledstatus.support.BaseISpec
+import uk.gov.hmrc.homeofficesettledstatus.support.{AppISpec, InMemoryJourneyService, TestJourneyService}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -256,7 +256,7 @@ class TestInMemoryHomeOfficeSettledStatusFrontendJourneyService
     extends HomeOfficeSettledStatusFrontendJourneyServiceWithHeaderCarrier
     with InMemoryJourneyService[HeaderCarrier] with TestJourneyService[HeaderCarrier]
 
-trait HomeOfficeSettledStatusFrontendControllerISpecSetup extends BaseISpec {
+trait HomeOfficeSettledStatusFrontendControllerISpecSetup extends AppISpec {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 

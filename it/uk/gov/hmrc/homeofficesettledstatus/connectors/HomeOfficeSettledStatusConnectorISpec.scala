@@ -3,38 +3,19 @@ package uk.gov.hmrc.homeofficesettledstatus.connectors
 import java.time.{LocalDate, ZoneId}
 
 import play.api.Application
-import play.api.inject.bind
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficesettledstatus.models.{StatusCheckByNinoRequest, StatusCheckRange, StatusCheckResponse}
-import uk.gov.hmrc.homeofficesettledstatus.services.HomeOfficeSettledStatusFrontendJourneyService
 import uk.gov.hmrc.homeofficesettledstatus.stubs.HomeOfficeSettledStatusStubs
-import uk.gov.hmrc.homeofficesettledstatus.support.BaseISpec
+import uk.gov.hmrc.homeofficesettledstatus.support.AppISpec
 import uk.gov.hmrc.http._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class HomeOfficeSettledStatusConnectorISpec extends BaseISpec with HomeOfficeSettledStatusStubs {
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
-
-  override def fakeApplication: Application = appBuilder.build()
-
-  private lazy val connector: HomeOfficeSettledStatusProxyConnector =
-    app.injector.instanceOf[HomeOfficeSettledStatusProxyConnector]
-
-  val request = StatusCheckByNinoRequest(
-    "2001-01-31",
-    "JANE",
-    "DOE",
-    Nino("RJ301829A"),
-    Some(
-      StatusCheckRange(
-        Some(LocalDate.now(ZoneId.of("UTC")).minusMonths(3)),
-        Some(LocalDate.now(ZoneId.of("UTC")))))
-  )
+class HomeOfficeSettledStatusConnectorISpec extends HomeOfficeSettledStatusConnectorISpecSetup {
 
   "HomeOfficeSettledStatusProxyConnector" when {
 
-    "POST /v1/status/public-funds/nino" should {
+    "statusPublicFundsByNino" should {
 
       "return status when range provided" in {
         givenStatusCheckResultWithRangeExample()
@@ -132,4 +113,26 @@ class HomeOfficeSettledStatusConnectorISpec extends BaseISpec with HomeOfficeSet
     }
   }
 
+}
+
+trait HomeOfficeSettledStatusConnectorISpecSetup
+    extends AppISpec with HomeOfficeSettledStatusStubs {
+
+  implicit val hc: HeaderCarrier = HeaderCarrier()
+
+  override def fakeApplication: Application = appBuilder.build()
+
+  lazy val connector: HomeOfficeSettledStatusProxyConnector =
+    app.injector.instanceOf[HomeOfficeSettledStatusProxyConnector]
+
+  val request = StatusCheckByNinoRequest(
+    "2001-01-31",
+    "JANE",
+    "DOE",
+    Nino("RJ301829A"),
+    Some(
+      StatusCheckRange(
+        Some(LocalDate.now(ZoneId.of("UTC")).minusMonths(3)),
+        Some(LocalDate.now(ZoneId.of("UTC")))))
+  )
 }
