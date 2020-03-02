@@ -19,7 +19,7 @@ class HomeOfficeSettledStatusFrontendISpec
     extends HomeOfficeSettledStatusFrontendISpecSetup with HomeOfficeSettledStatusStubs
     with JourneyTestData {
 
-  import journeyService.model.State._
+  import journey.model.State._
 
   "HomeOfficeSettledStatusFrontend" when {
 
@@ -32,14 +32,14 @@ class HomeOfficeSettledStatusFrontendISpec
 
         result.status shouldBe 200
         result.body should include(htmlEscapedMessage("lookup.title"))
-        journeyService.getState shouldBe StatusCheckByNino()
+        journey.getState shouldBe StatusCheckByNino()
       }
     }
 
     "POST /check-settled-status/check-with-nino" should {
       "submit the lookup form" in {
         implicit val journeyId: JourneyId = JourneyId()
-        journeyService.setState(StatusCheckByNino())
+        journey.setState(StatusCheckByNino())
         givenStatusCheckSucceeds()
         givenAuthorisedForStride("TBC", "StrideUserId")
 
@@ -55,10 +55,23 @@ class HomeOfficeSettledStatusFrontendISpec
 
         result.status shouldBe 200
         result.body should include(htmlEscapedMessage("status-found.title"))
-        journeyService.getState shouldBe StatusFound(
+        journey.getState shouldBe StatusFound(
           correlationId,
           validQuery,
           expectedResultWithSingleStatus)
+      }
+    }
+
+    "GET /check-settled-status/foo" should {
+      "return an error page not found" in {
+        implicit val journeyId: JourneyId = JourneyId()
+        givenAuthorisedForStride("TBC", "StrideUserId")
+
+        val result = await(request("/foo").get())
+
+        result.status shouldBe 404
+        result.body should include("This page can’t be found")
+        journey.get shouldBe None
       }
     }
   }
@@ -75,7 +88,7 @@ trait HomeOfficeSettledStatusFrontendISpecSetup extends ServerISpec {
   case class JourneyId(value: String = UUID.randomUUID().toString)
 
   // define test service capable of manipulating journey state
-  lazy val journeyService = new TestJourneyService[JourneyId]
+  lazy val journey = new TestJourneyService[JourneyId]
   with HomeOfficeSettledStatusFrontendJourneyService[JourneyId]
   with MongoDBCachedJourneyService[JourneyId] {
 
@@ -96,8 +109,7 @@ trait HomeOfficeSettledStatusFrontendISpecSetup extends ServerISpec {
       .withHttpHeaders(
         play.api.http.HeaderNames.COOKIE -> Cookies.encodeCookieHeader(
           Seq(
-            sessionCookieBaker.encodeAsCookie(
-              Session(Map("HomeOfficeSettledStatusJourney" -> journeyId.value)))
+            sessionCookieBaker.encodeAsCookie(Session(Map(journey.journeyKey -> journeyId.value)))
           )))
 
 }

@@ -24,6 +24,7 @@ import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFront
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.{State, Transition, TransitionNotAllowed}
 import uk.gov.hmrc.homeofficesettledstatus.models._
 import uk.gov.hmrc.homeofficesettledstatus.services.HomeOfficeSettledStatusFrontendJourneyService
+import uk.gov.hmrc.homeofficesettledstatus.support.{InMemoryStore, StateMatchers}
 import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.concurrent.ExecutionContext.Implicits.global
