@@ -17,7 +17,6 @@
 package uk.gov.hmrc.homeofficesettledstatus.support
 
 import java.net.{URI, URLEncoder}
-
 import play.api.{Configuration, Environment, Mode}
 
 object CallOps {
@@ -32,7 +31,7 @@ object CallOps {
     hostAndPort: String) = {
     val isLocalEnv = {
       if (env.mode.equals(Mode.Test)) false
-      else config.getString("run.mode").forall(Mode.Dev.toString.equals)
+      else config.getOptional[String]("run.mode").contains(Mode.Dev.toString)
     }
 
     val uri = new URI(url)
