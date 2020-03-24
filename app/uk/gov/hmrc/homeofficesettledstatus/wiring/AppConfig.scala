@@ -22,11 +22,13 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @ImplementedBy(classOf[AppConfigImpl])
 trait AppConfig {
+
   val appName: String
   val authBaseUrl: String
   val homeOfficeSettledStatusProxyBaseUrl: String
   val mongoSessionExpiryTime: Int
   val authorisedStrideGroup: String
+  val defaultQueryTimeRangeInMonths: Int
 }
 
 class AppConfigImpl @Inject()(config: ServicesConfig) extends AppConfig {
@@ -36,4 +38,5 @@ class AppConfigImpl @Inject()(config: ServicesConfig) extends AppConfig {
     config.baseUrl("home-office-settled-status-proxy")
   val mongoSessionExpiryTime: Int = config.getInt("mongodb.session.expireAfterSeconds")
   val authorisedStrideGroup: String = config.getString("authorisedStrideGroup")
+  val defaultQueryTimeRangeInMonths: Int = config.getInt("defaultQueryTimeRangeInMonths")
 }

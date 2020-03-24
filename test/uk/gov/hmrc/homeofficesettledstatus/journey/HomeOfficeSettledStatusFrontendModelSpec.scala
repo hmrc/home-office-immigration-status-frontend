@@ -37,6 +37,8 @@ class HomeOfficeSettledStatusFrontendModelSpec
   case class DummyContext()
   implicit val dummyContext: DummyContext = DummyContext()
 
+  val queryMonths = 6
+
   "HomeOfficeSettledStatusFrontendModel" when {
 
     "at state Start" should {
@@ -49,7 +51,8 @@ class HomeOfficeSettledStatusFrontendModelSpec
       }
       "throw an exception at Start when submitStatusCheckByNino" in {
         an[TransitionNotAllowed] shouldBe thrownBy {
-          given(Start) when submitStatusCheckByNino(checkStatusByNino)(userId)(validQuery)
+          given(Start) when submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(
+            validQuery)
         }
       }
     }
@@ -65,21 +68,22 @@ class HomeOfficeSettledStatusFrontendModelSpec
         atStatusCheckByNino when showStatusCheckByNino(userId) should thenGo(StatusCheckByNino())
       }
       "transition to StatusFound when submitStatusCheckByNino with valid query" in {
-        atStatusCheckByNino when submitStatusCheckByNino(checkStatusByNino)(userId)(validQuery) should thenGo(
-          StatusFound(correlationId, validQuery, expectedResult))
+        atStatusCheckByNino when submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(
+          validQuery) should thenGo(StatusFound(correlationId, validQuery, expectedResult))
       }
       "transition to StatusFound when submitStatusCheckByNino with valid query with date range" in {
-        atStatusCheckByNino when submitStatusCheckByNino(checkStatusByNino)(userId)(
+        atStatusCheckByNino when submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(
           validQueryWithDateRange) should thenGo(
           StatusFound(correlationId, validQueryWithDateRange, expectedResult))
       }
       "transition to StatusCheckFailure when submitStatusCheckByNino with invalid query" in {
-        atStatusCheckByNino when submitStatusCheckByNino(checkStatusByNino)(userId)(invalidQuery) should thenGo(
+        atStatusCheckByNino when submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(
+          invalidQuery) should thenGo(
           StatusCheckFailure(correlationId, invalidQuery, errorNotFound))
       }
       "transition to StatusCheckFailure when submitStatusCheckByNino returns strange response" in {
-        atStatusCheckByNino when submitStatusCheckByNino(checkStatusByNino)(userId)(strangeQuery) should thenGo(
-          StatusCheckFailure(correlationId, strangeQuery, errorUnknown))
+        atStatusCheckByNino when submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(
+          strangeQuery) should thenGo(StatusCheckFailure(correlationId, strangeQuery, errorUnknown))
       }
     }
 
@@ -97,12 +101,14 @@ class HomeOfficeSettledStatusFrontendModelSpec
       }
       "throw an exception at StatusFound when submitStatusCheckByNino with valid query" in {
         an[TransitionNotAllowed] shouldBe thrownBy {
-          atStatusFound when submitStatusCheckByNino(checkStatusByNino)(userId)(validQuery)
+          atStatusFound when submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(
+            validQuery)
         }
       }
       "throw an exception at StatusFound when submitStatusCheckByNino with invalid query" in {
         an[TransitionNotAllowed] shouldBe thrownBy {
-          atStatusFound when submitStatusCheckByNino(checkStatusByNino)(userId)(invalidQuery)
+          atStatusFound when submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(
+            invalidQuery)
         }
       }
     }
@@ -122,12 +128,14 @@ class HomeOfficeSettledStatusFrontendModelSpec
       }
       "throw an exception at StatusFound when submitStatusCheckByNino with valid query" in {
         an[TransitionNotAllowed] shouldBe thrownBy {
-          atStatusCheckFailure when submitStatusCheckByNino(checkStatusByNino)(userId)(validQuery)
+          atStatusCheckFailure when submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(
+            validQuery)
         }
       }
       "throw an exception at StatusFound when submitStatusCheckByNino with invalid query" in {
         an[TransitionNotAllowed] shouldBe thrownBy {
-          atStatusCheckFailure when submitStatusCheckByNino(checkStatusByNino)(userId)(invalidQuery)
+          atStatusCheckFailure when submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(
+            invalidQuery)
         }
       }
     }

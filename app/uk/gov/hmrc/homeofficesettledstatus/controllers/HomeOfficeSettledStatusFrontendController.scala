@@ -78,7 +78,8 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
     action { implicit request =>
       whenAuthorisedWithForm(AsStrideUser)(StatusCheckByNinoRequestForm)(
         Transitions.submitStatusCheckByNino(
-          homeOfficeSettledStatusProxyConnector.statusPublicFundsByNino(_))
+          homeOfficeSettledStatusProxyConnector.statusPublicFundsByNino(_),
+          appConfig.defaultQueryTimeRangeInMonths)
       )
     }
 

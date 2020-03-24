@@ -10,9 +10,11 @@ import uk.gov.hmrc.homeofficesettledstatus.support.WireMockSupport
 trait HomeOfficeSettledStatusStubs extends JourneyTestData {
   me: WireMockSupport =>
 
-  def validRequestBodyWith3MonthsDateRange = {
+  val queryMonths: Int = 6
+
+  def validRequestBodyWithDateRange(): String = {
     val date = LocalDate.now(ZoneId.of("UTC"))
-    requestBodyWithRange(date.minusMonths(3).toString, date.toString)
+    requestBodyWithRange(date.minusMonths(queryMonths).toString, date.toString)
   }
 
   def requestBodyWithRange(startDate: String, endDate: String): String =
@@ -32,7 +34,7 @@ trait HomeOfficeSettledStatusStubs extends JourneyTestData {
       |  "dateOfBirth": "2001-01-31",
       |  "familyName": "JANE",
       |  "givenName": "DOE",
-      |  "nino": "invailid"
+      |  "nino": "invalid"
       |}""".stripMargin
 
   val responseBodyWithStatus: String =
@@ -55,16 +57,10 @@ trait HomeOfficeSettledStatusStubs extends JourneyTestData {
        |}""".stripMargin
 
   def givenStatusCheckSucceeds(): StubMapping =
-    givenStatusPublicFundsByNinoStub(
-      200,
-      validRequestBodyWith3MonthsDateRange,
-      responseBodyWithStatus)
+    givenStatusPublicFundsByNinoStub(200, validRequestBodyWithDateRange(), responseBodyWithStatus)
 
   def givenStatusCheckResultWithRangeExample(): StubMapping =
-    givenStatusPublicFundsByNinoStub(
-      200,
-      validRequestBodyWith3MonthsDateRange,
-      responseBodyWithStatus)
+    givenStatusPublicFundsByNinoStub(200, validRequestBodyWithDateRange(), responseBodyWithStatus)
 
   def givenStatusCheckErrorWhenMissingInputField(): StubMapping = {
 
@@ -76,7 +72,7 @@ trait HomeOfficeSettledStatusStubs extends JourneyTestData {
          |  }
          |}""".stripMargin
 
-    givenStatusPublicFundsByNinoStub(400, validRequestBodyWith3MonthsDateRange, errorResponseBody)
+    givenStatusPublicFundsByNinoStub(400, validRequestBodyWithDateRange(), errorResponseBody)
   }
 
   def givenStatusCheckErrorWhenStatusNotFound(): StubMapping = {
@@ -89,7 +85,7 @@ trait HomeOfficeSettledStatusStubs extends JourneyTestData {
          |  }
          |}""".stripMargin
 
-    givenStatusPublicFundsByNinoStub(404, validRequestBodyWith3MonthsDateRange, errorResponseBody)
+    givenStatusPublicFundsByNinoStub(404, validRequestBodyWithDateRange(), errorResponseBody)
   }
 
   def givenStatusCheckErrorWhenConflict(): StubMapping = {
@@ -102,7 +98,7 @@ trait HomeOfficeSettledStatusStubs extends JourneyTestData {
          |  }
          |}""".stripMargin
 
-    givenStatusPublicFundsByNinoStub(409, validRequestBodyWith3MonthsDateRange, errorResponseBody)
+    givenStatusPublicFundsByNinoStub(409, validRequestBodyWithDateRange(), errorResponseBody)
   }
 
   def givenStatusCheckErrorWhenDOBInvalid(): StubMapping = {
@@ -121,7 +117,7 @@ trait HomeOfficeSettledStatusStubs extends JourneyTestData {
          |  }
          |}""".stripMargin
 
-    givenStatusPublicFundsByNinoStub(400, validRequestBodyWith3MonthsDateRange, errorResponseBody)
+    givenStatusPublicFundsByNinoStub(400, validRequestBodyWithDateRange(), errorResponseBody)
 
   }
 

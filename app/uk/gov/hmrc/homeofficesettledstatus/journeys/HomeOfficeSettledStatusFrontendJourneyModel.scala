@@ -64,14 +64,14 @@ object HomeOfficeSettledStatusFrontendJourneyModel extends JourneyModel {
     }
 
     def submitStatusCheckByNino(
-      checkStatusByNino: StatusCheckByNinoRequest => Future[StatusCheckResponse])(user: String)(
-      query: StatusCheckByNinoRequest) =
+      checkStatusByNino: StatusCheckByNinoRequest => Future[StatusCheckResponse],
+      defaultQueryTimeRangeInMonths: Int)(user: String)(query: StatusCheckByNinoRequest) =
       Transition {
         case _: StatusCheckByNino =>
           val extendedQuery = {
             val startDate = query.statusCheckRange
               .flatMap(_.startDate)
-              .getOrElse(LocalDate.now(ZoneId.of("UTC")).minusMonths(3))
+              .getOrElse(LocalDate.now(ZoneId.of("UTC")).minusMonths(defaultQueryTimeRangeInMonths))
             val endDate =
               query.statusCheckRange.flatMap(_.endDate).getOrElse(LocalDate.now(ZoneId.of("UTC")))
             query.copy(statusCheckRange = Some(StatusCheckRange(Some(startDate), Some(endDate))))

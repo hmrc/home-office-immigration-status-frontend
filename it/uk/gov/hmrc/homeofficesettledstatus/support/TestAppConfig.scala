@@ -9,4 +9,5 @@ case class TestAppConfig(wireMockBaseUrl: String, wireMockPort: Int) extends App
   override val homeOfficeSettledStatusProxyBaseUrl: String = wireMockBaseUrl
   override val mongoSessionExpiryTime: Int = 3600
   override val authorisedStrideGroup: String = "TBC"
+  override val defaultQueryTimeRangeInMonths: Int = 6
 }
