@@ -18,7 +18,8 @@ package uk.gov.hmrc.homeofficesettledstatus.views
 
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.homeofficesettledstatus.views.html.main_template
-import uk.gov.hmrc.play.views.html.helpers.{DateFieldsFreeInlineLegend, ErrorSummary, FormWithCSRF, Input}
+import uk.gov.hmrc.homeofficesettledstatus.views.html.helpers.Input
+import uk.gov.hmrc.play.views.html.helpers.{DateFieldsFreeInlineLegend, ErrorSummary, FormWithCSRF}
 
 @Singleton
 case class LayoutComponents @Inject()(
