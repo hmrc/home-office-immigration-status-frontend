@@ -39,45 +39,37 @@
     @layout.form(
         action = submitFormCall, 'class -> "form js-form") {
 
-        <div class="form-group">
+        @layout.input(
+            statusCheckForm("nino"),
+            '_label -> Messages("lookup.nino.label"),
+            '_inputClass -> "form-control width-10",
+            '_labelTextClass -> "form-label",
+            '_inputHint -> Messages("lookup.nino.hint"),
+            '_labelClass -> "soft--ends"
+        )
+
          @layout.input(
-             statusCheckForm("nino"),
-             '_label -> Messages("lookup.nino.label"),
-             '_inputClass -> "form-control width-10",
-             '_labelTextClass -> "form-label",
-             '_inputHint -> Messages("lookup.nino.hint"),
-             '_labelClass -> "soft--ends"
+            statusCheckForm("givenName"),
+            '_label -> Messages("lookup.givenName.label"),
+            '_inputClass -> "form-control width-10",
+            '_labelTextClass -> "form-label",
+            '_labelClass -> "soft--ends"
          )
-         </div>
 
-         <div class="form-group">
-             @layout.input(
-                 statusCheckForm("givenName"),
-                 '_label -> Messages("lookup.givenName.label"),
-                 '_inputClass -> "form-control width-10",
-                 '_labelTextClass -> "form-label",
-                 '_labelClass -> "soft--ends"
-             )
-         </div>
+         @layout.input(
+            statusCheckForm("familyName"),
+            '_label -> Messages("lookup.familyName.label"),
+            '_inputClass -> "form-control width-10",
+            '_labelTextClass -> "form-label",
+            '_labelClass -> "soft--ends"
+         )
 
-         <div class="form-group">
-             @layout.input(
-                 statusCheckForm("familyName"),
-                 '_label -> Messages("lookup.familyName.label"),
-                 '_inputClass -> "form-control width-10",
-                 '_labelTextClass -> "form-label",
-                 '_labelClass -> "soft--ends"
-             )
-         </div>
-
-          <div class="@noJsDateFieldsError">
-             @layout.dateFieldsFreeInlineLegend(statusCheckForm, "dateOfBirth",
-                 '_legend -> Messages("lookup.dateOfBirth.label"),
-                 '_inputHint -> Messages("lookup.dateOfBirth.hint"),
-                 '_legendSpanClass -> "form-label",
-                 '_legendClass -> "flush--ends"
-             )
-          </div>
+         @layout.dateFieldsFreeInlineLegend(statusCheckForm, "dateOfBirth",
+            '_legend -> Messages("lookup.dateOfBirth.label"),
+            '_inputHint -> Messages("lookup.dateOfBirth.hint"),
+            '_legendSpanClass -> "form-label",
+            '_legendClass -> "flush--ends"
+         )
 
           <button class="button" type="submit" id="continue">@Messages("button.continue")</button>
 

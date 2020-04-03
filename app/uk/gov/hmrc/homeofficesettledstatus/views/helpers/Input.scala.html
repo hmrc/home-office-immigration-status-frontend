@@ -28,66 +28,68 @@
 @labelHighlight = @{ elements.args.get('_labelHighlight).getOrElse(false).asInstanceOf[Boolean] }
 
 
-  @if(!labelAfter && elements.args.contains('_label)) {
-    @if(labelHighlight){<strong>}
-      <label for="@elements.field.name" class="@elements.args.get('_divClass) @if( elements.args.get('_labelClass) ){ @elements.args.get('_labelClass) } @if((elements.hasErrors || (parentElements.isDefined && parentElements.get.hasErrors)) && !elements.args.contains('_hideBar)) {form-field--error}" @if(elements.args.contains('_labelDataAttributes)){@elements.args.get('_labelDataAttributes)}>
-        @elements.label
+  <div class="form-group @elements.args.get('_divClass) @if((elements.hasErrors || (parentElements.isDefined && parentElements.get.hasErrors)) && !elements.args.contains('_hideBar)) {form-group-error}">
+    @if(!labelAfter && elements.args.contains('_label)) {
+      @if(labelHighlight){<strong>}
+        <label for="@elements.field.name" class="@if( elements.args.get('_labelClass) ){ @elements.args.get('_labelClass) }" @if(elements.args.contains('_labelDataAttributes)){@elements.args.get('_labelDataAttributes)}>
+          @elements.label
 
-        @if(parentElements.isDefined) {
-          @parentElements.get.errors.map { error => <span class="error-notification">@Messages(error)</span>}
-        }
-      </label>
-    @if(labelHighlight){</strong>}
-  }
-
-  @if(elements.args.contains('_inputHint) ){
-    <span class="form-hint"
-        @if(elements.args.contains('_hintId)) {
-            id="@elements.args.get('_hintId)"
-        }>
-        @elements.args.get('_inputHint)
-    </span>
-  }
-
-  @if(!elements.args.contains('_hideErrors)) {
-    @elements.errors.map { error =>
-      <span class="error-notification"
-          @if(elements.args.contains('_error_id)) {
-              id="@elements.args.get('_error_id)"
+          @if(parentElements.isDefined) {
+            @parentElements.get.errors.map { error => <span class="error-notification">@Messages(error)</span>}
           }
-          role="tooltip"
-          data-journey="search-page:error:@elements.field.name">
-          @if(elements.args.contains('_errorPrefix) ){<span class="visually-hidden">@elements.args.get('_errorPrefix) </span>}
-          @Messages(error)
+        </label>
+      @if(labelHighlight){</strong>}
+    }
+
+    @if(elements.args.contains('_inputHint) ){
+      <span class="form-hint"
+          @if(elements.args.contains('_hintId)) {
+              id="@elements.args.get('_hintId)"
+          }>
+          @elements.args.get('_inputHint)
       </span>
     }
-  }
 
-  <input
-    @if( elements.args.contains('_type)){type="@elements.args.get('_type)" }else{type="text" }
-    @if( elements.args.contains('_dataAttributes) ){ @elements.args.get('_dataAttributes)}
-    @if( elements.args.get('_inputClass) ){ class="@elements.args.get('_inputClass)" }
-    @if( elements.args.get('_autoComplete) ){ autocomplete="@elements.args.get('_autoComplete)" }
-       name="@elements.field.name"
-       id="@elements.field.name"
-       value="@value"
-    @if(elements.args.get('_error_id).isDefined) { aria-labeledby="@elements.args.get('_error_id)" }
-    @if(elements.args.get('_hintId).isDefined) { aria-describedby="@elements.args.get('_hintId)" }
-    @if(elements.args.get('_maxlength).isDefined) { maxlength="@elements.args.get('_maxlength)" }
-    @if(elements.args.get('_min).isDefined) { min="@elements.args.get('_min)" }
-    @if(elements.args.get('_max).isDefined) { max="@elements.args.get('_max)" }
-    @if(elements.args.get('_pattern).isDefined) { pattern="@elements.args.get('_pattern)" }
-    @if(elements.args.get('_title).isDefined) { title="@elements.args.get('_title)" }
-    @if(elements.args.get('_required).isDefined) { required }
-       />
-
-  @if(labelAfter && elements.args.contains('_label)) {
-      @if(labelHighlight){<strong>}
-      <span @if(elements.args.contains('_labelTextClass)) { class="@elements.args.get('_labelTextClass)"}>
-          @elements.label
-      </span>
-      @if(elements.args.contains('_inputHint) ){
-          <span class="form-hint">@elements.args.get('_inputHint)</span>
+    @if(!elements.args.contains('_hideErrors)) {
+      @elements.errors.map { error =>
+        <span class="error-notification"
+            @if(elements.args.contains('_error_id)) {
+                id="@elements.args.get('_error_id)"
+            }
+            role="tooltip"
+            data-journey="search-page:error:@elements.field.name">
+            @if(elements.args.contains('_errorPrefix) ){<span class="visually-hidden">@elements.args.get('_errorPrefix) </span>}
+            @Messages(error)
+        </span>
       }
-      @if(labelHighlight){</strong>}
-  }
+    }
+
+    <input
+      @if( elements.args.contains('_type)){type="@elements.args.get('_type)" }else{type="text" }
+      @if( elements.args.contains('_dataAttributes) ){ @elements.args.get('_dataAttributes)}
+      @if( elements.args.get('_inputClass) ){ class="@elements.args.get('_inputClass)" }
+      @if( elements.args.get('_autoComplete) ){ autocomplete="@elements.args.get('_autoComplete)" }
+         name="@elements.field.name"
+         id="@elements.field.name"
+         value="@value"
+      @if(elements.args.get('_error_id).isDefined) { aria-labeledby="@elements.args.get('_error_id)" }
+      @if(elements.args.get('_hintId).isDefined) { aria-describedby="@elements.args.get('_hintId)" }
+      @if(elements.args.get('_maxlength).isDefined) { maxlength="@elements.args.get('_maxlength)" }
+      @if(elements.args.get('_min).isDefined) { min="@elements.args.get('_min)" }
+      @if(elements.args.get('_max).isDefined) { max="@elements.args.get('_max)" }
+      @if(elements.args.get('_pattern).isDefined) { pattern="@elements.args.get('_pattern)" }
+      @if(elements.args.get('_title).isDefined) { title="@elements.args.get('_title)" }
+      @if(elements.args.get('_required).isDefined) { required }
+         />
+
+    @if(labelAfter && elements.args.contains('_label)) {
+        @if(labelHighlight){<strong>}
+        <span @if(elements.args.contains('_labelTextClass)) { class="@elements.args.get('_labelTextClass)"}>
+            @elements.label
+        </span>
+        @if(elements.args.contains('_inputHint) ){
+            <span class="form-hint">@elements.args.get('_inputHint)</span>
+        }
+        @if(labelHighlight){</strong>}
+    }
+  </div>
