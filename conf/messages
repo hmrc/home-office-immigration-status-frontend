@@ -11,17 +11,17 @@ generic.change=Change
 error.summary.heading=There is a problem
 error.prefix=Error:
 error.email=Enter a valid email address
-error.dateOfBirth.required=Enter date of birth
-error.dateOfBirth.invalid-format=Enter date of birth
+error.dateOfBirth.required=Enter Date of Birth
+error.dateOfBirth.invalid-format=Invalid Date of Birth
 error.year.invalid-format=Enter a year of birth
 error.day.invalid-format=Enter a day of birth
 error.month.invalid-format=Enter a month of birth
-error.nino.required=Enter a National Insurance number
-error.nino.invalid-format=Enter a National Insurance number
-error.familyName.required=Enter a family name
-error.familyName.invalid-format=Enter a family name
-error.givenName.required=Enter a first name
-error.givenName.invalid-format=Enter a first name
+error.nino.required=Enter National Insurance Number
+error.nino.invalid-format=Invalid National Insurance Number
+error.familyName.required=Enter Family Name
+error.familyName.invalid-format=Invalid Family Name
+error.givenName.required=Enter First Name
+error.givenName.invalid-format=Invalid First Name
 
 # Service specific messages
 app.titleSuffix=Check settled status - GOV.UK
