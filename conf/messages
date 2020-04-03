@@ -67,6 +67,6 @@ button.continue=Continue
 button.submit=Submit
 
 # Global errors
-global.error.500.title=Check Settled Status - GOV.UK
+global.error.500.title=Sorry, there is a problem with the service
 global.error.500.heading=Sorry, there is a problem with the service
 global.error.500.message=Try again later.
