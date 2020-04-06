@@ -161,16 +161,6 @@ object HomeOfficeSettledStatusFrontendController {
 
   import FormFieldMappings._
 
-  val wrap: (Nino, String, String, String, Option[StatusCheckRange]) => StatusCheckByNinoRequest = {
-    case (nino, gn, fn, db, range) => StatusCheckByNinoRequest.apply(db, fn, gn, nino, range)
-  }
-
-  val unwrap
-    : StatusCheckByNinoRequest => Option[(Nino, String, String, String, Option[StatusCheckRange])] =
-    StatusCheckByNinoRequest.unapply(_).map {
-      case (db, fn, gn, nino, range) => (nino, gn, fn, db, range)
-    }
-
   val StatusCheckByNinoRequestForm = Form[StatusCheckByNinoRequest](
     mapping(
       "nino" -> uppercaseNormalizedText
@@ -180,5 +170,5 @@ object HomeOfficeSettledStatusFrontendController {
       "familyName"  -> trimmedUppercaseName.verifying(validName("familyName", 3)),
       "dateOfBirth" -> dateOfBirthMapping,
       "range"       -> ignored[Option[StatusCheckRange]](None)
-    )(wrap)(unwrap))
+    )(StatusCheckByNinoRequest.apply)(StatusCheckByNinoRequest.unapply))
 }

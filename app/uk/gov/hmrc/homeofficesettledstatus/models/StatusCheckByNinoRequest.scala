@@ -20,14 +20,15 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.domain.Nino
 
 case class StatusCheckByNinoRequest(
-  // Date of birth of the person being checked in ISO 8601 format (can contain wildcards for day or month)
-  dateOfBirth: String,
-  // Family name required for search
-  familyName: String,
-  // Given name required for search
-  givenName: String,
   // National insurance number
   nino: Nino,
+  // Given name required for search
+  givenName: String,
+  // Family name required for search
+  familyName: String,
+  // Date of birth of the person being checked in ISO 8601 format (can contain wildcards for day or month)
+  dateOfBirth: String,
+  // Status check range, default to 6 months back
   statusCheckRange: Option[StatusCheckRange] = None
 )
 

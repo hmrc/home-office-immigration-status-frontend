@@ -164,22 +164,22 @@ trait TestData {
   val correlationId = "123"
 
   val validQuery =
-    StatusCheckByNinoRequest("2001-01-31", "JANE", "DOE", Nino("RJ301829A"))
+    StatusCheckByNinoRequest(Nino("RJ301829A"), "DOE", "JANE", "2001-01-31")
 
   val validQueryWithDateRange =
     StatusCheckByNinoRequest(
-      "2001-01-31",
-      "JANE",
-      "DOE",
       Nino("RJ301829A"),
+      "DOE",
+      "JANE",
+      "2001-01-31",
       Some(
         StatusCheckRange(Some(LocalDate.now().minusDays(6)), Some(LocalDate.now().minusMonths(6)))))
 
   val strangeQuery =
-    StatusCheckByNinoRequest("1999-12-31", "FOO", "BAR", Nino("KA339738D"))
+    StatusCheckByNinoRequest(Nino("KA339738D"), "BAR", "FOO", "1999-12-31")
 
   val invalidQuery =
-    StatusCheckByNinoRequest("1982-12-12", "MARIA", "DOLL", Nino("AB888330D"))
+    StatusCheckByNinoRequest(Nino("AB888330D"), "DOLL", "MARIA", "1982-12-12")
 
   val expectedResult = StatusCheckResult(
     fullName = "Jane Doe",

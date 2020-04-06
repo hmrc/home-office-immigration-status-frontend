@@ -34,7 +34,7 @@ class HomeOfficeSettledStatusFrontendControllerISpec
       }
 
       "redirect to the clean lookup page when on status-check-failure" in {
-        val existingQuery = StatusCheckByNinoRequest("2001-01-31", "JANE", "DOE", Nino("RJ301829A"))
+        val existingQuery = StatusCheckByNinoRequest(Nino("RJ301829A"), "DOE", "JANE", "2001-01-31")
         journey.set(
           StatusCheckFailure("123", existingQuery, StatusCheckError(errCode = "ERR_NOT_FOUND")),
           List(StatusCheckByNino(), Start))
@@ -66,7 +66,7 @@ class HomeOfficeSettledStatusFrontendControllerISpec
       }
 
       "display the lookup page filled with existing query parameters" in {
-        val existingQuery = StatusCheckByNinoRequest("2001-01-31", "JANE", "DOE", Nino("RJ301829A"))
+        val existingQuery = StatusCheckByNinoRequest(Nino("RJ301829A"), "DOE", "JANE", "2001-01-31")
         journey.set(
           StatusCheckFailure("123", existingQuery, StatusCheckError(errCode = "ERR_NOT_FOUND")),
           List(StatusCheckByNino(), Start))
@@ -181,7 +181,7 @@ class HomeOfficeSettledStatusFrontendControllerISpec
 
       "redirect to start page if current state is StatusCheckFailure" in {
         val query =
-          StatusCheckByNinoRequest("2001-01-31", "JANE", "DOE", Nino("RJ301829A"))
+          StatusCheckByNinoRequest(Nino("RJ301829A"), "DOE", "JANE", "2001-01-31")
         val queryError = StatusCheckError(errCode = "ERR_NOT_FOUND")
         journey
           .set(
@@ -198,7 +198,7 @@ class HomeOfficeSettledStatusFrontendControllerISpec
 
       "display not found page" in {
         val query =
-          StatusCheckByNinoRequest("2001-01-31", "JANE", "DOE", Nino("RJ301829A"))
+          StatusCheckByNinoRequest(Nino("RJ301829A"), "DOE", "JANE", "2001-01-31")
         val queryError = StatusCheckError(errCode = "ERR_NOT_FOUND")
         journey
           .set(
