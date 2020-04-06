@@ -6,6 +6,7 @@ generic.dob=Date of birth
 generic.nationality=Nationality
 generic.searchAgain=Search again
 generic.change=Change
+generic.title.Error=Error:
 
 # Validation errors
 error.summary.heading=There is a problem

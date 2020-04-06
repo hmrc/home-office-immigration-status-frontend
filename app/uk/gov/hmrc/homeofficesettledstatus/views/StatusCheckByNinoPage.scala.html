@@ -28,7 +28,11 @@
     if(statusCheckForm("dateOfBirth.day").hasErrors || statusCheckForm("dateOfBirth.month").hasErrors || statusCheckForm("dateOfBirth.year").hasErrors) "nojs-date-fields-error" else ""
 }
 
-@layout.mainTemplate(title = Messages("lookup.title"), bodyClasses = Some("full-width")) {
+@messageTitle = @{
+    if(statusCheckForm.hasErrors) messages("generic.title.Error") else messages("lookup.title")
+}
+
+@layout.mainTemplate(title = messageTitle, bodyClasses = Some("full-width")) {
 
     <h1 class="heading-xlarge">@Messages("lookup.title")</h1>
 
