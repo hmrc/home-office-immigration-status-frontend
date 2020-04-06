@@ -51,7 +51,7 @@ class HomeOfficeSettledStatusFrontendFormatSpec extends UnitSpec {
       "StatusCheckByNino with query" in {
         val state =
           StatusCheckByNino(
-            Some(StatusCheckByNinoRequest("1956-05-08", "bar", "foo", Nino("RJ301829A"))))
+            Some(StatusCheckByNinoRequest(Nino("RJ301829A"), "foo", "bar", "1956-05-08")))
 
         val json = Json.parse(
           """{"state":"StatusCheckByNino","properties":{"maybeQuery":{"dateOfBirth":"1956-05-08","familyName":"bar","givenName":"foo","nino":"RJ301829A"}}}""")
@@ -62,7 +62,7 @@ class HomeOfficeSettledStatusFrontendFormatSpec extends UnitSpec {
       "StatusFound" in {
         val state = StatusFound(
           correlationId = "1234567890",
-          query = StatusCheckByNinoRequest("1956-05-08", "bar", "foo", Nino("RJ301829A")),
+          query = StatusCheckByNinoRequest(Nino("RJ301829A"), "foo", "bar", "1956-05-08"),
           result = StatusCheckResult(
             "Foo Bar",
             LocalDate.parse("1956-05-08"),
@@ -79,7 +79,7 @@ class HomeOfficeSettledStatusFrontendFormatSpec extends UnitSpec {
       "StatusCheckFailure" in {
         val state = StatusCheckFailure(
           correlationId = "1234567890",
-          query = StatusCheckByNinoRequest("1956-05-08", "bar", "foo", Nino("RJ301829A")),
+          query = StatusCheckByNinoRequest(Nino("RJ301829A"), "foo", "bar", "1956-05-08"),
           error = StatusCheckError("FOO_ERROR", Some(List(ValidationError("code1", "name1"))))
         )
 

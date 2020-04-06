@@ -163,12 +163,12 @@ object HomeOfficeSettledStatusFrontendController {
 
   val StatusCheckByNinoRequestForm = Form[StatusCheckByNinoRequest](
     mapping(
-      "dateOfBirth" -> dateOfBirthMapping,
-      "familyName"  -> trimmedUppercaseName.verifying(validName("familyName", 3)),
-      "givenName"   -> trimmedUppercaseName.verifying(validName("givenName", 1)),
       "nino" -> uppercaseNormalizedText
         .verifying(validNino())
         .transform(Nino.apply, (n: Nino) => n.toString),
-      "range" -> ignored[Option[StatusCheckRange]](None)
+      "givenName"   -> trimmedUppercaseName.verifying(validName("givenName", 1)),
+      "familyName"  -> trimmedUppercaseName.verifying(validName("familyName", 3)),
+      "dateOfBirth" -> dateOfBirthMapping,
+      "range"       -> ignored[Option[StatusCheckRange]](None)
     )(StatusCheckByNinoRequest.apply)(StatusCheckByNinoRequest.unapply))
 }

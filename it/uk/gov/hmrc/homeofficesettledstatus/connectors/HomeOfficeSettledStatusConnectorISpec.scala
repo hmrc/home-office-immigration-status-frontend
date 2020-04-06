@@ -126,10 +126,10 @@ trait HomeOfficeSettledStatusConnectorISpecSetup
     app.injector.instanceOf[HomeOfficeSettledStatusProxyConnector]
 
   val request = StatusCheckByNinoRequest(
-    "2001-01-31",
-    "JANE",
-    "DOE",
     Nino("RJ301829A"),
+    "DOE",
+    "JANE",
+    "2001-01-31",
     Some(
       StatusCheckRange(
         Some(LocalDate.now(ZoneId.of("UTC")).minusMonths(queryMonths)),

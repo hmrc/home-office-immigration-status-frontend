@@ -17,8 +17,7 @@
 @import uk.gov.hmrc.homeofficesettledstatus.controllers.routes.HomeOfficeSettledStatusFrontendController
 @import play.api.Configuration
 @import uk.gov.hmrc.homeofficesettledstatus.models.StatusCheckByNinoRequest
-@import uk.gov.hmrc.play.views.html.helpers.{ErrorSummary, FormWithCSRF, Input}
-@import uk.gov.hmrc.play.views.html.helpers.DateFieldsFreeInlineLegend
+@import uk.gov.hmrc.play.views.html.helpers.{ErrorSummary, FormWithCSRF}
 @import uk.gov.hmrc.homeofficesettledstatus.views.LayoutComponents
 
 @this(layout: LayoutComponents)
@@ -29,7 +28,11 @@
     if(statusCheckForm("dateOfBirth.day").hasErrors || statusCheckForm("dateOfBirth.month").hasErrors || statusCheckForm("dateOfBirth.year").hasErrors) "nojs-date-fields-error" else ""
 }
 
-@layout.mainTemplate(title = Messages("lookup.title"), bodyClasses = Some("full-width")) {
+@messageTitle = @{
+    if(statusCheckForm.hasErrors) messages("generic.title.Error") else messages("lookup.title")
+}
+
+@layout.mainTemplate(title = messageTitle, bodyClasses = Some("full-width")) {
 
     <h1 class="heading-xlarge">@Messages("lookup.title")</h1>
 
@@ -40,45 +43,37 @@
     @layout.form(
         action = submitFormCall, 'class -> "form js-form") {
 
-        <div class="form-group">
+        @layout.input(
+            statusCheckForm("nino"),
+            '_label -> Messages("lookup.nino.label"),
+            '_inputClass -> "form-control width-10",
+            '_labelTextClass -> "form-label",
+            '_inputHint -> Messages("lookup.nino.hint"),
+            '_labelClass -> "soft--ends"
+        )
+
          @layout.input(
-             statusCheckForm("nino"),
-             '_label -> Messages("lookup.nino.label"),
-             '_inputClass -> "form-control width-10",
-             '_labelTextClass -> "form-label",
-             '_inputHint -> Messages("lookup.nino.hint"),
-             '_labelClass -> "soft--ends"
+            statusCheckForm("givenName"),
+            '_label -> Messages("lookup.givenName.label"),
+            '_inputClass -> "form-control width-10",
+            '_labelTextClass -> "form-label",
+            '_labelClass -> "soft--ends"
          )
-         </div>
 
-         <div class="form-group">
-             @layout.input(
-                 statusCheckForm("givenName"),
-                 '_label -> Messages("lookup.givenName.label"),
-                 '_inputClass -> "form-control width-10",
-                 '_labelTextClass -> "form-label",
-                 '_labelClass -> "soft--ends"
-             )
-         </div>
+         @layout.input(
+            statusCheckForm("familyName"),
+            '_label -> Messages("lookup.familyName.label"),
+            '_inputClass -> "form-control width-10",
+            '_labelTextClass -> "form-label",
+            '_labelClass -> "soft--ends"
+         )
 
-         <div class="form-group">
-             @layout.input(
-                 statusCheckForm("familyName"),
-                 '_label -> Messages("lookup.familyName.label"),
-                 '_inputClass -> "form-control width-10",
-                 '_labelTextClass -> "form-label",
-                 '_labelClass -> "soft--ends"
-             )
-         </div>
-
-          <div class="@noJsDateFieldsError">
-             @layout.dateFieldsFreeInlineLegend(statusCheckForm, "dateOfBirth",
-                 '_legend -> Messages("lookup.dateOfBirth.label"),
-                 '_inputHint -> Messages("lookup.dateOfBirth.hint"),
-                 '_legendSpanClass -> "form-label",
-                 '_legendClass -> "flush--ends"
-             )
-          </div>
+         @layout.dateFieldsFreeInlineLegend(statusCheckForm, "dateOfBirth",
+            '_legend -> Messages("lookup.dateOfBirth.label"),
+            '_inputHint -> Messages("lookup.dateOfBirth.hint"),
+            '_legendSpanClass -> "form-label",
+            '_legendClass -> "flush--ends"
+         )
 
           <button class="button" type="submit" id="continue">@Messages("button.continue")</button>
 

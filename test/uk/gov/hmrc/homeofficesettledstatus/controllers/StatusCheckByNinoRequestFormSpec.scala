@@ -24,11 +24,10 @@ import uk.gov.hmrc.play.test.UnitSpec
 class StatusCheckByNinoRequestFormSpec extends UnitSpec {
 
   val formOutput = StatusCheckByNinoRequest(
-    dateOfBirth = "1970-01-31",
-    familyName = "KOWALSKI",
+    nino = Nino("RJ301829A"),
     givenName = "JAN",
-    nino = Nino("RJ301829A")
-  )
+    familyName = "KOWALSKI",
+    dateOfBirth = "1970-01-31")
 
   val formInput1 = Map(
     "dateOfBirth.year"  -> "1970",
