@@ -26,7 +26,7 @@
     Set(fieldName, s"${fieldName}.day", s"${fieldName}.month", s"${fieldName}.year")
 }
 
-@fieldsetClasses = @{if(formItem.hasErrors) "form-group-error" else "" }
+@fieldsetClasses = @{if(formItem.errors.filter(error => fieldNames.contains(error.key)).nonEmpty) "form-group-error" else "" }
 
 <div class="form-group @fieldsetClasses soft--ends">
     <fieldset class="form-date" id="@fieldName">
