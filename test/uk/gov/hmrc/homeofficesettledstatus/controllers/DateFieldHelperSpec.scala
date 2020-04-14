@@ -16,7 +16,8 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.controllers
 
-import uk.gov.hmrc.homeofficesettledstatus.controllers.DateFieldHelper.{formatDateFromFields, parseDateIntoFields, validateDate}
+import play.api.data.validation.{Invalid, Valid, ValidationError}
+import uk.gov.hmrc.homeofficesettledstatus.controllers.DateFieldHelper._
 import uk.gov.hmrc.play.test.UnitSpec
 
 class DateFieldHelperSpec extends UnitSpec {
@@ -72,7 +73,7 @@ class DateFieldHelperSpec extends UnitSpec {
       formatDateFromFields("2019", "7", "5") shouldBe "2019-07-05"
       formatDateFromFields("2019", "7", "") shouldBe "2019-07-XX"
       formatDateFromFields("2019", "", "1") shouldBe "2019-XX-01"
-      formatDateFromFields("", "11", "30") shouldBe ""
+      formatDateFromFields("", "11", "30") shouldBe "-11-30"
     }
     "parse date into fields" in {
       parseDateIntoFields("2019-01-17") shouldBe Some("2019", "01", "17")
@@ -84,6 +85,19 @@ class DateFieldHelperSpec extends UnitSpec {
       parseDateIntoFields("foo") shouldBe Some(("foo", "", ""))
       parseDateIntoFields("2019-foo-bar") shouldBe Some(("2019", "foo", "bar"))
       parseDateIntoFields("") shouldBe Some(("", "", ""))
+    }
+    "distinguish between missing and invalid date format" in {
+      validDobDateFormat("") shouldBe Invalid(ValidationError("error.dateOfBirth.required"))
+      validDobDateFormat("-11-30") shouldBe Invalid(
+        ValidationError("error.dateOfBirth.invalid-format"))
+      validDobDateFormat("-11-") shouldBe Invalid(
+        ValidationError("error.dateOfBirth.invalid-format"))
+      validDobDateFormat("--20") shouldBe Invalid(
+        ValidationError("error.dateOfBirth.invalid-format"))
+      validDobDateFormat("1972-XX-11") shouldBe Invalid(
+        ValidationError("error.dateOfBirth.invalid-format"))
+      validDobDateFormat("1972-11-XX") shouldBe Valid
+      validDobDateFormat("1972-XX-XX") shouldBe Valid
     }
   }
 

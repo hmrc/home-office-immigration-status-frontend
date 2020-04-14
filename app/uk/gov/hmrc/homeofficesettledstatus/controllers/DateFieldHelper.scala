@@ -66,9 +66,9 @@ object DateFieldHelper {
 
   val formatDateFromFields: (String, String, String) => String = {
     case (y, m, d) =>
-      if (y.isEmpty) ""
+      if (y.isEmpty && m.isEmpty && d.isEmpty) ""
       else {
-        val year = if (y.length == 2) "19" + y else y
+        val year = if (y.isEmpty) "" else if (y.length == 2) "19" + y else y
         val month = if (m.isEmpty) "XX" else if (m.length == 1) "0" + m else m
         val day = if (d.isEmpty) "XX" else if (d.length == 1) "0" + d else d
         s"$year-$month-$day"
@@ -82,9 +82,9 @@ object DateFieldHelper {
 
   def dateFieldsMapping(constraintDate: Constraint[String]): Mapping[String] =
     mapping(
-      "year"  -> of[String],
-      "month" -> of[String].transform[String](_.toUpperCase, identity),
-      "day"   -> of[String].transform[String](_.toUpperCase, identity)
+      "year"  -> of[String].transform[String](_.trim, identity),
+      "month" -> of[String].transform[String](_.trim.toUpperCase, identity),
+      "day"   -> of[String].transform[String](_.trim.toUpperCase, identity)
     )(formatDateFromFields)(parseDateIntoFields).verifying(constraintDate)
 
 }
