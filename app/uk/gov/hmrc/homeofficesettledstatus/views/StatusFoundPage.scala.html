@@ -31,7 +31,7 @@
 
   <div class="grid-row">
     <div class="column-two-thirds">
-        <h1 class="heading-xlarge" id="title"><span id="full-name">@context.result.fullName</span> @context.statusLabel</h1>
+        <h1 class="heading-xlarge" id="title"><span id="full-name">@context.result.fullName</span> @context.currentStatusLabel</h1>
 
         <dl class="govuk-check-your-answers cya-questions-long form-group">
             <div>
@@ -49,16 +49,52 @@
                 <dd id="nationality" class="cya-answer">@ISO31661Alpha3.getCountryNameFor(context.result.nationality)</dd>
             </div>
 
-            <div>
-                <dt class="cya-question">@messages("status-found.startDate")</dt>
-                <dd id="startDate" class="cya-answer">@DateFormat.format(context.mostRecentStatus.statusStartDate)</dd>
-            </div>
+            @context.mostRecentStatus.map(_.statusStartDate).map(DateFormat.format).map { statusStartDate =>
+                <div>
+                    <dt class="cya-question">@messages("status-found.startDate")</dt>
+                    <dd id="startDate" class="cya-answer">@statusStartDate</dd>
+                </div>
+            }.getOrElse("")
 
-            <div>
-                <dt class="cya-question">@messages("status-found.expiryDate")</dt>
-                <dd id="expiryDate" class="cya-answer">@context.mostRecentStatus.statusEndDate.map(DateFormat.format).getOrElse("")</dd>
-            </div>
+            @context.mostRecentStatus.flatMap(_.statusEndDate).map(DateFormat.format).map { statusEndDate =>
+                <div>
+                    <dt class="cya-question">@messages("status-found.expiryDate")</dt>
+                    <dd id="expiryDate" class="cya-answer">@statusEndDate</dd>
+                </div>
+            }.getOrElse("")
+
         </dl>
+
+        @if(context.previousStatuses.nonEmpty) {
+
+            <h2 class="govuk-heading-l">Previous status</h2>
+
+            @context.previousStatuses.map { status =>
+
+                <dl class="govuk-check-your-answers cya-questions-long form-group">
+
+                    <div>
+                        <dt class="cya-question">@messages("status-found.previous.status")</dt>
+                        <dd id="startDate" class="cya-answer">@context.immigrationStatusLabel(status.immigrationStatus)</dd>
+                    </div>
+
+                    @Some(status).map(_.statusStartDate).map(DateFormat.format).map { statusStartDate =>
+                    <div>
+                        <dt class="cya-question">@messages("status-found.previous.startDate")</dt>
+                        <dd id="startDate" class="cya-answer">@statusStartDate</dd>
+                    </div>
+                    }.getOrElse("")
+
+                    @Some(status).flatMap(_.statusEndDate).map(DateFormat.format).map { statusEndDate =>
+                    <div>
+                        <dt class="cya-question">@messages("status-found.previous.expiryDate")</dt>
+                        <dd id="expiryDate" class="cya-answer">@statusEndDate</dd>
+                    </div>
+                    }.getOrElse("")
+
+                </dl>
+            }
+        }
 
       <p><a class="button" role="button" href="@context.searchAgainCall.url">@messages("generic.searchAgain")</a></p>
     </div>

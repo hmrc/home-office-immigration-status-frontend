@@ -29,6 +29,8 @@ app.titleSuffix=Check settled status - GOV.UK
 app.name=Check settled status
 app.hasSettledStatus=has settled status
 app.hasPreSettledStatus=has pre settled status
+app.hasSettledStatus.expired=has expired settled status
+app.hasPreSettledStatus.expired=has expired pre settled status
 app.hasNoStatus=has no settled status
 app.status.LTR=Leave to remain
 app.status.ILR=Indefinite leave to remain
@@ -47,6 +49,9 @@ status-found.title=Lookup results
 status-found.status=Status
 status-found.startDate=Start date
 status-found.expiryDate=Expiry date
+status-found.previous.status=Previous status
+status-found.previous.startDate=Previous start date
+status-found.previous.expiryDate=Previous expiry date
 
 # Failure page
 status-check-failure.title=Unable to determine status

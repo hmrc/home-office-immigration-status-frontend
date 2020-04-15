@@ -18,7 +18,7 @@ package uk.gov.hmrc.homeofficesettledstatus.models
 
 import java.time.LocalDate
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Format, Json}
 
 case class ImmigrationStatus(
   // start date of this status
@@ -31,7 +31,11 @@ case class ImmigrationStatus(
   immigrationStatus: String,
   // right to public funds status for this person
   noRecourseToPublicFunds: Boolean
-)
+) {
+
+  val hasExpired: Boolean = statusEndDate.exists(_.isBefore(LocalDate.now))
+
+}
 
 object ImmigrationStatus {
 
@@ -41,5 +45,5 @@ object ImmigrationStatus {
 
   val settledStatusSet: Set[String] = Set(ILR, LTR)
 
-  implicit val formats = Json.format[ImmigrationStatus]
+  implicit val formats: Format[ImmigrationStatus] = Json.format[ImmigrationStatus]
 }
