@@ -36,6 +36,12 @@ case class StatusCheckResult(
       .sortBy(f = _.statusStartDate.toEpochDay * -1)
       .headOption
 
+  val previousStatuses: Seq[ImmigrationStatus] = {
+    val sorted = statuses
+      .sortBy(f = _.statusStartDate.toEpochDay * -1)
+    if (sorted.isEmpty) Nil else sorted.tail
+  }
+
 }
 
 object StatusCheckResult {

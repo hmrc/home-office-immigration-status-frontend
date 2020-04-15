@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.views
 
+import java.time.LocalDate
+
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import uk.gov.hmrc.homeofficesettledstatus.models.{ImmigrationStatus, StatusCheckByNinoRequest, StatusCheckResult}
@@ -26,20 +28,27 @@ case class StatusFoundPageContext(
   result: StatusCheckResult,
   searchAgainCall: Call) {
 
-  val mostRecentStatus: ImmigrationStatus = result.mostRecentStatus
-    .getOrElse(
-      throw new IllegalStateException("Expected user to have immigration status but got none"))
+  val mostRecentStatus: Option[ImmigrationStatus] = result.mostRecentStatus
+  val previousStatuses: Seq[ImmigrationStatus] = result.previousStatuses
 
-  val hasStatus: Boolean = mostRecentStatus.productType == EUS &&
-    ImmigrationStatus.settledStatusSet.contains(mostRecentStatus.immigrationStatus)
+  val hasSettledStatus: Boolean = mostRecentStatus.map(_.productType).contains(EUS) &&
+    mostRecentStatus
+      .map(_.immigrationStatus)
+      .exists(ImmigrationStatus.settledStatusSet.contains)
 
-  val statusClass: String = if (hasStatus) "success" else "error"
+  def today: LocalDate = LocalDate.now()
 
-  def statusLabel(implicit messages: Messages) = mostRecentStatus match {
-    case s if s.productType == EUS && s.immigrationStatus == LTR =>
-      messages("app.hasPreSettledStatus")
-    case s if s.productType == EUS && s.immigrationStatus == ILR =>
-      messages("app.hasSettledStatus")
+  val hasExpiredSettledStatus: Boolean = hasSettledStatus && mostRecentStatus.exists(_.hasExpired)
+
+  val statusClass: String = if (hasSettledStatus) "success" else "error"
+
+  def currentStatusLabel(implicit messages: Messages) = mostRecentStatus match {
+    case Some(s) if s.productType == EUS && s.immigrationStatus == LTR =>
+      if (s.hasExpired) messages("app.hasPreSettledStatus.expired")
+      else messages("app.hasPreSettledStatus")
+    case Some(s) if s.productType == EUS && s.immigrationStatus == ILR =>
+      if (s.hasExpired) messages("app.hasSettledStatus.expired")
+      else messages("app.hasSettledStatus")
     case _ => messages("app.hasNoStatus")
   }
 
