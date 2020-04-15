@@ -17,16 +17,17 @@
 package uk.gov.hmrc.homeofficesettledstatus.connectors
 
 import java.net.URL
+import java.util.UUID
 
 import com.codahale.metrics.MetricRegistry
 import com.kenshoo.play.metrics.Metrics
 import javax.inject.{Inject, Singleton}
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, Writes}
 import uk.gov.hmrc.agent.kenshoo.monitoring.HttpAPIMonitor
 import uk.gov.hmrc.homeofficesettledstatus.connectors.HomeOfficeSettledStatusProxyConnector.extractResponseBody
 import uk.gov.hmrc.homeofficesettledstatus.models.{StatusCheckByNinoRequest, StatusCheckResponse}
 import uk.gov.hmrc.homeofficesettledstatus.wiring.AppConfig
-import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpGet, HttpPost, NotFoundException, Upstream4xxResponse}
+import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpGet, HttpPost, HttpReads, NotFoundException, Upstream4xxResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -36,6 +37,8 @@ class HomeOfficeSettledStatusProxyConnector @Inject()(
   http: HttpGet with HttpPost,
   metrics: Metrics)
     extends HttpAPIMonitor {
+
+  val HEADER_X_CORRELATION_ID = "X-Correlation-Id"
 
   val baseUrl: String = appConfig.homeOfficeSettledStatusProxyBaseUrl
   val publicFundsByNinoPath = "/v1/status/public-funds/nino"
@@ -49,7 +52,12 @@ class HomeOfficeSettledStatusProxyConnector @Inject()(
       http
         .POST[StatusCheckByNinoRequest, StatusCheckResponse](
           new URL(baseUrl + publicFundsByNinoPath).toExternalForm,
-          request)
+          request)(
+          implicitly[Writes[StatusCheckByNinoRequest]],
+          implicitly[HttpReads[StatusCheckResponse]],
+          hc.withExtraHeaders(HEADER_X_CORRELATION_ID -> UUID.randomUUID().toString),
+          implicitly[ExecutionContext]
+        )
         .recover {
           case e: BadRequestException =>
             Json.parse(extractResponseBody(e.message, "Response body '")).as[StatusCheckResponse]

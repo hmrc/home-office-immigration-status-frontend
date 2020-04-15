@@ -3,6 +3,7 @@ package uk.gov.hmrc.homeofficesettledstatus.stubs
 import java.time.{LocalDate, ZoneId}
 
 import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.matching.AnythingPattern
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.mvc.Http.HeaderNames
 import uk.gov.hmrc.homeofficesettledstatus.support.WireMockSupport
@@ -127,6 +128,7 @@ trait HomeOfficeSettledStatusStubs extends JourneyTestData {
     responseBody: String): StubMapping =
     stubFor(
       post(urlEqualTo(s"/v1/status/public-funds/nino"))
+        .withHeader("X-Correlation-Id", new AnythingPattern())
         .withHeader(HeaderNames.CONTENT_TYPE, containing("application/json"))
         .withRequestBody(equalToJson(requestBody, true, true))
         .willReturn(
