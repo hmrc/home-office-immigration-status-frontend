@@ -39,8 +39,11 @@ lookup.title=Enter the customer''s details
 lookup.title.Error=Error: Enter the customer''s details
 lookup.nino.label=National Insurance number
 lookup.nino.hint=For example, ‘QQ 12 34 56 C’.
+lookup.nino.ariaDescribedBy=nino-hint
 lookup.givenName.label=First name
+lookup.givenName.ariaDescribedBy=first-name
 lookup.familyName.label=Family name
+lookup.familyName.ariaDescribedBy=family-name
 lookup.dateOfBirth.label=Date of birth
 lookup.dateOfBirth.hint=For example, 31 3 1980
 

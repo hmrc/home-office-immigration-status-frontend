@@ -48,7 +48,7 @@
             '_label -> Messages("lookup.nino.label"),
             '_inputClass -> "form-control width-10",
             '_labelTextClass -> "form-label",
-            '_hintId -> "nino-hint",
+            '_hintId -> Messages("lookup.nino.hint"),
             '_inputHint -> Messages("lookup.nino.hint"),
             '_labelClass -> "soft--ends"
         )
@@ -56,6 +56,7 @@
          @layout.input(
             statusCheckForm("givenName"),
             '_label -> Messages("lookup.givenName.label"),
+            '_hintId -> Messages("lookup.givenName.ariaDescribedBy"),
             '_inputClass -> "form-control width-10",
             '_labelTextClass -> "form-label",
             '_labelClass -> "soft--ends"
@@ -64,6 +65,7 @@
          @layout.input(
             statusCheckForm("familyName"),
             '_label -> Messages("lookup.familyName.label"),
+            '_hintId -> Messages("lookup.familyName.ariaDescribedBy"),
             '_inputClass -> "form-control width-10",
             '_labelTextClass -> "form-label",
             '_labelClass -> "soft--ends"
