@@ -6,7 +6,6 @@ generic.dob=Date of birth
 generic.nationality=Nationality
 generic.searchAgain=Search again
 generic.change=Change
-generic.title.Error=Error:
 
 # Validation errors
 error.summary.heading=There is a problem
@@ -37,6 +36,7 @@ app.status.ILR=Indefinite leave to remain
 
 # Lookup page
 lookup.title=Enter the customer''s details
+lookup.title.Error=Error: Enter the customer''s details
 lookup.nino.label=National Insurance number
 lookup.nino.hint=For example, ‘QQ 12 34 56 C’.
 lookup.givenName.label=First name
