@@ -34,10 +34,10 @@
 
 @layout.mainTemplate(title = messageTitle, bodyClasses = Some("full-width")) {
 
-    <h1 class="heading-xlarge">@Messages("lookup.title")</h1>
+    <h1 class="heading-xlarge">@messages("lookup.title")</h1>
 
     @if(statusCheckForm.hasErrors){
-        @layout.errorSummary(Messages("error.summary.heading"), statusCheckForm, Seq.empty, Some("lookup"))
+        @layout.errorSummary(messages("error.summary.heading"), statusCheckForm, Seq.empty, Some("lookup"))
     }
 
     @layout.form(
@@ -45,17 +45,18 @@
 
         @layout.input(
             statusCheckForm("nino"),
-            '_label -> Messages("lookup.nino.label"),
+            '_label -> messages("lookup.nino.label"),
             '_inputClass -> "form-control width-10",
             '_labelTextClass -> "form-label",
-            '_hintId -> "nino-hint",
-            '_inputHint -> Messages("lookup.nino.hint"),
+            '_hintId -> messages("lookup.nino.hint"),
+            '_inputHint -> messages("lookup.nino.hint"),
             '_labelClass -> "soft--ends"
         )
 
          @layout.input(
             statusCheckForm("givenName"),
-            '_label -> Messages("lookup.givenName.label"),
+            '_label -> messages("lookup.givenName.label"),
+            '_hintId -> messages("lookup.givenName.ariaDescribedBy"),
             '_inputClass -> "form-control width-10",
             '_labelTextClass -> "form-label",
             '_labelClass -> "soft--ends"
@@ -63,20 +64,21 @@
 
          @layout.input(
             statusCheckForm("familyName"),
-            '_label -> Messages("lookup.familyName.label"),
+            '_label -> messages("lookup.familyName.label"),
+            '_hintId -> messages("lookup.familyName.ariaDescribedBy"),
             '_inputClass -> "form-control width-10",
             '_labelTextClass -> "form-label",
             '_labelClass -> "soft--ends"
          )
 
          @layout.dateFieldsFreeInlineLegend(statusCheckForm, "dateOfBirth",
-            '_legend -> Messages("lookup.dateOfBirth.label"),
-            '_inputHint -> Messages("lookup.dateOfBirth.hint"),
+            '_legend -> messages("lookup.dateOfBirth.label"),
+            '_inputHint -> messages("lookup.dateOfBirth.hint"),
             '_legendSpanClass -> "form-label",
             '_legendClass -> "flush--ends"
          )
 
-          <button class="button" type="submit" id="continue">@Messages("button.continue")</button>
+          <button class="button" type="submit" id="continue">@messages("button.continue")</button>
 
 
     }

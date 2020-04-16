@@ -26,30 +26,30 @@
 
 @(query: StatusCheckByNinoRequest, statusCheckError:StatusCheckError, changeCall: Call, searchAgainCall: Call)(implicit request: Request[_], messages: Messages, config: Configuration)
 
-@layout.mainTemplate(title = Messages("status-check-failure.title"), bodyClasses = Some("full-width")) {
+@layout.mainTemplate(title = messages("status-check-failure.title"), bodyClasses = Some("full-width")) {
 
   <div class="grid-row">
     <div class="column-two-thirds">
 
-      <h1 class="heading-xlarge" id="title">@Messages("status-check-failure.title")</h1>
+      <h1 class="heading-xlarge" id="title">@messages("status-check-failure.title")</h1>
 
-      <p>@Messages("status-check-failure.listParagraph")</p>
+      <p>@messages("status-check-failure.listParagraph")</p>
       <ul class="list list-bullet">
-          <li id="item1">@Messages("status-check-failure.list-item1")</li>
-          <li id="item2">@Messages("status-check-failure.list-item2")</li>
-          <li id="item3">@Messages("status-check-failure.list-item3")</li>
-          <li id="item4">@Messages("status-check-failure.list-item4")</li>
+          <li id="item1">@messages("status-check-failure.list-item1")</li>
+          <li id="item2">@messages("status-check-failure.list-item2")</li>
+          <li id="item3">@messages("status-check-failure.list-item3")</li>
+          <li id="item4">@messages("status-check-failure.list-item4")</li>
       </ul>
 
-      <p id="paragraph1">@Messages("status-check-failure.checkTryAgainParagraph")</p>
+      <p id="paragraph1">@messages("status-check-failure.checkTryAgainParagraph")</p>
 
-      <h2 class="heading-medium" id="personal-details">@Messages("status-check-failure.heading2PersonalDetails")</h2>
+      <h2 class="heading-medium" id="personal-details">@messages("status-check-failure.heading2PersonalDetails")</h2>
 
       <dl class="govuk-check-your-answers cya-questions-long form-group">
         <div>
           <dt class="cya-question">@messages("generic.nino")</dt>
           <dd id="nino" class="cya-answer">@query.nino.formatted</dd>
-          <dd class="cya-change"><a href="@changeCall.url"><span id="change">@messages("generic.change")</span><span class="visually-hidden">@Messages("status-check-failure.checkHiddenText")</span></a></dd>
+          <dd class="cya-change"><a href="@changeCall.url"><span id="change">@messages("generic.change")</span><span class="visually-hidden">@messages("status-check-failure.checkHiddenText")</span></a></dd>
         </div>
 
         <div>
@@ -71,7 +71,7 @@
         </div>
       </dl>
 
-      <p class="form-group">@Messages("status-check-failure.para-ifCorrect-part1") <a href="#" class="govuk-link">@Messages("status-check-failure.para-ifCorrect-link")</a> @Messages("status-check-failure.para-ifCorrect-part2")</p>
+      <p class="form-group">@messages("status-check-failure.para-ifCorrect-part1") <a href="#" class="govuk-link">@messages("status-check-failure.para-ifCorrect-link")</a> @messages("status-check-failure.para-ifCorrect-part2")</p>
 
       <p><a class="button" role="button" href="@searchAgainCall.url">@messages("generic.searchAgain")</a></p>
     </div>
