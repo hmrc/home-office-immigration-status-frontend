@@ -35,7 +35,7 @@
           @elements.label
 
           @if(parentElements.isDefined) {
-            @parentElements.get.errors.map { error => <span class="error-notification">@Messages(error)</span>}
+            @parentElements.get.errors.map { error => <span class="error-notification">@messages(error)</span>}
           }
         </label>
       @if(labelHighlight){</strong>}
@@ -59,7 +59,7 @@
             role="tooltip"
             data-journey="search-page:error:@elements.field.name">
             @if(elements.args.contains('_errorPrefix) ){<span class="visually-hidden">@elements.args.get('_errorPrefix) </span>}
-            @Messages(error)
+            @messages(error)
         </span>
       }
     }
