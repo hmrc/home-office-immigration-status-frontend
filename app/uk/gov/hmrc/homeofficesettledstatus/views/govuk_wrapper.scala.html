@@ -51,13 +51,13 @@
     <meta name="format-detection" content="telephone=no"/>
 }
 
-@titleWithSuffix = @{ title + " - " + Messages("app.titleSuffix") }
+@titleWithSuffix = @{ title + " - " + messages("app.titleSuffix") }
 
 @headerNavLinks = {}
 
 @insideHeader = {
 @layoutsHeaderNav(
-    navTitle = Some(Messages("app.name")),
+    navTitle = Some(messages("app.name")),
     navTitleLink = None,
     showBetaLink = false,
     navLinks = Some(headerNavLinks))

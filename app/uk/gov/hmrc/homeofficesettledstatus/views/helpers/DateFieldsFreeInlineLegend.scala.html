@@ -42,13 +42,13 @@
                 @args.toMap.get('_errorPrefix).map { errorPrefix =>
                     <span class="visually-hidden">@errorPrefix </span>
                 }
-                @Messages(error.message)
+                @messages(error.message)
             </span>}
         </legend>
 
         @input(
             formItem(s"${fieldName}.day"),
-            '_label -> Messages("date.fields.day"),
+            '_label -> messages("date.fields.day"),
             '_labelClass -> "form-group form-group-day",
             '_inputClass -> "form-control input--xsmall",
             '_emptyValueText -> " ",
@@ -61,7 +61,7 @@
 
         @input(
             formItem(s"${fieldName}.month"),
-            '_label -> Messages("date.fields.month"),
+            '_label -> messages("date.fields.month"),
             '_labelClass -> "form-group form-group-month",
             '_inputClass -> "form-control input--xsmall",
             '_emptyValueText -> " ",
@@ -74,7 +74,7 @@
 
         @input(
             formItem(s"${fieldName}.year"),
-            '_label -> Messages("date.fields.year"),
+            '_label -> messages("date.fields.year"),
             '_labelClass -> "form-group form-group-year",
             '_inputClass -> "form-control input--xsmall",
             '_emptyValueText -> " ",
