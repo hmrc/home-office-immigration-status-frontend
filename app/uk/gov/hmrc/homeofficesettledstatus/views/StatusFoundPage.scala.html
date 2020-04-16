@@ -69,26 +69,26 @@
 
             <h2 class="govuk-heading-l">Previous status</h2>
 
-            @context.previousStatuses.map { status =>
+            @context.previousStatuses.zipWithIndex.map { case (status, index) =>
 
                 <dl class="govuk-check-your-answers cya-questions-long form-group">
 
                     <div>
                         <dt class="cya-question">@messages("status-found.previous.status")</dt>
-                        <dd id="startDate" class="cya-answer">@context.immigrationStatusLabel(status.immigrationStatus)</dd>
+                        <dd id="status-previous-@index" class="cya-answer">@context.immigrationStatusLabel(status.immigrationStatus)</dd>
                     </div>
 
                     @Some(status).map(_.statusStartDate).map(DateFormat.format).map { statusStartDate =>
                     <div>
                         <dt class="cya-question">@messages("status-found.previous.startDate")</dt>
-                        <dd id="startDate" class="cya-answer">@statusStartDate</dd>
+                        <dd id="startDate-previous-@index" class="cya-answer">@statusStartDate</dd>
                     </div>
                     }.getOrElse("")
 
                     @Some(status).flatMap(_.statusEndDate).map(DateFormat.format).map { statusEndDate =>
                     <div>
                         <dt class="cya-question">@messages("status-found.previous.expiryDate")</dt>
-                        <dd id="expiryDate" class="cya-answer">@statusEndDate</dd>
+                        <dd id="expiryDate-previous-@index" class="cya-answer">@statusEndDate</dd>
                     </div>
                     }.getOrElse("")
 
