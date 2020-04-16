@@ -29,7 +29,7 @@
 }
 
 @messageTitle = @{
-    if(statusCheckForm.hasErrors) messages("generic.title.Error") else messages("lookup.title")
+    if(statusCheckForm.hasErrors) messages("lookup.title.Error") else messages("lookup.title")
 }
 
 @layout.mainTemplate(title = messageTitle, bodyClasses = Some("full-width")) {
@@ -48,6 +48,7 @@
             '_label -> Messages("lookup.nino.label"),
             '_inputClass -> "form-control width-10",
             '_labelTextClass -> "form-label",
+            '_hintId -> "nino-hint",
             '_inputHint -> Messages("lookup.nino.hint"),
             '_labelClass -> "soft--ends"
         )
