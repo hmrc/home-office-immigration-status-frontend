@@ -166,8 +166,8 @@ object HomeOfficeSettledStatusFrontendController {
       "nino" -> uppercaseNormalizedText
         .verifying(validNino())
         .transform(Nino.apply, (n: Nino) => n.toString),
-      "givenName"   -> trimmedUppercaseName.verifying(validName("givenName", 1)),
-      "familyName"  -> trimmedUppercaseName.verifying(validName("familyName", 3)),
+      "givenName"   -> trimmedName.verifying(validName("givenName", 1)),
+      "familyName"  -> trimmedName.verifying(validName("familyName", 3)),
       "dateOfBirth" -> dateOfBirthMapping,
       "range"       -> ignored[Option[StatusCheckRange]](None)
     )(StatusCheckByNinoRequest.apply)(StatusCheckByNinoRequest.unapply))

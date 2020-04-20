@@ -30,7 +30,12 @@ case class StatusCheckByNinoRequest(
   dateOfBirth: String,
   // Status check range, default to 6 months back
   statusCheckRange: Option[StatusCheckRange] = None
-)
+) {
+
+  def toUpperCase: StatusCheckByNinoRequest =
+    copy(givenName = this.givenName.toUpperCase, familyName = this.familyName.toUpperCase)
+
+}
 
 object StatusCheckByNinoRequest {
   implicit val formats = Json.format[StatusCheckByNinoRequest]

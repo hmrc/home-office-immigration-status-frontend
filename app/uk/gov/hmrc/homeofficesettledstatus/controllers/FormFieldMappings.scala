@@ -34,8 +34,7 @@ object FormFieldMappings {
 
   val normalizedText: Mapping[String] = of[String].transform(_.replaceAll("\\s", ""), identity)
   val uppercaseNormalizedText: Mapping[String] = normalizedText.transform(_.toUpperCase, identity)
-  val trimmedUppercaseName: Mapping[String] = of[String]
-    .transform[String](_.trim.take(64).toUpperCase, identity)
+  val trimmedName: Mapping[String] = of[String].transform[String](_.trim.take(64), identity)
 
   val allowedNameCharacters: Set[Char] = Set('-', '\'', ' ')
 

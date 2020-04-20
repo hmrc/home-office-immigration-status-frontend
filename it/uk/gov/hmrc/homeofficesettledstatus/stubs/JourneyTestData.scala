@@ -10,7 +10,7 @@ trait JourneyTestData {
   val correlationId: String = scala.util.Random.alphanumeric.take(64).toString()
 
   val validQuery =
-    StatusCheckByNinoRequest(Nino("RJ301829A"), "DOE", "JANE", "2001-01-31")
+    StatusCheckByNinoRequest(Nino("RJ301829A"), "Doe", "Jane", "2001-01-31")
 
   val expectedResultWithSingleStatus = StatusCheckResult(
     fullName = "Jane Doe",
