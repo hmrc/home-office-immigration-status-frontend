@@ -19,10 +19,7 @@ package uk.gov.hmrc.homeofficesettledstatus.services
 import com.google.inject.Singleton
 import javax.inject.Inject
 import play.api.mvc.Request
-import uk.gov.hmrc.agentmtdidentifiers.model.Arn
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.homeofficesettledstatus.models.HomeOfficeSettledStatusFrontendModel
-import uk.gov.hmrc.homeofficesettledstatus.models.HomeOfficeSettledStatusFrontendModel
 import uk.gov.hmrc.play.audit.AuditExtensions._
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.audit.model.DataEvent
@@ -39,23 +36,6 @@ object HomeOfficeSettledStatusFrontendEvent extends Enumeration {
 class AuditService @Inject()(val auditConnector: AuditConnector) {
 
   import HomeOfficeSettledStatusFrontendEvent._
-
-  def sendHomeOfficeSettledStatusFrontendSomethingHappened(
-    model: HomeOfficeSettledStatusFrontendModel,
-    agentReference: Arn)(
-    implicit hc: HeaderCarrier,
-    request: Request[Any],
-    ec: ExecutionContext): Unit =
-    auditEvent(
-      HomeOfficeSettledStatusFrontendEvent.HomeOfficeSettledStatusFrontendSomethingHappened,
-      "new-shiny-service-26-frontend-something-happened",
-      Seq(
-        "agentReference"  -> agentReference.value,
-        "name"            -> model.name,
-        "telephoneNumber" -> model.telephoneNumber.getOrElse(""),
-        "emailAddress"    -> model.emailAddress.getOrElse("")
-      )
-    )
 
   private[services] def auditEvent(
     event: HomeOfficeSettledStatusFrontendEvent,
@@ -77,7 +57,7 @@ class AuditService @Inject()(val auditConnector: AuditConnector) {
     val detail = hc.toAuditDetails(details.map(pair => pair._1 -> pair._2.toString): _*)
     val tags = hc.toAuditTags(transactionName, request.path)
     DataEvent(
-      auditSource = "new-shiny-service-26-frontend",
+      auditSource = "home-office-settled-status-frontend",
       auditType = event.toString,
       tags = tags,
       detail = detail)
