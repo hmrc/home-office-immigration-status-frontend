@@ -27,6 +27,8 @@
 
 @(context: StatusFoundPageContext)(implicit request: Request[_], messages: Messages, config: Configuration)
 
+@locale = @{messages.lang.locale}
+
 @layout.mainTemplate(title = messages("status-found.title"), bodyClasses = None, sidebarLinks = None, mainClass = Some("full-width")) {
 
   <div class="grid-row">
@@ -41,7 +43,7 @@
 
             <div>
                 <dt class="cya-question">@messages("generic.dob")</dt>
-                <dd id="dob" class="cya-answer">@DateFormat.format(context.result.dateOfBirth)</dd>
+                <dd id="dob" class="cya-answer">@DateFormat.format(locale)(context.result.dateOfBirth)</dd>
             </div>
 
             <div>
@@ -49,14 +51,14 @@
                 <dd id="nationality" class="cya-answer">@ISO31661Alpha3.getCountryNameFor(context.result.nationality)</dd>
             </div>
 
-            @context.mostRecentStatus.map(_.statusStartDate).map(DateFormat.format).map { statusStartDate =>
+            @context.mostRecentStatus.map(_.statusStartDate).map(DateFormat.format(locale)).map { statusStartDate =>
                 <div>
                     <dt class="cya-question">@messages("status-found.startDate")</dt>
                     <dd id="startDate" class="cya-answer">@statusStartDate</dd>
                 </div>
             }.getOrElse("")
 
-            @context.mostRecentStatus.flatMap(_.statusEndDate).map(DateFormat.format).map { statusEndDate =>
+            @context.mostRecentStatus.flatMap(_.statusEndDate).map(DateFormat.format(locale)).map { statusEndDate =>
                 <div>
                     <dt class="cya-question">@messages("status-found.expiryDate")</dt>
                     <dd id="expiryDate" class="cya-answer">@statusEndDate</dd>
@@ -78,14 +80,14 @@
                         <dd id="status-previous-@index" class="cya-answer">@context.immigrationStatusLabel(status.immigrationStatus)</dd>
                     </div>
 
-                    @Some(status).map(_.statusStartDate).map(DateFormat.format).map { statusStartDate =>
+                    @Some(status).map(_.statusStartDate).map(DateFormat.format(locale)).map { statusStartDate =>
                     <div>
                         <dt class="cya-question">@messages("status-found.previous.startDate")</dt>
                         <dd id="startDate-previous-@index" class="cya-answer">@statusStartDate</dd>
                     </div>
                     }.getOrElse("")
 
-                    @Some(status).flatMap(_.statusEndDate).map(DateFormat.format).map { statusEndDate =>
+                    @Some(status).flatMap(_.statusEndDate).map(DateFormat.format(locale)).map { statusEndDate =>
                     <div>
                         <dt class="cya-question">@messages("status-found.previous.expiryDate")</dt>
                         <dd id="expiryDate-previous-@index" class="cya-answer">@statusEndDate</dd>
