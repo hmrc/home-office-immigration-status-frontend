@@ -17,7 +17,6 @@
 package uk.gov.hmrc.homeofficesettledstatus.controllers
 
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
-import uk.gov.hmrc.agentmtdidentifiers.model.Vrn
 
 object ValidateHelper {
 
