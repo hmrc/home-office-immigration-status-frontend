@@ -16,53 +16,74 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.controllers
 
+import java.time.LocalDate
+
 import play.api.data.validation.{Invalid, Valid, ValidationError}
 import uk.gov.hmrc.homeofficesettledstatus.controllers.DateFieldHelper._
 import uk.gov.hmrc.play.test.UnitSpec
 
 class DateFieldHelperSpec extends UnitSpec {
 
+  val `2020-04-21`: LocalDate = LocalDate.parse("2020-04-21")
+
   "DateFieldHelper" should {
     "reject invalid date string" in {
-      validateDate("") shouldBe false
-      validateDate("   ") shouldBe false
-      validateDate("   -  -  ") shouldBe false
-      validateDate("0000-00-00") shouldBe false
-      validateDate("0") shouldBe false
-      validateDate("01") shouldBe false
-      validateDate("01-") shouldBe false
-      validateDate("---") shouldBe false
-      validateDate("--") shouldBe false
-      validateDate("-") shouldBe false
-      validateDate("01-01-01") shouldBe false
-      validateDate("2001-12-32") shouldBe false
-      validateDate("2001--1-30") shouldBe false
-      validateDate("2001-13-31") shouldBe false
-      validateDate("2001-02-30") shouldBe false
-      validateDate("2019-02-29") shouldBe false
-      validateDate("201-01-01") shouldBe false
-      validateDate("1899-01-01") shouldBe false
-      validateDate("2222-0X-07") shouldBe false
-      validateDate("2222-X1-07") shouldBe false
-      validateDate("2222-XX-X2") shouldBe false
-      validateDate("2222-XX-1X") shouldBe false
-      validateDate("1900-12-2X") shouldBe false
-      validateDate("1900-12-X2") shouldBe false
-      validateDate("2222-XX-07") shouldBe false
+      validateDate("", `2020-04-21`) shouldBe false
+      validateDate("   ", `2020-04-21`) shouldBe false
+      validateDate("   -  -  ", `2020-04-21`) shouldBe false
+      validateDate("0000-00-00", `2020-04-21`) shouldBe false
+      validateDate("0", `2020-04-21`) shouldBe false
+      validateDate("01", `2020-04-21`) shouldBe false
+      validateDate("01-", `2020-04-21`) shouldBe false
+      validateDate("---", `2020-04-21`) shouldBe false
+      validateDate("--", `2020-04-21`) shouldBe false
+      validateDate("-", `2020-04-21`) shouldBe false
+      validateDate("01-01-01", `2020-04-21`) shouldBe false
+      validateDate("2001-12-32", `2020-04-21`) shouldBe false
+      validateDate("2001--1-30", `2020-04-21`) shouldBe false
+      validateDate("2001-13-31", `2020-04-21`) shouldBe false
+      validateDate("2001-02-30", `2020-04-21`) shouldBe false
+      validateDate("2019-02-29", `2020-04-21`) shouldBe false
+      validateDate("201-01-01", `2020-04-21`) shouldBe false
+      validateDate("1899-01-01", `2020-04-21`) shouldBe false
+      validateDate("2222-0X-07", `2020-04-21`) shouldBe false
+      validateDate("2222-X1-07", `2020-04-21`) shouldBe false
+      validateDate("2222-XX-X2", `2020-04-21`) shouldBe false
+      validateDate("2222-XX-1X", `2020-04-21`) shouldBe false
+      validateDate("1900-12-2X", `2020-04-21`) shouldBe false
+      validateDate("1900-12-X2", `2020-04-21`) shouldBe false
+      validateDate("2222-XX-07", `2020-04-21`) shouldBe false
+      validateDate("2000-XX-XX", LocalDate.parse("1999-08-01")) shouldBe false
+      validateDate("1999-09-XX", LocalDate.parse("1999-08-01")) shouldBe false
+      validateDate("1999-08-02", LocalDate.parse("1999-08-01")) shouldBe false
+      validateDate("2000-07-31", LocalDate.parse("1999-08-01")) shouldBe false
+      validateDate("1999-12-XX", LocalDate.parse("1999-08-01")) shouldBe false
+      validateDate("2000-08-01", LocalDate.parse("1999-08-01")) shouldBe false
+      validateDate("1999-07-16", LocalDate.parse("1999-07-15")) shouldBe false
+      validateDate("2000-07-15", LocalDate.parse("1999-07-15")) shouldBe false
     }
     "accept valid date string" in {
-      validateDate("1970-01-01") shouldBe true
-      validateDate("2001-12-31") shouldBe true
-      validateDate("2999-06-07") shouldBe true
-      validateDate("2222-XX-XX") shouldBe true
-      validateDate("1900-12-XX") shouldBe true
-      validateDate("2000-02-29") shouldBe true
-      validateDate("2020-02-29") shouldBe true
-      validateDate("2016-02-29") shouldBe true
-      validateDate("2012-02-29") shouldBe true
-      validateDate("2008-02-29") shouldBe true
-      validateDate("2004-02-29") shouldBe true
-      validateDate("2000-02-29") shouldBe true
+      validateDate("1970-01-01", `2020-04-21`) shouldBe true
+      validateDate("2001-12-31", `2020-04-21`) shouldBe true
+      validateDate("2999-06-07", `2020-04-21`) shouldBe false
+      validateDate("2222-XX-XX", `2020-04-21`) shouldBe false
+      validateDate("2222-XX-XX", LocalDate.parse("2222-01-01")) shouldBe true
+      validateDate("1900-12-XX", `2020-04-21`) shouldBe true
+      validateDate("2000-02-29", `2020-04-21`) shouldBe true
+      validateDate("2020-02-29", `2020-04-21`) shouldBe true
+      validateDate("2016-02-29", `2020-04-21`) shouldBe true
+      validateDate("2012-02-29", `2020-04-21`) shouldBe true
+      validateDate("2008-02-29", `2020-04-21`) shouldBe true
+      validateDate("2004-02-29", `2020-04-21`) shouldBe true
+      validateDate("2000-02-29", `2020-04-21`) shouldBe true
+      validateDate("1999-XX-XX", LocalDate.parse("1999-08-01")) shouldBe true
+      validateDate("1999-08-XX", LocalDate.parse("1999-08-01")) shouldBe true
+      validateDate("1999-08-01", LocalDate.parse("1999-08-01")) shouldBe true
+      validateDate("1999-07-31", LocalDate.parse("1999-08-01")) shouldBe true
+      validateDate("1998-12-XX", LocalDate.parse("1999-08-01")) shouldBe true
+      validateDate("1998-08-02", LocalDate.parse("1999-08-01")) shouldBe true
+      validateDate("1999-07-15", LocalDate.parse("1999-07-15")) shouldBe true
+      validateDate("1999-07-14", LocalDate.parse("1999-07-15")) shouldBe true
     }
     "format date from fields" in {
       formatDateFromFields("", "", "") shouldBe ""
@@ -76,12 +97,12 @@ class DateFieldHelperSpec extends UnitSpec {
       formatDateFromFields("", "11", "30") shouldBe "-11-30"
     }
     "parse date into fields" in {
-      parseDateIntoFields("2019-01-17") shouldBe Some("2019", "01", "17")
-      parseDateIntoFields("2019") shouldBe Some("2019", "", "")
-      parseDateIntoFields("2019-01") shouldBe Some("2019", "01", "")
-      parseDateIntoFields("2019-01-XX") shouldBe Some("2019", "01", "")
-      parseDateIntoFields("2019-XX-XX") shouldBe Some("2019", "", "")
-      parseDateIntoFields("2019-XX-31") shouldBe Some("2019", "", "31")
+      parseDateIntoFields("2019-01-17") shouldBe Some(("2019", "01", "17"))
+      parseDateIntoFields("2019") shouldBe Some(("2019", "", ""))
+      parseDateIntoFields("2019-01") shouldBe Some(("2019", "01", ""))
+      parseDateIntoFields("2019-01-XX") shouldBe Some(("2019", "01", ""))
+      parseDateIntoFields("2019-XX-XX") shouldBe Some(("2019", "", ""))
+      parseDateIntoFields("2019-XX-31") shouldBe Some(("2019", "", "31"))
       parseDateIntoFields("foo") shouldBe Some(("foo", "", ""))
       parseDateIntoFields("2019-foo-bar") shouldBe Some(("2019", "foo", "bar"))
       parseDateIntoFields("") shouldBe Some(("", "", ""))

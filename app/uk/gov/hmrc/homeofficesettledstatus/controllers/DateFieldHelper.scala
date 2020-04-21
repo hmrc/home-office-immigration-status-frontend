@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.controllers
 
+import java.time.LocalDate
+
 import play.api.data.Forms.{mapping, of}
 import play.api.data.Mapping
 import play.api.data.format.Formats._
@@ -26,27 +28,41 @@ import scala.util.Try
 
 object DateFieldHelper {
 
-  def validateDate(value: String): Boolean = {
+  def validateDate(value: String, maxDateIncl: => LocalDate): Boolean = {
     val parts = value.split("-")
-    parts.size == 3 && isValidYear(parts(0)) && isValidMonth(parts(1), parts(2)) && isValidDay(
-      parts(2),
-      toInt(parts(1)),
-      toInt(parts(0)))
+    parts.size == 3 && {
+
+      val year = parts(0)
+      val month = parts(1)
+      val day = parts(2)
+
+      isValidYear(year, maxDateIncl) &&
+      isValidMonth(month, day, toInt(year), maxDateIncl) &&
+      isValidDay(day, toInt(month), toInt(year), maxDateIncl)
+    }
   }
 
-  def isValidYear(year: String) = year.matches("""^\d\d\d\d$""") && toInt(year) >= 1900
+  def isValidYear(year: String, maxDateIncl: LocalDate) =
+    year.matches("""^\d\d\d\d$""") && toInt(year) >= 1900 &&
+      toInt(year) <= maxDateIncl.getYear
 
-  def isValidMonth(month: String, day: String) =
-    if (month.contains("X") && day == "XX") month == "XX" else isInRange(toInt(month), 1, 12)
+  def isValidMonth(month: String, day: String, year: => Int, maxDateIncl: LocalDate) =
+    if (month.contains("X") && day == "XX") month == "XX"
+    else
+      isInRange(toInt(month), 1, 12) &&
+      (year < maxDateIncl.getYear || toInt(month) <= maxDateIncl.getMonthValue)
 
-  def isValidDay(day: String, month: Int, year: Int) =
+  def isValidDay(day: String, month: => Int, year: => Int, maxDateIncl: LocalDate) =
     if (day.contains("X")) day == "XX"
     else
-      month match {
+      (month match {
         case 4 | 6 | 9 | 11 => isInRange(toInt(day), 1, 30)
         case 2              => isInRange(toInt(day), 1, if (isLeapYear(year)) 29 else 28)
         case _              => isInRange(toInt(day), 1, 31)
-      }
+      }) &&
+      (year < maxDateIncl.getYear ||
+      (year == maxDateIncl.getYear && month < maxDateIncl.getMonthValue) ||
+      toInt(day) <= maxDateIncl.getDayOfMonth)
 
   def isLeapYear(year: Int): Boolean =
     (year % 4 == 0) && (year % 100 != 0) || (year % 400 == 0)
@@ -78,7 +94,7 @@ object DateFieldHelper {
   val validDobDateFormat: Constraint[String] =
     ValidateHelper
       .validateField("error.dateOfBirth.required", "error.dateOfBirth.invalid-format")(date =>
-        validateDate(date))
+        validateDate(date, LocalDate.now()))
 
   def dateFieldsMapping(constraintDate: Constraint[String]): Mapping[String] =
     mapping(
