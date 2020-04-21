@@ -18,12 +18,10 @@ package uk.gov.hmrc.homeofficesettledstatus.support
 
 import java.io.File
 
-import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.homeofficesettledstatus.support.CallOps.localFriendlyUrl
-import java.net.{URI, URLEncoder}
-
 import com.typesafe.config._
 import play.api.{Configuration, Environment, Mode}
+import uk.gov.hmrc.homeofficesettledstatus.support.CallOps.localFriendlyUrl
+import uk.gov.hmrc.play.test.UnitSpec
 
 class CallOpsSpec extends UnitSpec {
 

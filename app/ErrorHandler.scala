@@ -21,13 +21,12 @@ import play.api.mvc.Results._
 import play.api.mvc.{Request, RequestHeader, Result}
 import play.api.{Configuration, Environment, Mode}
 import uk.gov.hmrc.auth.core.{InsufficientEnrolments, NoActiveSession}
+import uk.gov.hmrc.homeofficesettledstatus.views.html.{error_template, govuk_wrapper}
 import uk.gov.hmrc.http.{JsValidationException, NotFoundException}
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.config.{AuthRedirects, HttpAuditEvent}
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
-import uk.gov.hmrc.homeofficesettledstatus.views.html.govuk_wrapper
-import uk.gov.hmrc.homeofficesettledstatus.views.html.{error_template, govuk_wrapper}
 
 import scala.concurrent.{ExecutionContext, Future}
 

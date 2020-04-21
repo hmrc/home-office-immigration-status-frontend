@@ -16,7 +16,8 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.support
 
-import java.net.{URI, URLEncoder}
+import java.net.URI
+
 import play.api.{Configuration, Environment, Mode}
 
 object CallOps {

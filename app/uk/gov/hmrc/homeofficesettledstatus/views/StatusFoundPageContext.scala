@@ -20,8 +20,8 @@ import java.time.LocalDate
 
 import play.api.i18n.Messages
 import play.api.mvc.Call
+import uk.gov.hmrc.homeofficesettledstatus.models.ImmigrationStatus.{EUS, ILR, LTR}
 import uk.gov.hmrc.homeofficesettledstatus.models.{ImmigrationStatus, StatusCheckByNinoRequest, StatusCheckResult}
-import ImmigrationStatus.{EUS, ILR, LTR}
 
 case class StatusFoundPageContext(
   query: StatusCheckByNinoRequest,

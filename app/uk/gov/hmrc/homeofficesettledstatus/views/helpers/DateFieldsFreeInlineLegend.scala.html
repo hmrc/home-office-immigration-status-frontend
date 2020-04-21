@@ -18,9 +18,7 @@
 
 @(formItem:Form[_], fieldName: String, args: (Symbol,Any)*)(implicit messages: Messages)
 
-@import uk.gov.hmrc.play.mappers.DateFields._
 @import play.api.i18n._
-@import uk.gov.hmrc.play.mappers.DateFormatSymbols._
 
 @fieldNames = @{
     Set(fieldName, s"${fieldName}.day", s"${fieldName}.month", s"${fieldName}.year")

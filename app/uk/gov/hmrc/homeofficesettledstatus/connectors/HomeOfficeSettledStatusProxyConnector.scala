@@ -27,7 +27,7 @@ import uk.gov.hmrc.agent.kenshoo.monitoring.HttpAPIMonitor
 import uk.gov.hmrc.homeofficesettledstatus.connectors.HomeOfficeSettledStatusProxyConnector.extractResponseBody
 import uk.gov.hmrc.homeofficesettledstatus.models.{StatusCheckByNinoRequest, StatusCheckResponse}
 import uk.gov.hmrc.homeofficesettledstatus.wiring.AppConfig
-import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpGet, HttpPost, HttpReads, NotFoundException, Upstream4xxResponse}
+import uk.gov.hmrc.http._
 
 import scala.concurrent.{ExecutionContext, Future}
 
