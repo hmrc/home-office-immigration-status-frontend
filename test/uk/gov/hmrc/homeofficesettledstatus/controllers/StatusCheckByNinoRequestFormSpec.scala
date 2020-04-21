@@ -25,11 +25,11 @@ class StatusCheckByNinoRequestFormSpec extends UnitSpec {
 
   val formOutput = StatusCheckByNinoRequest(
     nino = Nino("RJ301829A"),
-    givenName = "JAN",
-    familyName = "KOWALSKI",
+    givenName = "Jan",
+    familyName = "Kowalski",
     dateOfBirth = "1970-01-31")
 
-  val formInput1 = Map(
+  val formInput = Map(
     "dateOfBirth.year"  -> "1970",
     "dateOfBirth.month" -> "01",
     "dateOfBirth.day"   -> "31",
@@ -37,119 +37,111 @@ class StatusCheckByNinoRequestFormSpec extends UnitSpec {
     "givenName"         -> "Jan",
     "nino"              -> "RJ301829A")
 
-  val formInput2 = Map(
-    "dateOfBirth.year"  -> "1970",
-    "dateOfBirth.month" -> "01",
-    "dateOfBirth.day"   -> "31",
-    "familyName"        -> "KOWALSKI",
-    "givenName"         -> "JAN",
-    "nino"              -> "RJ301829A")
-
   "StatusCheckByNinoRequestForm" should {
 
     "bind some input fields and return StatusCheckByNinoRequest and fill it back" in {
       val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
 
-      form.bind(formInput1).value shouldBe Some(formOutput)
-      form.fill(formOutput).data shouldBe formInput2
+      form.bind(formInput).value shouldBe Some(formOutput)
+      form.fill(formOutput).data shouldBe formInput
     }
 
     "report an error when NINO is missing" in {
       val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
-      val input = formInput1.updated("nino", "")
+      val input = formInput.updated("nino", "")
       form.bind(input).errors shouldBe List(FormError("nino", "error.nino.required"))
     }
 
     "report an error when NINO is invalid" in {
       val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
-      val input = formInput1.updated("nino", "invalid")
+      val input = formInput.updated("nino", "invalid")
       form.bind(input).errors shouldBe List(FormError("nino", "error.nino.invalid-format"))
     }
 
     "report an error when givenName is missing" in {
       val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
-      val input = formInput1.updated("givenName", "")
+      val input = formInput.updated("givenName", "")
       form.bind(input).errors shouldBe List(FormError("givenName", "error.givenName.required"))
     }
 
     "report an error when givenName is invalid" in {
       val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
-      val input = formInput1.updated("givenName", "11267162")
+      val input = formInput.updated("givenName", "11267162")
       form.bind(input).errors shouldBe List(
         FormError("givenName", "error.givenName.invalid-format"))
     }
 
     "report an error when familyName is missing" in {
       val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
-      val input = formInput1.updated("familyName", "")
+      val input = formInput.updated("familyName", "")
       form.bind(input).errors shouldBe List(FormError("familyName", "error.familyName.required"))
     }
 
     "report an error when familyName is invalid" in {
       val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
-      val input = formInput1.updated("familyName", "AB")
+      val input = formInput.updated("familyName", "AB")
       form.bind(input).errors shouldBe List(
         FormError("familyName", "error.familyName.invalid-format"))
     }
 
     "report an error when dateOfBirth.year is missing" in {
       val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
-      val input = formInput1.updated("dateOfBirth.year", "")
+      val input = formInput.updated("dateOfBirth.year", "")
       form.bind(input).errors shouldBe List(
         FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
     }
 
     "report an error when dateOfBirth.year is invalid" in {
       val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
-      val input = formInput1.updated("dateOfBirth.year", "197B")
+      val input = formInput.updated("dateOfBirth.year", "197B")
       form.bind(input).errors shouldBe List(
         FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
     }
 
     "report an error when dateOfBirth.day is invalid - contains digit and wildcard" in {
       val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
-      val input = formInput1.updated("dateOfBirth.day", "0X")
+      val input = formInput.updated("dateOfBirth.day", "0X")
       form.bind(input).errors shouldBe List(
         FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
     }
 
     "report an error when dateOfBirth.day is invalid - contains value out-of-scope" in {
       val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
-      val input = formInput1.updated("dateOfBirth.day", "32")
+      val input = formInput.updated("dateOfBirth.day", "32")
       form.bind(input).errors shouldBe List(
         FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
     }
 
     "report an error when dateOfBirth.month is invalid - contains digit and wildcard" in {
       val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
-      val input = formInput1.updated("dateOfBirth.month", "1X")
+      val input = formInput.updated("dateOfBirth.month", "1X")
       form.bind(input).errors shouldBe List(
         FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
     }
 
     "report an error when dateOfBirth.month is invalid - contains value out-of-scope" in {
       val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
-      val input = formInput1.updated("dateOfBirth.month", "13")
+      val input = formInput.updated("dateOfBirth.month", "13")
       form.bind(input).errors shouldBe List(
         FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
     }
 
     "allow empty dateOfBirth.day" in {
       val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
-      val input = formInput1.updated("dateOfBirth.day", "")
+      val input = formInput.updated("dateOfBirth.day", "")
       form.bind(input).value shouldBe Some(formOutput.copy(dateOfBirth = "1970-01-XX"))
     }
 
     "report an error when empty dateOfBirth.month " in {
       val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
-      val input = formInput1.updated("dateOfBirth.month", "")
+      val input = formInput.updated("dateOfBirth.month", "")
       form.bind(input).errors shouldBe List(
         FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
     }
 
     "allow empty dateOfBirth.day and empty dateOfBirth.month" in {
       val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
-      val input = formInput1.updated("dateOfBirth.day", "").updated("dateOfBirth.month", "")
+      val input = formInput.updated("dateOfBirth.day", "").updated("dateOfBirth.month", "")
       form.bind(input).value shouldBe Some(formOutput.copy(dateOfBirth = "1970-XX-XX"))
     }
   }
