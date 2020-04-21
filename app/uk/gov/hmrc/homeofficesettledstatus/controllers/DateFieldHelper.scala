@@ -55,14 +55,16 @@ object DateFieldHelper {
   def isValidDay(day: String, month: => Int, year: => Int, maxDateIncl: LocalDate) =
     if (day.contains("X")) day == "XX"
     else
-      (month match {
-        case 4 | 6 | 9 | 11 => isInRange(toInt(day), 1, 30)
-        case 2              => isInRange(toInt(day), 1, if (isLeapYear(year)) 29 else 28)
-        case _              => isInRange(toInt(day), 1, 31)
-      }) &&
+      isValidDayOfTheMonth(toInt(day), month, year) &&
       (year < maxDateIncl.getYear ||
       (year == maxDateIncl.getYear && month < maxDateIncl.getMonthValue) ||
       toInt(day) <= maxDateIncl.getDayOfMonth)
+
+  def isValidDayOfTheMonth(day: Int, month: Int, year: Int): Boolean = month match {
+    case 4 | 6 | 9 | 11 => isInRange(day, 1, 30)
+    case 2              => isInRange(day, 1, if (isLeapYear(year)) 29 else 28)
+    case _              => isInRange(day, 1, 31)
+  }
 
   def isLeapYear(year: Int): Boolean =
     (year % 4 == 0) && (year % 100 != 0) || (year % 400 == 0)
