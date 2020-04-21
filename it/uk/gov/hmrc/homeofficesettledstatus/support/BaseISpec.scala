@@ -1,7 +1,6 @@
 package uk.gov.hmrc.homeofficesettledstatus.support
 
 import akka.stream.Materializer
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder

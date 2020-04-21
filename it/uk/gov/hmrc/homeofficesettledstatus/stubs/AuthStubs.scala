@@ -1,9 +1,7 @@
 package uk.gov.hmrc.homeofficesettledstatus.stubs
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import play.api.test.FakeRequest
 import uk.gov.hmrc.homeofficesettledstatus.support.WireMockSupport
-import uk.gov.hmrc.http.SessionKeys
 
 trait AuthStubs {
   me: WireMockSupport =>

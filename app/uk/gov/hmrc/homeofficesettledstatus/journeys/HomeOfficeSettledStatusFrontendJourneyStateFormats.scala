@@ -17,8 +17,8 @@
 package uk.gov.hmrc.homeofficesettledstatus.journeys
 
 import play.api.libs.json._
-import HomeOfficeSettledStatusFrontendJourneyModel.State
-import HomeOfficeSettledStatusFrontendJourneyModel.State._
+import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State
+import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State._
 import uk.gov.hmrc.play.fsm.JsonStateFormats
 
 object HomeOfficeSettledStatusFrontendJourneyStateFormats extends JsonStateFormats[State] {
