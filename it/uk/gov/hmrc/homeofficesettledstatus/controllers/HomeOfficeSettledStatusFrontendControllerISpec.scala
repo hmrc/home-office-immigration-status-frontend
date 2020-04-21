@@ -211,7 +211,7 @@ class HomeOfficeSettledStatusFrontendControllerISpec
         checkHtmlResultWithBodyText(result, query.nino.formatted)
         checkHtmlResultWithBodyText(result, query.givenName)
         checkHtmlResultWithBodyText(result, query.familyName)
-        checkHtmlResultWithBodyText(result, query.dateOfBirth)
+        checkHtmlResultWithBodyText(result, "31 January 2001")
       }
 
       "redirect to start page if current state is Start" in {
