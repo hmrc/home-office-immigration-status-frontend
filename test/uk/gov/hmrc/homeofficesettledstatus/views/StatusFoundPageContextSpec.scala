@@ -18,6 +18,7 @@ package uk.gov.hmrc.homeofficesettledstatus.views
 
 import java.time.LocalDate
 
+import play.api.i18n.{DefaultMessagesApi, Lang, Messages, MessagesImpl}
 import play.api.mvc.Call
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficesettledstatus.models.{ImmigrationStatus, StatusCheckByNinoRequest, StatusCheckResult}
@@ -187,6 +188,18 @@ class StatusFoundPageContextSpec extends UnitSpec {
       context.mostRecentStatus shouldBe Some(ILR)
       context.previousStatuses shouldBe Seq(LTR_EXPIRED, FOO)
       context.statusClass shouldBe "success"
+    }
+
+    "show status label" in {
+      implicit val messages: Messages =
+        MessagesImpl(
+          Lang("en-UK"),
+          new DefaultMessagesApi(
+            Map(
+              "en-UK" -> Map("app.status.EUS_LTR" -> "foo123", "app.status.EUS_ILR" -> "bar456"))))
+      StatusFoundPageContext.immigrationStatusLabel("EUS", "LTR") shouldBe "foo123"
+      StatusFoundPageContext.immigrationStatusLabel("EUS", "ILR") shouldBe "bar456"
+      StatusFoundPageContext.immigrationStatusLabel("FOO", "BAR") shouldBe "FOO + BAR"
     }
 
   }

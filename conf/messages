@@ -31,8 +31,8 @@ app.hasPreSettledStatus=has pre settled status
 app.hasSettledStatus.expired=has expired settled status
 app.hasPreSettledStatus.expired=has expired pre settled status
 app.hasNoStatus=has no settled status
-app.status.LTR=Leave to remain
-app.status.ILR=Indefinite leave to remain
+app.status.EUS_LTR=Pre settled status
+app.status.EUS_ILR=Settled status
 
 # Lookup page
 lookup.title=Enter the customer''s details

@@ -52,9 +52,14 @@ case class StatusFoundPageContext(
     case _ => messages("app.hasNoStatus")
   }
 
-  def immigrationStatusLabel(status: String)(implicit messages: Messages): String = status match {
-    case LTR   => messages("app.status.LTR")
-    case ILR   => messages("app.status.ILR")
-    case other => other
+}
+
+object StatusFoundPageContext {
+
+  def immigrationStatusLabel(productType: String, status: String)(
+    implicit messages: Messages): String = (productType, status) match {
+    case (EUS, LTR) => messages("app.status.EUS_LTR")
+    case (EUS, ILR) => messages("app.status.EUS_ILR")
+    case _          => s"$productType + $status"
   }
 }

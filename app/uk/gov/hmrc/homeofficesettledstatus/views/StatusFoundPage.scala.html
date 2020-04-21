@@ -71,7 +71,7 @@
 
                     <div>
                         <dt class="cya-question">@messages("status-found.previous.status")</dt>
-                        <dd id="status-previous-@index" class="cya-answer">@context.immigrationStatusLabel(status.immigrationStatus)</dd>
+                        <dd id="status-previous-@index" class="cya-answer">@StatusFoundPageContext.immigrationStatusLabel(status.productType, status.immigrationStatus)</dd>
                     </div>
 
                     @Some(status).map(_.statusStartDate).map(DateFormat.format(locale)).map { statusStartDate =>
