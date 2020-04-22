@@ -27,22 +27,20 @@
 @fieldsetClasses = @{if(formItem.errors.filter(error => fieldNames.contains(error.key)).nonEmpty) "form-group-error" else "" }
 
 <div class="form-group @fieldsetClasses soft--ends">
-    <fieldset class="form-date" id="@fieldName">
+    <fieldset class="form-date" id="@fieldName" aria-describedby="@args.toMap.get('_ariaDescribedBy).map {ariaDescribedBy=>@ariaDescribedBy}">
 
         <legend class="@args.toMap.get('_legendClass).map { legendClass => @legendClass}">
-            <span class="@args.toMap.get('_legendSpanClass).map { legendSpanClass => @legendSpanClass}">
-                @args.toMap.get('_legend).map { legend => @legend}
-            </span>
-            @args.toMap.get('_inputHint).map { hint =>
-                <span class="form-hint">@hint</span>
-            }
-            @formItem.errors.filter(error => fieldNames.contains(error.key)).map { error => <span class="error-notification">
-                @args.toMap.get('_errorPrefix).map { errorPrefix =>
-                    <span class="visually-hidden">@errorPrefix </span>
-                }
-                @messages(error.message)
-            </span>}
+            @args.toMap.get('_legend).map { legend => @legend}
         </legend>
+        @args.toMap.get('_inputHint).map { hint =>
+            <span class="form-hint" id="@args.toMap.get('_hintID).map{hintID=>@hintID}">@hint</span>
+        }
+        @formItem.errors.filter(error => fieldNames.contains(error.key)).map { error => <span class="error-notification">
+            @args.toMap.get('_errorPrefix).map { errorPrefix =>
+                <span class="visually-hidden">@errorPrefix </span>
+            }
+            @messages(error.message)
+        </span>}
 
         @input(
             formItem(s"${fieldName}.day"),
@@ -50,7 +48,8 @@
             '_labelClass -> "form-group form-group-day",
             '_inputClass -> "form-control input--xsmall",
             '_emptyValueText -> " ",
-            '_type -> "tel",
+            '_type -> "text",
+            '_inputMode -> messages("lookup.inputMode"),
             '_maxlength -> "2",
             '_hideErrors -> " ",
             '_hideBar -> " ",
@@ -63,7 +62,8 @@
             '_labelClass -> "form-group form-group-month",
             '_inputClass -> "form-control input--xsmall",
             '_emptyValueText -> " ",
-            '_type -> "tel",
+            '_type -> "text",
+            '_inputMode -> messages("lookup.inputMode"),
             '_maxlength -> "2",
             '_hideErrors -> " ",
             '_hideBar -> " ",
@@ -76,7 +76,8 @@
             '_labelClass -> "form-group form-group-year",
             '_inputClass -> "form-control input--xsmall",
             '_emptyValueText -> " ",
-            '_type -> "tel",
+            '_type -> "text",
+            '_inputMode -> messages("lookup.inputMode"),
             '_maxlength -> "4",
             '_hideErrors -> " ",
             '_hideBar -> " ",

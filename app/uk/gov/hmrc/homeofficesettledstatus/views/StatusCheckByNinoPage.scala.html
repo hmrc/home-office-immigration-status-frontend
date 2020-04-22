@@ -47,6 +47,8 @@
             '_inputClass -> "form-control width-10",
             '_labelTextClass -> "form-label",
             '_hintId -> messages("lookup.nino.ariaDescribedBy"),
+            '_error_id -> messages("lookup.nino.ariaDescribedByError"),
+            '_errorPrefix -> messages("error.prefix"),
             '_inputHint -> messages("lookup.nino.hint"),
             '_labelClass -> "soft--ends"
         )
@@ -54,7 +56,8 @@
          @layout.input(
             statusCheckForm("givenName"),
             '_label -> messages("lookup.givenName.label"),
-            '_hintId -> messages("lookup.givenName.ariaDescribedBy"),
+            '_error_id -> messages("lookup.givenName.ariaDescribedByError"),
+            '_errorPrefix -> messages("error.prefix"),
             '_inputClass -> "form-control width-10",
             '_labelTextClass -> "form-label",
             '_labelClass -> "soft--ends"
@@ -63,15 +66,19 @@
          @layout.input(
             statusCheckForm("familyName"),
             '_label -> messages("lookup.familyName.label"),
-            '_hintId -> messages("lookup.familyName.ariaDescribedBy"),
+            '_error_id -> messages("lookup.familyName.ariaDescribedByError"),
+            '_errorPrefix -> messages("error.prefix"),
             '_inputClass -> "form-control width-10",
             '_labelTextClass -> "form-label",
             '_labelClass -> "soft--ends"
          )
 
          @layout.dateFieldsFreeInlineLegend(statusCheckForm, "dateOfBirth",
+            '_ariaDescribedBy -> messages("lookup.hintID"),
+            '_hintID -> messages("lookup.hintID"),
             '_legend -> messages("lookup.dateOfBirth.label"),
             '_inputHint -> messages("lookup.dateOfBirth.hint"),
+            '_errorPrefix -> messages("error.prefix"),
             '_legendSpanClass -> "form-label",
             '_legendClass -> "flush--ends"
          )

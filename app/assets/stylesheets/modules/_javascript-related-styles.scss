@@ -34,6 +34,12 @@
 
 .form-group-error input[type="text"] {
     border: 4px solid #d4351c;
+    box-shadow: none;
+    &:focus {
+        border-color: #0b0c0c;
+        outline: 3px solid #fd0;
+        outline-offset: 0;
+    }
 }
 
 .form-group-error .form-date .form-field-error {

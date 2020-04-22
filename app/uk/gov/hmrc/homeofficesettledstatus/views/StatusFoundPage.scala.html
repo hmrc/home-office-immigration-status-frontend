@@ -23,7 +23,7 @@
 
 @locale = @{messages.lang.locale}
 
-@layout.mainTemplate(title = messages("status-found.title"), bodyClasses = None, sidebarLinks = None, mainClass = Some("full-width")) {
+@layout.mainTemplate(title = messages("status-found.title") + " " + context.currentStatusLabel, bodyClasses = None, sidebarLinks = None, mainClass = Some("full-width")) {
 
   <div class="grid-row">
     <div class="column-two-thirds">
