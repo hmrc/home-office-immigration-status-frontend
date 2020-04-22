@@ -3,7 +3,7 @@ generic.nino=National Insurance Number
 generic.givenName=First Name
 generic.familyName=Family Name
 generic.dob=Date of birth
-generic.nationality=Nationality
+generic.nationality=Country of nationality
 generic.searchAgain=Search again
 generic.change=Change
 
