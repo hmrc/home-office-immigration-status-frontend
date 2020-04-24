@@ -45,13 +45,14 @@ lookup.nino.hint=For example, ‘QQ 12 34 56 C’.
 lookup.nino.ariaDescribedBy=nino-hint
 lookup.nino.ariaDescribedByError=nino-error
 lookup.givenName.label=First name
-lookup.givenName.ariaDescribedByError=first-name
+lookup.givenName.ariaDescribedByError=givenName-error
 lookup.familyName.label=Family name
-lookup.familyName.ariaDescribedByError=family-name
+lookup.familyName.ariaDescribedByError=familyName-error
 lookup.dateOfBirth.label=Date of birth
 lookup.dateOfBirth.hint=For example, 31 3 1980
 lookup.inputMode=numeric
-lookup.hintID=dob-hint
+lookup.hintDOBid=dob-hint
+lookup.hintDOBIderror=dateOfBirth-error
 
 # Status page
 status-found.title=Applicant
