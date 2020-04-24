@@ -27,7 +27,7 @@
 @fieldsetClasses = @{if(formItem.errors.filter(error => fieldNames.contains(error.key)).nonEmpty) "form-group-error" else "" }
 
 <div class="form-group @fieldsetClasses soft--ends">
-    <fieldset class="form-date" id="@fieldName" aria-describedby="@args.toMap.get('_ariaDescribedBy).map {ariaDescribedBy=>@ariaDescribedBy}">
+    <fieldset class="form-date" id="@fieldName" aria-describedby="@args.toMap.get('_ariaDescribedBy).map {ariaDescribedBy=>@ariaDescribedBy}@formItem.errors.filter(error => fieldNames.contains(error.key)).map { error => @args.toMap.get('_ariaDescribedByError).map {ariaDescribedByError=>@ariaDescribedByError}}">
 
         <legend class="@args.toMap.get('_legendClass).map { legendClass => @legendClass}">
             @args.toMap.get('_legend).map { legend => @legend}
@@ -35,7 +35,7 @@
         @args.toMap.get('_inputHint).map { hint =>
             <span class="form-hint" id="@args.toMap.get('_hintID).map{hintID=>@hintID}">@hint</span>
         }
-        @formItem.errors.filter(error => fieldNames.contains(error.key)).map { error => <span class="error-notification">
+        @formItem.errors.filter(error => fieldNames.contains(error.key)).map { error => <span class="error-notification" id="@args.toMap.get('_ariaDescribedByError).map {ariaDescribedByError=>@ariaDescribedByError}">
             @args.toMap.get('_errorPrefix).map { errorPrefix =>
                 <span class="visually-hidden">@errorPrefix </span>
             }

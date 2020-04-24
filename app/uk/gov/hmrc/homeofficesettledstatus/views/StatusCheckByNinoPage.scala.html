@@ -74,8 +74,9 @@
          )
 
          @layout.dateFieldsFreeInlineLegend(statusCheckForm, "dateOfBirth",
-            '_ariaDescribedBy -> messages("lookup.hintID"),
-            '_hintID -> messages("lookup.hintID"),
+            '_ariaDescribedBy -> messages("lookup.hintDOBid"),
+            '_ariaDescribedByError -> messages("lookup.hintDOBIderror"),
+            '_hintID -> messages("lookup.hintDOBid"),
             '_legend -> messages("lookup.dateOfBirth.label"),
             '_inputHint -> messages("lookup.dateOfBirth.hint"),
             '_errorPrefix -> messages("error.prefix"),
