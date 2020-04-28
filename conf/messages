@@ -64,14 +64,12 @@ status-found.previous.startDate=Previous start date
 status-found.previous.expiryDate=Previous expiry date
 
 # Failure page
-status-check-failure.title=Unable to determine status
-status-check-failure.heading2PersonalDetails=Personal details
-status-check-failure.listParagraph=A match has not been found using the details given, this may be for a number of reasons including:
+status-check-failure.title=A match has not been found
+status-check-failure.heading2CustomerDetails=Customer details
+status-check-failure.listParagraph=This may be for a number of reasons, including:
 status-check-failure.list-item1=The details are incorrect
 status-check-failure.list-item2=The customer has not applied to the EU Settlement Scheme
 status-check-failure.list-item3=The customer has had their application to the EU Settlement Scheme rejected
-status-check-failure.list-item4=Unable to find a unique match
-status-check-failure.checkTryAgainParagraph=If you typed the details, check they are correct and perform the search again.
 status-check-failure.para-ifCorrect=If the details are correct and you need to speak to someone,
 status-check-failure.para-ifCorrect-link= contact the TBC Helpline
 
