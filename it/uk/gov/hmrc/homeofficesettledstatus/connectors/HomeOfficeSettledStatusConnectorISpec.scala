@@ -127,8 +127,8 @@ trait HomeOfficeSettledStatusConnectorISpecSetup
 
   val request = StatusCheckByNinoRequest(
     Nino("RJ301829A"),
-    "DOE",
-    "JANE",
+    "Doe",
+    "Jane",
     "2001-01-31",
     Some(
       StatusCheckRange(

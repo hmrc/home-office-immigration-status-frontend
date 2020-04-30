@@ -164,13 +164,13 @@ trait TestData {
   val correlationId = "123"
 
   val validQuery =
-    StatusCheckByNinoRequest(Nino("RJ301829A"), "DOE", "JANE", "2001-01-31")
+    StatusCheckByNinoRequest(Nino("RJ301829A"), "Doe", "Jane", "2001-01-31")
 
   val validQueryWithDateRange =
     StatusCheckByNinoRequest(
       Nino("RJ301829A"),
-      "DOE",
-      "JANE",
+      "Doe",
+      "Jane",
       "2001-01-31",
       Some(
         StatusCheckRange(Some(LocalDate.now().minusDays(6)), Some(LocalDate.now().minusMonths(6)))))

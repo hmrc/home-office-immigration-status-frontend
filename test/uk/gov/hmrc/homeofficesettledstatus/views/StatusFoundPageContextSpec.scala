@@ -26,7 +26,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 class StatusFoundPageContextSpec extends UnitSpec {
 
-  val query = StatusCheckByNinoRequest(Nino("RJ301829A"), "DOE", "JANE", "2001-01-31")
+  val query = StatusCheckByNinoRequest(Nino("RJ301829A"), "Doe", "Jane", "2001-01-31")
   val call = Call("GET", "/foo", "")
 
   val ILR = ImmigrationStatus(

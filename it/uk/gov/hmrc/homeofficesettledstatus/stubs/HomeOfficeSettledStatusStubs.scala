@@ -21,8 +21,8 @@ trait HomeOfficeSettledStatusStubs extends JourneyTestData {
   def requestBodyWithRange(startDate: String, endDate: String): String =
     s"""{
        |  "dateOfBirth": "2001-01-31",
-       |  "familyName": "JANE",
-       |  "givenName": "DOE",
+       |  "familyName": "Jane",
+       |  "givenName": "Doe",
        |  "nino": "RJ301829A",
        |  "statusCheckRange": {
        |    "startDate": "$startDate",
@@ -33,8 +33,8 @@ trait HomeOfficeSettledStatusStubs extends JourneyTestData {
   val invalidNinoRequestBody: String =
     """{
       |  "dateOfBirth": "2001-01-31",
-      |  "familyName": "JANE",
-      |  "givenName": "DOE",
+      |  "familyName": "Jane",
+      |  "givenName": "Doe",
       |  "nino": "invalid"
       |}""".stripMargin
 

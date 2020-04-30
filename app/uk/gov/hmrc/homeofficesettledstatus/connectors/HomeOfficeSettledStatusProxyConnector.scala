@@ -52,7 +52,7 @@ class HomeOfficeSettledStatusProxyConnector @Inject()(
       http
         .POST[StatusCheckByNinoRequest, StatusCheckResponse](
           new URL(baseUrl + publicFundsByNinoPath).toExternalForm,
-          request.toUpperCase)(
+          request)(
           implicitly[Writes[StatusCheckByNinoRequest]],
           implicitly[HttpReads[StatusCheckResponse]],
           hc.withExtraHeaders(HEADER_X_CORRELATION_ID -> UUID.randomUUID().toString),
