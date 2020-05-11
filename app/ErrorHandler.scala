@@ -21,6 +21,7 @@ import play.api.mvc.Results._
 import play.api.mvc.{Request, RequestHeader, Result}
 import play.api.{Configuration, Environment, Mode}
 import uk.gov.hmrc.auth.core.{InsufficientEnrolments, NoActiveSession}
+import uk.gov.hmrc.homeofficesettledstatus.connectors.HomeOfficeSettledStatusProxyError
 import uk.gov.hmrc.homeofficesettledstatus.views.html.{error_template, govuk_wrapper}
 import uk.gov.hmrc.http.{JsValidationException, NotFoundException}
 import uk.gov.hmrc.play.HeaderCarrierConverter
@@ -58,12 +59,18 @@ class ErrorHandler @Inject()(
       case _: NoActiveSession =>
         toGGLogin(if (isDevEnv) s"http://${request.host}${request.uri}" else s"${request.uri}")
       case _: InsufficientEnrolments => Forbidden
+      case _: HomeOfficeSettledStatusProxyError =>
+        Ok(
+          standardErrorTemplate(
+            Messages("external.error.500.title"),
+            Messages("external.error.500.heading"),
+            Messages("external.error.500.message")))
       case _ =>
         Ok(
           standardErrorTemplate(
-            Messages("global.error.500.title"),
-            Messages("global.error.500.heading"),
-            Messages("global.error.500.message")))
+            Messages("internal.error.500.title"),
+            Messages("internal.error.500.heading"),
+            Messages("internal.error.500.message")))
     }
   }
 

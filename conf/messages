@@ -79,9 +79,13 @@ button.continue=Continue
 button.submit=Submit
 
 # Global errors
-global.error.500.title=Sorry, there is a problem with the service
-global.error.500.heading=Sorry, there is a problem with the service
-global.error.500.message=Try again later.
+external.error.500.title=Service unavailable
+external.error.500.heading=Sorry, the service is unavailable
+external.error.500.message=Try again later.
+
+internal.error.500.title=There is a problem with the service
+internal.error.500.heading=Sorry, there is a problem with the service
+internal.error.500.message=Contact the Helpline.
 
 # Shuttering
 shuttering.title=Service unavailable
