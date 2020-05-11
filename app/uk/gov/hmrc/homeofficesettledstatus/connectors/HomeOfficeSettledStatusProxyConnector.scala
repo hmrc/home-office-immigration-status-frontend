@@ -66,6 +66,9 @@ class HomeOfficeSettledStatusProxyConnector @Inject()(
           case e: Upstream4xxResponse if e.upstreamResponseCode == 409 =>
             Json.parse(extractResponseBody(e.message, "Response body: '")).as[StatusCheckResponse]
         }
+        .recoverWith {
+          case e: Throwable => Future.failed(HomeOfficeSettledStatusProxyError(e))
+        }
     }
 
 }
@@ -80,3 +83,5 @@ object HomeOfficeSettledStatusProxyConnector {
     body
   }
 }
+
+case class HomeOfficeSettledStatusProxyError(e: Throwable) extends RuntimeException(e)

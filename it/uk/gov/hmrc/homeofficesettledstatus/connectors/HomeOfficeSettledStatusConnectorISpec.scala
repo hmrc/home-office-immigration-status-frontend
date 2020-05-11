@@ -73,7 +73,7 @@ class HomeOfficeSettledStatusConnectorISpec extends HomeOfficeSettledStatusConne
       "throw exception if other 4xx response" in {
         givenStatusPublicFundsByNinoStub(429, validRequestBodyWithDateRange(), "")
 
-        an[Upstream4xxResponse] shouldBe thrownBy {
+        an[HomeOfficeSettledStatusProxyError] shouldBe thrownBy {
           await(connector.statusPublicFundsByNino(request))
         }
       }
@@ -81,7 +81,7 @@ class HomeOfficeSettledStatusConnectorISpec extends HomeOfficeSettledStatusConne
       "throw exception if 5xx response" in {
         givenStatusPublicFundsByNinoStub(500, validRequestBodyWithDateRange(), "")
 
-        an[Upstream5xxResponse] shouldBe thrownBy {
+        an[HomeOfficeSettledStatusProxyError] shouldBe thrownBy {
           await(connector.statusPublicFundsByNino(request))
         }
       }
