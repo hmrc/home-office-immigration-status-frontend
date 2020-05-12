@@ -195,8 +195,7 @@ class StatusFoundPageContextSpec extends UnitSpec {
         MessagesImpl(
           Lang("en-UK"),
           new DefaultMessagesApi(
-            Map(
-              "en-UK" -> Map("app.status.EUS_LTR" -> "foo123", "app.status.EUS_ILR" -> "bar456"))))
+            Map("en-UK" -> Map("app.status.EUS_LTR" -> "foo123", "app.status.EUS_ILR" -> "bar456"))))
       StatusFoundPageContext.immigrationStatusLabel("EUS", "LTR") shouldBe "foo123"
       StatusFoundPageContext.immigrationStatusLabel("EUS", "ILR") shouldBe "bar456"
       StatusFoundPageContext.immigrationStatusLabel("FOO", "BAR") shouldBe "FOO + BAR"

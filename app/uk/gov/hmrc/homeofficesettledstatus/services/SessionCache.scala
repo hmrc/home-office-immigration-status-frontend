@@ -41,8 +41,7 @@ trait SessionCache[T, C] {
         Future.failed(new RuntimeException(error))
     }
 
-  def save(
-    input: T)(implicit requestContext: C, writes: Writes[T], ec: ExecutionContext): Future[T] =
+  def save(input: T)(implicit requestContext: C, writes: Writes[T], ec: ExecutionContext): Future[T] =
     store(input).flatMap {
       case Right(_) => input
       case Left(error) =>
@@ -85,19 +84,15 @@ trait SessionCache[T, C] {
         Right(None)
     }
 
-  private def store(newSession: T)(
-    implicit writes: Writes[T],
-    requestContext: C,
-    ec: ExecutionContext): Future[Either[String, Unit]] =
+  private def store(
+    newSession: T)(implicit writes: Writes[T], requestContext: C, ec: ExecutionContext): Future[Either[String, Unit]] =
     getSessionId match {
       case Some(sessionId) ⇒
         cacheRepository
           .createOrUpdate(Id(sessionId), sessionName, Json.toJson(newSession))
           .map[Either[String, Unit]] { dbUpdate ⇒
             if (dbUpdate.writeResult.inError) {
-              Left(
-                dbUpdate.writeResult.errmsg.getOrElse(
-                  "unknown error during inserting session data in mongo"))
+              Left(dbUpdate.writeResult.errmsg.getOrElse("unknown error during inserting session data in mongo"))
             } else {
               Right(())
             }

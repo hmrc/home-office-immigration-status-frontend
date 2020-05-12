@@ -45,9 +45,8 @@ class HomeOfficeSettledStatusProxyConnector @Inject()(
 
   override val kenshooRegistry: MetricRegistry = metrics.defaultRegistry
 
-  def statusPublicFundsByNino(request: StatusCheckByNinoRequest)(
-    implicit hc: HeaderCarrier,
-    ec: ExecutionContext): Future[StatusCheckResponse] =
+  def statusPublicFundsByNino(
+    request: StatusCheckByNinoRequest)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[StatusCheckResponse] =
     monitor(s"ConsumedAPI-home-office-settled-status-proxy-status-by-nino-POST") {
       http
         .POST[StatusCheckByNinoRequest, StatusCheckResponse](

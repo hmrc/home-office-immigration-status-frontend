@@ -88,5 +88,8 @@ internal.error.500.heading=Sorry, there is a problem with the service
 internal.error.500.message=Contact the Helpline.
 
 # Shuttering
-shuttering.title=Service unavailable
 shuttering.heading=Sorry, the service is unavailable
+shuttering.title=Service unavailable
+
+# Accessibility
+accessibility.title=Accessibility statement for check settled status

@@ -81,6 +81,13 @@ class HomeOfficeSettledStatusFrontendControllerISpec
         checkHtmlResultWithBodyText(result, "value=\"01\"")
         checkHtmlResultWithBodyText(result, "value=\"31\"")
       }
+
+      "display the lookup page including the link to the Accessibility page" in {
+        journey.set(StatusCheckByNino(), List(Start))
+        givenAuthorisedForStride("TBC", "StrideUserId")
+        val result = controller.showStatusCheckByNino(fakeRequest)
+        checkHtmlResultWithBodyText(result, s"<a href='${routes.AccessibilityStatementController.showPage().url}'")
+      }
     }
 
     "POST /check-with-nino" should {

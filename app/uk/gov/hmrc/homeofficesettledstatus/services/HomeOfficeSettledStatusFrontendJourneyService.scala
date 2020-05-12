@@ -24,8 +24,7 @@ import uk.gov.hmrc.homeofficesettledstatus.journeys.{HomeOfficeSettledStatusFron
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.fsm.PersistentJourneyService
 
-trait HomeOfficeSettledStatusFrontendJourneyService[RequestContext]
-    extends PersistentJourneyService[RequestContext] {
+trait HomeOfficeSettledStatusFrontendJourneyService[RequestContext] extends PersistentJourneyService[RequestContext] {
 
   val journeyKey = "HomeOfficeSettledStatusJourney"
 

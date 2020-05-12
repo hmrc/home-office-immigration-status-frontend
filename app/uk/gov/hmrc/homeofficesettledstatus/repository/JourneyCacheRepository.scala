@@ -25,6 +25,4 @@ import scala.concurrent.ExecutionContext
 
 class JourneyCacheRepository @Inject()(appConfig: AppConfig, mongo: ReactiveMongoComponent)(
   implicit ec: ExecutionContext)
-    extends CacheMongoRepository("journeys", appConfig.mongoSessionExpiryTime)(
-      mongo.mongoConnector.db,
-      ec)
+    extends CacheMongoRepository("journeys", appConfig.mongoSessionExpiryTime)(mongo.mongoConnector.db, ec)

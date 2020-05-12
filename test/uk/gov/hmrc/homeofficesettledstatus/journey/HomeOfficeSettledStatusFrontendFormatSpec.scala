@@ -50,8 +50,7 @@ class HomeOfficeSettledStatusFrontendFormatSpec extends UnitSpec {
 
       "StatusCheckByNino with query" in {
         val state =
-          StatusCheckByNino(
-            Some(StatusCheckByNinoRequest(Nino("RJ301829A"), "foo", "bar", "1956-05-08")))
+          StatusCheckByNino(Some(StatusCheckByNinoRequest(Nino("RJ301829A"), "foo", "bar", "1956-05-08")))
 
         val json = Json.parse(
           """{"state":"StatusCheckByNino","properties":{"maybeQuery":{"dateOfBirth":"1956-05-08","familyName":"bar","givenName":"foo","nino":"RJ301829A"}}}""")

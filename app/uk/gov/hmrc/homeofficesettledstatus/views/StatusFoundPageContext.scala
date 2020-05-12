@@ -23,10 +23,7 @@ import play.api.mvc.Call
 import uk.gov.hmrc.homeofficesettledstatus.models.ImmigrationStatus.{EUS, ILR, LTR}
 import uk.gov.hmrc.homeofficesettledstatus.models.{ImmigrationStatus, StatusCheckByNinoRequest, StatusCheckResult}
 
-case class StatusFoundPageContext(
-  query: StatusCheckByNinoRequest,
-  result: StatusCheckResult,
-  searchAgainCall: Call) {
+case class StatusFoundPageContext(query: StatusCheckByNinoRequest, result: StatusCheckResult, searchAgainCall: Call) {
 
   val mostRecentStatus: Option[ImmigrationStatus] = result.mostRecentStatus
   val previousStatuses: Seq[ImmigrationStatus] = result.previousStatuses
@@ -56,10 +53,10 @@ case class StatusFoundPageContext(
 
 object StatusFoundPageContext {
 
-  def immigrationStatusLabel(productType: String, status: String)(
-    implicit messages: Messages): String = (productType, status) match {
-    case (EUS, LTR) => messages("app.status.EUS_LTR")
-    case (EUS, ILR) => messages("app.status.EUS_ILR")
-    case _          => s"$productType + $status"
-  }
+  def immigrationStatusLabel(productType: String, status: String)(implicit messages: Messages): String =
+    (productType, status) match {
+      case (EUS, LTR) => messages("app.status.EUS_LTR")
+      case (EUS, ILR) => messages("app.status.EUS_ILR")
+      case _          => s"$productType + $status"
+    }
 }

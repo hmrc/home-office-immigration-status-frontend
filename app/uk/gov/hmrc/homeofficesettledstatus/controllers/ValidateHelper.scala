@@ -24,8 +24,7 @@ object ValidateHelper {
     if (fieldValue.trim.isEmpty) Invalid(ValidationError(failure)) else Valid
   }
 
-  def validateField(emptyFailure: String, invalidFailure: String)(
-    condition: String => Boolean): Constraint[String] =
+  def validateField(emptyFailure: String, invalidFailure: String)(condition: String => Boolean): Constraint[String] =
     Constraint[String] { fieldValue: String =>
       nonEmpty(emptyFailure)(fieldValue) match {
         case i: Invalid =>

@@ -109,14 +109,10 @@ class DateFieldHelperSpec extends UnitSpec {
     }
     "distinguish between missing and invalid date format" in {
       validDobDateFormat("") shouldBe Invalid(ValidationError("error.dateOfBirth.required"))
-      validDobDateFormat("-11-30") shouldBe Invalid(
-        ValidationError("error.dateOfBirth.invalid-format"))
-      validDobDateFormat("-11-") shouldBe Invalid(
-        ValidationError("error.dateOfBirth.invalid-format"))
-      validDobDateFormat("--20") shouldBe Invalid(
-        ValidationError("error.dateOfBirth.invalid-format"))
-      validDobDateFormat("1972-XX-11") shouldBe Invalid(
-        ValidationError("error.dateOfBirth.invalid-format"))
+      validDobDateFormat("-11-30") shouldBe Invalid(ValidationError("error.dateOfBirth.invalid-format"))
+      validDobDateFormat("-11-") shouldBe Invalid(ValidationError("error.dateOfBirth.invalid-format"))
+      validDobDateFormat("--20") shouldBe Invalid(ValidationError("error.dateOfBirth.invalid-format"))
+      validDobDateFormat("1972-XX-11") shouldBe Invalid(ValidationError("error.dateOfBirth.invalid-format"))
       validDobDateFormat("1972-11-XX") shouldBe Valid
       validDobDateFormat("1972-XX-XX") shouldBe Valid
     }

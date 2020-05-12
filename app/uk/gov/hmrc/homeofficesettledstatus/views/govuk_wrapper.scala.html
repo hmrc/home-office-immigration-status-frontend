@@ -17,23 +17,28 @@
 @import layouts.GovUkTemplate
 @import play.api.Configuration
 @import play.twirl.api.HtmlFormat
+@import uk.gov.hmrc.homeofficesettledstatus.controllers.routes.AccessibilityStatementController
 @import uk.gov.hmrc.play.views.html.helpers.ReportAProblemLink
 @import uk.gov.hmrc.play.views.html.layouts._
 
-@this(layoutsHead: Head, layoutsHeaderNav: HeaderNav, layoutsFooter: Footer, layoutsFooterLinks: FooterLinks,
- layoutsServiceInfo: ServiceInfo, layoutsMainContentHeader: MainContentHeader, layoutsMainContent: MainContent, helpersReportAProblemLink: ReportAProblemLink, govUkTemplate: GovUkTemplate)
+@this(
+  layoutsHead: Head, layoutsHeaderNav: HeaderNav, layoutsFooter: Footer, layoutsFooterLinks: FooterLinks,
+  layoutsServiceInfo: ServiceInfo, layoutsMainContentHeader: MainContentHeader, layoutsMainContent: MainContent,
+  helpersReportAProblemLink: ReportAProblemLink, govUkTemplate: GovUkTemplate
+)
 
-@(title: String,
-        mainClass: Option[String] = None,
-        mainDataAttributes: Option[Html] = None,
-        bodyClasses: Option[String] = None,
-        sidebar: Html = HtmlFormat.empty,
-        contentHeader: Option[Html] = None,
-        mainContent: Html = HtmlFormat.empty,
-        serviceInfoContent: Html = HtmlFormat.empty,
-        scriptElem: Option[Html] = None,
-        gaCode: Seq[String] = Seq.empty)(implicit messages: Messages, configuration: Configuration)
-
+@(
+  title: String,
+  mainClass: Option[String] = None,
+  mainDataAttributes: Option[Html] = None,
+  bodyClasses: Option[String] = None,
+  sidebar: Html = HtmlFormat.empty,
+  contentHeader: Option[Html] = None,
+  mainContent: Html = HtmlFormat.empty,
+  serviceInfoContent: Html = HtmlFormat.empty,
+  scriptElem: Option[Html] = None,
+  gaCode: Seq[String] = Seq.empty)(implicit messages: Messages, configuration: Configuration
+)
 
 @headScripts = {
     <link href="@routes.Assets.at("stylesheets/styles.css")" media="screen" rel="stylesheet" type="text/css">
@@ -90,14 +95,16 @@
 }
 
 @footerTop = {}
-@footerLinks = {}
+@footerLinks = {
+    @layoutsFooterLinks(accessibilityFooterUrl = Some(AccessibilityStatementController.showPage().url))
+}
 
 @serviceInfo = {}
 
 @mainContentHeader = {
-@if(contentHeader.isDefined) {
-    @layoutsMainContentHeader(contentHeader.get)
-}
+    @if(contentHeader.isDefined) {
+        @layoutsMainContentHeader(contentHeader.get)
+    }
 }
 
 @content = {
@@ -109,4 +116,4 @@
     sidebar = sidebar)
 }
 
-@govUkTemplate(Some(titleWithSuffix), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(layoutsFooterLinks()), nav = true)(content)
+@govUkTemplate(Some(titleWithSuffix), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(footerLinks), nav = true)(content)

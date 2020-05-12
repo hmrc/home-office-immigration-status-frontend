@@ -93,10 +93,7 @@ class ViewsSpec @Inject()(govUkWrapper: govuk_wrapper, layoutComponents: LayoutC
         Some("my-custom-body-class"),
         Some("my-custom-main-class"),
         Some(Html("My custom script"))
-      )(Html("My custom main content HTML"))(
-        MessagesImpl(lang, stubMessagesApi()),
-        FakeRequest(),
-        app.configuration)
+      )(Html("My custom main content HTML"))(MessagesImpl(lang, stubMessagesApi()), FakeRequest(), app.configuration)
       contentAsString(html2) shouldBe (content)
     }
   }

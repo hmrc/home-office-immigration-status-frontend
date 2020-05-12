@@ -37,16 +37,10 @@ object HomeOfficeSettledStatusFrontendJourneyModel extends JourneyModel {
 
     case class StatusCheckByNino(maybeQuery: Option[StatusCheckByNinoRequest] = None) extends State
 
-    case class StatusFound(
-      correlationId: String,
-      query: StatusCheckByNinoRequest,
-      result: StatusCheckResult)
+    case class StatusFound(correlationId: String, query: StatusCheckByNinoRequest, result: StatusCheckResult)
         extends State
 
-    case class StatusCheckFailure(
-      correlationId: String,
-      query: StatusCheckByNinoRequest,
-      error: StatusCheckError)
+    case class StatusCheckFailure(correlationId: String, query: StatusCheckByNinoRequest, error: StatusCheckError)
         extends State with IsError
 
   }
@@ -83,9 +77,8 @@ object HomeOfficeSettledStatusFrontendJourneyModel extends JourneyModel {
               goto(StatusCheckFailure(correlationId, query, error))
 
             case StatusCheckResponse(correlationId, _, Some(result))
-                if result.mostRecentStatus.exists(s =>
-                  s.productType == EUS && ImmigrationStatus.settledStatusSet.contains(
-                    s.immigrationStatus)) =>
+                if result.mostRecentStatus.exists(
+                  s => s.productType == EUS && ImmigrationStatus.settledStatusSet.contains(s.immigrationStatus)) =>
               goto(StatusFound(correlationId, query, result))
 
             case StatusCheckResponse(correlationId, _, _) =>

@@ -55,12 +55,7 @@ class StatusCheckResultSpec extends UnitSpec {
         LocalDate.parse("1971-01-01"),
         "B",
         List(
-          ImmigrationStatus(
-            LocalDate.parse("2010-01-02"),
-            None,
-            "A",
-            "B",
-            noRecourseToPublicFunds = false),
+          ImmigrationStatus(LocalDate.parse("2010-01-02"), None, "A", "B", noRecourseToPublicFunds = false),
           expectedResult)
       )
 

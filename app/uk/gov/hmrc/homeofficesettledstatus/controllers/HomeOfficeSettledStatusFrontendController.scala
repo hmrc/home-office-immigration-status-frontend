@@ -140,20 +140,14 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
       Ok(statusFoundPage(StatusFoundPageContext(query, result, getCallFor(Start))))
 
     case StatusCheckFailure(_, query, error) =>
-      Ok(
-        statusCheckFailurePage(
-          query,
-          error,
-          getCallFor(StatusCheckByNino(Some(query))),
-          getCallFor(Start)))
+      Ok(statusCheckFailurePage(query, error, getCallFor(StatusCheckByNino(Some(query))), getCallFor(Start)))
 
   }
 
   override implicit def context(implicit rh: RequestHeader): HeaderCarrier =
     appendJourneyId(super.hc)
 
-  override def amendContext(
-    headerCarrier: HeaderCarrier)(key: String, value: String): HeaderCarrier =
+  override def amendContext(headerCarrier: HeaderCarrier)(key: String, value: String): HeaderCarrier =
     headerCarrier.withExtraHeaders(key -> value)
 }
 
