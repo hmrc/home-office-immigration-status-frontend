@@ -37,6 +37,10 @@ class AppConfigImpl @Inject()(config: ServicesConfig) extends AppConfig {
   val homeOfficeSettledStatusProxyBaseUrl: String =
     config.baseUrl("home-office-settled-status-proxy")
   val mongoSessionExpiryTime: Int = config.getInt("mongodb.session.expireAfterSeconds")
-  val authorisedStrideGroup: String = config.getString("authorisedStrideGroup")
+
+  val authorisedStrideGroup: String = config
+    .getString("authorisedStrideGroup")
+    .replaceAllLiterally("_", " ")
+
   val defaultQueryTimeRangeInMonths: Int = config.getInt("defaultQueryTimeRangeInMonths")
 }
