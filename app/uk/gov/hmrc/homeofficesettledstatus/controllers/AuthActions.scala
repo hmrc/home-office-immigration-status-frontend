@@ -35,8 +35,11 @@ trait AuthActions extends AuthorisedFunctions with AuthRedirects {
     implicit
     request: Request[A],
     hc: HeaderCarrier,
-    ec: ExecutionContext): Future[Result] =
-    authorised(Enrolment(authorisedStrideGroup) and AuthProviders(PrivilegedApplication))
+    ec: ExecutionContext): Future[Result] = {
+    val authPredicate =
+      if (authorisedStrideGroup == "ANY") AuthProviders(PrivilegedApplication)
+      else Enrolment(authorisedStrideGroup) and AuthProviders(PrivilegedApplication)
+    authorised(authPredicate)
       .retrieve(credentials) {
         case Some(Credentials(authProviderId, _)) =>
           body(authProviderId)
@@ -46,6 +49,7 @@ trait AuthActions extends AuthorisedFunctions with AuthRedirects {
           Future.successful(Forbidden)
       }
       .recover(handleFailure)
+  }
 
   def handleFailure(implicit request: Request[_]): PartialFunction[Throwable, Result] = {
 
