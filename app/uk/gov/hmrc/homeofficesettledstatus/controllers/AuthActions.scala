@@ -42,7 +42,9 @@ trait AuthActions extends AuthorisedFunctions with AuthRedirects {
       else Enrolment(authorisedStrideGroup) and AuthProviders(PrivilegedApplication)
     authorised(authPredicate)
       .retrieve(credentials and allEnrolments) {
-        case Some(Credentials(authProviderId, _)) ~ _ =>
+        case Some(Credentials(authProviderId, _)) ~ enrollments =>
+          val userRoles = enrollments.enrolments.map(_.key).mkString("[", ",", "]")
+          Logger(getClass).info(s"User $authProviderId has been authorized with $userRoles")
           body(authProviderId)
 
         case None ~ enrollments =>
