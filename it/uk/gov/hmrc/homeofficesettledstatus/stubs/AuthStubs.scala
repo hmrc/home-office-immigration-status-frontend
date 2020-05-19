@@ -35,7 +35,7 @@ trait AuthStubs {
              |      ]
              |    }
              |  ],
-             |  "retrieve": ["optionalCredentials"]
+             |  "retrieve": ["optionalCredentials","allEnrolments"]
              |}
            """.stripMargin,
           true,
@@ -48,7 +48,10 @@ trait AuthStubs {
                        |  "optionalCredentials":{
                        |    "providerId": "$strideUserId",
                        |    "providerType": "PrivilegedApplication"
-                       |  }
+                       |  },
+                       |  "allEnrolments":[
+                       |    {"key":"$strideGroup"}
+                       |  ]
                        |}
        """.stripMargin)))
 

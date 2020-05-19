@@ -22,7 +22,8 @@ import play.api.mvc.{Request, Result}
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Credentials
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.credentials
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
+import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.homeofficesettledstatus.support.CallOps
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
@@ -40,12 +41,13 @@ trait AuthActions extends AuthorisedFunctions with AuthRedirects {
       if (authorisedStrideGroup == "ANY") AuthProviders(PrivilegedApplication)
       else Enrolment(authorisedStrideGroup) and AuthProviders(PrivilegedApplication)
     authorised(authPredicate)
-      .retrieve(credentials) {
-        case Some(Credentials(authProviderId, _)) =>
+      .retrieve(credentials and allEnrolments) {
+        case Some(Credentials(authProviderId, _)) ~ _ =>
           body(authProviderId)
 
-        case None =>
-          Logger.warn("No credentials found for the user")
+        case None ~ enrollments =>
+          val userRoles = enrollments.enrolments.map(_.key).mkString("[", ",", "]")
+          Logger(getClass).error(s"User not authorized, expected $authorisedStrideGroup, but got $userRoles")
           Future.successful(Forbidden)
       }
       .recover(handleFailure)
