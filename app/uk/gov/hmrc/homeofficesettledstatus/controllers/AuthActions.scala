@@ -48,8 +48,6 @@ trait AuthActions extends AuthorisedFunctions with AuthRedirects {
           body(authProviderId)
 
         case None ~ enrollments =>
-          val userRoles = enrollments.enrolments.map(_.key).mkString("[", ",", "]")
-          Logger(getClass).error(s"User not authorized, expected $authorisedStrideGroup, but got $userRoles")
           Future.successful(Forbidden)
       }
       .recover(handleFailure)

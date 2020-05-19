@@ -40,7 +40,6 @@ class AppConfigImpl @Inject()(config: ServicesConfig) extends AppConfig {
 
   val authorisedStrideGroup: String = config
     .getString("authorisedStrideGroup")
-    .replaceAllLiterally("_", " ")
 
   val defaultQueryTimeRangeInMonths: Int = config.getInt("defaultQueryTimeRangeInMonths")
 }
