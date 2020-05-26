@@ -27,64 +27,126 @@ class DateFieldHelperSpec extends UnitSpec {
   val `2020-04-21`: LocalDate = LocalDate.parse("2020-04-21")
 
   "DateFieldHelper" should {
-    "reject invalid date string" in {
-      validateDate("", `2020-04-21`) shouldBe false
-      validateDate("   ", `2020-04-21`) shouldBe false
-      validateDate("   -  -  ", `2020-04-21`) shouldBe false
-      validateDate("0000-00-00", `2020-04-21`) shouldBe false
-      validateDate("0", `2020-04-21`) shouldBe false
-      validateDate("01", `2020-04-21`) shouldBe false
-      validateDate("01-", `2020-04-21`) shouldBe false
-      validateDate("---", `2020-04-21`) shouldBe false
-      validateDate("--", `2020-04-21`) shouldBe false
-      validateDate("-", `2020-04-21`) shouldBe false
-      validateDate("01-01-01", `2020-04-21`) shouldBe false
-      validateDate("2001-12-32", `2020-04-21`) shouldBe false
-      validateDate("2001--1-30", `2020-04-21`) shouldBe false
-      validateDate("2001-13-31", `2020-04-21`) shouldBe false
-      validateDate("2001-02-30", `2020-04-21`) shouldBe false
-      validateDate("2019-02-29", `2020-04-21`) shouldBe false
-      validateDate("201-01-01", `2020-04-21`) shouldBe false
-      validateDate("1899-01-01", `2020-04-21`) shouldBe false
-      validateDate("2222-0X-07", `2020-04-21`) shouldBe false
-      validateDate("2222-X1-07", `2020-04-21`) shouldBe false
-      validateDate("2222-XX-X2", `2020-04-21`) shouldBe false
-      validateDate("2222-XX-1X", `2020-04-21`) shouldBe false
-      validateDate("1900-12-2X", `2020-04-21`) shouldBe false
-      validateDate("1900-12-X2", `2020-04-21`) shouldBe false
-      validateDate("2222-XX-07", `2020-04-21`) shouldBe false
-      validateDate("2000-XX-XX", LocalDate.parse("1999-08-01")) shouldBe false
-      validateDate("1999-09-XX", LocalDate.parse("1999-08-01")) shouldBe false
-      validateDate("1999-08-02", LocalDate.parse("1999-08-01")) shouldBe false
-      validateDate("2000-07-31", LocalDate.parse("1999-08-01")) shouldBe false
-      validateDate("1999-12-XX", LocalDate.parse("1999-08-01")) shouldBe false
-      validateDate("2000-08-01", LocalDate.parse("1999-08-01")) shouldBe false
-      validateDate("1999-07-16", LocalDate.parse("1999-07-15")) shouldBe false
-      validateDate("2000-07-15", LocalDate.parse("1999-07-15")) shouldBe false
+    "reject invalid date string when wildcards allowed" in {
+      validateDate("", `2020-04-21`, true) shouldBe false
+      validateDate("   ", `2020-04-21`, true) shouldBe false
+      validateDate("   -  -  ", `2020-04-21`, true) shouldBe false
+      validateDate("0000-00-00", `2020-04-21`, true) shouldBe false
+      validateDate("0", `2020-04-21`, true) shouldBe false
+      validateDate("01", `2020-04-21`, true) shouldBe false
+      validateDate("01-", `2020-04-21`, true) shouldBe false
+      validateDate("---", `2020-04-21`, true) shouldBe false
+      validateDate("--", `2020-04-21`, true) shouldBe false
+      validateDate("-", `2020-04-21`, true) shouldBe false
+      validateDate("01-01-01", `2020-04-21`, true) shouldBe false
+      validateDate("2001-12-32", `2020-04-21`, true) shouldBe false
+      validateDate("2001--1-30", `2020-04-21`, true) shouldBe false
+      validateDate("2001-13-31", `2020-04-21`, true) shouldBe false
+      validateDate("2001-02-30", `2020-04-21`, true) shouldBe false
+      validateDate("2019-02-29", `2020-04-21`, true) shouldBe false
+      validateDate("201-01-01", `2020-04-21`, true) shouldBe false
+      validateDate("1899-01-01", `2020-04-21`, true) shouldBe false
+      validateDate("2222-0X-07", `2020-04-21`, true) shouldBe false
+      validateDate("2222-X1-07", `2020-04-21`, true) shouldBe false
+      validateDate("2222-XX-X2", `2020-04-21`, true) shouldBe false
+      validateDate("2222-XX-1X", `2020-04-21`, true) shouldBe false
+      validateDate("1900-12-2X", `2020-04-21`, true) shouldBe false
+      validateDate("1900-12-X2", `2020-04-21`, true) shouldBe false
+      validateDate("2222-XX-07", `2020-04-21`, true) shouldBe false
+      validateDate("2000-XX-XX", LocalDate.parse("1999-08-01"), true) shouldBe false
+      validateDate("1999-09-XX", LocalDate.parse("1999-08-01"), true) shouldBe false
+      validateDate("1999-08-02", LocalDate.parse("1999-08-01"), true) shouldBe false
+      validateDate("2000-07-31", LocalDate.parse("1999-08-01"), true) shouldBe false
+      validateDate("1999-12-XX", LocalDate.parse("1999-08-01"), true) shouldBe false
+      validateDate("2000-08-01", LocalDate.parse("1999-08-01"), true) shouldBe false
+      validateDate("1999-07-16", LocalDate.parse("1999-07-15"), true) shouldBe false
+      validateDate("2000-07-15", LocalDate.parse("1999-07-15"), true) shouldBe false
     }
-    "accept valid date string" in {
-      validateDate("1970-01-01", `2020-04-21`) shouldBe true
-      validateDate("2001-12-31", `2020-04-21`) shouldBe true
-      validateDate("2999-06-07", `2020-04-21`) shouldBe false
-      validateDate("2222-XX-XX", `2020-04-21`) shouldBe false
-      validateDate("2222-XX-XX", LocalDate.parse("2222-01-01")) shouldBe true
-      validateDate("1900-12-XX", `2020-04-21`) shouldBe true
-      validateDate("2000-02-29", `2020-04-21`) shouldBe true
-      validateDate("2020-02-29", `2020-04-21`) shouldBe true
-      validateDate("2016-02-29", `2020-04-21`) shouldBe true
-      validateDate("2012-02-29", `2020-04-21`) shouldBe true
-      validateDate("2008-02-29", `2020-04-21`) shouldBe true
-      validateDate("2004-02-29", `2020-04-21`) shouldBe true
-      validateDate("2000-02-29", `2020-04-21`) shouldBe true
-      validateDate("1999-XX-XX", LocalDate.parse("1999-08-01")) shouldBe true
-      validateDate("1999-08-XX", LocalDate.parse("1999-08-01")) shouldBe true
-      validateDate("1999-08-01", LocalDate.parse("1999-08-01")) shouldBe true
-      validateDate("1999-07-31", LocalDate.parse("1999-08-01")) shouldBe true
-      validateDate("1998-12-XX", LocalDate.parse("1999-08-01")) shouldBe true
-      validateDate("1998-08-02", LocalDate.parse("1999-08-01")) shouldBe true
-      validateDate("1999-07-15", LocalDate.parse("1999-07-15")) shouldBe true
-      validateDate("1999-07-14", LocalDate.parse("1999-07-15")) shouldBe true
+
+    "reject invalid date string when wildcards disallowed" in {
+      validateDate("", `2020-04-21`, false) shouldBe false
+      validateDate("   ", `2020-04-21`, false) shouldBe false
+      validateDate("   -  -  ", `2020-04-21`, false) shouldBe false
+      validateDate("0000-00-00", `2020-04-21`, false) shouldBe false
+      validateDate("0", `2020-04-21`, false) shouldBe false
+      validateDate("01", `2020-04-21`, false) shouldBe false
+      validateDate("01-", `2020-04-21`, false) shouldBe false
+      validateDate("---", `2020-04-21`, false) shouldBe false
+      validateDate("--", `2020-04-21`, false) shouldBe false
+      validateDate("-", `2020-04-21`, false) shouldBe false
+      validateDate("01-01-01", `2020-04-21`, false) shouldBe false
+      validateDate("2001-12-32", `2020-04-21`, false) shouldBe false
+      validateDate("2001--1-30", `2020-04-21`, false) shouldBe false
+      validateDate("2001-13-31", `2020-04-21`, false) shouldBe false
+      validateDate("2001-02-30", `2020-04-21`, false) shouldBe false
+      validateDate("2019-02-29", `2020-04-21`, false) shouldBe false
+      validateDate("201-01-01", `2020-04-21`, false) shouldBe false
+      validateDate("1899-01-01", `2020-04-21`, false) shouldBe false
+      validateDate("2222-0X-07", `2020-04-21`, false) shouldBe false
+      validateDate("2222-X1-07", `2020-04-21`, false) shouldBe false
+      validateDate("2222-XX-X2", `2020-04-21`, false) shouldBe false
+      validateDate("2222-XX-1X", `2020-04-21`, false) shouldBe false
+      validateDate("1900-12-2X", `2020-04-21`, false) shouldBe false
+      validateDate("1900-12-X2", `2020-04-21`, false) shouldBe false
+      validateDate("2222-XX-07", `2020-04-21`, false) shouldBe false
+      validateDate("2000-XX-XX", LocalDate.parse("1999-08-01"), false) shouldBe false
+      validateDate("1999-09-XX", LocalDate.parse("1999-08-01"), false) shouldBe false
+      validateDate("1999-08-02", LocalDate.parse("1999-08-01"), false) shouldBe false
+      validateDate("2000-07-31", LocalDate.parse("1999-08-01"), false) shouldBe false
+      validateDate("1999-12-XX", LocalDate.parse("1999-08-01"), false) shouldBe false
+      validateDate("2000-08-01", LocalDate.parse("1999-08-01"), false) shouldBe false
+      validateDate("1999-07-16", LocalDate.parse("1999-07-15"), false) shouldBe false
+      validateDate("2000-07-15", LocalDate.parse("1999-07-15"), false) shouldBe false
     }
+
+    "accept valid date string when wildcards allowed" in {
+      validateDate("1970-01-01", `2020-04-21`, true) shouldBe true
+      validateDate("2001-12-31", `2020-04-21`, true) shouldBe true
+      validateDate("2999-06-07", `2020-04-21`, true) shouldBe false
+      validateDate("2222-XX-XX", `2020-04-21`, true) shouldBe false
+      validateDate("2222-XX-XX", LocalDate.parse("2222-01-01"), true) shouldBe true
+      validateDate("1900-12-XX", `2020-04-21`, true) shouldBe true
+      validateDate("2000-02-29", `2020-04-21`, true) shouldBe true
+      validateDate("2020-02-29", `2020-04-21`, true) shouldBe true
+      validateDate("2016-02-29", `2020-04-21`, true) shouldBe true
+      validateDate("2012-02-29", `2020-04-21`, true) shouldBe true
+      validateDate("2008-02-29", `2020-04-21`, true) shouldBe true
+      validateDate("2004-02-29", `2020-04-21`, true) shouldBe true
+      validateDate("2000-02-29", `2020-04-21`, true) shouldBe true
+      validateDate("1999-XX-XX", LocalDate.parse("1999-08-01"), true) shouldBe true
+      validateDate("1999-08-XX", LocalDate.parse("1999-08-01"), true) shouldBe true
+      validateDate("1999-08-01", LocalDate.parse("1999-08-01"), true) shouldBe true
+      validateDate("1999-07-31", LocalDate.parse("1999-08-01"), true) shouldBe true
+      validateDate("1998-12-XX", LocalDate.parse("1999-08-01"), true) shouldBe true
+      validateDate("1998-08-02", LocalDate.parse("1999-08-01"), true) shouldBe true
+      validateDate("1999-07-15", LocalDate.parse("1999-07-15"), true) shouldBe true
+      validateDate("1999-07-14", LocalDate.parse("1999-07-15"), true) shouldBe true
+    }
+
+    "accept valid date string when wildcards disallowed" in {
+      validateDate("1970-01-01", `2020-04-21`, false) shouldBe true
+      validateDate("2001-12-31", `2020-04-21`, false) shouldBe true
+      validateDate("2999-06-07", `2020-04-21`, false) shouldBe false
+      validateDate("2222-XX-XX", `2020-04-21`, false) shouldBe false
+      validateDate("2222-XX-XX", LocalDate.parse("2222-01-01"), false) shouldBe false
+      validateDate("1900-12-XX", `2020-04-21`, false) shouldBe false
+      validateDate("2000-02-29", `2020-04-21`, false) shouldBe true
+      validateDate("2020-02-29", `2020-04-21`, false) shouldBe true
+      validateDate("2016-02-29", `2020-04-21`, false) shouldBe true
+      validateDate("2012-02-29", `2020-04-21`, false) shouldBe true
+      validateDate("2008-02-29", `2020-04-21`, false) shouldBe true
+      validateDate("2004-02-29", `2020-04-21`, false) shouldBe true
+      validateDate("2000-02-29", `2020-04-21`, false) shouldBe true
+      validateDate("1999-XX-XX", LocalDate.parse("1999-08-01"), false) shouldBe false
+      validateDate("1999-08-XX", LocalDate.parse("1999-08-01"), false) shouldBe false
+      validateDate("1999-08-01", LocalDate.parse("1999-08-01"), false) shouldBe true
+      validateDate("1999-07-31", LocalDate.parse("1999-08-01"), false) shouldBe true
+      validateDate("1998-12-XX", LocalDate.parse("1999-08-01"), false) shouldBe false
+      validateDate("1998-08-02", LocalDate.parse("1999-08-01"), false) shouldBe true
+      validateDate("1999-07-15", LocalDate.parse("1999-07-15"), false) shouldBe true
+      validateDate("1999-07-14", LocalDate.parse("1999-07-15"), false) shouldBe true
+    }
+
     "format date from fields" in {
       formatDateFromFields("", "", "") shouldBe ""
       formatDateFromFields("2019", "", "") shouldBe "2019-XX-XX"
@@ -113,8 +175,8 @@ class DateFieldHelperSpec extends UnitSpec {
       validDobDateFormat("-11-") shouldBe Invalid(ValidationError("error.dateOfBirth.invalid-format"))
       validDobDateFormat("--20") shouldBe Invalid(ValidationError("error.dateOfBirth.invalid-format"))
       validDobDateFormat("1972-XX-11") shouldBe Invalid(ValidationError("error.dateOfBirth.invalid-format"))
-      validDobDateFormat("1972-11-XX") shouldBe Valid
-      validDobDateFormat("1972-XX-XX") shouldBe Valid
+      validDobDateFormat("1972-11-XX") shouldBe Invalid(ValidationError("error.dateOfBirth.invalid-format"))
+      validDobDateFormat("1972-XX-XX") shouldBe Invalid(ValidationError("error.dateOfBirth.invalid-format"))
     }
   }
 
