@@ -28,7 +28,7 @@ import scala.util.Try
 
 object DateFieldHelper {
 
-  def validateDate(value: String, maxDateIncl: => LocalDate): Boolean = {
+  def validateDate(value: String, maxDateIncl: => LocalDate, allowWildcard: Boolean): Boolean = {
     val parts = value.split("-")
     parts.size == 3 && {
 
@@ -37,8 +37,8 @@ object DateFieldHelper {
       val day = parts(2)
 
       isValidYear(year, maxDateIncl) &&
-      isValidMonth(month, day, toInt(year), maxDateIncl) &&
-      isValidDay(day, toInt(month), toInt(year), maxDateIncl)
+      isValidMonth(month, day, toInt(year), maxDateIncl, allowWildcard) &&
+      isValidDay(day, toInt(month), toInt(year), maxDateIncl, allowWildcard)
     }
   }
 
@@ -46,14 +46,14 @@ object DateFieldHelper {
     year.matches("""^\d\d\d\d$""") && toInt(year) >= 1900 &&
       toInt(year) <= maxDateIncl.getYear
 
-  def isValidMonth(month: String, day: String, year: => Int, maxDateIncl: LocalDate) =
-    if (month.contains("X") && day == "XX") month == "XX"
+  def isValidMonth(month: String, day: String, year: => Int, maxDateIncl: LocalDate, allowWildcard: Boolean) =
+    if (allowWildcard && month.contains("X") && day == "XX") month == "XX"
     else
       isInRange(toInt(month), 1, 12) &&
       (year < maxDateIncl.getYear || toInt(month) <= maxDateIncl.getMonthValue)
 
-  def isValidDay(day: String, month: => Int, year: => Int, maxDateIncl: LocalDate) =
-    if (day.contains("X")) day == "XX"
+  def isValidDay(day: String, month: => Int, year: => Int, maxDateIncl: LocalDate, allowWildcard: Boolean) =
+    if (allowWildcard && day.contains("X")) day == "XX"
     else
       isValidDayOfTheMonth(toInt(day), month, year) &&
       (year < maxDateIncl.getYear ||
@@ -96,7 +96,7 @@ object DateFieldHelper {
   val validDobDateFormat: Constraint[String] =
     ValidateHelper
       .validateField("error.dateOfBirth.required", "error.dateOfBirth.invalid-format")(date =>
-        validateDate(date, LocalDate.now()))
+        validateDate(date, LocalDate.now(), allowWildcard = false))
 
   def dateFieldsMapping(constraintDate: Constraint[String]): Mapping[String] =
     mapping(
