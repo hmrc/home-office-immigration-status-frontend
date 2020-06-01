@@ -63,7 +63,14 @@ class ViewsSpec @Inject()(govUkWrapper: govuk_wrapper, layoutComponents: LayoutC
     "render all supplied arguments" in new App {
       val sidebar = new Sidebar()
       val article = new Article()
-      val view = new main_template(sidebar, article, govUkWrapper)
+      val config = mock[Configuration]
+      val optimizelyConfig = new OptimizelyConfig(config)
+      val optimizelySnippet = new OptimizelySnippet(optimizelyConfig)
+      val assetsConfig = new AssetsConfig(config)
+      val gtmConfig = new GTMConfig(config)
+      val gtmSnippet = new GTMSnippet(gtmConfig)
+      val head = new Head(optimizelySnippet, assetsConfig, gtmSnippet)
+      val view = new main_template(sidebar, article, govUkWrapper, head)
       val html = view.render(
         title = "My custom page title",
         sidebarLinks = Some(Html("My custom sidebar links")),
