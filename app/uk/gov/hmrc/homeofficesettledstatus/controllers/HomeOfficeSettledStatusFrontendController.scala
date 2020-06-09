@@ -110,6 +110,8 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
       routes.HomeOfficeSettledStatusFrontendController.showStart()
     case _: StatusCheckByNino =>
       routes.HomeOfficeSettledStatusFrontendController.showStatusCheckByNino()
+    case _: StatusNotAvailable =>
+      routes.HomeOfficeSettledStatusFrontendController.showStatusNotAvailable()
     case _: StatusFound =>
       routes.HomeOfficeSettledStatusFrontendController.showStatusFound()
     case _: StatusCheckFailure =>
