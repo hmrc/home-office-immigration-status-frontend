@@ -34,6 +34,7 @@ app.hasPreSettledStatus=has pre-settled status
 app.hasSettledStatus.expired=has expired settled status
 app.hasPreSettledStatus.expired=has expired pre-settled status
 app.hasNoStatus=has no settled status
+app.hasNoActiveStatus=does not have an active status
 app.status.EUS_LTR=Pre settled status
 app.status.EUS_ILR=Settled status
 
@@ -62,6 +63,12 @@ status-found.expiryDate=Expiry date
 status-found.previous.status=Previous status
 status-found.previous.startDate=Previous start date
 status-found.previous.expiryDate=Previous expiry date
+
+# Status not available page
+status-not-available.title=Applicant does not have an active status
+status-not-available.listParagraph=This may be for a number of reasons, including:
+status-not-available.list-item1=The status expired over six months ago
+status-not-available.list-item2=Nothing associated with the account
 
 # Failure page
 status-check-failure.title=A match has not been found

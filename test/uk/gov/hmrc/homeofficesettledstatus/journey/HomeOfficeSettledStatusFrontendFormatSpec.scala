@@ -21,7 +21,7 @@ import java.time.LocalDate
 import play.api.libs.json.{Format, JsResultException, Json}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State
-import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State.{Start, StatusCheckByNino, StatusCheckFailure, StatusFound}
+import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State.{Start, StatusCheckByNino, StatusCheckFailure, StatusFound, StatusNotAvailable}
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyStateFormats
 import uk.gov.hmrc.homeofficesettledstatus.models._
 import uk.gov.hmrc.play.test.UnitSpec
@@ -71,6 +71,18 @@ class HomeOfficeSettledStatusFrontendFormatSpec extends UnitSpec {
 
         val json = Json.parse(
           """{"state":"StatusFound","properties":{"correlationId":"1234567890","query":{"dateOfBirth":"1956-05-08","familyName":"bar","givenName":"foo","nino":"RJ301829A"},"result":{"fullName":"Foo Bar","dateOfBirth":"1956-05-08","nationality":"IRL","statuses":[{"statusStartDate":"2001-01-01","productType":"EUS","immigrationStatus":"ILR","noRecourseToPublicFunds":true}]}}}""")
+        Json.toJson(state) shouldBe json
+        json.as[State] shouldBe state
+      }
+
+      "StatusNotAvailable" in {
+        val state = StatusNotAvailable(
+          correlationId = "1234567890",
+          query = StatusCheckByNinoRequest(Nino("RJ301829A"), "foo", "bar", "1956-05-08")
+        )
+
+        val json = Json.parse(
+          """{"state":"StatusNotAvailable","properties":{"correlationId":"1234567890","query":{"dateOfBirth":"1956-05-08","familyName":"bar","givenName":"foo","nino":"RJ301829A"}}}""")
         Json.toJson(state) shouldBe json
         json.as[State] shouldBe state
       }

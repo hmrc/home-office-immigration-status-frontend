@@ -77,9 +77,9 @@ class HomeOfficeSettledStatusFrontendModelSpec extends UnitSpec with StateMatche
         atStatusCheckByNino when submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(invalidQuery) should thenGo(
           StatusCheckFailure(correlationId, invalidQuery, errorNotFound))
       }
-      "transition to StatusCheckFailure when submitStatusCheckByNino returns strange response" in {
+      "transition to StatusCheckFailure when submitStatusCheckByNino returns empty response" in {
         atStatusCheckByNino when submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(strangeQuery) should thenGo(
-          StatusCheckFailure(correlationId, strangeQuery, errorUnknown))
+          StatusNotAvailable(correlationId, strangeQuery))
       }
     }
 

@@ -4,6 +4,7 @@ GET         /                            @uk.gov.hmrc.homeofficesettledstatus.co
 GET         /check-with-nino             @uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.showStatusCheckByNino
 POST        /check-with-nino             @uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.submitStatusCheckByNino
 GET         /status-found                @uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.showStatusFound
+GET         /status-not-available        @uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.showStatusNotAvailable
 GET         /status-check-failure        @uk.gov.hmrc.homeofficesettledstatus.controllers.HomeOfficeSettledStatusFrontendController.showStatusCheckFailure
 
 GET         /accessibility-statement     @uk.gov.hmrc.homeofficesettledstatus.controllers.AccessibilityStatementController.showPage

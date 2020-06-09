@@ -24,12 +24,14 @@ import uk.gov.hmrc.play.fsm.JsonStateFormats
 object HomeOfficeSettledStatusFrontendJourneyStateFormats extends JsonStateFormats[State] {
 
   val statusFound = Json.format[StatusFound]
+  val statusNotAvailable = Json.format[StatusNotAvailable]
   val statusCheckByNino = Json.format[StatusCheckByNino]
   val statusCheckFailure = Json.format[StatusCheckFailure]
 
   override val serializeStateProperties: PartialFunction[State, JsValue] = {
     case s: StatusCheckByNino  => statusCheckByNino.writes(s)
     case s: StatusFound        => statusFound.writes(s)
+    case s: StatusNotAvailable => statusNotAvailable.writes(s)
     case s: StatusCheckFailure => statusCheckFailure.writes(s)
   }
 
@@ -38,6 +40,7 @@ object HomeOfficeSettledStatusFrontendJourneyStateFormats extends JsonStateForma
       case "Start"              => JsSuccess(Start)
       case "StatusCheckByNino"  => statusCheckByNino.reads(properties)
       case "StatusFound"        => statusFound.reads(properties)
+      case "StatusNotAvailable" => statusNotAvailable.reads(properties)
       case "StatusCheckFailure" => statusCheckFailure.reads(properties)
       case _                    => JsError(s"Unknown state name $stateName")
     }

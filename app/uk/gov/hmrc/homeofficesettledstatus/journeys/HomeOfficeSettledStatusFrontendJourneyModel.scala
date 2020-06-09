@@ -33,12 +33,15 @@ object HomeOfficeSettledStatusFrontendJourneyModel extends JourneyModel {
   override val root: State = State.Start
 
   object State {
+
     case object Start extends State
 
     case class StatusCheckByNino(maybeQuery: Option[StatusCheckByNinoRequest] = None) extends State
 
     case class StatusFound(correlationId: String, query: StatusCheckByNinoRequest, result: StatusCheckResult)
         extends State
+
+    case class StatusNotAvailable(correlationId: String, query: StatusCheckByNinoRequest) extends State
 
     case class StatusCheckFailure(correlationId: String, query: StatusCheckByNinoRequest, error: StatusCheckError)
         extends State with IsError
@@ -82,7 +85,7 @@ object HomeOfficeSettledStatusFrontendJourneyModel extends JourneyModel {
               goto(StatusFound(correlationId, query, result))
 
             case StatusCheckResponse(correlationId, _, _) =>
-              goto(StatusCheckFailure(correlationId, query, StatusCheckError("ERR_UNKNOWN")))
+              goto(StatusNotAvailable(correlationId, query))
           }
       }
   }

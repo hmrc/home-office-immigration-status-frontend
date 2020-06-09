@@ -27,8 +27,8 @@ import uk.gov.hmrc.homeofficesettledstatus.connectors.{FrontendAuthConnector, Ho
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State.{StatusCheckFailure, _}
 import uk.gov.hmrc.homeofficesettledstatus.models.{StatusCheckByNinoRequest, StatusCheckRange}
 import uk.gov.hmrc.homeofficesettledstatus.services.HomeOfficeSettledStatusFrontendJourneyServiceWithHeaderCarrier
-import uk.gov.hmrc.homeofficesettledstatus.views.html.{StatusCheckByNinoPage, StatusCheckFailurePage, StatusFoundPage}
-import uk.gov.hmrc.homeofficesettledstatus.views.{LayoutComponents, StatusFoundPageContext}
+import uk.gov.hmrc.homeofficesettledstatus.views.html.{StatusCheckByNinoPage, StatusCheckFailurePage, StatusFoundPage, StatusNotAvailablePage}
+import uk.gov.hmrc.homeofficesettledstatus.views.{LayoutComponents, StatusFoundPageContext, StatusNotAvailablePageContext}
 import uk.gov.hmrc.homeofficesettledstatus.wiring.AppConfig
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -89,6 +89,12 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
       case _: StatusFound =>
     }
 
+  // GET /status-not-available
+  val showStatusNotAvailable: Action[AnyContent] =
+    actionShowStateWhenAuthorised(AsStrideUser) {
+      case _: StatusNotAvailable =>
+    }
+
   // GET /status-check-failure
   val showStatusCheckFailure: Action[AnyContent] =
     actionShowStateWhenAuthorised(AsStrideUser) {
@@ -114,6 +120,7 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
 
   val statusCheckByNinoPage = new StatusCheckByNinoPage(layoutComponents)
   val statusFoundPage = new StatusFoundPage(layoutComponents)
+  val statusNotAvailablePage = new StatusNotAvailablePage(layoutComponents)
   val statusCheckFailurePage = new StatusCheckFailurePage(layoutComponents)
 
   /**
@@ -138,6 +145,9 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
 
     case StatusFound(_, query, result) =>
       Ok(statusFoundPage(StatusFoundPageContext(query, result, getCallFor(Start))))
+
+    case StatusNotAvailable(_, query) =>
+      Ok(statusNotAvailablePage(StatusNotAvailablePageContext(query, getCallFor(Start))))
 
     case StatusCheckFailure(_, query, error) =>
       Ok(statusCheckFailurePage(query, error, getCallFor(StatusCheckByNino(Some(query))), getCallFor(Start)))

@@ -5,7 +5,7 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State.{Start, StatusCheckByNino, StatusFound}
+import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State.{Start, StatusCheckByNino, StatusFound, StatusNotAvailable}
 import uk.gov.hmrc.homeofficesettledstatus.models.{StatusCheckByNinoRequest, StatusCheckError, StatusCheckResult}
 import uk.gov.hmrc.homeofficesettledstatus.services.HomeOfficeSettledStatusFrontendJourneyServiceWithHeaderCarrier
 import uk.gov.hmrc.homeofficesettledstatus.stubs.{HomeOfficeSettledStatusStubs, JourneyTestData}
@@ -108,9 +108,7 @@ class HomeOfficeSettledStatusFrontendControllerISpec
         status(result) shouldBe 303
         redirectLocation(result) shouldBe Some("/check-settled-status/status-found")
         journey.get shouldBe Some(
-          (
-            StatusFound(correlationId, validQuery, expectedResultWithSingleStatus),
-            List(StatusCheckByNino(), Start)))
+          (StatusFound(correlationId, validQuery, expectedResultWithSingleStatus), List(StatusCheckByNino(), Start)))
       }
 
       "submit the lookup query and redisplay the form with errors if request details fails validation" in {
@@ -191,13 +189,24 @@ class HomeOfficeSettledStatusFrontendControllerISpec
           StatusCheckByNinoRequest(Nino("RJ301829A"), "Doe", "Jane", "2001-01-31")
         val queryError = StatusCheckError(errCode = "ERR_NOT_FOUND")
         journey
-          .set(
-            StatusCheckFailure("sjdfhks123", query, queryError),
-            List(StatusCheckByNino(), Start))
+          .set(StatusCheckFailure("sjdfhks123", query, queryError), List(StatusCheckByNino(), Start))
         givenAuthorisedForStride("TBC", "StrideUserId")
         val result = controller.showStatusFound(fakeRequest)
         status(result) shouldBe 303
         redirectLocation(result) shouldBe Some("/check-settled-status")
+      }
+    }
+
+    "GET /status-not-available" should {
+
+      "display status-not-available page if current state is StatusNotAvailable" in {
+        val query = givenJourneyStateIsStatusNotAvailable
+        givenAuthorisedForStride("TBC", "StrideUserId")
+        val result = controller.showStatusNotAvailable(fakeRequest)
+        status(result) shouldBe 200
+        checkHtmlResultWithBodyText(result, htmlEscapedMessage("status-not-available.title"))
+        checkHtmlResultWithBodyText(result, query.nino.formatted)
+        checkHtmlResultWithBodyText(result, s"${query.givenName} ${query.familyName}")
       }
     }
 
@@ -208,9 +217,7 @@ class HomeOfficeSettledStatusFrontendControllerISpec
           StatusCheckByNinoRequest(Nino("RJ301829A"), "Doe", "Jane", "2001-01-31")
         val queryError = StatusCheckError(errCode = "ERR_NOT_FOUND")
         journey
-          .set(
-            StatusCheckFailure("sjdfhks123", query, queryError),
-            List(StatusCheckByNino(), Start))
+          .set(StatusCheckFailure("sjdfhks123", query, queryError), List(StatusCheckByNino(), Start))
         givenAuthorisedForStride("TBC", "StrideUserId")
         val result = controller.showStatusCheckFailure(fakeRequest)
         status(result) shouldBe 200
@@ -250,18 +257,26 @@ trait JourneyStateHelpers extends JourneyTestData {
     timeout: Duration): (StatusCheckByNinoRequest, StatusCheckResult) = {
 
     journey
-      .set(
-        StatusFound(correlationId, validQuery, expectedResultWithMultipleStatuses),
-        List(StatusCheckByNino(), Start))
+      .set(StatusFound(correlationId, validQuery, expectedResultWithMultipleStatuses), List(StatusCheckByNino(), Start))
 
     (validQuery, expectedResultWithMultipleStatuses)
+  }
+
+  def givenJourneyStateIsStatusNotAvailable(
+    implicit headerCarrier: HeaderCarrier,
+    timeout: Duration): StatusCheckByNinoRequest = {
+
+    journey
+      .set(StatusNotAvailable(correlationId, validQuery), List(StatusCheckByNino(), Start))
+
+    validQuery
   }
 
 }
 
 class TestInMemoryHomeOfficeSettledStatusFrontendJourneyService
-    extends HomeOfficeSettledStatusFrontendJourneyServiceWithHeaderCarrier
-    with InMemoryJourneyService[HeaderCarrier] with TestJourneyService[HeaderCarrier]
+    extends HomeOfficeSettledStatusFrontendJourneyServiceWithHeaderCarrier with InMemoryJourneyService[HeaderCarrier]
+    with TestJourneyService[HeaderCarrier]
 
 trait HomeOfficeSettledStatusFrontendControllerISpecSetup extends AppISpec {
 
