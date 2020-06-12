@@ -27,7 +27,7 @@ import uk.gov.hmrc.homeofficesettledstatus.connectors.{FrontendAuthConnector, Ho
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State.{StatusCheckFailure, _}
 import uk.gov.hmrc.homeofficesettledstatus.models.{StatusCheckByNinoRequest, StatusCheckRange}
 import uk.gov.hmrc.homeofficesettledstatus.services.HomeOfficeSettledStatusFrontendJourneyServiceWithHeaderCarrier
-import uk.gov.hmrc.homeofficesettledstatus.views.html.{StatusCheckByNinoPage, StatusCheckFailurePage, StatusFoundPage, StatusNotAvailablePage}
+import uk.gov.hmrc.homeofficesettledstatus.views.html.{MultipleMatchesFoundPage, StatusCheckByNinoPage, StatusCheckFailurePage, StatusFoundPage, StatusNotAvailablePage}
 import uk.gov.hmrc.homeofficesettledstatus.views.{LayoutComponents, StatusFoundPageContext, StatusNotAvailablePageContext}
 import uk.gov.hmrc.homeofficesettledstatus.wiring.AppConfig
 import uk.gov.hmrc.http.HeaderCarrier
@@ -124,6 +124,7 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
   val statusFoundPage = new StatusFoundPage(layoutComponents)
   val statusNotAvailablePage = new StatusNotAvailablePage(layoutComponents)
   val statusCheckFailurePage = new StatusCheckFailurePage(layoutComponents)
+  val multipleMatchesFoundPage = new MultipleMatchesFoundPage(layoutComponents)
 
   /**
     * Function from the `State` to the `Result`,
@@ -152,7 +153,9 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
       Ok(statusNotAvailablePage(StatusNotAvailablePageContext(query, getCallFor(Start))))
 
     case StatusCheckFailure(_, query, error) =>
-      Ok(statusCheckFailurePage(query, error, getCallFor(StatusCheckByNino(Some(query))), getCallFor(Start)))
+      if (error.errCode == "ERR_CONFLICT")
+        Ok(multipleMatchesFoundPage(query, error, getCallFor(StatusCheckByNino(Some(query))), getCallFor(Start)))
+      else Ok(statusCheckFailurePage(query, error, getCallFor(StatusCheckByNino(Some(query))), getCallFor(Start)))
 
   }
 

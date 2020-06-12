@@ -80,7 +80,8 @@ status-check-failure.list-item3=The customer has had their application to the EU
 status-check-failure.para-ifCorrect=If the details are correct and you need to speak to someone,
 status-check-failure.para-ifCorrect-link= contact the TBC Helpline
 
-multiple-matches-found.title=More than one match found
+status-check-failure-conflict.title=A unique match has not been found
+status-check-failure-conflict.listParagraph=This is because there are multiple matches with these details
 
 button.continue=Continue
 button.submit=Submit

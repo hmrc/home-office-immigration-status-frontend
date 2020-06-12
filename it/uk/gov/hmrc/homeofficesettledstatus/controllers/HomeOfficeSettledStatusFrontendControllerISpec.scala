@@ -228,6 +228,23 @@ class HomeOfficeSettledStatusFrontendControllerISpec
         checkHtmlResultWithBodyText(result, "31 January 2001")
       }
 
+      "display unique match not found page" in {
+        val query =
+          StatusCheckByNinoRequest(Nino("RJ301829A"), "Doe", "Jane", "2001-01-31")
+        val queryError = StatusCheckError(errCode = "ERR_CONFLICT")
+        journey
+          .set(StatusCheckFailure("sjdfhks123", query, queryError), List(StatusCheckByNino(), Start))
+        givenAuthorisedForStride("TBC", "StrideUserId")
+        val result = controller.showStatusCheckFailure(fakeRequest)
+        status(result) shouldBe 200
+        checkHtmlResultWithBodyText(result, htmlEscapedMessage("status-check-failure-conflict.title"))
+        checkHtmlResultWithBodyText(result, htmlEscapedMessage("status-check-failure-conflict.listParagraph"))
+        checkHtmlResultWithBodyText(result, query.nino.formatted)
+        checkHtmlResultWithBodyText(result, query.givenName)
+        checkHtmlResultWithBodyText(result, query.familyName)
+        checkHtmlResultWithBodyText(result, "31 January 2001")
+      }
+
       "redirect to start page if current state is Start" in {
         journey.set(Start, Nil)
         givenAuthorisedForStride("TBC", "StrideUserId")
