@@ -21,7 +21,7 @@
 @(pageTitle: String, heading: String, message: String, variant: Option[String] = None)(implicit messages: Messages, configuration: Configuration)
 
 @contentHeader = {
-    <h1 class="heading-xlarge">@heading</h1>
+    <h1 id="title" class="heading-xlarge">@heading</h1>
 }
 
 @mainContent = {
