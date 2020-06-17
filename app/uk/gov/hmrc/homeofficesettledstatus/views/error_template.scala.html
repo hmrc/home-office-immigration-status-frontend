@@ -18,7 +18,7 @@
 
 @this(govUKWrapper: govuk_wrapper)
 
-@(pageTitle: String, heading: String, message: String)(implicit messages: Messages, configuration: Configuration)
+@(pageTitle: String, heading: String, message: String, variant: Option[String] = None)(implicit messages: Messages, configuration: Configuration)
 
 @contentHeader = {
     <h1 class="heading-xlarge">@heading</h1>
@@ -26,6 +26,15 @@
 
 @mainContent = {
     <p>@message</p>
+
+    @if(variant.contains("external")){
+     <p>@messages("external.error.500.listParagraph")</p>
+
+     <ul class="list list-bullet">
+      <li id="item1">@messages("external.error.500.list-item1")</li>
+      <li id="item2">@messages("external.error.500.list-item2")</li>
+     </ul>
+    }
 }
 
 @govUKWrapper(title = pageTitle, contentHeader = Some(contentHeader), mainContent = mainContent)

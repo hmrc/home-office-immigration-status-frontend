@@ -16,8 +16,7 @@ import uk.gov.hmrc.homeofficesettledstatus.support.{ServerISpec, TestJourneyServ
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class HomeOfficeSettledStatusFrontendISpec
-    extends HomeOfficeSettledStatusFrontendISpecSetup with HomeOfficeSettledStatusStubs
-    with JourneyTestData {
+    extends HomeOfficeSettledStatusFrontendISpecSetup with HomeOfficeSettledStatusStubs with JourneyTestData {
 
   import journey.model.State._
 
@@ -37,7 +36,7 @@ class HomeOfficeSettledStatusFrontendISpec
     }
 
     "POST /check-settled-status/check-with-nino" should {
-      "submit the lookup form" in {
+      "submit the lookup form and show match found" in {
         implicit val journeyId: JourneyId = JourneyId()
         journey.setState(StatusCheckByNino())
         givenStatusCheckSucceeds()
@@ -55,10 +54,34 @@ class HomeOfficeSettledStatusFrontendISpec
 
         result.status shouldBe 200
         result.body should include(htmlEscapedMessage("status-found.title"))
-        journey.getState shouldBe StatusFound(
-          correlationId,
-          validQuery,
-          expectedResultWithSingleStatus)
+        journey.getState shouldBe StatusFound(correlationId, validQuery, expectedResultWithSingleStatus)
+      }
+
+      "submit the lookup form and show error page" in {
+        implicit val journeyId: JourneyId = JourneyId()
+        journey.setState(StatusCheckByNino())
+        givenAnExternalServiceError()
+        givenAuthorisedForStride("TBC", "StrideUserId")
+
+        val payload = Map(
+          "dateOfBirth.year"  -> "2001",
+          "dateOfBirth.month" -> "01",
+          "dateOfBirth.day"   -> "31",
+          "familyName"        -> "Jane",
+          "givenName"         -> "Doe",
+          "nino"              -> "RJ301829A")
+
+        val result = await(request("/check-with-nino").post(payload))
+
+        result.status shouldBe 200
+        result.body should include(htmlEscapedMessage("external.error.500.title"))
+        result.body should include(htmlEscapedMessage("external.error.500.heading"))
+        result.body should include(htmlEscapedMessage("external.error.500.message"))
+        result.body should include(htmlEscapedMessage("external.error.500.listParagraph"))
+        result.body should include(htmlEscapedMessage("external.error.500.list-item1"))
+        result.body should include(htmlEscapedMessage("external.error.500.list-item2"))
+
+        journey.getState shouldBe StatusCheckByNino()
       }
     }
 
@@ -88,8 +111,7 @@ trait HomeOfficeSettledStatusFrontendISpecSetup extends ServerISpec {
   case class JourneyId(value: String = UUID.randomUUID().toString)
 
   // define test service capable of manipulating journey state
-  lazy val journey = new TestJourneyService[JourneyId]
-  with HomeOfficeSettledStatusFrontendJourneyService[JourneyId]
+  lazy val journey = new TestJourneyService[JourneyId] with HomeOfficeSettledStatusFrontendJourneyService[JourneyId]
   with MongoDBCachedJourneyService[JourneyId] {
 
     override lazy val cacheMongoRepository = app.injector.instanceOf[CacheMongoRepository]

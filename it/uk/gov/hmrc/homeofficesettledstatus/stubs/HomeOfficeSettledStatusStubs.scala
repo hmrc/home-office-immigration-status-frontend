@@ -102,6 +102,9 @@ trait HomeOfficeSettledStatusStubs extends JourneyTestData {
     givenStatusPublicFundsByNinoStub(409, validRequestBodyWithDateRange(), errorResponseBody)
   }
 
+  def givenAnExternalServiceError(): StubMapping =
+    givenStatusPublicFundsByNinoErrorStub(500, validRequestBodyWithDateRange())
+
   def givenStatusCheckErrorWhenDOBInvalid(): StubMapping = {
 
     val errorResponseBody: String =
@@ -122,10 +125,7 @@ trait HomeOfficeSettledStatusStubs extends JourneyTestData {
 
   }
 
-  def givenStatusPublicFundsByNinoStub(
-    httpResponseCode: Int,
-    requestBody: String,
-    responseBody: String): StubMapping =
+  def givenStatusPublicFundsByNinoStub(httpResponseCode: Int, requestBody: String, responseBody: String): StubMapping =
     stubFor(
       post(urlEqualTo(s"/v1/status/public-funds/nino"))
         .withHeader("X-Correlation-Id", new AnythingPattern())
@@ -136,6 +136,17 @@ trait HomeOfficeSettledStatusStubs extends JourneyTestData {
             .withStatus(httpResponseCode)
             .withHeader("Content-Type", "application/json")
             .withBody(responseBody)
+        ))
+
+  def givenStatusPublicFundsByNinoErrorStub(httpResponseCode: Int, requestBody: String): StubMapping =
+    stubFor(
+      post(urlEqualTo(s"/v1/status/public-funds/nino"))
+        .withHeader("X-Correlation-Id", new AnythingPattern())
+        .withHeader(HeaderNames.CONTENT_TYPE, containing("application/json"))
+        .withRequestBody(equalToJson(requestBody, true, true))
+        .willReturn(
+          aResponse()
+            .withStatus(httpResponseCode)
         ))
 
 }

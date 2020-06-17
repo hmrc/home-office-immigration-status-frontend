@@ -45,6 +45,7 @@ class ViewsSpec @Inject()(govUkWrapper: govuk_wrapper, layoutComponents: LayoutC
         pageTitle = pageTitle,
         heading = heading,
         message = message,
+        variant = None,
         messages = MessagesImpl(lang, stubMessagesApi()),
         configuration = app.configuration)
       val content = contentAsString(html)
@@ -54,7 +55,7 @@ class ViewsSpec @Inject()(govUkWrapper: govuk_wrapper, layoutComponents: LayoutC
 
       val html2 =
         new error_template(govUkWrapper)
-          .f(pageTitle, heading, message)(MessagesImpl(lang, stubMessagesApi()), app.configuration)
+          .f(pageTitle, heading, message, None)(MessagesImpl(lang, stubMessagesApi()), app.configuration)
       contentAsString(html2) shouldBe (content)
     }
   }

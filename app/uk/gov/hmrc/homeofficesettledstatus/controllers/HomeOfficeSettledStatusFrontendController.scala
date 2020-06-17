@@ -71,6 +71,10 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
   val showStatusCheckByNino: Action[AnyContent] =
     action { implicit request =>
       whenAuthorised(AsStrideUser)(Transitions.showStatusCheckByNino)(display)
+        .andThen {
+          // reset navigation history
+          case Success(_) => journeyService.cleanBreadcrumbs()
+        }
     }
 
   // POST /check-with-nino

@@ -53,27 +53,30 @@ class ErrorHandler @Inject()(
     auditServerError(request, exception)
     implicit val r = Request(request, "")
     exception match {
-      case _: NoActiveSession =>
-        toGGLogin(if (isDevEnv) s"http://${request.host}${request.uri}" else s"${request.uri}")
-      case _: InsufficientEnrolments => Forbidden
-      case _: HomeOfficeSettledStatusProxyError =>
-        Ok(
-          standardErrorTemplate(
-            Messages("external.error.500.title"),
-            Messages("external.error.500.heading"),
-            Messages("external.error.500.message")))
-      case _ =>
-        Ok(
-          standardErrorTemplate(
-            Messages("internal.error.500.title"),
-            Messages("internal.error.500.heading"),
-            Messages("internal.error.500.message")))
+      case _: NoActiveSession                   => toGGLogin(if (isDevEnv) s"http://${request.host}${request.uri}" else s"${request.uri}")
+      case _: InsufficientEnrolments            => Forbidden
+      case _: HomeOfficeSettledStatusProxyError => Ok(externalErrorTemplate())
+      case _                                    => Ok(internalErrorTemplate())
     }
   }
 
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(
     implicit request: Request[_]) =
-    new error_template(govUkWrapper)(pageTitle, heading, message)
+    new error_template(govUkWrapper)(pageTitle, heading, message, None)
+
+  def externalErrorTemplate()(implicit request: Request[_]) =
+    new error_template(govUkWrapper)(
+      Messages("external.error.500.title"),
+      Messages("external.error.500.heading"),
+      Messages("external.error.500.message"),
+      Some("external"))
+
+  def internalErrorTemplate()(implicit request: Request[_]) =
+    new error_template(govUkWrapper)(
+      Messages("internal.error.500.title"),
+      Messages("internal.error.500.heading"),
+      Messages("internal.error.500.message"),
+      None)
 }
 
 object EventTypes {

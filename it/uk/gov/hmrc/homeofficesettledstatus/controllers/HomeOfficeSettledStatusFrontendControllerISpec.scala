@@ -62,7 +62,7 @@ class HomeOfficeSettledStatusFrontendControllerISpec
         val result = controller.showStatusCheckByNino(fakeRequest)
         status(result) shouldBe 200
         checkHtmlResultWithBodyText(result, htmlEscapedMessage("lookup.title"))
-        journey.get shouldBe Some((StatusCheckByNino(), List(Start)))
+        journey.get shouldBe Some((StatusCheckByNino(), List()))
       }
 
       "display the lookup page filled with existing query parameters" in {
