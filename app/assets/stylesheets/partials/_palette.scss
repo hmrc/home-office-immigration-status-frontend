@@ -210,7 +210,7 @@ button:active,
   color: #00703c;
 }
 
-// #b10e1e to #af1324
+// #b10e1e to #d4351c
 .button--alert,
 .button--alert:visited,
 .button--alert.disabled:hover,
@@ -227,11 +227,11 @@ button:active,
 .highlight-block--red,
 .main-nav .count,
 .badge {
-  background-color: #af1324;
+  background-color: #d4351c;
 }
 .button--alert:active {
-  -webkit-box-shadow: 0 0 0 #af1324;
-  box-shadow: 0 0 0 #af1324;
+  -webkit-box-shadow: 0 0 0 #d4351c;
+  box-shadow: 0 0 0 #d4351c;
 }
 .email-form-errors .error-notification,
 .error-notification,
@@ -243,13 +243,13 @@ button:active,
 .error-summary .error-summary-list .link-style,
 .error-summary .error-summary-list .button--link-style,
 .flash.error-summary a, .flash.error-summary .link-style, .flash.error-summary .button--link-style {
-  color: #af1324;
+  color: #d4351c;
 }
 .email-form-errors .error-notification,
 .attorneyBanner--client-request-rejected,
 .business-tax .content__body .flag.flag--urgent,
 .form-group-error {
-  border-left-color: #af1324;
+  border-left-color: #d4351c;
 }
 .business-tax .alert--failure,
 .form-control-error,
@@ -257,7 +257,7 @@ textarea.form-control-error,
 input.form-control-error[type="text"],
 input.form-control-error[type="password"],
 .error-summary {
-  border-color: #af1324;
+  border-color: #d4351c;
 }
 
 .transaction-banner--complete {
