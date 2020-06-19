@@ -6,7 +6,8 @@
 
   a:focus,
   .error-summary .error-summary-list a:focus,
-  details summary:focus {
+  details summary:focus,
+  .flash.error-summary a:focus {
     outline: 3px solid transparent;
     color: #0b0c0c;
     background-color: #fd0;
