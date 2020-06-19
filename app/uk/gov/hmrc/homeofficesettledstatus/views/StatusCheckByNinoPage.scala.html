@@ -32,6 +32,9 @@
 
 @layout.mainTemplate(title = messageTitle, bodyClasses = Some("full-width")) {
 
+    <div class="grid-row">
+        <div class="column-two-thirds">
+
     <h1 class="heading-xlarge">@messages("lookup.title")</h1>
 
     @if(statusCheckForm.hasErrors){
@@ -44,7 +47,7 @@
         @layout.input(
             statusCheckForm("nino"),
             '_label -> messages("lookup.nino.label"),
-            '_inputClass -> "form-control width-10",
+            '_inputClass -> "form-control form-control-2-3",
             '_labelTextClass -> "form-label",
             '_hintId -> messages("lookup.nino.ariaDescribedBy"),
             '_error_id -> messages("lookup.nino.ariaDescribedByError"),
@@ -58,7 +61,7 @@
             '_label -> messages("lookup.givenName.label"),
             '_error_id -> messages("lookup.givenName.ariaDescribedByError"),
             '_errorPrefix -> messages("error.prefix"),
-            '_inputClass -> "form-control width-10",
+            '_inputClass -> "form-control form-control-2-3",
             '_labelTextClass -> "form-label",
             '_labelClass -> "soft--ends"
          )
@@ -68,7 +71,7 @@
             '_label -> messages("lookup.familyName.label"),
             '_error_id -> messages("lookup.familyName.ariaDescribedByError"),
             '_errorPrefix -> messages("error.prefix"),
-            '_inputClass -> "form-control width-10",
+            '_inputClass -> "form-control form-control-2-3",
             '_labelTextClass -> "form-label",
             '_labelClass -> "soft--ends"
          )
@@ -85,8 +88,8 @@
          )
 
           <button class="button" type="submit" id="continue">@messages("button.continue")</button>
-
-
-    }
+            }
+        </div>
+    </div>
 
 }
