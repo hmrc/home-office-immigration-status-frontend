@@ -28,6 +28,7 @@
 @labelHighlight = @{ elements.args.get('_labelHighlight).getOrElse(false).asInstanceOf[Boolean] }
 @concatenate(options: Option[Any]*) = @{options.collect{case Some(x) => x}.mkString(" ")}
 @ifNonEmpty(seq: Seq[Any], opt: Option[Any]) = @{if(seq.isEmpty) None else opt}
+@ariaDescribedBy = @{ concatenate(elements.args.get('_hintId), ifNonEmpty(elements.errors,elements.args.get('_error_id)))}
 
 <div class="form-group @elements.args.get('_divClass) @if((elements.hasErrors || (parentElements.isDefined && parentElements.get.hasErrors)) && !elements.args.contains('_hideBar)) {form-group-error}">
     @if(!labelAfter && elements.args.contains('_label)) {
@@ -65,14 +66,14 @@
     }
 
     <input
-      @if( elements.args.contains('_type)){type="@elements.args.get('_type)" }else{type="text" }
-      @if( elements.args.contains('_dataAttributes) ){ @elements.args.get('_dataAttributes)}
-      @if( elements.args.get('_inputClass) ){ class="@elements.args.get('_inputClass)" }
-      @if( elements.args.get('_autoComplete) ){ autocomplete="@elements.args.get('_autoComplete)" }
+      @if(elements.args.contains('_type)){type="@elements.args.get('_type)" }else{type="text" }
+      @if(elements.args.contains('_dataAttributes) ){ @elements.args.get('_dataAttributes)}
+      @if(elements.args.get('_inputClass) ){ class="@elements.args.get('_inputClass)" }
+      @if(elements.args.get('_autoComplete) ){ autocomplete="@elements.args.get('_autoComplete)" }
          name="@elements.field.name"
          id="@elements.field.name"
          value="@value"
-      @if(elements.args.get('_error_id).isDefined || elements.args.get('_hintId).isDefined) { aria-describedby="@concatenate(elements.args.get('_hintId), ifNonEmpty(elements.errors,elements.args.get('_error_id)))" }
+      @if(ariaDescribedBy.nonEmpty) { aria-describedby="@ariaDescribedBy" }
       @if(elements.args.get('_maxlength).isDefined) { maxlength="@elements.args.get('_maxlength)" }
       @if(elements.args.get('_min).isDefined) { min="@elements.args.get('_min)" }
       @if(elements.args.get('_max).isDefined) { max="@elements.args.get('_max)" }
