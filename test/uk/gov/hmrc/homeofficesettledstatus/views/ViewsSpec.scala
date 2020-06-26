@@ -24,7 +24,7 @@ import play.api.i18n.{Lang, MessagesImpl}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import uk.gov.hmrc.homeofficesettledstatus.views.html.{error_template, govuk_wrapper, main_template}
+import uk.gov.hmrc.homeofficesettledstatus.views.html.{HossFooterLinks, error_template, govuk_wrapper, main_template}
 import uk.gov.hmrc.play.config.{AssetsConfig, GTMConfig, OptimizelyConfig}
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.play.views.html.helpers.ReportAProblemLink
@@ -117,7 +117,7 @@ class ViewsSpec @Inject()(govUkWrapper: govuk_wrapper, layoutComponents: LayoutC
       val head = new Head(optimizelySnippet, assetsConfig, gtmSnippet)
       val headerNav = new HeaderNav()
       val footer = new Footer(assetsConfig)
-      val footerLinks = new FooterLinks()
+      val footerLinks = new HossFooterLinks()
       val serviceInfo = new ServiceInfo()
       val mainContentHeader = new MainContentHeader()
       val mainContent = new MainContent()
