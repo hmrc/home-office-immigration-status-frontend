@@ -27,14 +27,20 @@
 @mainContent = {
     <p>@message</p>
 
-    @if(variant.contains("external")){
+    @if(variant.contains("external")) {
      <p>@messages("external.error.500.listParagraph")</p>
 
      <ul class="list list-bullet">
       <li id="item1">@messages("external.error.500.list-item1")</li>
       <li id="item2">@messages("external.error.500.list-item2")</li>
      </ul>
+
+     <p class="form-group"> <a href="mailto:RTPFPrivateBeta@@homeoffice.gov.uk"
+                              class="govuk-link">@messages("status-check-failure.contact-service-desk-link")</a>
+     @messages("status-check-failure.contact-service-desk-text")
+     </p>
     }
+
 }
 
 @govUKWrapper(title = pageTitle, contentHeader = Some(contentHeader), mainContent = mainContent)
