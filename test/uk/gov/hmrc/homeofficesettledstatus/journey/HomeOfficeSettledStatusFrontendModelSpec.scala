@@ -76,21 +76,21 @@ class HomeOfficeSettledStatusFrontendModelSpec extends UnitSpec with StateMatche
       }
       "transition to StatusNotAvailable when submitStatusCheckByNino with valid query with date range" in {
         atStatusCheckByNino when submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(
-          queryReturningMatchDateRange) should thenGo(
-          StatusFound(correlationId, queryReturningMatchDateRange, matchFoundResult))
-      }
-      "transition to StatusCheckFailure when submitStatusCheckByNino with valid query with date range" in {
-        atStatusCheckByNino when submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(queryReturning202) should
-          thenGo(StatusNotAvailable(correlationId, queryReturning202))
+          queryReturningEmptyResponse) should
+          thenGo(StatusNotAvailable(correlationId, queryReturningEmptyResponse))
       }
       "transition to StatusCheckFailure when submitStatusCheckByNino with invalid query" in {
         atStatusCheckByNino when submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(
           queryReturningUnsupportedMatch) should thenGo(
           StatusCheckFailure(correlationId, queryReturningUnsupportedMatch, errorUnsupportedStatus))
       }
-      "transition to StatusCheckFailure when submitStatusCheckByNino returns empty response" in {
-        atStatusCheckByNino when submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(queryReturning202) should thenGo(
-          StatusNotAvailable(correlationId, queryReturning202))
+      "transition to StatusNotAvailable when submitStatusCheckByNino returns empty response" in {
+        atStatusCheckByNino when submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(
+          queryReturningEmptyResponse) should thenGo(StatusNotAvailable(correlationId, queryReturningEmptyResponse))
+      }
+      "transition to StatusNotAvailable when submitStatusCheckByNino returns empty status list" in {
+        atStatusCheckByNino when submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(
+          queryReturningEmptyStatusList) should thenGo(StatusNotAvailable(correlationId, queryReturningEmptyStatusList))
       }
     }
 
@@ -121,7 +121,7 @@ class HomeOfficeSettledStatusFrontendModelSpec extends UnitSpec with StateMatche
     "at state StatusNotAvailable" should {
 
       def atStatusNotAvailable =
-        given(StatusNotAvailable(correlationId, queryReturning202))
+        given(StatusNotAvailable(correlationId, queryReturningEmptyResponse))
           .withBreadcrumbs(StatusCheckByNino(), Start)
 
       "transition to Start when start" in {
@@ -203,8 +203,11 @@ trait TestData {
       "2001-01-31",
       Some(StatusCheckRange(Some(LocalDate.now().minusDays(6)), Some(LocalDate.now().minusMonths(6)))))
 
-  val queryReturning202 =
-    StatusCheckByNinoRequest(Nino("KA339738D"), "BAR", "FOO", "1999-12-31")
+  val queryReturningEmptyResponse =
+    StatusCheckByNinoRequest(Nino("KA339738D"), "BAR", "FOO", "1997-10-29")
+
+  val queryReturningEmptyStatusList =
+    StatusCheckByNinoRequest(Nino("SR137010A"), "FOO", "BAR", "1998-11-30")
 
   val queryReturningUnsupportedMatch =
     StatusCheckByNinoRequest(Nino("BS088353B"), "BAR", "FOO", "1999-12-31")
@@ -255,8 +258,10 @@ trait TestData {
       Future.successful(
         if (request.nino == queryReturningMatch.nino)
           StatusCheckResponse(correlationId = correlationId, result = Some(matchFoundResult))
-        else if (request.nino == queryReturning202.nino)
+        else if (request.nino == queryReturningEmptyResponse.nino)
           StatusCheckResponse(correlationId = correlationId)
+        else if (request.nino == queryReturningEmptyStatusList.nino)
+          StatusCheckResponse(correlationId = correlationId, result = Some(matchFoundResult.copy(statuses = List())))
         else if (request.nino == queryReturningUnsupportedMatch.nino)
           StatusCheckResponse(correlationId = correlationId, result = Some(unsupportedMatchFoundResult))
         else
