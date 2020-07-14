@@ -32,15 +32,17 @@ object FormFieldMappings {
     invalidFailure: String = "error.nino.invalid-format"): Constraint[String] =
     ValidateHelper.validateField(nonEmptyFailure, invalidFailure)(nino => Nino.isValid(nino))
 
+  val maxNameLen = 64
+
   val normalizedText: Mapping[String] = of[String].transform(_.replaceAll("\\s", ""), identity)
   val uppercaseNormalizedText: Mapping[String] = normalizedText.transform(_.toUpperCase, identity)
-  val trimmedName: Mapping[String] = of[String].transform[String](_.trim.take(64), identity)
+  val trimmedName: Mapping[String] = of[String].transform[String](_.trim.take(maxNameLen), identity)
 
   val allowedNameCharacters: Set[Char] = Set('-', '\'', ' ')
 
   def validName(fieldName: String, minLenInc: Int): Constraint[String] =
     Constraint[String] { fieldValue: String =>
-      Constraints.nonEmpty(errorMessage = s"error.$fieldName.required")(fieldValue) match {
+      nonEmpty(fieldName)(fieldValue) match {
         case i @ Invalid(_) => i
         case Valid =>
           if (fieldValue.length >= minLenInc && fieldValue.forall(
@@ -49,5 +51,12 @@ object FormFieldMappings {
           else
             Invalid(ValidationError(s"error.$fieldName.invalid-format"))
       }
+    }
+
+  def nonEmpty(fieldName: String): Constraint[String] =
+    Constraint[String]("constraint.required") { s =>
+      Option(s)
+        .filter(!_.trim.isEmpty)
+        .fold[ValidationResult](Invalid(ValidationError(s"error.$fieldName.required")))(_ => Valid)
     }
 }
