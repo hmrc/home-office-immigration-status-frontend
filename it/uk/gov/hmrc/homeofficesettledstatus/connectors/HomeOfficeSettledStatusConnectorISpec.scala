@@ -115,8 +115,7 @@ class HomeOfficeSettledStatusConnectorISpec extends HomeOfficeSettledStatusConne
 
 }
 
-trait HomeOfficeSettledStatusConnectorISpecSetup
-    extends AppISpec with HomeOfficeSettledStatusStubs {
+trait HomeOfficeSettledStatusConnectorISpecSetup extends AppISpec with HomeOfficeSettledStatusStubs {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 

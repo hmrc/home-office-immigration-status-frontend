@@ -28,6 +28,7 @@ import uk.gov.hmrc.homeofficesettledstatus.connectors.HomeOfficeSettledStatusPro
 import uk.gov.hmrc.homeofficesettledstatus.models.{StatusCheckByNinoRequest, StatusCheckResponse}
 import uk.gov.hmrc.homeofficesettledstatus.wiring.AppConfig
 import uk.gov.hmrc.http._
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -58,11 +59,11 @@ class HomeOfficeSettledStatusProxyConnector @Inject()(
           implicitly[ExecutionContext]
         )
         .recover {
-          case e: BadRequestException =>
-            Json.parse(extractResponseBody(e.message, "Response body '")).as[StatusCheckResponse]
-          case e: NotFoundException =>
+          case UpstreamErrorResponse.Upstream4xxResponse(e) if e.statusCode == 400 =>
             Json.parse(extractResponseBody(e.message, "Response body: '")).as[StatusCheckResponse]
-          case e: Upstream4xxResponse if e.upstreamResponseCode == 409 =>
+          case UpstreamErrorResponse.Upstream4xxResponse(e) if e.statusCode == 404 =>
+            Json.parse(extractResponseBody(e.message, "Response body: '")).as[StatusCheckResponse]
+          case UpstreamErrorResponse.Upstream4xxResponse(e) if e.statusCode == 409 =>
             Json.parse(extractResponseBody(e.message, "Response body: '")).as[StatusCheckResponse]
         }
         .recoverWith {
