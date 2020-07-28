@@ -31,8 +31,8 @@ app.titleSuffix=Check settled status - GOV.UK
 app.name=Check settled status
 app.hasSettledStatus=has settled status
 app.hasPreSettledStatus=has pre-settled status
-app.hasSettledStatus.expired=settled status has ended
-app.hasPreSettledStatus.expired=pre-settled status has ended
+app.hasSettledStatus.expired=''s settled status has ended
+app.hasPreSettledStatus.expired=''s pre-settled status has ended
 app.hasNoStatus=has no settled status
 app.hasNoActiveStatus=does not have an active status
 app.status.EUS_LTR=Pre settled status
@@ -67,7 +67,7 @@ status-found.previous.expiryDate=Previous expiry date
 # Status not available page
 status-not-available.title=Applicant does not have an active status
 status-not-available.listParagraph=This may be for a number of reasons, including:
-status-not-available.list-item1=The status expired over six months ago
+status-not-available.list-item1=The status ended over six months ago
 status-not-available.list-item2=Nothing associated with the account
 
 # Failure page
