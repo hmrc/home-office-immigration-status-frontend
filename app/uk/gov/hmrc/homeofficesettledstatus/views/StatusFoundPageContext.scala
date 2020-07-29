@@ -42,10 +42,12 @@ case class StatusFoundPageContext(query: StatusCheckByNinoRequest, result: Statu
   def currentStatusLabel(implicit messages: Messages) = mostRecentStatus match {
     case Some(s) if s.productType == EUS && s.immigrationStatus == LTR =>
       if (s.hasExpired) messages("app.hasPreSettledStatus.expired")
-      else messages("app.hasPreSettledStatus")
+      else s" ${messages("app.hasPreSettledStatus")}"
+
     case Some(s) if s.productType == EUS && s.immigrationStatus == ILR =>
       if (s.hasExpired) messages("app.hasSettledStatus.expired")
-      else messages("app.hasSettledStatus")
+      else s" ${messages("app.hasSettledStatus")}"
+
     case _ => messages("app.hasNoStatus")
   }
 
