@@ -76,8 +76,8 @@ status-check-failure.heading2CustomerDetails=Customer details
 status-check-failure.listParagraph=This may be for a number of reasons, including:
 status-check-failure.list-item1=The details are incorrect
 status-check-failure.list-item2=The customer has not applied to the EU Settlement Scheme
-status-check-failure.contact-service-desk-link=Contact the Home office service desk
-status-check-failure.contact-service-desk-text=to inform them if the service is continuously unavailable.
+status-check-failure.contact-helpdesk-link=IT help desk
+status-check-failure.contact-helpdesk-text=If you need to escalate this contact the
 
 status-check-failure-conflict.title=A unique match has not been found
 status-check-failure-conflict.listParagraph=This is because there are multiple matches with these details

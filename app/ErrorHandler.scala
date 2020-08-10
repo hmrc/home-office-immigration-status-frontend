@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import scala.concurrent.{ExecutionContext, Future}
+
 import com.google.inject.name.Named
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.{Messages, MessagesApi}
@@ -28,8 +30,6 @@ import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.config.{AuthRedirects, HttpAuditEvent}
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
-
-import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ErrorHandler @Inject()(
@@ -69,14 +69,15 @@ class ErrorHandler @Inject()(
       Messages("external.error.500.title"),
       Messages("external.error.500.heading"),
       Messages("external.error.500.message"),
-      Some("external"))
+      Some(config.get[String]("it.helpdesk.url"))
+    )
 
   def internalErrorTemplate()(implicit request: Request[_]) =
     new error_template(govUkWrapper)(
       Messages("internal.error.500.title"),
       Messages("internal.error.500.heading"),
-      Messages("internal.error.500.message"),
-      None)
+      Messages("internal.error.500.message")
+    )
 }
 
 object EventTypes {

@@ -45,7 +45,7 @@ class ViewsSpec @Inject()(govUkWrapper: govuk_wrapper, layoutComponents: LayoutC
         pageTitle = pageTitle,
         heading = heading,
         message = message,
-        variant = None,
+        helpdesk = None,
         messages = MessagesImpl(lang, stubMessagesApi()),
         configuration = app.configuration)
       val content = contentAsString(html)

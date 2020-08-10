@@ -18,7 +18,7 @@
 
 @this(govUKWrapper: govuk_wrapper)
 
-@(pageTitle: String, heading: String, message: String, variant: Option[String] = None)(implicit messages: Messages, configuration: Configuration)
+@(pageTitle: String, heading: String, message: String, helpdesk: Option[String] = None)(implicit messages: Messages, configuration: Configuration)
 
 @contentHeader = {
     <h1 id="title" class="heading-xlarge">@heading</h1>
@@ -27,20 +27,20 @@
 @mainContent = {
     <p>@message</p>
 
-    @if(variant.contains("external")) {
-     <p>@messages("external.error.500.listParagraph")</p>
+    @for(hd <- helpdesk) {
+      <p>@messages("external.error.500.listParagraph")</p>
 
-     <ul class="list list-bullet">
-      <li id="item1">@messages("external.error.500.list-item1")</li>
-      <li id="item2">@messages("external.error.500.list-item2")</li>
-     </ul>
+      <ul class="list list-bullet">
+        <li id="item1">@messages("external.error.500.list-item1")</li>
+        <li id="item2">@messages("external.error.500.list-item2")</li>
+      </ul>
 
-     <p class="form-group"> <a href="mailto:RTPFPrivateBeta@@homeoffice.gov.uk"
-                              class="govuk-link">@messages("status-check-failure.contact-service-desk-link")</a>
-     @messages("status-check-failure.contact-service-desk-text")
-     </p>
+      <p class="form-group">
+        @messages("status-check-failure.contact-helpdesk-text")
+        <a href="@hd" target="_blank"
+           class="govuk-link">@messages("status-check-failure.contact-helpdesk-link")</a>.
+      </p>
     }
-
 }
 
 @govUKWrapper(title = pageTitle, contentHeader = Some(contentHeader), mainContent = mainContent)
