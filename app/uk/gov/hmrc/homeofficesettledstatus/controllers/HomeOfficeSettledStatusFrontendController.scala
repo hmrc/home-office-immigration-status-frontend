@@ -180,7 +180,7 @@ object HomeOfficeSettledStatusFrontendController {
         .verifying(validNino())
         .transform(Nino.apply, (n: Nino) => n.toString),
       "givenName"   -> trimmedName.verifying(validName("givenName", 1)),
-      "familyName"  -> trimmedName.verifying(validName("familyName", 3)),
+      "familyName"  -> trimmedName.verifying(validName("familyName", 2)),
       "dateOfBirth" -> dateOfBirthMapping,
       "range"       -> ignored[Option[StatusCheckRange]](None)
     )(StatusCheckByNinoRequest.apply)(StatusCheckByNinoRequest.unapply))

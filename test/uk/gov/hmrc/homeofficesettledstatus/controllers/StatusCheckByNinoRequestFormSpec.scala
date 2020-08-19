@@ -76,9 +76,9 @@ class StatusCheckByNinoRequestFormSpec extends UnitSpec {
       form.bind(input).errors shouldBe List(FormError("familyName", "error.familyName.required"))
     }
 
-    "report an error when familyName is invalid" in {
+    "report an error when familyName is too short" in {
       val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
-      val input = formInput.updated("familyName", "AB")
+      val input = formInput.updated("familyName", "A")
       form.bind(input).errors shouldBe List(FormError("familyName", "error.familyName.invalid-format"))
     }
 
