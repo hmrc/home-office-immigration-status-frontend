@@ -18,7 +18,7 @@ package uk.gov.hmrc.homeofficesettledstatus.filters
 
 import javax.inject.Inject
 import play.http.DefaultHttpFilters
-import uk.gov.hmrc.play.bootstrap.filters.FrontendFilters
+import uk.gov.hmrc.play.bootstrap.frontend.filters.FrontendFilters
 
 class HossFilters @Inject()(
   shutteringFilter: ShutteringFilter,
