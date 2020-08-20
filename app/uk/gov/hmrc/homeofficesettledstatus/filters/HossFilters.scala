@@ -22,5 +22,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.filters.FrontendFilters
 
 class HossFilters @Inject()(
   shutteringFilter: ShutteringFilter,
-  frontendFilters: FrontendFilters
-) extends DefaultHttpFilters(shutteringFilter +: frontendFilters.filters: _*)
+  frontendFilters: FrontendFilters,
+  auditFilter: AuditFilter
+) extends DefaultHttpFilters(
+      (shutteringFilter +: frontendFilters.filters
+        .filterNot(_.getClass.getSimpleName.contains("AuditFilter")) :+ auditFilter): _*)
