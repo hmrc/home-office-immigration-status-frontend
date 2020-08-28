@@ -48,5 +48,5 @@ class AuditFilter @Inject()(
       .dataEvent(eventType, transactionName, request, detail.updated("authId", hc.userId.map(_.value).getOrElse("-")))
 
   override def controllerNeedsAuditing(controllerName: String): Boolean =
-    !controllerName.contains("Assets") || controllerConfigs.controllerNeedsAuditing(controllerName)
+    !controllerName.contains("Assets") && controllerConfigs.controllerNeedsAuditing(controllerName)
 }
