@@ -45,7 +45,7 @@ class AuditFilter @Inject()(
     request: RequestHeader,
     detail: Map[String, String])(implicit hc: HeaderCarrier): DataEvent =
     httpAuditEvent
-      .dataEvent(eventType, transactionName, request, detail.updated("authId", hc.userId.map(_.value).getOrElse("-")))
+      .dataEvent(eventType, transactionName, request, detail.updated("authId", "-"))
 
   override def controllerNeedsAuditing(controllerName: String): Boolean =
     !controllerName.contains("Assets") && controllerConfigs.controllerNeedsAuditing(controllerName)
