@@ -80,7 +80,7 @@ trait SessionCache[T, C] {
           }
 
       case None ⇒
-        Logger.warn("no sessionId found in the HeaderCarrier to query mongo")
+        Logger.warn("[SessionCache][get] no sessionId found in the HeaderCarrier to query mongo")
         Right(None)
     }
 
@@ -103,7 +103,7 @@ trait SessionCache[T, C] {
           }
 
       case None ⇒
-        Left(s"no sessionId found in the HeaderCarrier to store in mongo")
+        Left("[SessionCache][store] no sessionId found in the HeaderCarrier to store in mongo")
     }
 
   def delete()(implicit requestContext: C, ec: ExecutionContext): Future[Either[String, Unit]] =
