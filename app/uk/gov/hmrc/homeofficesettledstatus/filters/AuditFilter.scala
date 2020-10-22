@@ -23,17 +23,16 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.audit.model.DataEvent
 import uk.gov.hmrc.play.bootstrap.config.{ControllerConfigs, HttpAuditEvent}
-import uk.gov.hmrc.play.bootstrap.frontend.filters.FrontendAuditFilter
+import uk.gov.hmrc.play.bootstrap.filters.frontend.DefaultFrontendAuditFilter
 
 import scala.concurrent.ExecutionContext
 
 class AuditFilter @Inject()(
-  controllerConfigs: ControllerConfigs,
+  val controllerConfigs: ControllerConfigs,
   override val auditConnector: AuditConnector,
-  httpAuditEvent: HttpAuditEvent,
-  override val mat: Materializer
-)(implicit protected val ec: ExecutionContext)
-    extends FrontendAuditFilter {
+  val httpAuditEvent: HttpAuditEvent,
+  override val mat: Materializer)(implicit override protected val ec: ExecutionContext)
+    extends DefaultFrontendAuditFilter(controllerConfigs, auditConnector, httpAuditEvent, mat) {
 
   override val maskedFormFields: Seq[String] = Seq.empty
 
