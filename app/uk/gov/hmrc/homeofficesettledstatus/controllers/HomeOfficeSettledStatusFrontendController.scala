@@ -35,7 +35,6 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.fsm.{JourneyController, JourneyIdSupport}
 
 import scala.concurrent.ExecutionContext
-import scala.util.Success
 
 @Singleton
 class HomeOfficeSettledStatusFrontendController @Inject()(
@@ -46,7 +45,8 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
   val env: Environment,
   override val journeyService: HomeOfficeSettledStatusFrontendJourneyServiceWithHeaderCarrier,
   controllerComponents: MessagesControllerComponents,
-  layoutComponents: LayoutComponents)(implicit val config: Configuration, ec: ExecutionContext)
+  layoutComponents: LayoutComponents
+)(implicit val config: Configuration, ec: ExecutionContext)
     extends FrontendController(controllerComponents) with I18nSupport with AuthActions
     with JourneyController[HeaderCarrier] with JourneyIdSupport[HeaderCarrier] {
 
@@ -59,54 +59,54 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
 
   // GET /
   val showStart: Action[AnyContent] =
-    action { implicit request =>
-      whenAuthorised(AsStrideUser)(Transitions.start)(display)
-        .andThen {
-          // reset navigation history
-          case Success(_) => journeyService.cleanBreadcrumbs()
-        }
-    }
+    actions
+      .whenAuthorised(AsStrideUser)
+      .apply(Transitions.start)
+      .display
+      .andCleanBreadcrumbs() // reset navigation history
 
   // GET /check-with-nino
   val showStatusCheckByNino: Action[AnyContent] =
-    action { implicit request =>
-      whenAuthorised(AsStrideUser)(Transitions.showStatusCheckByNino)(display)
-        .andThen {
-          // reset navigation history
-          case Success(_) => journeyService.cleanBreadcrumbs()
-        }
-    }
+    actions
+      .whenAuthorised(AsStrideUser)
+      .apply(Transitions.showStatusCheckByNino)
+      .display
+      .andCleanBreadcrumbs() // reset navigation history
 
   // POST /check-with-nino
   val submitStatusCheckByNino: Action[AnyContent] =
-    action { implicit request =>
-      whenAuthorisedWithForm(AsStrideUser)(StatusCheckByNinoRequestForm)(
-        Transitions.submitStatusCheckByNino(
-          homeOfficeSettledStatusProxyConnector.statusPublicFundsByNino(_),
-          appConfig.defaultQueryTimeRangeInMonths)
-      )
-    }
+    actions
+      .whenAuthorised(AsStrideUser)
+      .bindForm(StatusCheckByNinoRequestForm)
+      .applyWithRequest(
+        implicit request =>
+          Transitions.submitStatusCheckByNino(
+            homeOfficeSettledStatusProxyConnector.statusPublicFundsByNino(_),
+            appConfig.defaultQueryTimeRangeInMonths
+        ))
 
   // GET /status-found
   val showStatusFound: Action[AnyContent] =
-    actionShowStateWhenAuthorised(AsStrideUser) {
-      case _: StatusFound =>
-    }
+    actions
+      .whenAuthorised(AsStrideUser)
+      .show[StatusFound]
+      .orRollback
 
   // GET /status-not-available
   val showStatusNotAvailable: Action[AnyContent] =
-    actionShowStateWhenAuthorised(AsStrideUser) {
-      case _: StatusNotAvailable =>
-    }
+    actions
+      .whenAuthorised(AsStrideUser)
+      .show[StatusNotAvailable]
+      .orRollback
 
   // GET /status-check-failure
   val showStatusCheckFailure: Action[AnyContent] =
-    actionShowStateWhenAuthorised(AsStrideUser) {
-      case _: StatusCheckFailure =>
-    }
+    actions
+      .whenAuthorised(AsStrideUser)
+      .show[StatusCheckFailure]
+      .orRollback
 
-  /**
-    * Function from the `State` to the `Call` (route),
+  /** Function from the `State` to the `Call` (route),
     * used by play-fsm internally to create redirects.
     */
   override def getCallFor(state: State)(implicit request: Request[_]): Call = state match {
@@ -130,12 +130,12 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
   val statusCheckFailurePage = new StatusCheckFailurePage(layoutComponents)
   val multipleMatchesFoundPage = new MultipleMatchesFoundPage(layoutComponents)
 
-  /**
-    * Function from the `State` to the `Result`,
+  /** Function from the `State` to the `Result`,
     * used by play-fsm internally to render the actual content.
     */
   override def renderState(state: State, breadcrumbs: List[State], formWithErrors: Option[Form[_]])(
-    implicit request: Request[_]): Result = state match {
+    implicit
+    request: Request[_]): Result = state match {
 
     case Start =>
       Redirect(getCallFor(StatusCheckByNino()))
@@ -146,9 +146,11 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
           formWithErrors.or(
             maybeQuery
               .map(query => StatusCheckByNinoRequestForm.fill(query))
-              .getOrElse(StatusCheckByNinoRequestForm)),
+              .getOrElse(StatusCheckByNinoRequestForm)
+          ),
           routes.HomeOfficeSettledStatusFrontendController.submitStatusCheckByNino()
-        ))
+        )
+      )
 
     case StatusFound(_, query, result) =>
       Ok(statusFoundPage(StatusFoundPageContext(query, result, getCallFor(Start))))
@@ -183,5 +185,6 @@ object HomeOfficeSettledStatusFrontendController {
       "familyName"  -> trimmedName.verifying(validName("familyName", 2)),
       "dateOfBirth" -> dateOfBirthMapping,
       "range"       -> ignored[Option[StatusCheckRange]](None)
-    )(StatusCheckByNinoRequest.apply)(StatusCheckByNinoRequest.unapply))
+    )(StatusCheckByNinoRequest.apply)(StatusCheckByNinoRequest.unapply)
+  )
 }
