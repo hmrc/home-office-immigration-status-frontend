@@ -44,6 +44,7 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
   val authConnector: FrontendAuthConnector,
   val env: Environment,
   override val journeyService: HomeOfficeSettledStatusFrontendJourneyServiceWithHeaderCarrier,
+  override val actionBuilder: DefaultActionBuilder,
   controllerComponents: MessagesControllerComponents,
   layoutComponents: LayoutComponents
 )(implicit val config: Configuration, ec: ExecutionContext)
@@ -60,7 +61,7 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
   // GET /
   val showStart: Action[AnyContent] =
     actions
-      .whenAuthorised(AsStrideUser)
+      .whenAuthorisedWithRetrievals(AsStrideUser)
       .apply(Transitions.start)
       .display
       .andCleanBreadcrumbs() // reset navigation history
@@ -68,7 +69,7 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
   // GET /check-with-nino
   val showStatusCheckByNino: Action[AnyContent] =
     actions
-      .whenAuthorised(AsStrideUser)
+      .whenAuthorisedWithRetrievals(AsStrideUser)
       .apply(Transitions.showStatusCheckByNino)
       .display
       .andCleanBreadcrumbs() // reset navigation history
@@ -76,7 +77,7 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
   // POST /check-with-nino
   val submitStatusCheckByNino: Action[AnyContent] =
     actions
-      .whenAuthorised(AsStrideUser)
+      .whenAuthorisedWithRetrievals(AsStrideUser)
       .bindForm(StatusCheckByNinoRequestForm)
       .applyWithRequest(
         implicit request =>
