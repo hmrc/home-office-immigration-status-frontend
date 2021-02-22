@@ -22,7 +22,7 @@
 @import uk.gov.hmrc.play.views.html.layouts._
 
 @this(
-  layoutsHead: Head, layoutsHeaderNav: HeaderNav, layoutsFooter: Footer, layoutsFooterLinks: HossFooterLinks,
+  layoutsHead: HeadWithTrackingConsent, layoutsHeaderNav: HeaderNav, layoutsFooter: Footer, layoutsFooterLinks: HossFooterLinks,
   layoutsServiceInfo: ServiceInfo, layoutsMainContentHeader: MainContentHeader, layoutsMainContent: MainContent,
   helpersReportAProblemLink: ReportAProblemLink, govUkTemplate: GovUkTemplate
 )
@@ -50,17 +50,10 @@
 }
 
 @head = {
-@if(configuration.get[String]("google-tag-manager.id") != "N/A") {
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-              new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-              j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-              'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-              })(window,document,'script','dataLayer','@configuration.get[String]("google-tag-manager.id")');
-        </script>
-}
-@layoutsHead(
-    linkElem = None,
-    headScripts = Some(headScripts))
+    @layoutsHead(
+        linkElem = None,
+        headScripts = Some(headScripts)
+    )
     <meta name="format-detection" content="telephone=no"/>
 }
 
@@ -69,16 +62,12 @@
 @headerNavLinks = {}
 
 @insideHeader = {
-@if(configuration.get[String]("google-tag-manager.id") != "N/A") {
-<noscript>
-    <iframe src="https://www.googletagmanager.com/ns.html?id=@configuration.get[String]("google-tag-manager.id")" height="0" width="0" style="display:none;visibility:hidden"></iframe>
-</noscript>
-}
-@layoutsHeaderNav(
-    navTitle = Some(messages("app.name")),
-    navTitleLink = None,
-    showBetaLink = false,
-    navLinks = Some(headerNavLinks))
+    @layoutsHeaderNav(
+        navTitle = Some(messages("app.name")),
+        navTitleLink = None,
+        showBetaLink = false,
+        navLinks = Some(headerNavLinks)
+    )
 }
 
 @afterHeader = {
@@ -95,19 +84,22 @@
 }
 
 @gaJS = {
-@gaCode.map(Html(_))
+    @gaCode.map(Html(_))
 }
 
 @bodyEnd = {
-@layoutsFooter(analyticsToken = Some(configuration.get[String]("google-analytics.token")),
-    analyticsHost = configuration.get[String]("google-analytics.host"),
-    ssoUrl = None,
-    scriptElem = Some(scriptElement),
-    gaCalls = None,
-    analyticsAdditionalJs = Some(gaJS))
+    @layoutsFooter(
+        analyticsToken = None,
+        analyticsHost = "",
+        ssoUrl = None,
+        scriptElem = Some(scriptElement),
+        gaCalls = None,
+        analyticsAdditionalJs = Some(gaJS)
+    )
 }
 
 @footerTop = {}
+
 @footerLinks = {
     @layoutsFooterLinks(accessibilityFooterUrl = Some(AccessibilityStatementController.showPage().url))
 }
@@ -121,12 +113,13 @@
 }
 
 @content = {
-@layoutsMainContent(article = mainContent,
-    mainClass = mainClass,
-    mainDataAttributes = mainDataAttributes,
-    mainContentHeader = mainContentHeader,
-    serviceInfo = serviceInfo,
-    sidebar = sidebar)
+    @layoutsMainContent(article = mainContent,
+        mainClass = mainClass,
+        mainDataAttributes = mainDataAttributes,
+        mainContentHeader = mainContentHeader,
+        serviceInfo = serviceInfo,
+        sidebar = sidebar
+    )
 }
 
 @govUkTemplate(Some(titleWithSuffix), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(footerLinks), nav = true)(content)

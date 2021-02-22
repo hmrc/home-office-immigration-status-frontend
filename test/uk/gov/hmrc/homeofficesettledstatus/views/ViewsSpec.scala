@@ -25,7 +25,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import uk.gov.hmrc.homeofficesettledstatus.views.html.{HossFooterLinks, error_template, govuk_wrapper, main_template}
-import uk.gov.hmrc.play.config.{AssetsConfig, GTMConfig, OptimizelyConfig}
+import uk.gov.hmrc.play.config.{AssetsConfig, GTMConfig, OptimizelyConfig, TrackingConsentConfig}
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.play.views.html.helpers.ReportAProblemLink
 import uk.gov.hmrc.play.views.html.layouts._
@@ -112,9 +112,9 @@ class ViewsSpec @Inject()(govUkWrapper: govuk_wrapper, layoutComponents: LayoutC
       val optimizelyConfig = new OptimizelyConfig(config)
       val optimizelySnippet = new OptimizelySnippet(optimizelyConfig)
       val assetsConfig = new AssetsConfig(config)
-      val gtmConfig = new GTMConfig(config)
-      val gtmSnippet = new GTMSnippet(gtmConfig)
-      val head = new Head(optimizelySnippet, assetsConfig, gtmSnippet)
+      val trackingConsentConfig = new TrackingConsentConfig(config)
+      val trackingConsentSnippet = new TrackingConsentSnippet(trackingConsentConfig, optimizelyConfig)
+      val headWithTrackingConsent = new HeadWithTrackingConsent(trackingConsentSnippet, assetsConfig)
       val headerNav = new HeaderNav()
       val footer = new Footer(assetsConfig)
       val footerLinks = new HossFooterLinks()
@@ -125,7 +125,7 @@ class ViewsSpec @Inject()(govUkWrapper: govuk_wrapper, layoutComponents: LayoutC
       val govUkTemplate = new GovUkTemplate()
 
       val html = new govuk_wrapper(
-        head,
+        headWithTrackingConsent,
         headerNav,
         footer,
         footerLinks,
@@ -160,7 +160,7 @@ class ViewsSpec @Inject()(govUkWrapper: govuk_wrapper, layoutComponents: LayoutC
       content should include("My custom script")
 
       val html2 = new govuk_wrapper(
-        head,
+        headWithTrackingConsent,
         headerNav,
         footer,
         footerLinks,
