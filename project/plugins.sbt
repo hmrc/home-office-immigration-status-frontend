@@ -18,3 +18,5 @@ addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.6.0")
 addSbtPlugin("com.lucidchart" % "sbt-scalafmt" % "1.16")
 
 addSbtPlugin("org.irundaia.sbt" % "sbt-sassify" % "1.4.12")
+
+addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.5.0")

@@ -34,7 +34,7 @@ class FrontendModule(val environment: Environment, val configuration: Configurat
 
     bind(classOf[HttpPost]).to(classOf[DefaultHttpClient])
 
-    bind(classOf[AuthConnector]).to(classOf[FrontendAuthConnector])
+    //bind(classOf[AuthConnector]).to(classOf[FrontendAuthConnector])
 
     bind(classOf[CacheMongoRepository]).to(classOf[JourneyCacheRepository])
 

@@ -17,22 +17,25 @@
 package uk.gov.hmrc.homeofficesettledstatus.filters
 
 import akka.stream.Materializer
-import javax.inject.Inject
+import play.api.Configuration
+
+import javax.inject.{Inject, Singleton}
 import play.api.mvc.RequestHeader
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.audit.model.DataEvent
 import uk.gov.hmrc.play.bootstrap.config.{ControllerConfigs, HttpAuditEvent}
-import uk.gov.hmrc.play.bootstrap.filters.frontend.DefaultFrontendAuditFilter
+import uk.gov.hmrc.play.bootstrap.frontend.filters.DefaultFrontendAuditFilter
 
 import scala.concurrent.ExecutionContext
 
 class AuditFilter @Inject()(
+  config: Configuration,
   val controllerConfigs: ControllerConfigs,
   override val auditConnector: AuditConnector,
   val httpAuditEvent: HttpAuditEvent,
   override val mat: Materializer)(implicit override protected val ec: ExecutionContext)
-    extends DefaultFrontendAuditFilter(controllerConfigs, auditConnector, httpAuditEvent, mat) {
+    extends DefaultFrontendAuditFilter(config, controllerConfigs, auditConnector, httpAuditEvent, mat) {
 
   override val maskedFormFields: Seq[String] = Seq.empty
 

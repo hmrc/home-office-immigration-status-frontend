@@ -23,7 +23,7 @@ import play.api.Configuration
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.homeofficesettledstatus.views.LayoutComponents
 import uk.gov.hmrc.homeofficesettledstatus.views.html.AccessibilityStatementPage
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 @Singleton
 class AccessibilityStatementController @Inject()(
