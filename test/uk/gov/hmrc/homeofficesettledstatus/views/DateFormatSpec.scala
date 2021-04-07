@@ -20,9 +20,9 @@ import java.time.LocalDate
 import java.util.Locale
 
 import uk.gov.hmrc.homeofficesettledstatus.views.DateFormat.formatDatePattern
-import uk.gov.hmrc.play.test.UnitSpec
+import org.scalatest.{Matchers, OptionValues, WordSpecLike}
 
-class DateFormatSpec extends UnitSpec {
+class DateFormatSpec extends WordSpecLike with Matchers with OptionValues {
 
   "DateFormat" should {
 

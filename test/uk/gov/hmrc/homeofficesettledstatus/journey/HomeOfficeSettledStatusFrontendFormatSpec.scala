@@ -24,9 +24,9 @@ import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFront
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State.{Start, StatusCheckByNino, StatusCheckFailure, StatusFound, StatusNotAvailable}
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyStateFormats
 import uk.gov.hmrc.homeofficesettledstatus.models._
-import uk.gov.hmrc.play.test.UnitSpec
+import org.scalatest.{Matchers, OptionValues, WordSpecLike}
 
-class HomeOfficeSettledStatusFrontendFormatSpec extends UnitSpec {
+class HomeOfficeSettledStatusFrontendFormatSpec extends WordSpecLike with Matchers with OptionValues {
 
   implicit val formats: Format[State] = HomeOfficeSettledStatusFrontendJourneyStateFormats.formats
 

@@ -3,6 +3,7 @@ package uk.gov.hmrc.homeofficesettledstatus.connectors
 import java.time.{LocalDate, ZoneId}
 
 import play.api.Application
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficesettledstatus.models.{StatusCheckByNinoRequest, StatusCheckRange, StatusCheckResponse}
 import uk.gov.hmrc.homeofficesettledstatus.stubs.HomeOfficeSettledStatusStubs

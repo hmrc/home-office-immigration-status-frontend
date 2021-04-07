@@ -1,11 +1,10 @@
 package uk.gov.hmrc.homeofficesettledstatus.controllers
 
 import scala.concurrent.Future
-
 import play.api.http.Status.OK
 import play.api.mvc.Result
 import play.api.test.FakeRequest
-import play.api.test.Helpers.contentAsString
+import play.api.test.Helpers.{contentAsString, status}
 import uk.gov.hmrc.homeofficesettledstatus.support.NonAuthPageISpec
 import uk.gov.hmrc.homeofficesettledstatus.views.html.AccessibilityStatementPage
 

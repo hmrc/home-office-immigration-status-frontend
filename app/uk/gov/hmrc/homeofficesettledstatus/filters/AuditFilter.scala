@@ -29,6 +29,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.filters.DefaultFrontendAuditFilter
 
 import scala.concurrent.ExecutionContext
 
+@Singleton
 class AuditFilter @Inject()(
   config: Configuration,
   val controllerConfigs: ControllerConfigs,

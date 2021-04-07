@@ -18,9 +18,9 @@ package uk.gov.hmrc.homeofficesettledstatus.models
 
 import java.time.LocalDate
 
-import uk.gov.hmrc.play.test.UnitSpec
+import org.scalatest.{Matchers, OptionValues, WordSpecLike}
 
-class StatusCheckResultSpec extends UnitSpec {
+class StatusCheckResultSpec extends WordSpecLike with Matchers with OptionValues {
 
   val expectedResult =
     ImmigrationStatus(LocalDate.parse("2015-02-11"), None, "C", "D", noRecourseToPublicFunds = true)
