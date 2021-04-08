@@ -19,9 +19,9 @@ package uk.gov.hmrc.homeofficesettledstatus.controllers
 import play.api.data.FormError
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficesettledstatus.models.StatusCheckByNinoRequest
-import uk.gov.hmrc.play.test.UnitSpec
+import org.scalatest.{Matchers, OptionValues, WordSpecLike}
 
-class StatusCheckByNinoRequestFormSpec extends UnitSpec {
+class StatusCheckByNinoRequestFormSpec extends WordSpecLike with Matchers with OptionValues {
 
   val formOutput = StatusCheckByNinoRequest(
     nino = Nino("RJ301829A"),

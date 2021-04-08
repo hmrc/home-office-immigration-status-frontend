@@ -25,14 +25,14 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import uk.gov.hmrc.homeofficesettledstatus.views.html.{HossFooterLinks, error_template, govuk_wrapper, main_template}
-import uk.gov.hmrc.play.config.{AssetsConfig, GTMConfig, OptimizelyConfig}
-import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.play.config.{AssetsConfig, GTMConfig}
+import org.scalatest.{Matchers, OptionValues, WordSpecLike}
 import uk.gov.hmrc.play.views.html.helpers.ReportAProblemLink
 import uk.gov.hmrc.play.views.html.layouts._
 import views.html.layouts.GovUkTemplate
 
-class ViewsSpec @Inject()(govUkWrapper: govuk_wrapper, layoutComponents: LayoutComponents)
-    extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar {
+class ViewsSpec @Inject()(govUkWrapper: govuk_wrapper)
+    extends WordSpecLike with Matchers with OptionValues with GuiceOneAppPerSuite with MockitoSugar {
 
   implicit val lang: Lang = Lang("eng")
 
@@ -65,12 +65,10 @@ class ViewsSpec @Inject()(govUkWrapper: govuk_wrapper, layoutComponents: LayoutC
       val sidebar = new Sidebar()
       val article = new Article()
       val config = mock[Configuration]
-      val optimizelyConfig = new OptimizelyConfig(config)
-      val optimizelySnippet = new OptimizelySnippet(optimizelyConfig)
       val assetsConfig = new AssetsConfig(config)
       val gtmConfig = new GTMConfig(config)
       val gtmSnippet = new GTMSnippet(gtmConfig)
-      val head = new Head(optimizelySnippet, assetsConfig, gtmSnippet)
+      val head = new Head(assetsConfig, gtmSnippet)
       val view = new main_template(sidebar, article, govUkWrapper, head)
       val html = view.render(
         title = "My custom page title",
@@ -109,12 +107,10 @@ class ViewsSpec @Inject()(govUkWrapper: govuk_wrapper, layoutComponents: LayoutC
   "govuk wrapper view" should {
     "render all of the supplied arguments" in new App {
       val config = mock[Configuration]
-      val optimizelyConfig = new OptimizelyConfig(config)
-      val optimizelySnippet = new OptimizelySnippet(optimizelyConfig)
       val assetsConfig = new AssetsConfig(config)
       val gtmConfig = new GTMConfig(config)
       val gtmSnippet = new GTMSnippet(gtmConfig)
-      val head = new Head(optimizelySnippet, assetsConfig, gtmSnippet)
+      val head = new Head(assetsConfig, gtmSnippet)
       val headerNav = new HeaderNav()
       val footer = new Footer(assetsConfig)
       val footerLinks = new HossFooterLinks()

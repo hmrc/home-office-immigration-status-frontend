@@ -18,6 +18,7 @@ package uk.gov.hmrc.homeofficesettledstatus.filters
 
 import play.api.http.Status.SERVICE_UNAVAILABLE
 import play.api.i18n.Messages
+import play.api.test.Helpers.await
 import uk.gov.hmrc.homeofficesettledstatus.support.NonAuthPageISpec
 import uk.gov.hmrc.homeofficesettledstatus.views.html.{error_template => ShutteringPage}
 

@@ -21,9 +21,9 @@ import java.io.File
 import com.typesafe.config._
 import play.api.{Configuration, Environment, Mode}
 import uk.gov.hmrc.homeofficesettledstatus.support.CallOps.localFriendlyUrl
-import uk.gov.hmrc.play.test.UnitSpec
+import org.scalatest.{Matchers, OptionValues, WordSpecLike}
 
-class CallOpsSpec extends UnitSpec {
+class CallOpsSpec extends WordSpecLike with Matchers with OptionValues {
 
   val testEnv = Environment(new File(""), classOf[CallOpsSpec].getClassLoader, Mode.Test)
   val prodEnv = Environment(new File(""), classOf[CallOpsSpec].getClassLoader, Mode.Prod)

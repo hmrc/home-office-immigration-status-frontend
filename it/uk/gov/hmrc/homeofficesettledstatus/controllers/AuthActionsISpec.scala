@@ -3,7 +3,7 @@ package uk.gov.hmrc.homeofficesettledstatus.controllers
 import play.api.mvc.Result
 import play.api.mvc.Results._
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import play.api.{Application, Configuration, Environment}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.homeofficesettledstatus.support.AppISpec
@@ -22,7 +22,7 @@ class AuthActionsISpec extends AuthActionISpecSetup {
       val result = TestController.withAuthorisedWithStrideGroup("TBC")
 
       status(result) shouldBe 200
-      bodyOf(result) should include("StrideUserId")
+      contentAsString(result) should include("StrideUserId")
     }
 
     "redirect to log in page when user not enrolled for the service" in {
@@ -69,11 +69,9 @@ trait AuthActionISpecSetup extends AppISpec {
 
     import scala.concurrent.ExecutionContext.Implicits.global
 
-    def withAuthorisedWithStrideGroup[A](group: String): Result =
-      await(super.authorisedWithStrideGroup(group) { pid =>
+    def withAuthorisedWithStrideGroup[A](group: String): Future[Result] =
+      super.authorisedWithStrideGroup(group) { pid =>
         Future.successful(Ok(pid))
-      })
-
+      }
   }
-
 }

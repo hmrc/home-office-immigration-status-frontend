@@ -16,24 +16,24 @@ lazy val scoverageSettings = {
 
 lazy val compileDeps = Seq(
   ws,
-  "uk.gov.hmrc" %% "bootstrap-play-26" % "2.1.0",
-  "uk.gov.hmrc" %% "govuk-template" % "5.59.0-play-26",
-  "uk.gov.hmrc" %% "play-ui" % "8.15.0-play-26",
-  "uk.gov.hmrc" %% "auth-client" % "3.2.0-play-26",
-  "uk.gov.hmrc" %% "play-partials" % "7.0.0-play-26",
+  "uk.gov.hmrc" %% "bootstrap-frontend-play-27" % "4.2.0",
+  "uk.gov.hmrc" %% "govuk-template" % "5.65.0-play-27",
+  "uk.gov.hmrc" %% "play-ui" % "9.1.0-play-27",
+  "uk.gov.hmrc" %% "auth-client" % "5.2.0-play-27",
+  "uk.gov.hmrc" %% "play-partials" % "8.0.0-play-27",
   "uk.gov.hmrc" %% "agent-kenshoo-monitoring" % "4.4.0",
-  "uk.gov.hmrc" %% "play-fsm" % "0.79.0-play-26",
-  "uk.gov.hmrc" %% "domain" % "5.10.0-play-26",
-  "uk.gov.hmrc" %% "mongo-caching" % "6.15.0-play-26",
-  "uk.gov.hmrc" %% "json-encryption"  % "4.8.0-play-26"
+  "uk.gov.hmrc" %% "play-fsm" % "0.83.0-play-27",
+  "uk.gov.hmrc" %% "domain" % "5.11.0-play-27",
+  "uk.gov.hmrc" %% "mongo-caching" % "6.16.0-play-27",
+  "uk.gov.hmrc" %% "json-encryption"  % "4.10.0-play-27"
 )
 
 def testDeps(scope: String) = Seq(
-  "uk.gov.hmrc" %% "hmrctest" % "3.9.0-play-26" % scope,
-  "org.scalatest" %% "scalatest" % "3.0.8" % scope,
+  "org.scalatest" %% "scalatest" % "3.0.9" % scope,
   "org.mockito" % "mockito-core" % "3.5.15" % scope,
-  "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.3" % scope,
-  "com.github.tomakehurst" % "wiremock" % "2.27.1" % scope
+  "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.3" % scope,
+  "com.github.tomakehurst" % "wiremock" % "2.27.2" % scope,
+  "org.pegdown" % "pegdown" % "1.6.0"
 )
 
 val jettyVersion = "9.2.24.v20180105"
@@ -59,7 +59,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "home-office-settled-status-frontend",
     organization := "uk.gov.hmrc",
-    scalaVersion := "2.12.10",
+    scalaVersion := "2.12.12",
     PlayKeys.playDefaultPort := 9386,
     resolvers := Seq(
       Resolver.bintrayRepo("hmrc", "releases"),
@@ -86,7 +86,7 @@ lazy val root = (project in file("."))
     scalafmtOnCompile in IntegrationTest := true
   )
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
-  .enablePlugins(PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
+  .enablePlugins(PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
 
 inConfig(IntegrationTest)(scalafmtCoreSettings)
 

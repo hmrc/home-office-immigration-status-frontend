@@ -22,9 +22,9 @@ import play.api.i18n.{DefaultMessagesApi, Lang, Messages, MessagesImpl}
 import play.api.mvc.Call
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficesettledstatus.models.{ImmigrationStatus, StatusCheckByNinoRequest, StatusCheckResult}
-import uk.gov.hmrc.play.test.UnitSpec
+import org.scalatest.{Matchers, OptionValues, WordSpecLike}
 
-class StatusFoundPageContextSpec extends UnitSpec {
+class StatusFoundPageContextSpec extends WordSpecLike with Matchers with OptionValues {
 
   val query = StatusCheckByNinoRequest(Nino("RJ301829A"), "Doe", "Jane", "2001-01-31")
   val call = Call("GET", "/foo", "")

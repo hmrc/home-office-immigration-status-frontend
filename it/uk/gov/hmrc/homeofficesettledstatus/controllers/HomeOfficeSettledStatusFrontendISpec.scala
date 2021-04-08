@@ -6,6 +6,7 @@ import play.api.Application
 import play.api.libs.json.Format
 import play.api.libs.ws.WSClient
 import play.api.mvc.{Cookies, Session, SessionCookieBaker}
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.cache.repository.CacheMongoRepository
 import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyStateFormats

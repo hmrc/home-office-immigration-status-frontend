@@ -8,9 +8,9 @@ import play.api.{Application, Configuration}
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.ws.WSClient
-import uk.gov.hmrc.play.test.UnitSpec
+import org.scalatest.{Matchers, OptionValues, WordSpecLike}
 
-abstract class NonAuthPageISpec(config: (String, Any)*) extends UnitSpec with GuiceOneServerPerSuite {
+abstract class NonAuthPageISpec(config: (String, Any)*) extends WordSpecLike with Matchers with OptionValues with GuiceOneServerPerSuite {
 
   override lazy val app: Application = new GuiceApplicationBuilder()
     .configure(config: _*)

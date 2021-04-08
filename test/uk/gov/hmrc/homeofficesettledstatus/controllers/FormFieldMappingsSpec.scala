@@ -18,9 +18,9 @@ package uk.gov.hmrc.homeofficesettledstatus.controllers
 
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import uk.gov.hmrc.homeofficesettledstatus.controllers.FormFieldMappings.validName
-import uk.gov.hmrc.play.test.UnitSpec
+import org.scalatest.{Matchers, OptionValues, WordSpecLike}
 
-class FormFieldMappingsSpec extends UnitSpec {
+class FormFieldMappingsSpec extends WordSpecLike with Matchers with OptionValues {
 
   val validateName: Constraint[String] = validName(fieldName = "bar", minLenInc = 0)
   val invalid = Invalid("error.bar.invalid-format")

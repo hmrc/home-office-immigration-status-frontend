@@ -37,7 +37,7 @@
           @elements.label
 
           @if(parentElements.isDefined) {
-            @parentElements.get.errors.map { error => <span class="error-notification">@messages(error)</span>}
+            @parentElements.get.field.errors.map{ error => <span class="error-notification">@messages(error.key)</span>}
           }
         </label>
       @if(labelHighlight){</strong>}
@@ -53,14 +53,14 @@
     }
 
     @if(!elements.args.contains('_hideErrors)) {
-      @elements.errors.map { error =>
+      @elements.field.errors.map { error =>
         <span class="error-notification"
             @if(elements.args.contains('_error_id)) {
                 id="@elements.args.get('_error_id)"
             }
             data-journey="search-page:error:@elements.field.name">
             @if(elements.args.contains('_errorPrefix) ){<span class="visually-hidden">@elements.args.get('_errorPrefix) </span>}
-            @messages(error)
+            @messages(error.key)
         </span>
       }
     }
