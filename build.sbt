@@ -62,10 +62,9 @@ lazy val root = (project in file("."))
     scalaVersion := "2.12.12",
     PlayKeys.playDefaultPort := 9386,
     resolvers := Seq(
-      Resolver.bintrayRepo("hmrc", "releases"),
-      Resolver.bintrayRepo("hmrc", "release-candidates"),
+      Resolver.jcenterRepo,
       Resolver.typesafeRepo("releases"),
-      Resolver.jcenterRepo
+      "hmrc-releases" at "https://artefacts.tax.service.gov.uk/artifactory/hmrc-releases/"
     ),
     libraryDependencies ++= compileDeps ++ testDeps("test") ++ testDeps("it"),
     dependencyOverrides ++= jettyOverrides,
