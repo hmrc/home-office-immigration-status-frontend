@@ -56,7 +56,7 @@ object FormFieldMappings {
   def nonEmpty(fieldName: String): Constraint[String] =
     Constraint[String]("constraint.required") { s =>
       Option(s)
-        .filter(!_.trim.isEmpty)
+        .filter(_.trim.nonEmpty)
         .fold[ValidationResult](Invalid(ValidationError(s"error.$fieldName.required")))(_ => Valid)
     }
 }

@@ -1,7 +1,6 @@
 package uk.gov.hmrc.homeofficesettledstatus.connectors
 
-import java.time.{LocalDate, ZoneId}
-
+import org.scalatest.concurrent.ScalaFutures
 import play.api.Application
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.domain.Nino
@@ -10,6 +9,7 @@ import uk.gov.hmrc.homeofficesettledstatus.stubs.HomeOfficeSettledStatusStubs
 import uk.gov.hmrc.homeofficesettledstatus.support.AppISpec
 import uk.gov.hmrc.http._
 
+import java.time.{LocalDate, ZoneId}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class HomeOfficeSettledStatusConnectorISpec extends HomeOfficeSettledStatusConnectorISpecSetup {
@@ -21,8 +21,7 @@ class HomeOfficeSettledStatusConnectorISpec extends HomeOfficeSettledStatusConne
       "return status when range provided" in {
         givenStatusCheckResultWithRangeExample()
 
-        val result: StatusCheckResponse =
-          await(connector.statusPublicFundsByNino(request))
+        val result: StatusCheckResponse = connector.statusPublicFundsByNino(request).futureValue
 
         result.result shouldBe defined
         result.error shouldBe None
@@ -31,8 +30,7 @@ class HomeOfficeSettledStatusConnectorISpec extends HomeOfficeSettledStatusConne
       "return status when no range provided" in {
         givenStatusCheckSucceeds()
 
-        val result: StatusCheckResponse =
-          await(connector.statusPublicFundsByNino(request))
+        val result: StatusCheckResponse = connector.statusPublicFundsByNino(request).futureValue
 
         result.result shouldBe defined
         result.error shouldBe None
@@ -41,8 +39,7 @@ class HomeOfficeSettledStatusConnectorISpec extends HomeOfficeSettledStatusConne
       "return check error when 400 response ERR_REQUEST_INVALID" in {
         givenStatusCheckErrorWhenMissingInputField()
 
-        val result: StatusCheckResponse =
-          await(connector.statusPublicFundsByNino(request))
+        val result: StatusCheckResponse = connector.statusPublicFundsByNino(request).futureValue
 
         result.result shouldBe None
         result.error shouldBe defined
@@ -52,8 +49,7 @@ class HomeOfficeSettledStatusConnectorISpec extends HomeOfficeSettledStatusConne
       "return check error when 404 response ERR_NOT_FOUND" in {
         givenStatusCheckErrorWhenStatusNotFound()
 
-        val result: StatusCheckResponse =
-          await(connector.statusPublicFundsByNino(request))
+        val result: StatusCheckResponse = connector.statusPublicFundsByNino(request).futureValue
 
         result.result shouldBe None
         result.error shouldBe defined
@@ -63,8 +59,7 @@ class HomeOfficeSettledStatusConnectorISpec extends HomeOfficeSettledStatusConne
       "return check error when 400 response ERR_VALIDATION" in {
         givenStatusCheckErrorWhenDOBInvalid()
 
-        val result: StatusCheckResponse =
-          await(connector.statusPublicFundsByNino(request))
+        val result: StatusCheckResponse = connector.statusPublicFundsByNino(request).futureValue
 
         result.result shouldBe None
         result.error shouldBe defined
@@ -116,7 +111,7 @@ class HomeOfficeSettledStatusConnectorISpec extends HomeOfficeSettledStatusConne
 
 }
 
-trait HomeOfficeSettledStatusConnectorISpecSetup extends AppISpec with HomeOfficeSettledStatusStubs {
+trait HomeOfficeSettledStatusConnectorISpecSetup extends AppISpec with HomeOfficeSettledStatusStubs with ScalaFutures {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
@@ -125,7 +120,7 @@ trait HomeOfficeSettledStatusConnectorISpecSetup extends AppISpec with HomeOffic
   lazy val connector: HomeOfficeSettledStatusProxyConnector =
     app.injector.instanceOf[HomeOfficeSettledStatusProxyConnector]
 
-  val request = StatusCheckByNinoRequest(
+  val request: StatusCheckByNinoRequest = StatusCheckByNinoRequest(
     Nino("RJ301829A"),
     "Doe",
     "Jane",

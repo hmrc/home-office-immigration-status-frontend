@@ -19,7 +19,7 @@ package uk.gov.hmrc.homeofficesettledstatus.repository
 import javax.inject.Inject
 import play.modules.reactivemongo.ReactiveMongoComponent
 import uk.gov.hmrc.cache.repository.CacheMongoRepository
-import uk.gov.hmrc.homeofficesettledstatus.wiring.AppConfig
+import uk.gov.hmrc.homeofficesettledstatus.config.AppConfig
 
 import scala.concurrent.ExecutionContext
 

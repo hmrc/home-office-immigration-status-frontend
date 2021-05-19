@@ -66,7 +66,7 @@ class HomeOfficeSettledStatusFrontendFormatSpec extends WordSpecLike with Matche
             "Foo Bar",
             LocalDate.parse("1956-05-08"),
             "IRL",
-            List(ImmigrationStatus(LocalDate.parse("2001-01-01"), None, "EUS", "ILR", true)))
+            List(ImmigrationStatus(LocalDate.parse("2001-01-01"), None, "EUS", "ILR", noRecourseToPublicFunds = true)))
         )
 
         val json = Json.parse(

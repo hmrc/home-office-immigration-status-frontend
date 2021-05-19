@@ -23,7 +23,7 @@ import org.scalatest.{Matchers, OptionValues, WordSpecLike}
 class FormFieldMappingsSpec extends WordSpecLike with Matchers with OptionValues {
 
   val validateName: Constraint[String] = validName(fieldName = "bar", minLenInc = 0)
-  val invalid = Invalid("error.bar.invalid-format")
+  val invalid: Invalid = Invalid("error.bar.invalid-format")
 
   "FormFieldMappings" should {
     "validate name" in {

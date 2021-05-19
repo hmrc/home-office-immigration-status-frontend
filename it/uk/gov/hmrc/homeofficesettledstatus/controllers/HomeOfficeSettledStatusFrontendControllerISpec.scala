@@ -2,6 +2,7 @@ package uk.gov.hmrc.homeofficesettledstatus.controllers
 
 import play.api.Application
 import play.api.inject.bind
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.Nino
@@ -86,7 +87,7 @@ class HomeOfficeSettledStatusFrontendControllerISpec
         journey.set(StatusCheckByNino(), List(Start))
         givenAuthorisedForStride("TBC", "StrideUserId")
         val result = controller.showStatusCheckByNino(fakeRequest)
-        checkHtmlResultWithBodyText(result, s"<a href='${routes.AccessibilityStatementController.showPage().url}'")
+        checkHtmlResultWithBodyText(result, s"""href="${routes.AccessibilityStatementController.showPage().url}"""")
       }
     }
 
@@ -313,6 +314,6 @@ trait HomeOfficeSettledStatusFrontendControllerISpecSetup extends AppISpec {
     controller.journeyService
       .asInstanceOf[TestInMemoryHomeOfficeSettledStatusFrontendJourneyService]
 
-  def fakeRequest = FakeRequest().withSession(controller.journeyService.journeyKey -> "fooId")
+  def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(controller.journeyService.journeyKey -> "fooId")
 
 }

@@ -18,7 +18,7 @@ package uk.gov.hmrc.homeofficesettledstatus.connectors
 
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.auth.core.PlayAuthConnector
-import uk.gov.hmrc.homeofficesettledstatus.wiring.AppConfig
+import uk.gov.hmrc.homeofficesettledstatus.config.AppConfig
 import uk.gov.hmrc.http.HttpPost
 
 @Singleton

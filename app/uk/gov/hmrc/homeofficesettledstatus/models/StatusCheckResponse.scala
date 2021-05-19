@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.models
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class StatusCheckResponse(
   // Identifier associated with a checks,
@@ -29,5 +29,5 @@ case class StatusCheckResponse(
 )
 
 object StatusCheckResponse {
-  implicit val formats = Json.format[StatusCheckResponse]
+  implicit val formats: OFormat[StatusCheckResponse] = Json.format[StatusCheckResponse]
 }

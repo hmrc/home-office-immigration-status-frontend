@@ -17,7 +17,6 @@
 package uk.gov.hmrc.homeofficesettledstatus.journeys
 
 import java.time.{LocalDate, ZoneId}
-
 import uk.gov.hmrc.homeofficesettledstatus.models.ImmigrationStatus.EUS
 import uk.gov.hmrc.homeofficesettledstatus.models._
 import uk.gov.hmrc.play.fsm.JourneyModel
@@ -51,18 +50,19 @@ object HomeOfficeSettledStatusFrontendJourneyModel extends JourneyModel {
   object Transitions {
     import State._
 
-    def start(user: String) = Transition {
+    def start(user: String): Transition = Transition {
       case _ => goto(Start)
     }
 
-    def showStatusCheckByNino(user: String) = Transition {
+    def showStatusCheckByNino(user: String): HomeOfficeSettledStatusFrontendJourneyModel.Transition = Transition {
       case StatusCheckFailure(_, query, _) => goto(StatusCheckByNino(Some(query)))
       case _                               => goto(StatusCheckByNino())
     }
 
     def submitStatusCheckByNino(
       checkStatusByNino: StatusCheckByNinoRequest => Future[StatusCheckResponse],
-      defaultQueryTimeRangeInMonths: Int)(user: String)(query: StatusCheckByNinoRequest) =
+      defaultQueryTimeRangeInMonths: Int)(user: String)(
+      query: StatusCheckByNinoRequest): HomeOfficeSettledStatusFrontendJourneyModel.Transition =
       Transition {
         case _: StatusCheckByNino =>
           val extendedQuery = {

@@ -39,7 +39,7 @@ case class StatusFoundPageContext(query: StatusCheckByNinoRequest, result: Statu
 
   val statusClass: String = if (hasSettledStatus) "success" else "error"
 
-  def currentStatusLabel(implicit messages: Messages) = mostRecentStatus match {
+  def currentStatusLabel(implicit messages: Messages): String = mostRecentStatus match {
     case Some(s) if s.productType == EUS && s.immigrationStatus == LTR =>
       if (s.hasExpired) messages("app.hasPreSettledStatus.expired")
       else s" ${messages("app.hasPreSettledStatus")}"

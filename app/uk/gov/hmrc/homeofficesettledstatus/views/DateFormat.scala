@@ -25,8 +25,8 @@ import uk.gov.hmrc.homeofficesettledstatus.controllers.DateFieldHelper
 object DateFormat {
 
   val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
-  val yearFormatter = DateTimeFormatter.ofPattern("yyyy")
-  val yearMonthFormatter = DateTimeFormatter.ofPattern("MMMM yyyy")
+  val yearFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy")
+  val yearMonthFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("MMMM yyyy")
 
   def format(locale: Locale)(date: LocalDate): String =
     date.format(formatter.withLocale(locale))

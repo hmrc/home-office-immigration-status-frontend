@@ -42,17 +42,17 @@ object DateFieldHelper {
     }
   }
 
-  def isValidYear(year: String, maxDateIncl: LocalDate) =
+  def isValidYear(year: String, maxDateIncl: LocalDate): Boolean =
     year.matches("""^\d\d\d\d$""") && toInt(year) >= 1900 &&
       toInt(year) <= maxDateIncl.getYear
 
-  def isValidMonth(month: String, day: String, year: => Int, maxDateIncl: LocalDate, allowWildcard: Boolean) =
+  def isValidMonth(month: String, day: String, year: => Int, maxDateIncl: LocalDate, allowWildcard: Boolean): Boolean =
     if (allowWildcard && month.contains("X") && day == "XX") month == "XX"
     else
       isInRange(toInt(month), 1, 12) &&
       (year < maxDateIncl.getYear || toInt(month) <= maxDateIncl.getMonthValue)
 
-  def isValidDay(day: String, month: => Int, year: => Int, maxDateIncl: LocalDate, allowWildcard: Boolean) =
+  def isValidDay(day: String, month: => Int, year: => Int, maxDateIncl: LocalDate, allowWildcard: Boolean): Boolean =
     if (allowWildcard && day.contains("X")) day == "XX"
     else
       isValidDayOfTheMonth(toInt(day), month, year) &&

@@ -22,11 +22,14 @@ import uk.gov.hmrc.cache.model.Id
 import uk.gov.hmrc.cache.repository.CacheRepository
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.language.implicitConversions
 
 /**
   * Generic short-term session store based on mongo-caching.
   */
 trait SessionCache[T, C] {
+
+  private val logger = Logger(this.getClass)
 
   val sessionName: String
   val cacheRepository: CacheRepository
@@ -37,7 +40,7 @@ trait SessionCache[T, C] {
     get.flatMap {
       case Right(cache) => cache
       case Left(error) =>
-        Logger.warn(error)
+        logger.warn(error)
         Future.failed(new RuntimeException(error))
     }
 
@@ -45,7 +48,7 @@ trait SessionCache[T, C] {
     store(input).flatMap {
       case Right(_) => input
       case Left(error) =>
-        Logger.warn(error)
+        logger.warn(error)
         Future.failed(new RuntimeException(error))
     }
 
@@ -80,7 +83,7 @@ trait SessionCache[T, C] {
           }
 
       case None ⇒
-        Logger.warn("[SessionCache][get] no sessionId found in the HeaderCarrier to query mongo")
+        logger.warn("[SessionCache][get] no sessionId found in the HeaderCarrier to query mongo")
         Right(None)
     }
 
