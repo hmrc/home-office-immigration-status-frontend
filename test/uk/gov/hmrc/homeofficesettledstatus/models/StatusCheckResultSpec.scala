@@ -22,7 +22,7 @@ import org.scalatest.{Matchers, OptionValues, WordSpecLike}
 
 class StatusCheckResultSpec extends WordSpecLike with Matchers with OptionValues {
 
-  val expectedResult =
+  val expectedResult: ImmigrationStatus =
     ImmigrationStatus(LocalDate.parse("2015-02-11"), None, "C", "D", noRecourseToPublicFunds = true)
 
   "StatusCheckResultSpec" should {

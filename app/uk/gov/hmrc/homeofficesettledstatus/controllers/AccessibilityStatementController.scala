@@ -16,22 +16,20 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.controllers
 
-import scala.concurrent.Future
-
-import javax.inject.{Inject, Singleton}
-import play.api.Configuration
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.homeofficesettledstatus.views.LayoutComponents
+import uk.gov.hmrc.homeofficesettledstatus.config.AppConfig
 import uk.gov.hmrc.homeofficesettledstatus.views.html.AccessibilityStatementPage
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.Future
 
 @Singleton
 class AccessibilityStatementController @Inject()(
   controllerComponents: MessagesControllerComponents,
-  layoutComponents: LayoutComponents)(implicit configuration: Configuration)
+  accessibilityStatementPage: AccessibilityStatementPage
+)(implicit val appConfig: AppConfig)
     extends FrontendController(controllerComponents) {
-
-  val accessibilityStatementPage = new AccessibilityStatementPage(layoutComponents)
 
   val showPage: Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Ok(accessibilityStatementPage()))

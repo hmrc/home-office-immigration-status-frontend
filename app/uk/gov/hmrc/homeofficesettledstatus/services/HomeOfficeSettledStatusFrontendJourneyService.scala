@@ -26,9 +26,9 @@ import uk.gov.hmrc.play.fsm.PersistentJourneyService
 
 trait HomeOfficeSettledStatusFrontendJourneyService[RequestContext] extends PersistentJourneyService[RequestContext] {
 
-  val journeyKey = "HomeOfficeSettledStatusJourney"
+  val journeyKey: String = "HomeOfficeSettledStatusJourney"
 
-  override val model = HomeOfficeSettledStatusFrontendJourneyModel
+  override val model: HomeOfficeSettledStatusFrontendJourneyModel.type = HomeOfficeSettledStatusFrontendJourneyModel
 
   // do not keep errors in the journey history
   override val breadcrumbsRetentionStrategy: Breadcrumbs => Breadcrumbs =

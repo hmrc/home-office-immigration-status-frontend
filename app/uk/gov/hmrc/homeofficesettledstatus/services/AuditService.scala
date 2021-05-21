@@ -17,8 +17,10 @@
 package uk.gov.hmrc.homeofficesettledstatus.services
 
 import com.google.inject.Singleton
+
 import javax.inject.Inject
 import play.api.mvc.Request
+import uk.gov.hmrc.homeofficesettledstatus.services
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.AuditExtensions._
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
@@ -28,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 object HomeOfficeSettledStatusFrontendEvent extends Enumeration {
-  val HomeOfficeSettledStatusFrontendSomethingHappened = Value
+  val HomeOfficeSettledStatusFrontendSomethingHappened: services.HomeOfficeSettledStatusFrontendEvent.Value = Value
   type HomeOfficeSettledStatusFrontendEvent = Value
 }
 

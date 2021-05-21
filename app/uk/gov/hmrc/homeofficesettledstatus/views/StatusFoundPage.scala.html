@@ -14,87 +14,86 @@
  * limitations under the License.
  *@
 
-@import play.api.Configuration
-@import uk.gov.hmrc.homeofficesettledstatus.views.{DateFormat, ISO31661Alpha3, LayoutComponents, StatusFoundPageContext}
+@import uk.gov.hmrc.homeofficesettledstatus.views.{DateFormat, ISO31661Alpha3, StatusFoundPageContext}
+@import uk.gov.hmrc.homeofficesettledstatus.config.AppConfig
 
-@this(layout: LayoutComponents)
+@this(
+    govukButton : GovukButton,
+    govukWrapper: govuk_wrapper
+)
 
-@(context: StatusFoundPageContext)(implicit request: Request[_], messages: Messages, config: Configuration)
+@(context: StatusFoundPageContext)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @locale = @{messages.lang.locale}
 
-@layout.mainTemplate(title = messages("status-found.title") + " " + context.currentStatusLabel, bodyClasses = None, sidebarLinks = None, mainClass = Some("full-width")) {
+@govukWrapper(title = messages("status-found.title") + context.currentStatusLabel) {
 
-  <div class="grid-row">
-    <div class="column-two-thirds">
-        <h1 class="heading-xlarge" id="title"><span id="full-name">@context.result.fullName</span>@context.currentStatusLabel</h1>
+    <h1 class="govuk-heading-xl" id="title"><span id="full-name">@context.result.fullName</span>@context.currentStatusLabel</h1>
 
-        <dl class="govuk-check-your-answers cya-questions-long form-group">
-            <div>
-                <dt class="cya-question">@messages("generic.nino")</dt>
-                <dd id="nino" class="cya-answer">@context.query.nino.formatted</dd>
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("generic.nino")</dt>
+            <dd id="nino" class="govuk-summary-list__value govuk-!-width-one-third">@context.query.nino.formatted</dd>
+        </div>
+
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("generic.dob")</dt>
+            <dd id="dob" class="govuk-summary-list__value govuk-!-width-one-third">@DateFormat.format(locale)(context.result.dateOfBirth)</dd>
+        </div>
+
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("generic.nationality")</dt>
+            <dd id="nationality" class="govuk-summary-list__value govuk-!-width-one-third">@ISO31661Alpha3.getCountryNameFor(context.result.nationality)</dd>
+        </div>
+
+        @context.mostRecentStatus.map(_.statusStartDate).map(DateFormat.format(locale)).map { statusStartDate =>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("status-found.startDate")</dt>
+                <dd id="startDate" class="govuk-summary-list__value govuk-!-width-one-third">@statusStartDate</dd>
             </div>
+        }.getOrElse("")
 
-            <div>
-                <dt class="cya-question">@messages("generic.dob")</dt>
-                <dd id="dob" class="cya-answer">@DateFormat.format(locale)(context.result.dateOfBirth)</dd>
+        @context.mostRecentStatus.flatMap(_.statusEndDate).map(DateFormat.format(locale)).map { statusEndDate =>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("status-found.expiryDate")</dt>
+                <dd id="expiryDate" class="govuk-summary-list__value govuk-!-width-one-third">@statusEndDate</dd>
             </div>
+        }.getOrElse("")
 
-            <div>
-                <dt class="cya-question">@messages("generic.nationality")</dt>
-                <dd id="nationality" class="cya-answer">@ISO31661Alpha3.getCountryNameFor(context.result.nationality)</dd>
-            </div>
+    </dl>
 
-            @context.mostRecentStatus.map(_.statusStartDate).map(DateFormat.format(locale)).map { statusStartDate =>
-                <div>
-                    <dt class="cya-question">@messages("status-found.startDate")</dt>
-                    <dd id="startDate" class="cya-answer">@statusStartDate</dd>
+    @if(context.previousStatuses.nonEmpty) {
+
+        <h2 class="govuk-heading-l">Previous status</h2>
+
+        @context.previousStatuses.zipWithIndex.map { case (status, index) =>
+
+            <dl class="govuk-summary-list">
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("status-found.previous.status")</dt>
+                    <dd id="status-previous-@index" class="govuk-summary-list__value govuk-!-width-one-third">@StatusFoundPageContext.immigrationStatusLabel(status.productType, status.immigrationStatus)</dd>
                 </div>
-            }.getOrElse("")
 
-            @context.mostRecentStatus.flatMap(_.statusEndDate).map(DateFormat.format(locale)).map { statusEndDate =>
-                <div>
-                    <dt class="cya-question">@messages("status-found.expiryDate")</dt>
-                    <dd id="expiryDate" class="cya-answer">@statusEndDate</dd>
-                </div>
-            }.getOrElse("")
-
-        </dl>
-
-        @if(context.previousStatuses.nonEmpty) {
-
-            <h2 class="govuk-heading-l">Previous status</h2>
-
-            @context.previousStatuses.zipWithIndex.map { case (status, index) =>
-
-                <dl class="govuk-check-your-answers cya-questions-long form-group">
-
-                    <div>
-                        <dt class="cya-question">@messages("status-found.previous.status")</dt>
-                        <dd id="status-previous-@index" class="cya-answer">@StatusFoundPageContext.immigrationStatusLabel(status.productType, status.immigrationStatus)</dd>
+                @Some(status).map(_.statusStartDate).map(DateFormat.format(locale)).map { statusStartDate =>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("status-found.previous.startDate")</dt>
+                        <dd id="startDate-previous-@index" class="govuk-summary-list__value govuk-!-width-one-third">@statusStartDate</dd>
                     </div>
+                }.getOrElse("")
 
-                    @Some(status).map(_.statusStartDate).map(DateFormat.format(locale)).map { statusStartDate =>
-                    <div>
-                        <dt class="cya-question">@messages("status-found.previous.startDate")</dt>
-                        <dd id="startDate-previous-@index" class="cya-answer">@statusStartDate</dd>
+                @Some(status).flatMap(_.statusEndDate).map(DateFormat.format(locale)).map { statusEndDate =>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("status-found.previous.expiryDate")</dt>
+                        <dd id="expiryDate-previous-@index" class="govuk-summary-list__value govuk-!-width-one-third">@statusEndDate</dd>
                     </div>
-                    }.getOrElse("")
+                }.getOrElse("")
 
-                    @Some(status).flatMap(_.statusEndDate).map(DateFormat.format(locale)).map { statusEndDate =>
-                    <div>
-                        <dt class="cya-question">@messages("status-found.previous.expiryDate")</dt>
-                        <dd id="expiryDate-previous-@index" class="cya-answer">@statusEndDate</dd>
-                    </div>
-                    }.getOrElse("")
-
-                </dl>
-            }
+            </dl>
         }
+    }
 
-      <p><a class="button" role="button" href="@context.searchAgainCall.url">@messages("generic.searchAgain")</a></p>
-    </div>
-  </div>
+    @govukButton(Button(content = Text(messages("generic.searchAgain")), href=Some(context.searchAgainCall.url)))
 
 
 }

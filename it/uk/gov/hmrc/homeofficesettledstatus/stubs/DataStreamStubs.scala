@@ -10,7 +10,7 @@ import uk.gov.hmrc.homeofficesettledstatus.support.WireMockSupport
 trait DataStreamStubs extends Eventually {
   me: WireMockSupport =>
 
-  override implicit val patienceConfig =
+  override implicit val patienceConfig: PatienceConfig =
     PatienceConfig(scaled(Span(5, Seconds)), scaled(Span(500, Millis)))
 
   def verifyAuditRequestSent(

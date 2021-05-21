@@ -14,5 +14,21 @@
  * limitations under the License.
  *@
 
-@(url: String)(implicit messages: Messages)
-  <a id="backLink" href="@url" class="link-back">@messages("button.back")</a>
+@this(govukFieldset: GovukFieldset)
+
+@(
+  legend: String,
+  asHeading: Boolean = true,
+  headingMessageArgs: Seq[String] = Seq()
+)(content: Html)(implicit messages: Messages)
+
+@govukFieldset(
+    Fieldset(
+        legend = Some(Legend(
+            content = Text(messages(legend, headingMessageArgs:_*)),
+            classes = if(asHeading) "govuk-fieldset__legend--xl govuk-!-padding-bottom-7" else "",
+            isPageHeading = asHeading
+            )),
+        html = content
+    )
+)

@@ -23,7 +23,7 @@ import org.scalatest.{Matchers, OptionValues, WordSpecLike}
 
 class StatusCheckByNinoRequestFormSpec extends WordSpecLike with Matchers with OptionValues {
 
-  val formOutput = StatusCheckByNinoRequest(
+  val formOutput: StatusCheckByNinoRequest = StatusCheckByNinoRequest(
     nino = Nino("RJ301829A"),
     givenName = "Jan",
     familyName = "Kowalski",

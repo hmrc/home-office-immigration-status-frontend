@@ -14,58 +14,74 @@
  * limitations under the License.
  *@
 
-@import play.api.Configuration
 @import uk.gov.hmrc.homeofficesettledstatus.models.{StatusCheckByNinoRequest, StatusCheckError}
-@import uk.gov.hmrc.homeofficesettledstatus.views.{DateFormat, LayoutComponents}
+@import uk.gov.hmrc.homeofficesettledstatus.views.DateFormat
+@import uk.gov.hmrc.homeofficesettledstatus.config.AppConfig
 
-@this(layout: LayoutComponents)
+@this(
+    govukButton : GovukButton,
+    govukWrapper: govuk_wrapper
+)
 
-@(query: StatusCheckByNinoRequest, statusCheckError:StatusCheckError, changeCall: Call, searchAgainCall: Call)(implicit request: Request[_], messages: Messages, config: Configuration)
+@(query: StatusCheckByNinoRequest, statusCheckError:StatusCheckError, changeCall: Call, searchAgainCall: Call)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @locale = @{messages.lang.locale}
 
-@layout.mainTemplate(title = messages("status-check-failure.title"), bodyClasses = Some("full-width")) {
+@govukWrapper(title = messages("status-check-failure.title")) {
 
-  <div class="grid-row">
-    <div class="column-two-thirds">
+    <h1 class="govuk-heading-xl" id="title">@messages("status-check-failure.title")</h1>
 
-      <h1 class="heading-xlarge" id="title">@messages("status-check-failure.title")</h1>
+    <p class="govuk-body">@messages("status-check-failure.listParagraph")</p>
 
-      <p>@messages("status-check-failure.listParagraph")</p>
-      <ul class="list list-bullet">
-          <li id="item1">@messages("status-check-failure.list-item1")</li>
-          <li id="item2">@messages("status-check-failure.list-item2")</li>
-      </ul>
+    <ul class="govuk-list govuk-list--bullet">
+        <li id="item1">@messages("status-check-failure.list-item1")</li>
+        <li id="item2">@messages("status-check-failure.list-item2")</li>
+    </ul>
 
-      <h2 class="heading-medium" id="personal-details">@messages("status-check-failure.heading2CustomerDetails")</h2>
+    <h2 class="govuk-heading-m" id="personal-details">@messages("status-check-failure.heading2CustomerDetails")</h2>
 
-      <dl class="govuk-check-your-answers cya-questions-long form-group">
-        <div>
-          <dt class="cya-question">@messages("generic.nino")</dt>
-          <dd id="nino" class="cya-answer">@query.nino.formatted</dd>
-          <dd class="cya-change"><a href="@changeCall.url" id="change-nino">@messages("generic.change") <span class="visually-hidden">@messages("generic.nino")</span></a></dd>
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("generic.nino")</dt>
+            <dd id="nino" class="govuk-summary-list__value govuk-!-width-one-third">@query.nino.formatted</dd>
+            <dd class="govuk-summary-list__actions govuk-!-width-one-third">
+                <a class="govuk-link" href="@changeCall.url" id="change-nino">@messages("generic.change")
+                    <span class="govuk-visually-hidden">@messages("generic.nino")</span>
+                </a>
+            </dd>
         </div>
 
-        <div>
-          <dt class="cya-question">@messages("generic.givenName")</dt>
-          <dd id="givenName" class="cya-answer">@query.givenName</dd>
-          <dd class="cya-change"><a href="@changeCall.url" id="change-given-name">@messages("generic.change") <span class="visually-hidden">@messages("generic.givenName.lowercase")</span></a></dd>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("generic.givenName")</dt>
+            <dd id="givenName" class="govuk-summary-list__value govuk-!-width-one-third">@query.givenName</dd>
+            <dd class="govuk-summary-list__actions govuk-!-width-one-third">
+                <a class="govuk-link" href="@changeCall.url" id="change-given-name">@messages("generic.change")
+                    <span class="govuk-visually-hidden">@messages("generic.givenName.lowercase")</span>
+                </a>
+            </dd>
         </div>
 
-        <div>
-          <dt class="cya-question">@messages("generic.familyName")</dt>
-          <dd id="familyName" class="cya-answer">@query.familyName</dd>
-          <dd class="cya-change"><a href="@changeCall.url" id="change-family-name">@messages("generic.change") <span class="visually-hidden">@messages("generic.familyName.lowercase")</span></a></dd>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("generic.familyName")</dt>
+            <dd id="familyName" class="govuk-summary-list__value govuk-!-width-one-third">@query.familyName</dd>
+            <dd class="govuk-summary-list__actions govuk-!-width-one-third">
+                <a class="govuk-link" href="@changeCall.url" id="change-family-name">@messages("generic.change")
+                    <span class="govuk-visually-hidden">@messages("generic.familyName.lowercase")</span>
+                </a>
+            </dd>
         </div>
 
-        <div>
-          <dt class="cya-question">@messages("generic.dob")</dt>
-          <dd id="dob" class="cya-answer">@DateFormat.formatDatePattern(locale)(query.dateOfBirth)</dd>
-          <dd class="cya-change"><a href="@changeCall.url" id="change-dob">@messages("generic.change") <span class="visually-hidden">@messages("generic.dob.lowercase")</span></a></dd>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("generic.dob")</dt>
+            <dd id="dob" class="govuk-summary-list__value govuk-!-width-one-third">@DateFormat.formatDatePattern(locale)(query.dateOfBirth)</dd>
+            <dd class="govuk-summary-list__actions govuk-!-width-one-third">
+                <a class="govuk-link" href="@changeCall.url" id="change-dob">@messages("generic.change")
+                    <span class="govuk-visually-hidden">@messages("generic.dob.lowercase")</span>
+                </a>
+            </dd>
         </div>
-      </dl>
+    </dl>
 
-      <p><a class="button" role="button" href="@searchAgainCall.url">@messages("generic.searchAgain")</a></p>
-    </div>
-  </div>
+    @govukButton(Button(content = Text(messages("generic.searchAgain")), href=Some(searchAgainCall.url)))
+
 }

@@ -16,21 +16,22 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.filters
 
-import scala.concurrent.Future
-
 import akka.stream.Materializer
-import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.Results.ServiceUnavailable
 import play.api.mvc._
-import uk.gov.hmrc.homeofficesettledstatus.views.html.{govuk_wrapper, error_template => ShutteringPage}
+import uk.gov.hmrc.homeofficesettledstatus.config.AppConfig
+import uk.gov.hmrc.homeofficesettledstatus.views.html.error_template
+
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.Future
 
 @Singleton
 class ShutteringFilter @Inject()(
   configuration: Configuration,
   val messagesApi: MessagesApi,
-  govUkWrapper: govuk_wrapper)(implicit val mat: Materializer)
+  errorTemplate: error_template)(implicit val mat: Materializer, appConfig: AppConfig)
     extends Filter with I18nSupport {
 
   private implicit val C: Configuration = configuration
@@ -42,11 +43,12 @@ class ShutteringFilter @Inject()(
     !(rh.path.startsWith("/template/") || rh.path.startsWith("/check-settled-status/assets/"))
 
   override def apply(next: RequestHeader => Future[Result])(rh: RequestHeader): Future[Result] = {
-    implicit val R: RequestHeader = rh
+
+    implicit val request: Request[_] = Request(rh, "")
     if (isServiceShuttered && notARequestForAnAsset)
       Future.successful(
         ServiceUnavailable(
-          new ShutteringPage(govUkWrapper)(
+          errorTemplate(
             Messages("shuttering.title"),
             Messages("shuttering.heading"),
             Messages("global.error.500.message")

@@ -23,10 +23,10 @@ import uk.gov.hmrc.play.fsm.JsonStateFormats
 
 object HomeOfficeSettledStatusFrontendJourneyStateFormats extends JsonStateFormats[State] {
 
-  val statusFound = Json.format[StatusFound]
-  val statusNotAvailable = Json.format[StatusNotAvailable]
-  val statusCheckByNino = Json.format[StatusCheckByNino]
-  val statusCheckFailure = Json.format[StatusCheckFailure]
+  val statusFound: OFormat[StatusFound] = Json.format[StatusFound]
+  val statusNotAvailable: OFormat[StatusNotAvailable] = Json.format[StatusNotAvailable]
+  val statusCheckByNino: OFormat[StatusCheckByNino] = Json.format[StatusCheckByNino]
+  val statusCheckFailure: OFormat[StatusCheckFailure] = Json.format[StatusCheckFailure]
 
   override val serializeStateProperties: PartialFunction[State, JsValue] = {
     case s: StatusCheckByNino  => statusCheckByNino.writes(s)

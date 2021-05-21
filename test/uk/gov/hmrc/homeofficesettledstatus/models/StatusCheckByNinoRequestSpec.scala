@@ -16,15 +16,26 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.models
 
-import play.api.libs.json.{Json, OFormat}
+import org.scalatest.{Matchers, OptionValues, WordSpecLike}
+import uk.gov.hmrc.domain.Nino
 
-case class HomeOfficeSettledStatusFrontendModel(
-  name: String,
-  postcode: Option[String],
-  telephoneNumber: Option[String],
-  emailAddress: Option[String])
+class StatusCheckByNinoRequestSpec extends WordSpecLike with Matchers with OptionValues {
 
-object HomeOfficeSettledStatusFrontendModel {
-  implicit val modelFormat: OFormat[HomeOfficeSettledStatusFrontendModel] =
-    Json.format[HomeOfficeSettledStatusFrontendModel]
+  val expectedResult: StatusCheckByNinoRequest =
+    StatusCheckByNinoRequest(Nino("RJ301829A"), "DOE", "JANE", "1971-01-01", None)
+
+  "StatusCheckByNinoRequestSpec" should {
+
+    val formInputWithNoImmigration = StatusCheckByNinoRequest(
+      Nino("RJ301829A"),
+      "Doe",
+      "Jane",
+      "1971-01-01"
+    )
+
+    "return givenName and falilyName in uppercase" in {
+      formInputWithNoImmigration.toUpperCase shouldBe expectedResult
+    }
+  }
+
 }

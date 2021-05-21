@@ -1,12 +1,10 @@
 package uk.gov.hmrc.homeofficesettledstatus.controllers
 
-import java.util.UUID
-
+import org.scalatest.concurrent.ScalaFutures
 import play.api.Application
 import play.api.libs.json.Format
-import play.api.libs.ws.WSClient
+import play.api.libs.ws.{WSClient, WSRequest}
 import play.api.mvc.{Cookies, Session, SessionCookieBaker}
-import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.cache.repository.CacheMongoRepository
 import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyStateFormats
@@ -14,6 +12,7 @@ import uk.gov.hmrc.homeofficesettledstatus.services.{HomeOfficeSettledStatusFron
 import uk.gov.hmrc.homeofficesettledstatus.stubs.{HomeOfficeSettledStatusStubs, JourneyTestData}
 import uk.gov.hmrc.homeofficesettledstatus.support.{ServerISpec, TestJourneyService}
 
+import java.util.UUID
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class HomeOfficeSettledStatusFrontendISpec
@@ -28,7 +27,7 @@ class HomeOfficeSettledStatusFrontendISpec
         implicit val journeyId: JourneyId = JourneyId()
         givenAuthorisedForStride("TBC", "StrideUserId")
 
-        val result = await(request("/").get())
+        val result = request("/").get().futureValue
 
         result.status shouldBe 200
         result.body should include(htmlEscapedMessage("lookup.title"))
@@ -51,7 +50,7 @@ class HomeOfficeSettledStatusFrontendISpec
           "givenName"         -> "Doe",
           "nino"              -> "RJ301829A")
 
-        val result = await(request("/check-with-nino").post(payload))
+        val result = request("/check-with-nino").post(payload).futureValue
 
         result.status shouldBe 200
         result.body should include(htmlEscapedMessage("status-found.title"))
@@ -72,7 +71,7 @@ class HomeOfficeSettledStatusFrontendISpec
           "givenName"         -> "Doe",
           "nino"              -> "RJ301829A")
 
-        val result = await(request("/check-with-nino").post(payload))
+        val result = request("/check-with-nino").post(payload).futureValue
 
         result.status shouldBe 200
         result.body should include(htmlEscapedMessage("external.error.500.title"))
@@ -91,7 +90,7 @@ class HomeOfficeSettledStatusFrontendISpec
         implicit val journeyId: JourneyId = JourneyId()
         givenAuthorisedForStride("TBC", "StrideUserId")
 
-        val result = await(request("/foo").get())
+        val result = request("/foo").get().futureValue
 
         result.status shouldBe 404
         result.body should include("This page can’t be found")
@@ -102,7 +101,7 @@ class HomeOfficeSettledStatusFrontendISpec
 
 }
 
-trait HomeOfficeSettledStatusFrontendISpecSetup extends ServerISpec {
+trait HomeOfficeSettledStatusFrontendISpecSetup extends ServerISpec with ScalaFutures {
 
   override def fakeApplication: Application = appBuilder.build()
 
@@ -112,11 +111,11 @@ trait HomeOfficeSettledStatusFrontendISpecSetup extends ServerISpec {
   case class JourneyId(value: String = UUID.randomUUID().toString)
 
   // define test service capable of manipulating journey state
-  lazy val journey = new TestJourneyService[JourneyId] with HomeOfficeSettledStatusFrontendJourneyService[JourneyId]
+  lazy val journey: TestJourneyService[JourneyId] with HomeOfficeSettledStatusFrontendJourneyService[JourneyId] with MongoDBCachedJourneyService[JourneyId] = new TestJourneyService[JourneyId] with HomeOfficeSettledStatusFrontendJourneyService[JourneyId]
   with MongoDBCachedJourneyService[JourneyId] {
 
-    override lazy val cacheMongoRepository = app.injector.instanceOf[CacheMongoRepository]
-    override lazy val applicationCrypto = app.injector.instanceOf[ApplicationCrypto]
+    override lazy val cacheMongoRepository: CacheMongoRepository = app.injector.instanceOf[CacheMongoRepository]
+    override lazy val applicationCrypto: ApplicationCrypto = app.injector.instanceOf[ApplicationCrypto]
 
     override val stateFormats: Format[model.State] =
       HomeOfficeSettledStatusFrontendJourneyStateFormats.formats
@@ -126,7 +125,7 @@ trait HomeOfficeSettledStatusFrontendISpecSetup extends ServerISpec {
 
   val baseUrl: String = s"http://localhost:$port/check-settled-status"
 
-  def request(path: String)(implicit journeyId: JourneyId) =
+  def request(path: String)(implicit journeyId: JourneyId): WSRequest =
     wsClient
       .url(s"$baseUrl$path")
       .withHttpHeaders(

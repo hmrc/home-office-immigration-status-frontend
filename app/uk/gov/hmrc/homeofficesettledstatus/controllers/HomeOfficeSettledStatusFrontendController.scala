@@ -16,38 +16,42 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.controllers
 
-import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.homeofficesettledstatus.config.AppConfig
 import uk.gov.hmrc.homeofficesettledstatus.connectors.{FrontendAuthConnector, HomeOfficeSettledStatusProxyConnector}
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State.{StatusCheckFailure, _}
 import uk.gov.hmrc.homeofficesettledstatus.models.{StatusCheckByNinoRequest, StatusCheckRange}
 import uk.gov.hmrc.homeofficesettledstatus.services.HomeOfficeSettledStatusFrontendJourneyServiceWithHeaderCarrier
-import uk.gov.hmrc.homeofficesettledstatus.views.html.{MultipleMatchesFoundPage, StatusCheckByNinoPage, StatusCheckFailurePage, StatusFoundPage, StatusNotAvailablePage}
-import uk.gov.hmrc.homeofficesettledstatus.views.{LayoutComponents, StatusFoundPageContext, StatusNotAvailablePageContext}
-import uk.gov.hmrc.homeofficesettledstatus.wiring.AppConfig
+import uk.gov.hmrc.homeofficesettledstatus.views.html._
+import uk.gov.hmrc.homeofficesettledstatus.views.{StatusFoundPageContext, StatusNotAvailablePageContext}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.fsm.{JourneyController, JourneyIdSupport}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
 class HomeOfficeSettledStatusFrontendController @Inject()(
-  appConfig: AppConfig,
   override val messagesApi: MessagesApi,
-  homeOfficeSettledStatusProxyConnector: HomeOfficeSettledStatusProxyConnector,
-  val authConnector: FrontendAuthConnector,
-  val env: Environment,
+  override val config: Configuration,
   override val journeyService: HomeOfficeSettledStatusFrontendJourneyServiceWithHeaderCarrier,
   override val actionBuilder: DefaultActionBuilder,
+  val authConnector: FrontendAuthConnector,
+  val env: Environment,
+  homeOfficeSettledStatusProxyConnector: HomeOfficeSettledStatusProxyConnector,
   controllerComponents: MessagesControllerComponents,
-  layoutComponents: LayoutComponents
-)(implicit val config: Configuration, ec: ExecutionContext)
+  statusCheckByNinoPage: StatusCheckByNinoPage,
+  statusFoundPage: StatusFoundPage,
+  statusNotAvailablePage: StatusNotAvailablePage,
+  statusCheckFailurePage: StatusCheckFailurePage,
+  multipleMatchesFoundPage: MultipleMatchesFoundPage
+)(implicit val appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(controllerComponents) with I18nSupport with AuthActions
     with JourneyController[HeaderCarrier] with JourneyIdSupport[HeaderCarrier] {
 
@@ -125,12 +129,6 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
 
   import uk.gov.hmrc.play.fsm.OptionalFormOps._
 
-  val statusCheckByNinoPage = new StatusCheckByNinoPage(layoutComponents)
-  val statusFoundPage = new StatusFoundPage(layoutComponents)
-  val statusNotAvailablePage = new StatusNotAvailablePage(layoutComponents)
-  val statusCheckFailurePage = new StatusCheckFailurePage(layoutComponents)
-  val multipleMatchesFoundPage = new MultipleMatchesFoundPage(layoutComponents)
-
   /** Function from the `State` to the `Result`,
     * used by play-fsm internally to render the actual content.
     */
@@ -177,7 +175,7 @@ object HomeOfficeSettledStatusFrontendController {
 
   import FormFieldMappings._
 
-  val StatusCheckByNinoRequestForm = Form[StatusCheckByNinoRequest](
+  val StatusCheckByNinoRequestForm: Form[StatusCheckByNinoRequest] = Form[StatusCheckByNinoRequest](
     mapping(
       "nino" -> uppercaseNormalizedText
         .verifying(validNino())
