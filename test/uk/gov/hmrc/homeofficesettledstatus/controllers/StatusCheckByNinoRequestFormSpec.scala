@@ -16,12 +16,14 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.controllers
 
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.data.FormError
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficesettledstatus.models.StatusCheckByNinoRequest
-import org.scalatest.{Matchers, OptionValues, WordSpecLike}
+import org.scalatest.OptionValues
 
-class StatusCheckByNinoRequestFormSpec extends WordSpecLike with Matchers with OptionValues {
+class StatusCheckByNinoRequestFormSpec extends AnyWordSpecLike with Matchers with OptionValues {
 
   val formOutput: StatusCheckByNinoRequest = StatusCheckByNinoRequest(
     nino = Nino("RJ301829A"),

@@ -17,13 +17,14 @@
 package uk.gov.hmrc.homeofficesettledstatus.support
 
 import java.io.File
-
 import com.typesafe.config._
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.{Configuration, Environment, Mode}
 import uk.gov.hmrc.homeofficesettledstatus.support.CallOps.localFriendlyUrl
-import org.scalatest.{Matchers, OptionValues, WordSpecLike}
+import org.scalatest.OptionValues
 
-class CallOpsSpec extends WordSpecLike with Matchers with OptionValues {
+class CallOpsSpec extends AnyWordSpecLike with Matchers with OptionValues {
 
   val testEnv = Environment(new File(""), classOf[CallOpsSpec].getClassLoader, Mode.Test)
   val prodEnv = Environment(new File(""), classOf[CallOpsSpec].getClassLoader, Mode.Prod)

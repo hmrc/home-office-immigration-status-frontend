@@ -16,11 +16,13 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.models
 
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
+
 import java.time.LocalDate
+import org.scalatest.OptionValues
 
-import org.scalatest.{Matchers, OptionValues, WordSpecLike}
-
-class StatusCheckResultSpec extends WordSpecLike with Matchers with OptionValues {
+class StatusCheckResultSpec extends AnyWordSpecLike with Matchers with OptionValues {
 
   val expectedResult: ImmigrationStatus =
     ImmigrationStatus(LocalDate.parse("2015-02-11"), None, "C", "D", noRecourseToPublicFunds = true)

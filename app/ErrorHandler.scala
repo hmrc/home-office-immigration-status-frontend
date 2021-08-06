@@ -15,7 +15,7 @@
  */
 
 import com.google.inject.name.Named
-import controllers.Assets.{BAD_REQUEST, NOT_FOUND}
+import play.api.http.Status.{BAD_REQUEST, NOT_FOUND}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.Results._
 import play.api.mvc.{Request, RequestHeader, Result}
