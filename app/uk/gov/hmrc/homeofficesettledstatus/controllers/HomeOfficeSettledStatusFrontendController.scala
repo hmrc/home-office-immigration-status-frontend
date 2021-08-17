@@ -116,15 +116,15 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
     */
   override def getCallFor(state: State)(implicit request: Request[_]): Call = state match {
     case Start =>
-      routes.HomeOfficeSettledStatusFrontendController.showStart()
+      routes.HomeOfficeSettledStatusFrontendController.showStart
     case _: StatusCheckByNino =>
-      routes.HomeOfficeSettledStatusFrontendController.showStatusCheckByNino()
+      routes.HomeOfficeSettledStatusFrontendController.showStatusCheckByNino
     case _: StatusNotAvailable =>
-      routes.HomeOfficeSettledStatusFrontendController.showStatusNotAvailable()
+      routes.HomeOfficeSettledStatusFrontendController.showStatusNotAvailable
     case _: StatusFound =>
-      routes.HomeOfficeSettledStatusFrontendController.showStatusFound()
+      routes.HomeOfficeSettledStatusFrontendController.showStatusFound
     case _: StatusCheckFailure =>
-      routes.HomeOfficeSettledStatusFrontendController.showStatusCheckFailure()
+      routes.HomeOfficeSettledStatusFrontendController.showStatusCheckFailure
   }
 
   import uk.gov.hmrc.play.fsm.OptionalFormOps._
@@ -147,7 +147,7 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
               .map(query => StatusCheckByNinoRequestForm.fill(query))
               .getOrElse(StatusCheckByNinoRequestForm)
           ),
-          routes.HomeOfficeSettledStatusFrontendController.submitStatusCheckByNino()
+          routes.HomeOfficeSettledStatusFrontendController.submitStatusCheckByNino
         )
       )
 

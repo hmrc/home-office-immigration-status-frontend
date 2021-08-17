@@ -16,11 +16,13 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.controllers
 
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import uk.gov.hmrc.homeofficesettledstatus.controllers.FormFieldMappings.validName
-import org.scalatest.{Matchers, OptionValues, WordSpecLike}
+import org.scalatest.OptionValues
 
-class FormFieldMappingsSpec extends WordSpecLike with Matchers with OptionValues {
+class FormFieldMappingsSpec extends AnyWordSpecLike with Matchers with OptionValues {
 
   val validateName: Constraint[String] = validName(fieldName = "bar", minLenInc = 0)
   val invalid: Invalid = Invalid("error.bar.invalid-format")

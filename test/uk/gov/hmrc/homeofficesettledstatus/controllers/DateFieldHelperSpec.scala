@@ -16,12 +16,15 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.controllers
 
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
+
 import java.time.LocalDate
 import play.api.data.validation.{Invalid, ValidationError}
 import uk.gov.hmrc.homeofficesettledstatus.controllers.DateFieldHelper._
-import org.scalatest.{Matchers, OptionValues, WordSpecLike}
+import org.scalatest.OptionValues
 
-class DateFieldHelperSpec extends WordSpecLike with Matchers with OptionValues {
+class DateFieldHelperSpec extends AnyWordSpecLike with Matchers with OptionValues {
 
   val `2020-04-21`: LocalDate = LocalDate.parse("2020-04-21")
 

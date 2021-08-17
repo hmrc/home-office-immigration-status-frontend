@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.journey
 
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State._
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.Transitions._
@@ -23,15 +25,15 @@ import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFront
 import uk.gov.hmrc.homeofficesettledstatus.models._
 import uk.gov.hmrc.homeofficesettledstatus.services.HomeOfficeSettledStatusFrontendJourneyService
 import uk.gov.hmrc.homeofficesettledstatus.support.{InMemoryStore, StateMatchers}
-import org.scalatest.{Matchers, OptionValues, WordSpecLike}
+import org.scalatest.OptionValues
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import java.time.LocalDate
 
+import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class HomeOfficeSettledStatusFrontendModelSpec
-    extends WordSpecLike with Matchers with OptionValues with StateMatchers[State] with TestData {
+    extends AnyWordSpecLike with Matchers with OptionValues with StateMatchers[State] with TestData {
 
   // dummy journey context
   case class DummyContext()

@@ -16,10 +16,12 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.models
 
-import org.scalatest.{Matchers, OptionValues, WordSpecLike}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
+import org.scalatest.OptionValues
 import uk.gov.hmrc.domain.Nino
 
-class StatusCheckByNinoRequestSpec extends WordSpecLike with Matchers with OptionValues {
+class StatusCheckByNinoRequestSpec extends AnyWordSpecLike with Matchers with OptionValues {
 
   val expectedResult: StatusCheckByNinoRequest =
     StatusCheckByNinoRequest(Nino("RJ301829A"), "DOE", "JANE", "1971-01-01", None)

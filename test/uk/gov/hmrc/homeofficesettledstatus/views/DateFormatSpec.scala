@@ -16,13 +16,15 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.views
 
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
+
 import java.time.LocalDate
 import java.util.Locale
-
 import uk.gov.hmrc.homeofficesettledstatus.views.DateFormat.formatDatePattern
-import org.scalatest.{Matchers, OptionValues, WordSpecLike}
+import org.scalatest.OptionValues
 
-class DateFormatSpec extends WordSpecLike with Matchers with OptionValues {
+class DateFormatSpec extends AnyWordSpecLike with Matchers with OptionValues {
 
   "DateFormat" should {
 

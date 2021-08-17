@@ -30,7 +30,7 @@ object HossFooterLinks {
   def accessibilityLink(implicit messages: Messages): FooterItem =
     FooterItem(
       Some(messages("footer.links.accessibility.text")),
-      Some(AccessibilityStatementController.showPage().url)
+      Some(AccessibilityStatementController.showPage.url)
     )
 
   def items(implicit messages: Messages) = Seq(

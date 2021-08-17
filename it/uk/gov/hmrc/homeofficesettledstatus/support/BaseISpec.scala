@@ -1,7 +1,9 @@
 package uk.gov.hmrc.homeofficesettledstatus.support
 
 import akka.stream.Materializer
-import org.scalatest.{Matchers, OptionValues, WordSpecLike}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
+import org.scalatest.OptionValues
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Result
@@ -17,7 +19,7 @@ import scala.language.postfixOps
 import scala.reflect.ClassTag
 
 abstract class BaseISpec
-    extends WordSpecLike with Matchers with OptionValues with WireMockSupport with AuthStubs with DataStreamStubs
+    extends AnyWordSpecLike with Matchers with OptionValues with WireMockSupport with AuthStubs with DataStreamStubs
     with MetricsTestSupport {
 
   import scala.concurrent.duration._
