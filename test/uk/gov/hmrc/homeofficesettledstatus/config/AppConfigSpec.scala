@@ -20,6 +20,7 @@ import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
+import scala.concurrent.duration._
 
 class AppConfigSpec extends PlaySpec with GuiceOneAppPerSuite {
 
@@ -43,7 +44,7 @@ class AppConfigSpec extends PlaySpec with GuiceOneAppPerSuite {
       }
 
       "mongoSessionExpiryTime" in {
-        appConfig.mongoSessionExpiryTime mustBe 3600
+        appConfig.mongoSessionExpiration mustBe 1.hour
       }
 
       "authorisedStrideGroup" in {

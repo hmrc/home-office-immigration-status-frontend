@@ -55,6 +55,11 @@ lazy val root = (project in file("."))
 
 inConfig(IntegrationTest)(scalafmtCoreSettings)
 
+scalacOptions ++= Seq(
+  "-P:silencer:globalFilters=Unused import",
+  "-feature"
+)
+
 def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] = {
   tests.map { test =>
     Group(test.name, Seq(test), SubProcess(ForkOptions().withRunJVMOptions(Vector(s"-Dtest.name=${test.name}"))))

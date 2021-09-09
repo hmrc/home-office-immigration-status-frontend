@@ -1,18 +1,19 @@
 package uk.gov.hmrc.homeofficesettledstatus.controllers
 
+import java.util.UUID
+
 import org.scalatest.concurrent.ScalaFutures
 import play.api.Application
 import play.api.libs.json.Format
 import play.api.libs.ws.{WSClient, WSRequest}
-import play.api.mvc.{Cookies, Session, SessionCookieBaker}
-import uk.gov.hmrc.cache.repository.CacheMongoRepository
+import play.api.mvc.{CookieHeaderEncoding, Session, SessionCookieBaker}
 import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyStateFormats
+import uk.gov.hmrc.homeofficesettledstatus.repository.CacheRepository
 import uk.gov.hmrc.homeofficesettledstatus.services.{HomeOfficeSettledStatusFrontendJourneyService, MongoDBCachedJourneyService}
 import uk.gov.hmrc.homeofficesettledstatus.stubs.{HomeOfficeSettledStatusStubs, JourneyTestData}
 import uk.gov.hmrc.homeofficesettledstatus.support.{ServerISpec, TestJourneyService}
 
-import java.util.UUID
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class HomeOfficeSettledStatusFrontendISpec
@@ -107,6 +108,7 @@ trait HomeOfficeSettledStatusFrontendISpecSetup extends ServerISpec with ScalaFu
 
   lazy val wsClient: WSClient = app.injector.instanceOf[WSClient]
   lazy val sessionCookieBaker: SessionCookieBaker = app.injector.instanceOf[SessionCookieBaker]
+  lazy val cookieHeaderEncoding: CookieHeaderEncoding = app.injector.instanceOf[CookieHeaderEncoding]
 
   case class JourneyId(value: String = UUID.randomUUID().toString)
 
@@ -114,7 +116,7 @@ trait HomeOfficeSettledStatusFrontendISpecSetup extends ServerISpec with ScalaFu
   lazy val journey: TestJourneyService[JourneyId] with HomeOfficeSettledStatusFrontendJourneyService[JourneyId] with MongoDBCachedJourneyService[JourneyId] = new TestJourneyService[JourneyId] with HomeOfficeSettledStatusFrontendJourneyService[JourneyId]
   with MongoDBCachedJourneyService[JourneyId] {
 
-    override lazy val cacheMongoRepository: CacheMongoRepository = app.injector.instanceOf[CacheMongoRepository]
+    override lazy val cacheRepository: CacheRepository = app.injector.instanceOf[CacheRepository]
     override lazy val applicationCrypto: ApplicationCrypto = app.injector.instanceOf[ApplicationCrypto]
 
     override val stateFormats: Format[model.State] =
@@ -129,7 +131,7 @@ trait HomeOfficeSettledStatusFrontendISpecSetup extends ServerISpec with ScalaFu
     wsClient
       .url(s"$baseUrl$path")
       .withHttpHeaders(
-        play.api.http.HeaderNames.COOKIE -> Cookies.encodeCookieHeader(
+        play.api.http.HeaderNames.COOKIE -> cookieHeaderEncoding.encodeCookieHeader(
           Seq(
             sessionCookieBaker.encodeAsCookie(Session(Map(journey.journeyKey -> journeyId.value)))
           )))

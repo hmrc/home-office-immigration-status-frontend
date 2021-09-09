@@ -17,8 +17,9 @@
 package uk.gov.hmrc.homeofficesettledstatus.config
 
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-
 import javax.inject.{Inject, Singleton}
+
+import scala.concurrent.duration.Duration
 
 @Singleton
 class AppConfig @Inject()(val servicesConfig: ServicesConfig) {
@@ -26,7 +27,7 @@ class AppConfig @Inject()(val servicesConfig: ServicesConfig) {
   lazy val appName: String = servicesConfig.getString("appName")
   lazy val authBaseUrl: String = servicesConfig.baseUrl("auth")
   lazy val homeOfficeSettledStatusProxyBaseUrl: String = servicesConfig.baseUrl("home-office-settled-status-proxy")
-  lazy val mongoSessionExpiryTime: Int = servicesConfig.getInt("mongodb.session.expireAfterSeconds")
+  lazy val mongoSessionExpiration: Duration = servicesConfig.getDuration("mongodb.session.expiration")
   lazy val authorisedStrideGroup: String = servicesConfig.getString("authorisedStrideGroup")
   lazy val defaultQueryTimeRangeInMonths: Int = servicesConfig.getInt("defaultQueryTimeRangeInMonths")
   lazy val gtmId: String = servicesConfig.getString("google-tag-manager.id")

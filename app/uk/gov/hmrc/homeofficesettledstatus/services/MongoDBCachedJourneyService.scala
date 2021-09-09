@@ -17,9 +17,9 @@
 package uk.gov.hmrc.homeofficesettledstatus.services
 
 import play.api.libs.json.{Format, Json}
-import uk.gov.hmrc.cache.repository.{CacheMongoRepository, CacheRepository}
 import uk.gov.hmrc.crypto.json.{JsonDecryptor, JsonEncryptor}
 import uk.gov.hmrc.crypto.{ApplicationCrypto, CompositeSymmetricCrypto, Protected}
+import uk.gov.hmrc.homeofficesettledstatus.repository.CacheRepository
 import uk.gov.hmrc.play.fsm.PersistentJourneyService
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -30,11 +30,11 @@ import scala.concurrent.{ExecutionContext, Future}
   */
 trait MongoDBCachedJourneyService[RequestContext] extends PersistentJourneyService[RequestContext] {
 
-  val cacheMongoRepository: CacheMongoRepository
+  val cacheRepository: CacheRepository
   val applicationCrypto: ApplicationCrypto
   val stateFormats: Format[model.State]
   def getJourneyId(context: RequestContext): Option[String]
-
+  private val self = this
   case class PersistentState(state: model.State, breadcrumbs: List[model.State])
 
   implicit lazy val crypto: CompositeSymmetricCrypto = applicationCrypto.JsonCrypto
@@ -48,7 +48,7 @@ trait MongoDBCachedJourneyService[RequestContext] extends PersistentJourneyServi
   final val cache = new SessionCache[Protected[PersistentState], RequestContext] {
 
     override lazy val sessionName: String = journeyKey
-    override lazy val cacheRepository: CacheRepository = cacheMongoRepository
+    override lazy val cacheRepository: CacheRepository = self.cacheRepository
 
     // uses journeyId as a sessionId to persist state and breadcrumbs
     override def getSessionId(implicit requestContext: RequestContext): Option[String] =
