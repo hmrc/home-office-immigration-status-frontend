@@ -16,21 +16,22 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.repository
 
-import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.homeofficesettledstatus.config.AppConfig
 import uk.gov.hmrc.mongo.{MongoComponent, TimestampSupport}
+import uk.gov.hmrc.mongo.cache.{CacheIdType, MongoCacheRepository}
 
 import scala.concurrent.ExecutionContext
+import scala.concurrent.duration.Duration
 
-@Singleton
-class JourneyCacheRepository @Inject()(
-  appConfig: AppConfig,
+class CacheRepository(
   mongoComponent: MongoComponent,
+  collectionName: String,
+  ttl: Duration,
   timestampSupport: TimestampSupport
 )(implicit ec: ExecutionContext)
-    extends CacheRepository(
+    extends MongoCacheRepository[String](
       mongoComponent = mongoComponent,
-      collectionName = "journeys",
-      ttl = appConfig.mongoSessionExpiration,
-      timestampSupport = timestampSupport
-    )
+      collectionName = collectionName,
+      ttl = ttl,
+      timestampSupport = timestampSupport,
+      cacheIdType = CacheIdType.SimpleCacheId
+    )(ec)

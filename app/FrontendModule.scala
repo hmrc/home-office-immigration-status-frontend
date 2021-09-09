@@ -16,8 +16,7 @@
 
 import com.google.inject.AbstractModule
 import play.api.{Configuration, Environment}
-import uk.gov.hmrc.cache.repository.CacheMongoRepository
-import uk.gov.hmrc.homeofficesettledstatus.repository.JourneyCacheRepository
+import uk.gov.hmrc.homeofficesettledstatus.repository.{CacheRepository, JourneyCacheRepository}
 import uk.gov.hmrc.homeofficesettledstatus.services.{HomeOfficeSettledStatusFrontendJourneyServiceWithHeaderCarrier, MongoDBCachedHomeOfficeSettledStatusFrontendJourneyService}
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
@@ -30,7 +29,7 @@ class FrontendModule(val environment: Environment, val configuration: Configurat
 
     bind(classOf[HttpPost]).to(classOf[DefaultHttpClient])
 
-    bind(classOf[CacheMongoRepository]).to(classOf[JourneyCacheRepository])
+    bind(classOf[CacheRepository]).to(classOf[JourneyCacheRepository])
 
     bind(classOf[HomeOfficeSettledStatusFrontendJourneyServiceWithHeaderCarrier])
       .to(classOf[MongoDBCachedHomeOfficeSettledStatusFrontendJourneyService])

@@ -18,9 +18,9 @@ package uk.gov.hmrc.homeofficesettledstatus.services
 
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Format
-import uk.gov.hmrc.cache.repository.CacheMongoRepository
 import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.homeofficesettledstatus.journeys.{HomeOfficeSettledStatusFrontendJourneyModel, HomeOfficeSettledStatusFrontendJourneyStateFormats}
+import uk.gov.hmrc.homeofficesettledstatus.repository.CacheRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.fsm.PersistentJourneyService
 
@@ -40,7 +40,7 @@ trait HomeOfficeSettledStatusFrontendJourneyServiceWithHeaderCarrier
 
 @Singleton
 case class MongoDBCachedHomeOfficeSettledStatusFrontendJourneyService @Inject()(
-  cacheMongoRepository: CacheMongoRepository,
+  cacheRepository: CacheRepository,
   applicationCrypto: ApplicationCrypto)
     extends MongoDBCachedJourneyService[HeaderCarrier]
     with HomeOfficeSettledStatusFrontendJourneyServiceWithHeaderCarrier {

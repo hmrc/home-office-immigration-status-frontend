@@ -18,14 +18,14 @@ package uk.gov.hmrc.homeofficesettledstatus.services
 
 import play.api.Logger
 import play.api.libs.json._
-import uk.gov.hmrc.cache.model.Id
-import uk.gov.hmrc.cache.repository.CacheRepository
+import uk.gov.hmrc.homeofficesettledstatus.repository.CacheRepository
+import uk.gov.hmrc.mongo.cache.DataKey
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
 
 /**
-  * Generic short-term session store based on mongo-caching.
+  * Generic short-term session store based on hmrc-mongo-cache.
   */
 trait SessionCache[T, C] {
 
@@ -36,7 +36,7 @@ trait SessionCache[T, C] {
 
   def getSessionId(implicit requestContext: C): Option[String]
 
-  def fetch(implicit requestContext: C, reads: Reads[T], ec: ExecutionContext): Future[Option[T]] =
+  final def fetch(implicit requestContext: C, reads: Reads[T], ec: ExecutionContext): Future[Option[T]] =
     get.flatMap {
       case Right(cache) => cache
       case Left(error) =>
@@ -44,7 +44,7 @@ trait SessionCache[T, C] {
         Future.failed(new RuntimeException(error))
     }
 
-  def save(input: T)(implicit requestContext: C, writes: Writes[T], ec: ExecutionContext): Future[T] =
+  final def save(input: T)(implicit requestContext: C, writes: Writes[T], ec: ExecutionContext): Future[T] =
     store(input).flatMap {
       case Right(_) => input
       case Left(error) =>
@@ -52,7 +52,7 @@ trait SessionCache[T, C] {
         Future.failed(new RuntimeException(error))
     }
 
-  implicit def toFuture[A](a: A): Future[A] = Future.successful(a)
+  implicit final def toFuture[A](a: A): Future[A] = Future.successful(a)
 
   private def get(
     implicit reads: Reads[T],
@@ -61,11 +61,10 @@ trait SessionCache[T, C] {
     getSessionId match {
       case Some(sessionId) ⇒
         cacheRepository
-          .findById(Id(sessionId))
-          .flatMap(_.flatMap(_.data))
+          .findById(sessionId)
           .flatMap {
-            case Some(cache) =>
-              (cache \ sessionName).asOpt[JsValue] match {
+            case Some(cacheItem) =>
+              (cacheItem.data \ sessionName).asOpt[JsValue] match {
                 case None => Right(None)
                 case Some(obj: JsValue) =>
                   obj.validate[T] match {
@@ -92,41 +91,24 @@ trait SessionCache[T, C] {
     getSessionId match {
       case Some(sessionId) ⇒
         cacheRepository
-          .createOrUpdate(Id(sessionId), sessionName, Json.toJson(newSession))
-          .map[Either[String, Unit]] { dbUpdate ⇒
-            if (dbUpdate.writeResult.inError) {
-              Left(dbUpdate.writeResult.errmsg.getOrElse("unknown error during inserting session data in mongo"))
-            } else {
-              Right(())
-            }
-          }
+          .put(sessionId)(DataKey(sessionName), Json.toJson(newSession))
+          .map(_ => Right(()))
           .recover {
-            case e ⇒
-              Left(e.getMessage)
+            case ex: Exception => Left(ex.getMessage)
           }
-
       case None ⇒
         Left("[SessionCache][store] no sessionId found in the HeaderCarrier to store in mongo")
     }
 
-  def delete()(implicit requestContext: C, ec: ExecutionContext): Future[Either[String, Unit]] =
+  final def delete()(implicit requestContext: C, ec: ExecutionContext): Future[Either[String, Unit]] =
     getSessionId match {
       case Some(sessionId) ⇒
         cacheRepository
-          .removeById(Id(sessionId))
-          .map[Either[String, Unit]] { dbUpdate ⇒
-            if (dbUpdate.writeErrors.nonEmpty) {
-              Left(dbUpdate.writeErrors.map(_.errmsg).mkString(","))
-            } else {
-              Right(())
-            }
-          }
+          .deleteEntity(sessionId)
+          .map(_ => Right(()))
           .recover {
-            case e ⇒
-              Left(e.getMessage)
+            case ex: Exception => Left(ex.getMessage)
           }
-
-      case None ⇒
-        Right(())
+      case None ⇒ Right(())
     }
 }
