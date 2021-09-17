@@ -36,5 +36,5 @@ tmp
 .idea_modules
 bin
 project/metals.sbt
-/.metals
+.metals/
 .metals/metals.lock.db
