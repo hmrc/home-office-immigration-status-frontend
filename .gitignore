@@ -37,4 +37,3 @@ tmp
 bin
 project/metals.sbt
 .metals/
-.metals/metals.lock.db
