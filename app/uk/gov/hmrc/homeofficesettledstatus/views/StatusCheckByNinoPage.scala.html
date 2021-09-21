@@ -1,0 +1,77 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.homeofficesettledstatus.models.StatusCheckByNinoRequest
+@import uk.gov.hmrc.homeofficesettledstatus.config.AppConfig
+
+@this(
+    govukWrapper: govuk_wrapper,
+    formHelper: FormWithCSRF,
+    errorSummary: helpers.errorSummary,
+    govukButton : GovukButton,
+    inputText: helpers.inputText,
+    inputDate: helpers.inputDate,
+    fieldset: helpers.fieldset
+)
+
+@(statusCheckForm: Form[StatusCheckByNinoRequest],submitFormCall: Call)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+
+@govukWrapper(title = if(statusCheckForm.hasErrors) messages("lookup.title.Error") else messages("lookup.title")) {
+
+    @formHelper(submitFormCall) {
+
+        @errorSummary(statusCheckForm.errors)
+
+        @fieldset("lookup.title") {
+
+            @inputText(
+                statusCheckForm,
+                id = "nino",
+                name = "nino",
+                label = "lookup.nino.label",
+                hint = Some(Html(messages("lookup.nino.hint"))),
+                classes = Some("govuk-!-width-one-half")
+            )
+
+            @inputText(
+                statusCheckForm,
+                id = "givenName",
+                name = "givenName",
+                label = "lookup.givenName.label",
+                classes = Some("govuk-!-width-two-thirds")
+            )
+
+            @inputText(
+                statusCheckForm,
+                id = "familyName",
+                name = "familyName",
+                label = "lookup.familyName.label",
+                classes = Some("govuk-!-width-two-thirds")
+            )
+
+            @inputDate(
+                statusCheckForm,
+                id = "dateOfBirth",
+                legendClasses = "govuk-label",
+                legendContent = messages("lookup.dateOfBirth.label"),
+                hintMessage = Some(messages("lookup.dateOfBirth.hint"))
+            )
+        }
+
+        @govukButton(Button(content = Text(messages("button.continue")), attributes = Map("id" -> "continue")))
+    }
+
+}

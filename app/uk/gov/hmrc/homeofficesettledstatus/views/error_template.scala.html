@@ -1,0 +1,48 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.homeofficesettledstatus.config.AppConfig
+
+@this(
+    govukWrapper: govuk_wrapper
+)
+
+@(pageTitle: String, heading: String, message: String, helpdesk: Option[String] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+
+@govukWrapper(title = messages(pageTitle)) {
+
+    <h1 class="govuk-heading-xl" id="title">@messages(heading)</h1>
+
+    <p class="govuk-body">@messages(message)</p>
+
+    @for(hd <- helpdesk) {
+        <p class="govuk-body">@messages("external.error.500.listParagraph")</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+            <li id="item1">@messages("external.error.500.list-item1")</li>
+            <li id="item2">@messages("external.error.500.list-item2")</li>
+        </ul>
+
+        <p class="govuk-body">
+            @messages("status-check-failure.contact-helpdesk-text")
+            <a href="@hd" class="govuk-link" target="_blank"> @messages("status-check-failure.contact-helpdesk-link")</a>
+        </p>
+
+    }
+
+}
+
+
