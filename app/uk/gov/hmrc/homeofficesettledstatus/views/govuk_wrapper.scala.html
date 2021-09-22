@@ -69,15 +69,11 @@
 @titleWithSuffix = @{ title + " - " + messages("app.titleSuffix") }
 
 @content = {
-    <main id="wrapper" role="main">
-        <div id="content">
-            <div class="content__body">
-                @mainContent
+    <div id="content" class="content__body">
+        @mainContent
 
-                @hmrcReportTechnicalIssueHelper()
-            </div>
-        </div>
-    </main>
+        @hmrcReportTechnicalIssueHelper()
+    </div>
 }
 
 @govukLayout(
