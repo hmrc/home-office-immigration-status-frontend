@@ -33,10 +33,7 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class HomeOfficeSettledStatusProxyConnector @Inject()(
-  appConfig: AppConfig,
-  http: HttpGet with HttpPost,
-  metrics: Metrics)
+class HomeOfficeSettledStatusProxyConnector @Inject()(appConfig: AppConfig, http: HttpClient, metrics: Metrics)
     extends HttpAPIMonitor {
 
   val HEADER_X_CORRELATION_ID = "X-Correlation-Id"

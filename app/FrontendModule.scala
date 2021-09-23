@@ -18,17 +18,10 @@ import com.google.inject.AbstractModule
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.homeofficesettledstatus.repository.{CacheRepository, JourneyCacheRepository}
 import uk.gov.hmrc.homeofficesettledstatus.services.{HomeOfficeSettledStatusFrontendJourneyServiceWithHeaderCarrier, MongoDBCachedHomeOfficeSettledStatusFrontendJourneyService}
-import uk.gov.hmrc.http._
-import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 
 class FrontendModule(val environment: Environment, val configuration: Configuration) extends AbstractModule {
 
   override def configure(): Unit = {
-
-    bind(classOf[HttpGet]).to(classOf[DefaultHttpClient])
-
-    bind(classOf[HttpPost]).to(classOf[DefaultHttpClient])
-
     bind(classOf[CacheRepository]).to(classOf[JourneyCacheRepository])
 
     bind(classOf[HomeOfficeSettledStatusFrontendJourneyServiceWithHeaderCarrier])

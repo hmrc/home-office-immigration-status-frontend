@@ -22,14 +22,14 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.Duration
 
 @Singleton
-class AppConfig @Inject()(val servicesConfig: ServicesConfig) {
+class AppConfig @Inject()(servicesConfig: ServicesConfig) {
 
-  lazy val appName: String = servicesConfig.getString("appName")
-  lazy val authBaseUrl: String = servicesConfig.baseUrl("auth")
-  lazy val homeOfficeSettledStatusProxyBaseUrl: String = servicesConfig.baseUrl("home-office-settled-status-proxy")
-  lazy val mongoSessionExpiration: Duration = servicesConfig.getDuration("mongodb.session.expiration")
-  lazy val authorisedStrideGroup: String = servicesConfig.getString("authorisedStrideGroup")
-  lazy val defaultQueryTimeRangeInMonths: Int = servicesConfig.getInt("defaultQueryTimeRangeInMonths")
-  lazy val gtmId: String = servicesConfig.getString("google-tag-manager.id")
+  val appName: String = servicesConfig.getString("appName")
+  val authBaseUrl: String = servicesConfig.baseUrl("auth")
+  val homeOfficeSettledStatusProxyBaseUrl: String = servicesConfig.baseUrl("home-office-settled-status-proxy")
+  val mongoSessionExpiration: Duration = servicesConfig.getDuration("mongodb.session.expiration")
+  val authorisedStrideGroup: String = servicesConfig.getString("authorisedStrideGroup")
+  val defaultQueryTimeRangeInMonths: Int = servicesConfig.getInt("defaultQueryTimeRangeInMonths")
+  val gtmId: String = servicesConfig.getString("google-tag-manager.id")
 
 }

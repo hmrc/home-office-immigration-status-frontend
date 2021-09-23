@@ -21,9 +21,10 @@ import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import play.api.{Configuration, Environment}
+import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficesettledstatus.config.AppConfig
-import uk.gov.hmrc.homeofficesettledstatus.connectors.{FrontendAuthConnector, HomeOfficeSettledStatusProxyConnector}
+import uk.gov.hmrc.homeofficesettledstatus.connectors.HomeOfficeSettledStatusProxyConnector
 import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State.{StatusCheckFailure, _}
 import uk.gov.hmrc.homeofficesettledstatus.models.{StatusCheckByNinoRequest, StatusCheckRange}
 import uk.gov.hmrc.homeofficesettledstatus.services.HomeOfficeSettledStatusFrontendJourneyServiceWithHeaderCarrier
@@ -42,7 +43,7 @@ class HomeOfficeSettledStatusFrontendController @Inject()(
   override val config: Configuration,
   override val journeyService: HomeOfficeSettledStatusFrontendJourneyServiceWithHeaderCarrier,
   override val actionBuilder: DefaultActionBuilder,
-  val authConnector: FrontendAuthConnector,
+  val authConnector: AuthConnector,
   val env: Environment,
   homeOfficeSettledStatusProxyConnector: HomeOfficeSettledStatusProxyConnector,
   controllerComponents: MessagesControllerComponents,
