@@ -19,7 +19,7 @@ lazy val root = (project in file("."))
     name := "home-office-settled-status-frontend",
     organization := "uk.gov.hmrc",
     scalaVersion := "2.12.12",
-    PlayKeys.playDefaultPort := 9386, // change this to 9386 once upgrade done
+    PlayKeys.playDefaultPort := 10210,
     TwirlKeys.templateImports ++= Seq(
       "play.twirl.api.HtmlFormat",
       "uk.gov.hmrc.govukfrontend.views.html.components._",

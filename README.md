@@ -16,9 +16,9 @@ Web application providing internal HMRC staff with an interface to check custome
     sm --stop HOME_OFFICE_SETTLED_STATUS_FRONTEND 
     sbt run
 
-It should then be listening on port 9386
+It should then be listening on port 10210
 
-    browse http://localhost:9386/check-settled-status
+    browse http://localhost:10210/check-settled-status
 
 ### License
 
