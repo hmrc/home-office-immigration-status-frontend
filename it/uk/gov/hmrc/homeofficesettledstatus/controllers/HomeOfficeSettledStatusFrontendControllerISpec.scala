@@ -210,6 +210,7 @@ class HomeOfficeSettledStatusFrontendControllerISpec
         checkHtmlResultWithBodyText(result, htmlEscapedMessage("status-not-available.title"))
         checkHtmlResultWithBodyText(result, query.nino.formatted)
         checkHtmlResultWithBodyText(result, s"${query.givenName} ${query.familyName}")
+        checkHtmlResultWithBodyText(result, "31 January 2001")
       }
     }
 

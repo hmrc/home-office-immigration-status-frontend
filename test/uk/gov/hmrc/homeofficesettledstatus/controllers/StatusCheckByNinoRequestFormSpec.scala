@@ -202,17 +202,17 @@ class StatusCheckByNinoRequestFormSpec extends AnyWordSpecLike with Matchers wit
         form.bind(input).errors shouldBe List(FormError("givenName", "error.givenName.invalid-format"))
       }
 
-      "not error reported when givenName is atleast one character long" in {
-        val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
-        val input = formInput.updated("givenName", "a")
-        form.bind(input).errors shouldBe List()
-      }
-
       "report an error when special characters are used" in {
         val generatedOption = Gen.oneOf("!", "£", "#", "%").sample.value
         val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("givenName", generatedOption)
         form.bind(input).errors shouldBe List(FormError("givenName", "error.givenName.invalid-format"))
+      }
+
+      "not error reported when givenName is atleast one character long" in {
+        val form = HomeOfficeSettledStatusFrontendController.StatusCheckByNinoRequestForm
+        val input = formInput.updated("givenName", "a")
+        form.bind(input).errors shouldBe List()
       }
 
       "not report an error when givenName contains a -" in {
