@@ -125,7 +125,7 @@ trait HomeOfficeSettledStatusFrontendISpecSetup extends ServerISpec with ScalaFu
     override def getJourneyId(journeyId: JourneyId): Option[String] = Some(journeyId.value)
   }
 
-  val baseUrl: String = s"http://localhost:$port/check-settled-status"
+  val baseUrl: String = s"http://localhost:$port/check-immigration-status"
 
   def request(path: String)(implicit journeyId: JourneyId): WSRequest =
     wsClient

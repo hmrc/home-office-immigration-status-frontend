@@ -30,7 +30,7 @@ class HomeOfficeSettledStatusFrontendControllerISpec
         givenAuthorisedForStride("TBC", "StrideUserId")
         val result = controller.showStart(fakeRequest)
         status(result) shouldBe 303
-        redirectLocation(result) shouldBe Some("/check-settled-status/check-with-nino")
+        redirectLocation(result) shouldBe Some("/check-immigration-status/check-with-nino")
         journey.get shouldBe Some((Start, Nil))
       }
 
@@ -42,7 +42,7 @@ class HomeOfficeSettledStatusFrontendControllerISpec
         givenAuthorisedForStride("TBC", "StrideUserId")
         val result = controller.showStart(fakeRequest)
         status(result) shouldBe 303
-        redirectLocation(result) shouldBe Some("/check-settled-status/check-with-nino")
+        redirectLocation(result) shouldBe Some("/check-immigration-status/check-with-nino")
       }
 
       "redirect to the lookup page when elsewhere" in {
@@ -50,7 +50,7 @@ class HomeOfficeSettledStatusFrontendControllerISpec
         givenAuthorisedForStride("TBC", "StrideUserId")
         val result = controller.showStart(fakeRequest)
         status(result) shouldBe 303
-        redirectLocation(result) shouldBe Some("/check-settled-status/check-with-nino")
+        redirectLocation(result) shouldBe Some("/check-immigration-status/check-with-nino")
         journey.get shouldBe Some((Start, Nil))
       }
     }
@@ -107,7 +107,7 @@ class HomeOfficeSettledStatusFrontendControllerISpec
             "nino"              -> "RJ301829A")
         val result = controller.submitStatusCheckByNino(request)
         status(result) shouldBe 303
-        redirectLocation(result) shouldBe Some("/check-settled-status/status-found")
+        redirectLocation(result) shouldBe Some("/check-immigration-status/status-found")
         journey.get shouldBe Some(
           (StatusFound(correlationId, validQuery, expectedResultWithSingleStatus), List(StatusCheckByNino(), Start)))
       }
@@ -125,7 +125,7 @@ class HomeOfficeSettledStatusFrontendControllerISpec
             "nino"              -> "invalid")
         val result = controller.submitStatusCheckByNino(request)
         status(result) shouldBe 303
-        redirectLocation(result) shouldBe Some("/check-settled-status/check-with-nino")
+        redirectLocation(result) shouldBe Some("/check-immigration-status/check-with-nino")
       }
 
       "submit the lookup query and show status check failure" in {
@@ -142,7 +142,7 @@ class HomeOfficeSettledStatusFrontendControllerISpec
             "nino"              -> "RJ301829A")
         val result = controller.submitStatusCheckByNino(request)
         status(result) shouldBe 303
-        redirectLocation(result) shouldBe Some("/check-settled-status/status-check-failure")
+        redirectLocation(result) shouldBe Some("/check-immigration-status/status-check-failure")
       }
 
       "submit the lookup query and show multiple matches found" in {
@@ -159,7 +159,7 @@ class HomeOfficeSettledStatusFrontendControllerISpec
             "nino"              -> "RJ301829A")
         val result = controller.submitStatusCheckByNino(request)
         status(result) shouldBe 303
-        redirectLocation(result) shouldBe Some("/check-settled-status/status-check-failure")
+        redirectLocation(result) shouldBe Some("/check-immigration-status/status-check-failure")
       }
 
     }
@@ -182,7 +182,7 @@ class HomeOfficeSettledStatusFrontendControllerISpec
         givenAuthorisedForStride("TBC", "StrideUserId")
         val result = controller.showStatusFound(fakeRequest)
         status(result) shouldBe 303
-        redirectLocation(result) shouldBe Some("/check-settled-status")
+        redirectLocation(result) shouldBe Some("/check-immigration-status")
       }
 
       "redirect to start page if current state is StatusCheckFailure" in {
@@ -194,7 +194,7 @@ class HomeOfficeSettledStatusFrontendControllerISpec
         givenAuthorisedForStride("TBC", "StrideUserId")
         val result = controller.showStatusFound(fakeRequest)
         status(result) shouldBe 303
-        redirectLocation(result) shouldBe Some("/check-settled-status")
+        redirectLocation(result) shouldBe Some("/check-immigration-status")
       }
     }
 
@@ -251,7 +251,7 @@ class HomeOfficeSettledStatusFrontendControllerISpec
         givenAuthorisedForStride("TBC", "StrideUserId")
         val result = controller.showStatusCheckFailure(fakeRequest)
         status(result) shouldBe 303
-        redirectLocation(result) shouldBe Some("/check-settled-status")
+        redirectLocation(result) shouldBe Some("/check-immigration-status")
       }
 
       "redirect to start page if current state is StatusFound" in {
@@ -259,7 +259,7 @@ class HomeOfficeSettledStatusFrontendControllerISpec
         givenAuthorisedForStride("TBC", "StrideUserId")
         val result = controller.showStatusCheckFailure(fakeRequest)
         status(result) shouldBe 303
-        redirectLocation(result) shouldBe Some("/check-settled-status")
+        redirectLocation(result) shouldBe Some("/check-immigration-status")
       }
     }
   }
