@@ -36,9 +36,11 @@ class HomeOfficeSettledStatusFrontendControllerISpec
 
       "redirect to the clean lookup page when on status-check-failure" in {
         val existingQuery = StatusCheckByNinoRequest(Nino("RJ301829A"), "Doe", "Jane", "2001-01-31")
+
         journey.set(
           StatusCheckFailure("123", existingQuery, StatusCheckError(errCode = "ERR_NOT_FOUND")),
           List(StatusCheckByNino(), Start))
+
         givenAuthorisedForStride("TBC", "StrideUserId")
         val result = controller.showStart(fakeRequest)
         status(result) shouldBe 303
@@ -68,9 +70,11 @@ class HomeOfficeSettledStatusFrontendControllerISpec
 
       "display the lookup page filled with existing query parameters" in {
         val existingQuery = StatusCheckByNinoRequest(Nino("RJ301829A"), "Doe", "Jane", "2001-01-31")
+
         journey.set(
           StatusCheckFailure("123", existingQuery, StatusCheckError(errCode = "ERR_NOT_FOUND")),
           List(StatusCheckByNino(), Start))
+
         givenAuthorisedForStride("TBC", "StrideUserId")
         val result = controller.showStatusCheckByNino(fakeRequest)
         status(result) shouldBe 200
@@ -186,11 +190,9 @@ class HomeOfficeSettledStatusFrontendControllerISpec
       }
 
       "redirect to start page if current state is StatusCheckFailure" in {
-        val query =
-          StatusCheckByNinoRequest(Nino("RJ301829A"), "Doe", "Jane", "2001-01-31")
+        val query = StatusCheckByNinoRequest(Nino("RJ301829A"), "Doe", "Jane", "2001-01-31")
         val queryError = StatusCheckError(errCode = "ERR_NOT_FOUND")
-        journey
-          .set(StatusCheckFailure("sjdfhks123", query, queryError), List(StatusCheckByNino(), Start))
+        journey.set(StatusCheckFailure("sjdfhks123", query, queryError), List(StatusCheckByNino(), Start))
         givenAuthorisedForStride("TBC", "StrideUserId")
         val result = controller.showStatusFound(fakeRequest)
         status(result) shouldBe 303
@@ -208,19 +210,19 @@ class HomeOfficeSettledStatusFrontendControllerISpec
         checkHtmlResultWithBodyText(result, htmlEscapedMessage("status-not-available.title"))
         checkHtmlResultWithBodyText(result, query.nino.formatted)
         checkHtmlResultWithBodyText(result, s"${query.givenName} ${query.familyName}")
+        checkHtmlResultWithBodyText(result, "31 January 2001")
       }
     }
 
     "GET /status-check-failure" should {
 
       "display not found page" in {
-        val query =
-          StatusCheckByNinoRequest(Nino("RJ301829A"), "Doe", "Jane", "2001-01-31")
+        val query = StatusCheckByNinoRequest(Nino("RJ301829A"), "Doe", "Jane", "2001-01-31")
         val queryError = StatusCheckError(errCode = "ERR_NOT_FOUND")
-        journey
-          .set(StatusCheckFailure("sjdfhks123", query, queryError), List(StatusCheckByNino(), Start))
+        journey.set(StatusCheckFailure("sjdfhks123", query, queryError), List(StatusCheckByNino(), Start))
         givenAuthorisedForStride("TBC", "StrideUserId")
         val result = controller.showStatusCheckFailure(fakeRequest)
+
         status(result) shouldBe 200
         checkHtmlResultWithBodyText(result, htmlEscapedMessage("status-check-failure.title"))
         checkHtmlResultWithBodyText(result, query.nino.formatted)
@@ -230,13 +232,12 @@ class HomeOfficeSettledStatusFrontendControllerISpec
       }
 
       "display unique match not found page" in {
-        val query =
-          StatusCheckByNinoRequest(Nino("RJ301829A"), "Doe", "Jane", "2001-01-31")
+        val query = StatusCheckByNinoRequest(Nino("RJ301829A"), "Doe", "Jane", "2001-01-31")
         val queryError = StatusCheckError(errCode = "ERR_CONFLICT")
-        journey
-          .set(StatusCheckFailure("sjdfhks123", query, queryError), List(StatusCheckByNino(), Start))
+        journey.set(StatusCheckFailure("sjdfhks123", query, queryError), List(StatusCheckByNino(), Start))
         givenAuthorisedForStride("TBC", "StrideUserId")
         val result = controller.showStatusCheckFailure(fakeRequest)
+
         status(result) shouldBe 200
         checkHtmlResultWithBodyText(result, htmlEscapedMessage("status-check-failure-conflict.title"))
         checkHtmlResultWithBodyText(result, htmlEscapedMessage("status-check-failure-conflict.listParagraph"))
@@ -263,7 +264,6 @@ class HomeOfficeSettledStatusFrontendControllerISpec
       }
     }
   }
-
 }
 
 trait JourneyStateHelpers extends JourneyTestData {

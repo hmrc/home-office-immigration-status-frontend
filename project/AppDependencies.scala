@@ -19,13 +19,15 @@ object AppDependencies {
   )
 
   private val test: Seq[ModuleID] = Seq(
-    "org.scalatest"               %% "scalatest"            % "3.2.9",
-    "org.mockito"                 %  "mockito-core"         % "3.5.15",
-    "org.scalatestplus.play"      %% "scalatestplus-play"   % "5.1.0",
-    "com.github.tomakehurst"      %  "wiremock"             % "2.27.2",
-    "com.vladsch.flexmark"        % "flexmark-all"          % "0.35.10",
-    "org.mockito"                 % "mockito-all"           % "1.10.19",
-    "org.pegdown"                 %  "pegdown"              % "1.6.0"
+    "org.scalatest"               %% "scalatest"                % "3.2.9",
+    "org.mockito"                 %  "mockito-core"             % "3.5.15",
+    "org.scalatestplus"           %% "scalatestplus-scalacheck" % "3.1.0.0-RC2",
+    "org.scalacheck"              %% "scalacheck"               % "1.14.3",
+    "org.scalatestplus.play"      %% "scalatestplus-play"       % "5.1.0",
+    "com.github.tomakehurst"      %  "wiremock"                 % "2.27.2",
+    "com.vladsch.flexmark"        % "flexmark-all"              % "0.35.10",
+    "org.mockito"                 % "mockito-all"               % "1.10.19",
+    "org.pegdown"                 %  "pegdown"                  % "1.6.0"
   ).map(_ % "test, it")
 
 
