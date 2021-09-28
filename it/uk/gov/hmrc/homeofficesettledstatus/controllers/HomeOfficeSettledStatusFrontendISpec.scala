@@ -23,7 +23,7 @@ class HomeOfficeSettledStatusFrontendISpec
 
   "HomeOfficeSettledStatusFrontend" when {
 
-    "GET /check-settled-status/" should {
+    "GET /check-immigration-status/" should {
       "show the lookup page" in {
         implicit val journeyId: JourneyId = JourneyId()
         givenAuthorisedForStride("TBC", "StrideUserId")
@@ -36,7 +36,7 @@ class HomeOfficeSettledStatusFrontendISpec
       }
     }
 
-    "POST /check-settled-status/check-with-nino" should {
+    "POST /check-immigration-status/check-with-nino" should {
       "submit the lookup form and show match found" in {
         implicit val journeyId: JourneyId = JourneyId()
         journey.setState(StatusCheckByNino())
@@ -86,7 +86,7 @@ class HomeOfficeSettledStatusFrontendISpec
       }
     }
 
-    "GET /check-settled-status/foo" should {
+    "GET /check-immigration-status/foo" should {
       "return an error page not found" in {
         implicit val journeyId: JourneyId = JourneyId()
         givenAuthorisedForStride("TBC", "StrideUserId")
