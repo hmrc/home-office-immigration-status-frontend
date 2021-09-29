@@ -1,6 +1,6 @@
 # Add all the application routes to the app.routes file
-->         /check-settled-status        app.Routes
-->         /                            health.Routes
+->         /check-immigration-status        app.Routes
+->         /                                health.Routes
 
 GET        /admin/metrics               @com.kenshoo.play.metrics.MetricsController.metrics
 

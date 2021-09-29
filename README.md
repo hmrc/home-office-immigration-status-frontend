@@ -18,7 +18,7 @@ Web application providing internal HMRC staff with an interface to check custome
 
 It should then be listening on port 10210
 
-    browse http://localhost:10210/check-settled-status
+    browse http://localhost:10210/check-immigration-status
 
 ### License
 

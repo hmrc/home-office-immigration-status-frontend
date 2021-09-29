@@ -27,7 +27,7 @@ class ShutteringFilterISpec extends NonAuthPageISpec("isShuttered" -> true) {
   "The shuttering filter" should {
     "display the shuttering page when the `isShuttered` property is true" in {
 
-      val result = await(ws.url(s"http://localhost:$port/check-settled-status").get)
+      val result = await(ws.url(s"http://localhost:$port/check-immigration-status").get)
 
       result.status shouldBe SERVICE_UNAVAILABLE
 

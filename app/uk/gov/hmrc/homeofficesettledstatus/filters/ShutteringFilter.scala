@@ -40,7 +40,7 @@ class ShutteringFilter @Inject()(
     configuration.getOptional[Boolean]("isShuttered").getOrElse(false)
 
   private def notARequestForAnAsset(implicit rh: RequestHeader) =
-    !(rh.path.startsWith("/template/") || rh.path.startsWith("/check-settled-status/assets/"))
+    !(rh.path.startsWith("/template/") || rh.path.startsWith("/check-immigration-status/assets/"))
 
   override def apply(next: RequestHeader => Future[Result])(rh: RequestHeader): Future[Result] = {
 
