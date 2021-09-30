@@ -16,20 +16,22 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.config
 
+import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import javax.inject.{Inject, Singleton}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.Duration
 
 @Singleton
-class AppConfig @Inject()(val servicesConfig: ServicesConfig) {
+class AppConfig @Inject()(servicesConfig: ServicesConfig, configuration: Configuration) {
 
-  lazy val appName: String = servicesConfig.getString("appName")
-  lazy val authBaseUrl: String = servicesConfig.baseUrl("auth")
-  lazy val homeOfficeSettledStatusProxyBaseUrl: String = servicesConfig.baseUrl("home-office-immigration-status-proxy")
-  lazy val mongoSessionExpiration: Duration = servicesConfig.getDuration("mongodb.session.expiration")
-  lazy val authorisedStrideGroup: String = servicesConfig.getString("authorisedStrideGroup")
-  lazy val defaultQueryTimeRangeInMonths: Int = servicesConfig.getInt("defaultQueryTimeRangeInMonths")
-  lazy val gtmId: String = servicesConfig.getString("google-tag-manager.id")
+  val appName: String = servicesConfig.getString("appName")
+  val shuttered: Boolean = configuration.getOptional[Boolean]("isShuttered").getOrElse(false)
+  val authBaseUrl: String = servicesConfig.baseUrl("auth")
+  val homeOfficeImmigrationStatusProxyBaseUrl: String = servicesConfig.baseUrl("home-office-immigration-status-proxy")
+  val mongoSessionExpiration: Duration = servicesConfig.getDuration("mongodb.session.expiration")
+  val authorisedStrideGroup: String = servicesConfig.getString("authorisedStrideGroup")
+  val defaultQueryTimeRangeInMonths: Int = servicesConfig.getInt("defaultQueryTimeRangeInMonths")
+  val gtmId: String = servicesConfig.getString("google-tag-manager.id")
 
 }

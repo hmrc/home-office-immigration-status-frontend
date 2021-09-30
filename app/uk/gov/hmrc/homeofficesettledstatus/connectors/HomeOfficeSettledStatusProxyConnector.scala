@@ -33,15 +33,12 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class HomeOfficeSettledStatusProxyConnector @Inject()(
-  appConfig: AppConfig,
-  http: HttpGet with HttpPost,
-  metrics: Metrics)
+class HomeOfficeSettledStatusProxyConnector @Inject()(appConfig: AppConfig, http: HttpClient, metrics: Metrics)
     extends HttpAPIMonitor {
 
   val HEADER_X_CORRELATION_ID = "X-Correlation-Id"
 
-  val baseUrl: String = appConfig.homeOfficeSettledStatusProxyBaseUrl
+  val baseUrl: String = appConfig.homeOfficeImmigrationStatusProxyBaseUrl
   val publicFundsByNinoPath = "/v1/status/public-funds/nino"
 
   override val kenshooRegistry: MetricRegistry = metrics.defaultRegistry
