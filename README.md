@@ -1,6 +1,6 @@
-# Home Office Settled Status Frontend
+# Home Office Immigration Status Frontend
 
-Web application providing internal HMRC staff with an interface to check customer's settled status and rights to public funds.
+Web application providing internal HMRC staff with an interface to check customer's immigration status and rights to public funds.
 
 ## Running the tests
 
@@ -12,8 +12,8 @@ Web application providing internal HMRC staff with an interface to check custome
 
 ## Running the app locally
 
-    sm --start HOSS_ALL -r
-    sm --stop HOME_OFFICE_SETTLED_STATUS_FRONTEND 
+    sm --start HOME_OFFICE_IMMIGRATION_STATUS_ALL -r
+    sm --stop HOME_OFFICE_IMMIGRATION_STATUS_FRONTEND 
     sbt run
 
 It should then be listening on port 10210

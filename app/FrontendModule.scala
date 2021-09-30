@@ -24,7 +24,7 @@ class FrontendModule(val environment: Environment, val configuration: Configurat
   override def configure(): Unit = {
     bind(classOf[CacheRepository]).to(classOf[JourneyCacheRepository])
 
-    bind(classOf[HomeOfficeSettledStatusFrontendJourneyServiceWithHeaderCarrier])
-      .to(classOf[MongoDBCachedHomeOfficeSettledStatusFrontendJourneyService])
+    bind(classOf[HomeOfficeImmigrationStatusFrontendJourneyServiceWithHeaderCarrier])
+      .to(classOf[MongoDBCachedHomeOfficeImmigrationStatusFrontendJourneyService])
   }
 }
