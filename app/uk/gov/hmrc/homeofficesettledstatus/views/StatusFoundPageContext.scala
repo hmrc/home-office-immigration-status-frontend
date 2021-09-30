@@ -47,8 +47,8 @@ case class StatusFoundPageContext(query: StatusCheckByNinoRequest, result: Statu
     case Some(s) if s.productType == EUS && s.immigrationStatus == ILR =>
       if (s.hasExpired) messages("app.hasSettledStatus.expired")
       else s" ${messages("app.hasSettledStatus")}"
-
-    case _ => messages("app.hasNoStatus")
+    case Some(s) => s" has FBIS status ${s.productType} - ${s.immigrationStatus}"
+    case _       => messages("app.hasNoStatus")
   }
 
 }

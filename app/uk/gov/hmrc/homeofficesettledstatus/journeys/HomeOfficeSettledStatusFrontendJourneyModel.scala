@@ -80,13 +80,10 @@ object HomeOfficeSettledStatusFrontendJourneyModel extends JourneyModel {
               goto(StatusCheckFailure(correlationId, query, error))
 
             case StatusCheckResponse(correlationId, _, Some(result)) =>
-              if (result.statuses.isEmpty) goto(StatusNotAvailable(correlationId, query))
-              else if (result.mostRecentStatus.exists(
-                         s => s.productType == EUS && ImmigrationStatus.settledStatusSet.contains(s.immigrationStatus)))
-                goto(StatusFound(correlationId, query, result))
-              else
-                goto(StatusCheckFailure(correlationId, query, StatusCheckError("UNSUPPORTED_STATUS")))
-
+              result.statuses match {
+                case Nil => goto(StatusNotAvailable(correlationId, query))
+                case _   => goto(StatusFound(correlationId, query, result))
+              }
             case StatusCheckResponse(correlationId, _, _) =>
               goto(StatusNotAvailable(correlationId, query))
           }
