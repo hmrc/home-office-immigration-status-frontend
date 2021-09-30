@@ -28,7 +28,7 @@ class AppConfig @Inject()(servicesConfig: ServicesConfig, configuration: Configu
   val appName: String = servicesConfig.getString("appName")
   val shuttered: Boolean = configuration.getOptional[Boolean]("isShuttered").getOrElse(false)
   val authBaseUrl: String = servicesConfig.baseUrl("auth")
-  val homeOfficeSettledStatusProxyBaseUrl: String = servicesConfig.baseUrl("home-office-settled-status-proxy")
+  val homeOfficeImmigrationStatusProxyBaseUrl: String = servicesConfig.baseUrl("home-office-immigration-status-proxy")
   val mongoSessionExpiration: Duration = servicesConfig.getDuration("mongodb.session.expiration")
   val authorisedStrideGroup: String = servicesConfig.getString("authorisedStrideGroup")
   val defaultQueryTimeRangeInMonths: Int = servicesConfig.getInt("defaultQueryTimeRangeInMonths")

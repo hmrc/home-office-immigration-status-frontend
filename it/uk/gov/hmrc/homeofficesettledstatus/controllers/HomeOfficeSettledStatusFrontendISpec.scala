@@ -23,7 +23,7 @@ class HomeOfficeSettledStatusFrontendISpec
 
   "HomeOfficeSettledStatusFrontend" when {
 
-    "GET /check-settled-status/" should {
+    "GET /check-immigration-status/" should {
       "show the lookup page" in {
         implicit val journeyId: JourneyId = JourneyId()
         givenAuthorisedForStride("TBC", "StrideUserId")
@@ -36,7 +36,7 @@ class HomeOfficeSettledStatusFrontendISpec
       }
     }
 
-    "POST /check-settled-status/check-with-nino" should {
+    "POST /check-immigration-status/check-with-nino" should {
       "submit the lookup form and show match found" in {
         implicit val journeyId: JourneyId = JourneyId()
         journey.setState(StatusCheckByNino())
@@ -86,7 +86,7 @@ class HomeOfficeSettledStatusFrontendISpec
       }
     }
 
-    "GET /check-settled-status/foo" should {
+    "GET /check-immigration-status/foo" should {
       "return an error page not found" in {
         implicit val journeyId: JourneyId = JourneyId()
         givenAuthorisedForStride("TBC", "StrideUserId")
@@ -125,7 +125,7 @@ trait HomeOfficeSettledStatusFrontendISpecSetup extends ServerISpec with ScalaFu
     override def getJourneyId(journeyId: JourneyId): Option[String] = Some(journeyId.value)
   }
 
-  val baseUrl: String = s"http://localhost:$port/check-settled-status"
+  val baseUrl: String = s"http://localhost:$port/check-immigration-status"
 
   def request(path: String)(implicit journeyId: JourneyId): WSRequest =
     wsClient

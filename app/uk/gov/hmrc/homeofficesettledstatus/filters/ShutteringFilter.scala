@@ -36,7 +36,7 @@ class ShutteringFilter @Inject()(val messagesApi: MessagesApi, errorTemplate: er
   private val isServiceShuttered: Boolean = appConfig.shuttered
 
   private def notARequestForAnAsset(implicit rh: RequestHeader) =
-    !(rh.path.startsWith("/template/") || rh.path.startsWith("/check-settled-status/assets/"))
+    !(rh.path.startsWith("/template/") || rh.path.startsWith("/check-immigration-status/assets/"))
 
   override def apply(next: RequestHeader => Future[Result])(rh: RequestHeader): Future[Result] = {
 

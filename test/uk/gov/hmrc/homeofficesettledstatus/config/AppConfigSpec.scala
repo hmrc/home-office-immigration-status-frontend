@@ -32,7 +32,7 @@ class AppConfigSpec extends PlaySpec with GuiceOneAppPerSuite {
     "contains correct configured values" must {
 
       "host" in {
-        appConfig.appName mustBe "home-office-settled-status-frontend"
+        appConfig.appName mustBe "home-office-immigration-status-frontend"
       }
 
       "authBaseUrl" in {
@@ -40,7 +40,7 @@ class AppConfigSpec extends PlaySpec with GuiceOneAppPerSuite {
       }
 
       "homeOfficeSettledStatusProxyBaseUrl" in {
-        appConfig.homeOfficeSettledStatusProxyBaseUrl mustBe "http://localhost:9388"
+        appConfig.homeOfficeImmigrationStatusProxyBaseUrl mustBe "http://localhost:10211"
       }
 
       "mongoSessionExpiryTime" in {

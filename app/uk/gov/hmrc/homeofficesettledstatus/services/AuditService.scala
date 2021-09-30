@@ -56,7 +56,7 @@ class AuditService @Inject()(val auditConnector: AuditConnector) {
     val detail = hc.toAuditDetails(details.map(pair => pair._1 -> pair._2.toString): _*)
     val tags = hc.toAuditTags(transactionName, request.path)
     DataEvent(
-      auditSource = "home-office-settled-status-frontend",
+      auditSource = "home-office-immigration-status-frontend",
       auditType = event.toString,
       tags = tags,
       detail = detail)
