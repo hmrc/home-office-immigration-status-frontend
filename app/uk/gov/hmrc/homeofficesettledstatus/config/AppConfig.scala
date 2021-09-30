@@ -16,15 +16,17 @@
 
 package uk.gov.hmrc.homeofficesettledstatus.config
 
+import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import javax.inject.{Inject, Singleton}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.Duration
 
 @Singleton
-class AppConfig @Inject()(servicesConfig: ServicesConfig) {
+class AppConfig @Inject()(servicesConfig: ServicesConfig, configuration: Configuration) {
 
   val appName: String = servicesConfig.getString("appName")
+  val shuttered: Boolean = configuration.getOptional[Boolean]("isShuttered").getOrElse(false)
   val authBaseUrl: String = servicesConfig.baseUrl("auth")
   val homeOfficeSettledStatusProxyBaseUrl: String = servicesConfig.baseUrl("home-office-settled-status-proxy")
   val mongoSessionExpiration: Duration = servicesConfig.getDuration("mongodb.session.expiration")

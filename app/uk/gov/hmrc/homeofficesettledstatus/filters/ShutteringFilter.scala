@@ -28,16 +28,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class ShutteringFilter @Inject()(
-  configuration: Configuration,
-  val messagesApi: MessagesApi,
-  errorTemplate: error_template)(implicit val mat: Materializer, appConfig: AppConfig)
+class ShutteringFilter @Inject()(val messagesApi: MessagesApi, errorTemplate: error_template)(
+  implicit val mat: Materializer,
+  appConfig: AppConfig)
     extends Filter with I18nSupport {
 
-  private implicit val C: Configuration = configuration
-
-  private lazy val isServiceShuttered: Boolean =
-    configuration.getOptional[Boolean]("isShuttered").getOrElse(false)
+  private val isServiceShuttered: Boolean = appConfig.shuttered
 
   private def notARequestForAnAsset(implicit rh: RequestHeader) =
     !(rh.path.startsWith("/template/") || rh.path.startsWith("/check-settled-status/assets/"))
