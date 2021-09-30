@@ -41,7 +41,7 @@ class HomeOfficeSettledStatusFrontendJourneyModelSpec
 
   val queryMonths = 6
 
-  "HomeOfficeSettledStatusFrontendJourneyModel" when {
+  "HomeOfficeStatusFrontendJourneyModel" when {
 
     "at state Start" should {
 
