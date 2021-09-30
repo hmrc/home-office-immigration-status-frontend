@@ -1,0 +1,99 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.homeofficeimmigrationstatus.views.{DateFormat, ISO31661Alpha3, StatusFoundPageContext}
+@import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
+
+@this(
+    govukButton : GovukButton,
+    govukWrapper: govuk_wrapper
+)
+
+@(context: StatusFoundPageContext)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+
+@locale = @{messages.lang.locale}
+
+@govukWrapper(title = messages("status-found.title") + context.currentStatusLabel) {
+
+    <h1 class="govuk-heading-xl" id="status-found-title"><span id="full-name">@context.result.fullName</span>@context.currentStatusLabel</h1>
+
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("generic.nino")</dt>
+            <dd id="nino" class="govuk-summary-list__value govuk-!-width-one-third">@context.query.nino.formatted</dd>
+        </div>
+
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("generic.dob")</dt>
+            <dd id="dob" class="govuk-summary-list__value govuk-!-width-one-third">@DateFormat.format(locale)(context.result.dateOfBirth)</dd>
+        </div>
+
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("generic.nationality")</dt>
+            <dd id="nationality" class="govuk-summary-list__value govuk-!-width-one-third">@ISO31661Alpha3.getCountryNameFor(context.result.nationality)</dd>
+        </div>
+
+        @context.mostRecentStatus.map(_.statusStartDate).map(DateFormat.format(locale)).map { statusStartDate =>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("status-found.startDate")</dt>
+                <dd id="startDate" class="govuk-summary-list__value govuk-!-width-one-third">@statusStartDate</dd>
+            </div>
+        }.getOrElse("")
+
+        @context.mostRecentStatus.flatMap(_.statusEndDate).map(DateFormat.format(locale)).map { statusEndDate =>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("status-found.expiryDate")</dt>
+                <dd id="expiryDate" class="govuk-summary-list__value govuk-!-width-one-third">@statusEndDate</dd>
+            </div>
+        }.getOrElse("")
+
+    </dl>
+
+    @if(context.previousStatuses.nonEmpty) {
+
+        <h2 class="govuk-heading-l">Previous status</h2>
+
+        @context.previousStatuses.zipWithIndex.map { case (status, index) =>
+
+            <dl class="govuk-summary-list">
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("status-found.previous.status")</dt>
+                    <dd id="status-previous-@index" class="govuk-summary-list__value govuk-!-width-one-third">@StatusFoundPageContext.immigrationStatusLabel(status.productType, status.immigrationStatus)</dd>
+                </div>
+
+                @Some(status).map(_.statusStartDate).map(DateFormat.format(locale)).map { statusStartDate =>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("status-found.previous.startDate")</dt>
+                        <dd id="startDate-previous-@index" class="govuk-summary-list__value govuk-!-width-one-third">@statusStartDate</dd>
+                    </div>
+                }.getOrElse("")
+
+                @Some(status).flatMap(_.statusEndDate).map(DateFormat.format(locale)).map { statusEndDate =>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("status-found.previous.expiryDate")</dt>
+                        <dd id="expiryDate-previous-@index" class="govuk-summary-list__value govuk-!-width-one-third">@statusEndDate</dd>
+                    </div>
+                }.getOrElse("")
+
+            </dl>
+        }
+    }
+
+    @govukButton(Button(content = Text(messages("generic.searchAgain")), href=Some(context.searchAgainCall.url)))
+
+
+}

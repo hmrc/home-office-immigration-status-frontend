@@ -34,13 +34,13 @@ error.givenName.invalid-format=Invalid first name
 error.browser.title.prefix = Error:
 
 # Service specific messages
-app.titleSuffix=Check settled status - GOV.UK
-app.name=Check settled status
-app.hasSettledStatus=has settled status
-app.hasPreSettledStatus=has pre-settled status
-app.hasSettledStatus.expired=’s settled status has ended
-app.hasPreSettledStatus.expired=’s pre-settled status has ended
-app.hasNoStatus=has no settled status
+app.titleSuffix=Check immigration status - GOV.UK
+app.name=Check immigration status
+app.hasImmigrationStatus=has settled status
+app.hasPreImmigrationStatus=has pre-settled status
+app.hasImmigrationStatus.expired=’s settled status has ended
+app.hasPreImmigrationStatus.expired=’s pre-settled status has ended
+app.hasNoStatus=has no immigration status
 app.hasNoActiveStatus=does not have an active status
 app.status.EUS_LTR=Pre settled status
 app.status.EUS_ILR=Settled status
@@ -112,7 +112,7 @@ shuttering.heading=Sorry, the service is unavailable
 shuttering.title=Service unavailable
 
 # Accessibility
-accessibility.title=Accessibility statement for check settled status
+accessibility.title=Accessibility statement for check immigration status
 
 # Footer Links
 footer.links.support_links.text=Support links

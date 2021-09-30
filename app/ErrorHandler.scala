@@ -22,9 +22,9 @@ import play.api.mvc.{Request, RequestHeader, Result}
 import play.api.{Configuration, Environment, Mode}
 import play.twirl.api.{Html, HtmlFormat}
 import uk.gov.hmrc.auth.core.{InsufficientEnrolments, NoActiveSession}
-import uk.gov.hmrc.homeofficesettledstatus.config.AppConfig
-import uk.gov.hmrc.homeofficesettledstatus.connectors.HomeOfficeSettledStatusProxyError
-import uk.gov.hmrc.homeofficesettledstatus.views.html.error_template
+import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
+import uk.gov.hmrc.homeofficeimmigrationstatus.connectors.HomeOfficeImmigrationStatusProxyError
+import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.error_template
 import uk.gov.hmrc.http.{JsValidationException, NotFoundException}
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.config.{AuthRedirects, HttpAuditEvent}
@@ -57,10 +57,10 @@ class ErrorHandler @Inject()(
     auditServerError(request, exception)
     implicit val r: Request[String] = Request(request, "")
     exception match {
-      case _: NoActiveSession                   => toGGLogin(if (isDevEnv) s"http://${request.host}${request.uri}" else s"${request.uri}")
-      case _: InsufficientEnrolments            => Forbidden
-      case _: HomeOfficeSettledStatusProxyError => Ok(externalErrorTemplate())
-      case _                                    => Ok(internalErrorTemplate())
+      case _: NoActiveSession                       => toGGLogin(if (isDevEnv) s"http://${request.host}${request.uri}" else s"${request.uri}")
+      case _: InsufficientEnrolments                => Forbidden
+      case _: HomeOfficeImmigrationStatusProxyError => Ok(externalErrorTemplate())
+      case _                                        => Ok(internalErrorTemplate())
     }
   }
 
