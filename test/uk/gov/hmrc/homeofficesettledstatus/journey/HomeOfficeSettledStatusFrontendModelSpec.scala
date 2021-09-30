@@ -32,7 +32,7 @@ import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class HomeOfficeSettledStatusFrontendModelSpec
+class HomeOfficeSettledStatusFrontendJourneyModelSpec
     extends AnyWordSpecLike with Matchers with OptionValues with StateMatchers[State] with TestData {
 
   // dummy journey context
@@ -41,7 +41,7 @@ class HomeOfficeSettledStatusFrontendModelSpec
 
   val queryMonths = 6
 
-  "HomeOfficeSettledStatusFrontendModel" when {
+  "HomeOfficeSettledStatusFrontendJourneyModel" when {
 
     "at state Start" should {
 
@@ -53,7 +53,7 @@ class HomeOfficeSettledStatusFrontendModelSpec
       }
       "throw an exception at Start when submitStatusCheckByNino" in {
         an[TransitionNotAllowed] shouldBe thrownBy {
-          given(Start) when submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(queryReturningMatch)
+          given(Start) when submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(queryReturningEUSMatch)
         }
       }
     }
@@ -68,24 +68,29 @@ class HomeOfficeSettledStatusFrontendModelSpec
       "stay at StatusCheckByNino when showStatusCheckByNino" in {
         atStatusCheckByNino when showStatusCheckByNino(userId) should thenGo(StatusCheckByNino())
       }
-      "transition to StatusFound when submitStatusCheckByNino with valid query" in {
-        atStatusCheckByNino when submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(queryReturningMatch) should thenGo(
-          StatusFound(correlationId, queryReturningMatch, matchFoundResult))
+      "transition to StatusFound when submitStatusCheckByNino with valid EUS query" in {
+        atStatusCheckByNino when submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(queryReturningEUSMatch) should thenGo(
+          StatusFound(correlationId, queryReturningEUSMatch, eusMatchFoundResult))
+      }
+      "transition to StatusFound when submitStatusCheckByNino with valid non-EUS query" in {
+        atStatusCheckByNino when
+          submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(queryReturningNonEUSMatch) should thenGo(
+          StatusFound(correlationId, queryReturningNonEUSMatch, nonEUSMatchFoundResult))
+      }
+      "transition to StatusFound when submitStatusCheckByNino with valid unknown status query" in {
+        atStatusCheckByNino when submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(
+          queryReturningUnknownMatch) should thenGo(
+          StatusFound(correlationId, queryReturningUnknownMatch, unknownMatchFoundResult))
       }
       "transition to StatusFound when submitStatusCheckByNino with valid query with date range" in {
         atStatusCheckByNino when submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(
           queryReturningMatchDateRange) should thenGo(
-          StatusFound(correlationId, queryReturningMatchDateRange, matchFoundResult))
+          StatusFound(correlationId, queryReturningMatchDateRange, eusMatchFoundResult))
       }
       "transition to StatusNotAvailable when submitStatusCheckByNino with valid query with date range" in {
         atStatusCheckByNino when submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(
           queryReturningEmptyResponse) should
           thenGo(StatusNotAvailable(correlationId, queryReturningEmptyResponse))
-      }
-      "transition to StatusCheckFailure when submitStatusCheckByNino with invalid query" in {
-        atStatusCheckByNino when submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(
-          queryReturningUnsupportedMatch) should thenGo(
-          StatusCheckFailure(correlationId, queryReturningUnsupportedMatch, errorUnsupportedStatus))
       }
       "transition to StatusNotAvailable when submitStatusCheckByNino returns empty response" in {
         atStatusCheckByNino when submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(
@@ -100,7 +105,7 @@ class HomeOfficeSettledStatusFrontendModelSpec
     "at state StatusFound" should {
 
       def atStatusFound =
-        given(StatusFound(correlationId, queryReturningMatch, matchFoundResult))
+        given(StatusFound(correlationId, queryReturningEUSMatch, eusMatchFoundResult))
           .withBreadcrumbs(StatusCheckByNino(), Start)
 
       "transition to Start when start" in {
@@ -111,7 +116,7 @@ class HomeOfficeSettledStatusFrontendModelSpec
       }
       "throw an exception at StatusFound when submitStatusCheckByNino with valid query" in {
         an[TransitionNotAllowed] shouldBe thrownBy {
-          atStatusFound when submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(queryReturningMatch)
+          atStatusFound when submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(queryReturningEUSMatch)
         }
       }
       "throw an exception at StatusFound when submitStatusCheckByNino with invalid query" in {
@@ -135,7 +140,8 @@ class HomeOfficeSettledStatusFrontendModelSpec
       }
       "throw an exception at StatusFound when submitStatusCheckByNino with valid query" in {
         an[TransitionNotAllowed] shouldBe thrownBy {
-          atStatusNotAvailable when submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(queryReturningMatch)
+          atStatusNotAvailable when submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(
+            queryReturningEUSMatch)
         }
       }
       "throw an exception at StatusFound when submitStatusCheckByNino with invalid query" in {
@@ -161,7 +167,8 @@ class HomeOfficeSettledStatusFrontendModelSpec
       }
       "throw an exception at StatusFound when submitStatusCheckByNino with valid query" in {
         an[TransitionNotAllowed] shouldBe thrownBy {
-          atStatusCheckFailure when submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(queryReturningMatch)
+          atStatusCheckFailure when submitStatusCheckByNino(checkStatusByNino, queryMonths)(userId)(
+            queryReturningEUSMatch)
         }
       }
       "throw an exception at StatusFound when submitStatusCheckByNino with invalid query" in {
@@ -195,8 +202,11 @@ trait TestData {
   val userId = "foo"
   val correlationId = "123"
 
-  val queryReturningMatch =
+  val queryReturningEUSMatch =
     StatusCheckByNinoRequest(Nino("RJ301829A"), "Doe", "Jane", "2001-01-31")
+
+  val queryReturningNonEUSMatch =
+    StatusCheckByNinoRequest(Nino("RJ123321A"), "Johnson", "Dave", "2001-02-28")
 
   val queryReturningMatchDateRange =
     StatusCheckByNinoRequest(
@@ -212,13 +222,13 @@ trait TestData {
   val queryReturningEmptyStatusList =
     StatusCheckByNinoRequest(Nino("SR137010A"), "FOO", "BAR", "1998-11-30")
 
-  val queryReturningUnsupportedMatch =
+  val queryReturningUnknownMatch =
     StatusCheckByNinoRequest(Nino("BS088353B"), "BAR", "FOO", "1999-12-31")
 
   val queryReturningNoMatch =
     StatusCheckByNinoRequest(Nino("AB888330D"), "DOLL", "MARIA", "1982-12-12")
 
-  val matchFoundResult = StatusCheckResult(
+  val eusMatchFoundResult = StatusCheckResult(
     fullName = "Jane Doe",
     dateOfBirth = LocalDate.parse("2001-01-31"),
     nationality = "IRL",
@@ -239,7 +249,21 @@ trait TestData {
     )
   )
 
-  val unsupportedMatchFoundResult = StatusCheckResult(
+  val nonEUSMatchFoundResult = StatusCheckResult(
+    fullName = "Dave Johnson",
+    dateOfBirth = LocalDate.parse("2001-02-28"),
+    nationality = "JPN",
+    statuses = List(
+      ImmigrationStatus(
+        statusStartDate = LocalDate.parse("2021-01-12"),
+        productType = "WORK",
+        immigrationStatus = "LTR",
+        noRecourseToPublicFunds = false
+      )
+    )
+  )
+
+  val unknownMatchFoundResult = StatusCheckResult(
     fullName = "Jane Doe",
     dateOfBirth = LocalDate.parse("2001-01-31"),
     nationality = "IRL",
@@ -254,20 +278,19 @@ trait TestData {
   )
 
   val errorNotFound = StatusCheckError(errCode = "ERR_NOT_FOUND")
-  val errorUnsupportedStatus = StatusCheckError(errCode = "UNSUPPORTED_STATUS")
+
+  val resultMap: Map[Nino, Option[StatusCheckResult]] = Map(
+    queryReturningEUSMatch.nino        -> Some(eusMatchFoundResult),
+    queryReturningNonEUSMatch.nino     -> Some(nonEUSMatchFoundResult),
+    queryReturningEmptyResponse.nino   -> None,
+    queryReturningEmptyStatusList.nino -> Some(eusMatchFoundResult.copy(statuses = List())),
+    queryReturningUnknownMatch.nino    -> Some(unknownMatchFoundResult)
+  )
 
   val checkStatusByNino: StatusCheckByNinoRequest => Future[StatusCheckResponse] =
     (request: StatusCheckByNinoRequest) =>
-      Future.successful(
-        if (request.nino == queryReturningMatch.nino)
-          StatusCheckResponse(correlationId = correlationId, result = Some(matchFoundResult))
-        else if (request.nino == queryReturningEmptyResponse.nino)
-          StatusCheckResponse(correlationId = correlationId)
-        else if (request.nino == queryReturningEmptyStatusList.nino)
-          StatusCheckResponse(correlationId = correlationId, result = Some(matchFoundResult.copy(statuses = List())))
-        else if (request.nino == queryReturningUnsupportedMatch.nino)
-          StatusCheckResponse(correlationId = correlationId, result = Some(unsupportedMatchFoundResult))
-        else
-          StatusCheckResponse(correlationId = correlationId, error = Some(errorNotFound)))
-
+      resultMap.get(request.nino) match {
+        case Some(result) => Future.successful(StatusCheckResponse(correlationId = correlationId, result = result))
+        case None         => Future.successful(StatusCheckResponse(correlationId = correlationId, error = Some(errorNotFound)))
+    }
 }
