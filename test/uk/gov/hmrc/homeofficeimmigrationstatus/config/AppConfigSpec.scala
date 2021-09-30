@@ -39,11 +39,7 @@ class AppConfigSpec extends PlaySpec with GuiceOneAppPerSuite {
         appConfig.authBaseUrl mustBe "http://localhost:8500"
       }
 
-<<<<<<< HEAD:test/uk/gov/hmrc/homeofficesettledstatus/config/AppConfigSpec.scala
-      "homeOfficeSettledStatusProxyBaseUrl" in {
-=======
       "homeOfficeImmigrationStatusProxyBaseUrl" in {
->>>>>>> HOSS2-149 - Update all references of settled status to immigration status:test/uk/gov/hmrc/homeofficeimmigrationstatus/config/AppConfigSpec.scala
         appConfig.homeOfficeImmigrationStatusProxyBaseUrl mustBe "http://localhost:10211"
       }
 

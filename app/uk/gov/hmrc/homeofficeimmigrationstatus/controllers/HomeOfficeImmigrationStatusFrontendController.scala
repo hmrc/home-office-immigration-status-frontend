@@ -23,23 +23,13 @@ import play.api.mvc._
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.domain.Nino
-<<<<<<< HEAD:app/uk/gov/hmrc/homeofficesettledstatus/controllers/HomeOfficeSettledStatusFrontendController.scala
-import uk.gov.hmrc.homeofficesettledstatus.config.AppConfig
-import uk.gov.hmrc.homeofficesettledstatus.connectors.HomeOfficeSettledStatusProxyConnector
-import uk.gov.hmrc.homeofficesettledstatus.journeys.HomeOfficeSettledStatusFrontendJourneyModel.State.{StatusCheckFailure, _}
-import uk.gov.hmrc.homeofficesettledstatus.models.{StatusCheckByNinoRequest, StatusCheckRange}
-import uk.gov.hmrc.homeofficesettledstatus.services.HomeOfficeSettledStatusFrontendJourneyServiceWithHeaderCarrier
-import uk.gov.hmrc.homeofficesettledstatus.views.html._
-import uk.gov.hmrc.homeofficesettledstatus.views.{StatusFoundPageContext, StatusNotAvailablePageContext}
-=======
 import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
-import uk.gov.hmrc.homeofficeimmigrationstatus.connectors.{FrontendAuthConnector, HomeOfficeImmigrationStatusProxyConnector}
+import uk.gov.hmrc.homeofficeimmigrationstatus.connectors.HomeOfficeImmigrationStatusProxyConnector
 import uk.gov.hmrc.homeofficeimmigrationstatus.journeys.HomeOfficeImmigrationStatusFrontendJourneyModel.State.{StatusCheckFailure, _}
 import uk.gov.hmrc.homeofficeimmigrationstatus.models.{StatusCheckByNinoRequest, StatusCheckRange}
 import uk.gov.hmrc.homeofficeimmigrationstatus.services.HomeOfficeImmigrationStatusFrontendJourneyServiceWithHeaderCarrier
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html._
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.{StatusFoundPageContext, StatusNotAvailablePageContext}
->>>>>>> HOSS2-149 - Update all references of settled status to immigration status:app/uk/gov/hmrc/homeofficeimmigrationstatus/controllers/HomeOfficeImmigrationStatusFrontendController.scala
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.fsm.{JourneyController, JourneyIdSupport}

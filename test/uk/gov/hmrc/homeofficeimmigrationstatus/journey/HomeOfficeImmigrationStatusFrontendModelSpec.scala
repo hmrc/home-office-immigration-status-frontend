@@ -32,11 +32,7 @@ import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-<<<<<<< HEAD:test/uk/gov/hmrc/homeofficesettledstatus/journey/HomeOfficeSettledStatusFrontendJourneyModelSpec.scala
-class HomeOfficeSettledStatusFrontendJourneyModelSpec
-=======
-class HomeOfficeImmigrationStatusFrontendModelSpec
->>>>>>> HOSS2-149 - Update all references of settled status to immigration status:test/uk/gov/hmrc/homeofficeimmigrationstatus/journey/HomeOfficeImmigrationStatusFrontendModelSpec.scala
+class HomeOfficeImmigrationStatusFrontendJourneyModelSpec
     extends AnyWordSpecLike with Matchers with OptionValues with StateMatchers[State] with TestData {
 
   // dummy journey context
@@ -45,11 +41,7 @@ class HomeOfficeImmigrationStatusFrontendModelSpec
 
   val queryMonths = 6
 
-<<<<<<< HEAD:test/uk/gov/hmrc/homeofficesettledstatus/journey/HomeOfficeSettledStatusFrontendJourneyModelSpec.scala
-  "HomeOfficeStatusFrontendJourneyModel" when {
-=======
-  "HomeOfficeImmigrationStatusFrontendModel" when {
->>>>>>> HOSS2-149 - Update all references of settled status to immigration status:test/uk/gov/hmrc/homeofficeimmigrationstatus/journey/HomeOfficeImmigrationStatusFrontendModelSpec.scala
+  "HomeOfficeImmigrationStatusFrontendJourneyModel" when {
 
     "at state Start" should {
 
