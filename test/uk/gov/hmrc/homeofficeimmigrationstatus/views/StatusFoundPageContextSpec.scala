@@ -35,8 +35,6 @@ class StatusFoundPageContextSpec
   val realMessages: Messages = app.injector.instanceOf[MessagesApi].preferred(Seq.empty[Lang])
   val mockMessages: Messages = mock(classOf[MessagesImpl], RETURNS_DEEP_STUBS)
   val currentStatusLabelMsg = "current status label msg"
-  //todo can the msg file contain &#32; (html space) to avoid this.
-  val currentStatusLabelMsgWithSpace = " " + currentStatusLabelMsg
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -44,195 +42,93 @@ class StatusFoundPageContextSpec
     when(mockMessages(any[String](), any())).thenReturn(currentStatusLabelMsg)
   }
 
-  val query = StatusCheckByNinoRequest(Nino("RJ301829A"), "Doe", "Jane", "2001-01-31")
-  val call = Call("GET", "/foo", "")
+  //todo nino generator
+  val query = StatusCheckByNinoRequest(Nino("RJ301829A"), "Surname", "Forename", "some dob")
+  val call = Call("GET", "/")
 
-  val ILR = ImmigrationStatus(
-    statusStartDate = LocalDate.parse("2019-12-12"),
-    statusEndDate = None,
-    productType = "EUS",
-    immigrationStatus = "ILR",
-    noRecourseToPublicFunds = true
-  )
-
-  val LTR = ImmigrationStatus(
-    statusStartDate = LocalDate.parse("2018-07-13"),
-    statusEndDate = Some(LocalDate.parse("2222-12-11")),
-    productType = "EUS",
-    immigrationStatus = "LTR",
-    noRecourseToPublicFunds = true
-  )
-
-  val ILR_EXPIRED = ImmigrationStatus(
-    statusStartDate = LocalDate.parse("2019-12-12"),
-    statusEndDate = Some(LocalDate.parse("2020-03-12")),
-    productType = "EUS",
-    immigrationStatus = "ILR",
-    noRecourseToPublicFunds = true
-  )
-
-  val LTR_EXPIRED = ImmigrationStatus(
-    statusStartDate = LocalDate.parse("2018-07-13"),
-    statusEndDate = Some(LocalDate.parse("2019-12-11")),
-    productType = "EUS",
-    immigrationStatus = "LTR",
-    noRecourseToPublicFunds = true
-  )
-
-  val FOO = ImmigrationStatus(
-    statusStartDate = LocalDate.parse("2015-11-11"),
-    statusEndDate = Some(LocalDate.parse("2018-01-20")),
-    productType = "FOO",
-    immigrationStatus = "BAR",
-    noRecourseToPublicFunds = false
-  )
-
-  "StatusFoundPageContext" should {
-    "return correct status info when single ILR" in {
-      val result = StatusCheckResult(
-        fullName = "Jane Doe",
-        dateOfBirth = LocalDate.parse("2001-01-31"),
-        nationality = "IRL",
-        statuses = List(ILR)
+  "currentStatusLabel" when {
+    def createContext(pt: String, is: String, endDate: Option[LocalDate]) =
+      StatusFoundPageContext(
+        query,
+        StatusCheckResult(
+          fullName = "Some name",
+          dateOfBirth = LocalDate.now,
+          nationality = "Some nationality",
+          statuses = List(ImmigrationStatus(LocalDate.MIN, endDate, pt, is, noRecourseToPublicFunds = true))
+        ),
+        call
       )
-      val context = StatusFoundPageContext(query, result, call)
-      context.hasImmigrationStatus shouldBe true
-      context.hasExpiredImmigrationStatus shouldBe false
-      context.mostRecentStatus shouldBe Some(ILR)
-      context.previousStatuses shouldBe Nil
-      context.statusClass shouldBe "success"
-      context.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsgWithSpace
-      val msgKey = "app.hasSettledStatus"
-      verify(mockMessages, times(1)).apply(msgKey)
-      realMessages(msgKey) should not be msgKey
+
+    Seq(
+      ("EUS", "ILR", "app.hasSettledStatus"),
+      ("EUS", "LTR", "app.hasPreSettledStatus"),
+      ("non eus", "LTR", "app.nonEUS.LTR")
+    ).foreach {
+      case (productType, immigrationStatus, msgKey) =>
+        s"productType is $productType and immigrationStatus is $immigrationStatus" should {
+
+          "give correct expired info" in {
+            val date = LocalDate.now().minusDays(1)
+            val sut = createContext(productType, immigrationStatus, Some(date))
+
+            sut.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
+            val msgKeyExpired = s"$msgKey.expired"
+            verify(mockMessages, times(1)).apply(msgKeyExpired)
+            realMessages(msgKeyExpired) should not be msgKeyExpired
+          }
+
+          "give correct in-time info" in {
+            val date = LocalDate.now()
+            val sut = createContext(productType, immigrationStatus, Some(date))
+
+            sut.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
+            verify(mockMessages, times(1)).apply(msgKey)
+            realMessages(msgKey) should not be msgKey
+          }
+        }
     }
 
-    "return correct status info when single LTR" in {
-      val result = StatusCheckResult(
-        fullName = "Jane Doe",
-        dateOfBirth = LocalDate.parse("2001-01-31"),
-        nationality = "IRL",
-        statuses = List(LTR)
-      )
-      val context = StatusFoundPageContext(query, result, call)
-      context.hasImmigrationStatus shouldBe true
-      context.hasExpiredImmigrationStatus shouldBe false
-      context.mostRecentStatus shouldBe Some(LTR)
-      context.previousStatuses shouldBe Nil
-      context.statusClass shouldBe "success"
-      context.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsgWithSpace
-      val msgKey = "app.hasPreSettledStatus"
-      verify(mockMessages, times(1)).apply(msgKey)
-      realMessages(msgKey) should not be msgKey
+    "the immigration status is unrecognised" should {
+      "provide a temporary description" in {
+        val context = createContext("FOO", "BAR", None)
+
+        context.currentStatusLabel(mockMessages) shouldBe " has FBIS status FOO - BAR"
+        verify(mockMessages, never()).apply(any[String](), any())
+      }
     }
 
-    "return correct status info when single expired ILR" in {
-      val result = StatusCheckResult(
-        fullName = "Jane Doe",
-        dateOfBirth = LocalDate.parse("2001-01-31"),
-        nationality = "IRL",
-        statuses = List(ILR_EXPIRED)
-      )
-      val context = StatusFoundPageContext(query, result, call)
-      context.hasImmigrationStatus shouldBe true
-      context.hasExpiredImmigrationStatus shouldBe true
-      context.mostRecentStatus shouldBe Some(ILR_EXPIRED)
-      context.previousStatuses shouldBe Nil
-      context.statusClass shouldBe "success"
-      context.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
-      val msgKey = "app.hasSettledStatus.expired"
-      verify(mockMessages, times(1)).apply(msgKey)
-      realMessages(msgKey) should not be msgKey
-    }
+    "there is no immigration Status" should {
+      "display no status" in {
+        val context = StatusFoundPageContext(
+          query,
+          StatusCheckResult("Some name", LocalDate.MIN, "some nation", statuses = Nil),
+          call)
 
-    "return correct status info when single expired LTR" in {
-      val result = StatusCheckResult(
-        fullName = "Jane Doe",
-        dateOfBirth = LocalDate.parse("2001-01-31"),
-        nationality = "IRL",
-        statuses = List(LTR_EXPIRED)
-      )
-      val context = StatusFoundPageContext(query, result, call)
-      context.hasImmigrationStatus shouldBe true
-      context.hasExpiredImmigrationStatus shouldBe true
-      context.mostRecentStatus shouldBe Some(LTR_EXPIRED)
-      context.previousStatuses shouldBe Nil
-      context.statusClass shouldBe "success"
-      context.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
-      val msgKey = "app.hasPreSettledStatus.expired"
-      verify(mockMessages, times(1)).apply(msgKey)
-      realMessages(msgKey) should not be msgKey
+        context.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
+        val msgKey = "app.hasNoStatus"
+        verify(mockMessages, times(1)).apply(msgKey)
+        realMessages(msgKey) should not be msgKey
+      }
     }
+  }
 
-    "return correct status info when none" in {
-      val result = StatusCheckResult(
-        fullName = "Jane Doe",
-        dateOfBirth = LocalDate.parse("2001-01-31"),
-        nationality = "IRL",
-        statuses = Nil
-      )
-      val context = StatusFoundPageContext(query, result, call)
-      context.hasImmigrationStatus shouldBe false
-      context.hasExpiredImmigrationStatus shouldBe false
-      context.mostRecentStatus shouldBe None
-      context.previousStatuses shouldBe Nil
-      context.statusClass shouldBe "error"
-      context.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
-      val msgKey = "app.hasNoStatus"
-      verify(mockMessages, times(1)).apply(msgKey)
-      realMessages(msgKey) should not be msgKey
+  "mostRecentStatus" should {
+    "return the results most recent" in {
+      val mockResult: StatusCheckResult = mock(classOf[StatusCheckResult])
+      val fakeImmigrationStatus = ImmigrationStatus(LocalDate.now(), None, "TEST", "STATUS", true)
+      when(mockResult.mostRecentStatus).thenReturn(Some(fakeImmigrationStatus))
+
+      StatusFoundPageContext(null, mockResult, null).mostRecentStatus shouldBe Some(fakeImmigrationStatus)
     }
+  }
 
-    "return correct status info when non-standard" in {
-      val result = StatusCheckResult(
-        fullName = "Jane Doe",
-        dateOfBirth = LocalDate.parse("2001-01-31"),
-        nationality = "IRL",
-        statuses = List(FOO)
-      )
-      val context = StatusFoundPageContext(query, result, call)
-      context.hasImmigrationStatus shouldBe false
-      context.hasExpiredImmigrationStatus shouldBe false
-      context.mostRecentStatus shouldBe Some(FOO)
-      context.previousStatuses shouldBe Nil
-      context.statusClass shouldBe "error"
-      context.currentStatusLabel(mockMessages) shouldBe " has FBIS status FOO - BAR"
-      verify(mockMessages, never()).apply(any[String](), any())
-    }
+  "previousStatuses" should {
+    "return the results most recent" in {
+      val mockResult: StatusCheckResult = mock(classOf[StatusCheckResult])
+      val fakeImmigrationStatus = ImmigrationStatus(LocalDate.now(), None, "TEST", "STATUS", true)
+      when(mockResult.previousStatuses).thenReturn(Seq(fakeImmigrationStatus))
 
-    //todo these tests are checking the sort functionailty.
-    "return correct status info when both ILR and LTR" in {
-      val result = StatusCheckResult(
-        fullName = "Jane Doe",
-        dateOfBirth = LocalDate.parse("2001-01-31"),
-        nationality = "IRL",
-        statuses = List(FOO, ILR, LTR_EXPIRED)
-      )
-      val context = StatusFoundPageContext(query, result, call)
-      context.hasImmigrationStatus shouldBe true
-      context.hasExpiredImmigrationStatus shouldBe false
-      context.mostRecentStatus shouldBe Some(ILR)
-      context.previousStatuses shouldBe Seq(LTR_EXPIRED, FOO)
-      context.statusClass shouldBe "success"
-      context.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsgWithSpace
-      val msgKey = "app.hasSettledStatus"
-      verify(mockMessages, times(1)).apply(msgKey)
-      realMessages(msgKey) should not be msgKey
-    }
-
-    "return correct status info when both ILR and LTR in reverse order" in {
-      val result = StatusCheckResult(
-        fullName = "Jane Doe",
-        dateOfBirth = LocalDate.parse("2001-01-31"),
-        nationality = "IRL",
-        statuses = List(LTR_EXPIRED, FOO, ILR)
-      )
-      val context = StatusFoundPageContext(query, result, call)
-      context.hasImmigrationStatus shouldBe true
-      context.hasExpiredImmigrationStatus shouldBe false
-      context.mostRecentStatus shouldBe Some(ILR)
-      context.previousStatuses shouldBe Seq(LTR_EXPIRED, FOO)
-      context.statusClass shouldBe "success"
+      StatusFoundPageContext(null, mockResult, null).previousStatuses shouldBe Seq(fakeImmigrationStatus)
     }
   }
 

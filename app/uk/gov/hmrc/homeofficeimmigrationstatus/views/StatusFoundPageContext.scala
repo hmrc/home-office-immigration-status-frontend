@@ -16,8 +16,6 @@
 
 package uk.gov.hmrc.homeofficeimmigrationstatus.views
 
-import java.time.LocalDate
-
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import uk.gov.hmrc.homeofficeimmigrationstatus.models.ImmigrationStatus.{EUS, ILR, LTR}
@@ -28,33 +26,22 @@ case class StatusFoundPageContext(query: StatusCheckByNinoRequest, result: Statu
   val mostRecentStatus: Option[ImmigrationStatus] = result.mostRecentStatus
   val previousStatuses: Seq[ImmigrationStatus] = result.previousStatuses
 
-  val hasImmigrationStatus: Boolean = mostRecentStatus.map(_.productType).contains(EUS) &&
-    mostRecentStatus
-      .map(_.immigrationStatus)
-      .exists(ImmigrationStatus.settledStatusSet.contains)
-
-  def today: LocalDate = LocalDate.now()
-
-  val hasExpiredImmigrationStatus: Boolean = hasImmigrationStatus && mostRecentStatus.exists(_.hasExpired)
-
-  val statusClass: String = if (hasImmigrationStatus) "success" else "error"
-
   def currentStatusLabel(implicit messages: Messages): String = mostRecentStatus match {
-    case Some(s) if s.productType == EUS && s.immigrationStatus == LTR =>
-      if (s.hasExpired) messages("app.hasPreSettledStatus.expired")
-      else s" ${messages("app.hasPreSettledStatus")}"
-
-    case Some(s) if s.productType == EUS && s.immigrationStatus == ILR =>
-      if (s.hasExpired) messages("app.hasSettledStatus.expired")
-      else s" ${messages("app.hasSettledStatus")}"
-    case Some(s) => s" has FBIS status ${s.productType} - ${s.immigrationStatus}"
-    case _       => messages("app.hasNoStatus")
+    case Some(status) =>
+      (status.productType, status.immigrationStatus) match {
+        case (EUS, LTR)                       => messages("app.hasPreSettledStatus" + status.expiredMessages)
+        case (EUS, ILR)                       => messages("app.hasSettledStatus" + status.expiredMessages)
+        case (pt, LTR) if pt != EUS           => messages("app.nonEUS.LTR" + status.expiredMessages)
+        case (productType, immigrationStatus) => s" has FBIS status $productType - $immigrationStatus"
+      }
+    case None => messages("app.hasNoStatus")
   }
 
 }
 
 object StatusFoundPageContext {
 
+  //todo what even is this?
   def immigrationStatusLabel(productType: String, status: String)(implicit messages: Messages): String =
     (productType, status) match {
       case (EUS, LTR) => messages("app.status.EUS_LTR")

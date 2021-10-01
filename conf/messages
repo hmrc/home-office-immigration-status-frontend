@@ -38,10 +38,12 @@ app.titleSuffix=Check immigration status - GOV.UK
 app.name=Check immigration status
 app.hasSettledStatus=has settled status
 app.hasSettledStatus.expired=’s settled status has ended
-app.hasPreSettledStatus=has pre-settled status
+app.hasPreSettledStatus=' has pre-settled status'
 app.hasPreSettledStatus.expired=’s pre-settled status has ended
-app.hasNoStatus=has no immigration status
+app.hasNoStatus=' has no immigration status'
 app.hasNoActiveStatus=does not have an active status
+app.nonEUS.LTR=' has leave to remain'
+app.nonEUS.LTR.expired='’s leave to remain has ended'
 app.status.EUS_LTR=Pre settled status
 app.status.EUS_ILR=Settled status
 

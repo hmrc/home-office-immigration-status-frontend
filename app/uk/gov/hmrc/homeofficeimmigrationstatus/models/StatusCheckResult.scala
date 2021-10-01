@@ -31,11 +31,13 @@ case class StatusCheckResult(
   statuses: List[ImmigrationStatus]
 ) {
 
+  // todo test this
   val mostRecentStatus: Option[ImmigrationStatus] =
     statuses
       .sortBy(f = _.statusStartDate.toEpochDay * -1)
       .headOption
 
+  // todo test this
   val previousStatuses: Seq[ImmigrationStatus] = {
     val sorted = statuses
       .sortBy(f = _.statusStartDate.toEpochDay * -1)
