@@ -59,10 +59,14 @@ class StatusFoundPageContextSpec
         call
       )
 
+    //todo standardise these message names eg   app.current.status.EUS.ILR.expired
     Seq(
       ("EUS", "ILR", "app.hasSettledStatus"),
       ("EUS", "LTR", "app.hasPreSettledStatus"),
-      ("non eus", "LTR", "app.nonEUS.LTR")
+      ("non EUS", "LTR", "app.nonEUS.LTR"),
+      ("non EUS", "ILR", "app.nonEUS.ILR"),
+      ("non EUS", "LTE", "app.nonEUS.LTE"),
+      ("EUS", "COA_IN_TIME_GRANT", "app.EUS.COA_IN_TIME_GRANT")
     ).foreach {
       case (productType, immigrationStatus, msgKey) =>
         s"productType is $productType and immigrationStatus is $immigrationStatus" should {

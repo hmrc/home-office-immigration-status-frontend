@@ -18,7 +18,7 @@ package uk.gov.hmrc.homeofficeimmigrationstatus.views
 
 import play.api.i18n.Messages
 import play.api.mvc.Call
-import uk.gov.hmrc.homeofficeimmigrationstatus.models.ImmigrationStatus.{EUS, ILR, LTR}
+import uk.gov.hmrc.homeofficeimmigrationstatus.models.ImmigrationStatus._
 import uk.gov.hmrc.homeofficeimmigrationstatus.models.{ImmigrationStatus, StatusCheckByNinoRequest, StatusCheckResult}
 
 case class StatusFoundPageContext(query: StatusCheckByNinoRequest, result: StatusCheckResult, searchAgainCall: Call) {
@@ -32,6 +32,9 @@ case class StatusFoundPageContext(query: StatusCheckByNinoRequest, result: Statu
         case (EUS, LTR)                       => messages("app.hasPreSettledStatus" + status.expiredMessages)
         case (EUS, ILR)                       => messages("app.hasSettledStatus" + status.expiredMessages)
         case (pt, LTR) if pt != EUS           => messages("app.nonEUS.LTR" + status.expiredMessages)
+        case (pt, ILR) if pt != EUS           => messages("app.nonEUS.ILR" + status.expiredMessages)
+        case (pt, LTE) if pt != EUS           => messages("app.nonEUS.LTE" + status.expiredMessages)
+        case (EUS, COA_IN_TIME_GRANT)         => messages("app.EUS.COA_IN_TIME_GRANT" + status.expiredMessages)
         case (productType, immigrationStatus) => s" has FBIS status $productType - $immigrationStatus"
       }
     case None => messages("app.hasNoStatus")

@@ -45,6 +45,8 @@ object ImmigrationStatus {
   val EUS = "EUS"
   val LTR = "LTR"
   val ILR = "ILR"
+  val LTE = "LTE"
+  val COA_IN_TIME_GRANT = "COA_IN_TIME_GRANT"
 
   val settledStatusSet: Set[String] = Set(ILR, LTR)
 
