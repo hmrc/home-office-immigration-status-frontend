@@ -16,17 +16,33 @@
 
 package uk.gov.hmrc.homeofficeimmigrationstatus.views
 
-import org.scalatest.matchers.should.Matchers
+import org.mockito.Mockito.{RETURNS_DEEP_STUBS, mock, never, reset, times, verify, when}
+import org.mockito.ArgumentMatchers.{any, anyList, matches}
 import org.scalatest.wordspec.AnyWordSpecLike
 
 import java.time.LocalDate
-import play.api.i18n.{DefaultMessagesApi, Lang, Messages, MessagesImpl}
+import play.api.i18n.{DefaultMessagesApi, Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.mvc.Call
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficeimmigrationstatus.models.{ImmigrationStatus, StatusCheckByNinoRequest, StatusCheckResult}
-import org.scalatest.OptionValues
+import org.scalatest.{BeforeAndAfterEach, OptionValues}
+import org.scalatest.matchers.should.Matchers
+import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 
-class StatusFoundPageContextSpec extends AnyWordSpecLike with Matchers with OptionValues {
+class StatusFoundPageContextSpec
+    extends AnyWordSpecLike with Matchers with OptionValues with BeforeAndAfterEach with GuiceOneServerPerSuite {
+
+  val realMessages: Messages = app.injector.instanceOf[MessagesApi].preferred(Seq.empty[Lang])
+  val mockMessages: Messages = mock(classOf[MessagesImpl], RETURNS_DEEP_STUBS)
+  val currentStatusLabelMsg = "current status label msg"
+  //todo can the msg file contain &#32; (html space) to avoid this.
+  val currentStatusLabelMsgWithSpace = " " + currentStatusLabelMsg
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockMessages)
+    when(mockMessages(any[String](), any())).thenReturn(currentStatusLabelMsg)
+  }
 
   val query = StatusCheckByNinoRequest(Nino("RJ301829A"), "Doe", "Jane", "2001-01-31")
   val call = Call("GET", "/foo", "")
@@ -67,7 +83,7 @@ class StatusFoundPageContextSpec extends AnyWordSpecLike with Matchers with Opti
     statusStartDate = LocalDate.parse("2015-11-11"),
     statusEndDate = Some(LocalDate.parse("2018-01-20")),
     productType = "FOO",
-    immigrationStatus = "FOO",
+    immigrationStatus = "BAR",
     noRecourseToPublicFunds = false
   )
 
@@ -85,6 +101,10 @@ class StatusFoundPageContextSpec extends AnyWordSpecLike with Matchers with Opti
       context.mostRecentStatus shouldBe Some(ILR)
       context.previousStatuses shouldBe Nil
       context.statusClass shouldBe "success"
+      context.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsgWithSpace
+      val msgKey = "app.hasSettledStatus"
+      verify(mockMessages, times(1)).apply(msgKey)
+      realMessages(msgKey) should not be msgKey
     }
 
     "return correct status info when single LTR" in {
@@ -100,6 +120,10 @@ class StatusFoundPageContextSpec extends AnyWordSpecLike with Matchers with Opti
       context.mostRecentStatus shouldBe Some(LTR)
       context.previousStatuses shouldBe Nil
       context.statusClass shouldBe "success"
+      context.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsgWithSpace
+      val msgKey = "app.hasPreSettledStatus"
+      verify(mockMessages, times(1)).apply(msgKey)
+      realMessages(msgKey) should not be msgKey
     }
 
     "return correct status info when single expired ILR" in {
@@ -115,6 +139,10 @@ class StatusFoundPageContextSpec extends AnyWordSpecLike with Matchers with Opti
       context.mostRecentStatus shouldBe Some(ILR_EXPIRED)
       context.previousStatuses shouldBe Nil
       context.statusClass shouldBe "success"
+      context.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
+      val msgKey = "app.hasSettledStatus.expired"
+      verify(mockMessages, times(1)).apply(msgKey)
+      realMessages(msgKey) should not be msgKey
     }
 
     "return correct status info when single expired LTR" in {
@@ -130,6 +158,10 @@ class StatusFoundPageContextSpec extends AnyWordSpecLike with Matchers with Opti
       context.mostRecentStatus shouldBe Some(LTR_EXPIRED)
       context.previousStatuses shouldBe Nil
       context.statusClass shouldBe "success"
+      context.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
+      val msgKey = "app.hasPreSettledStatus.expired"
+      verify(mockMessages, times(1)).apply(msgKey)
+      realMessages(msgKey) should not be msgKey
     }
 
     "return correct status info when none" in {
@@ -145,6 +177,10 @@ class StatusFoundPageContextSpec extends AnyWordSpecLike with Matchers with Opti
       context.mostRecentStatus shouldBe None
       context.previousStatuses shouldBe Nil
       context.statusClass shouldBe "error"
+      context.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
+      val msgKey = "app.hasNoStatus"
+      verify(mockMessages, times(1)).apply(msgKey)
+      realMessages(msgKey) should not be msgKey
     }
 
     "return correct status info when non-standard" in {
@@ -160,8 +196,11 @@ class StatusFoundPageContextSpec extends AnyWordSpecLike with Matchers with Opti
       context.mostRecentStatus shouldBe Some(FOO)
       context.previousStatuses shouldBe Nil
       context.statusClass shouldBe "error"
+      context.currentStatusLabel(mockMessages) shouldBe " has FBIS status FOO - BAR"
+      verify(mockMessages, never()).apply(any[String](), any())
     }
 
+    //todo these tests are checking the sort functionailty.
     "return correct status info when both ILR and LTR" in {
       val result = StatusCheckResult(
         fullName = "Jane Doe",
@@ -175,6 +214,10 @@ class StatusFoundPageContextSpec extends AnyWordSpecLike with Matchers with Opti
       context.mostRecentStatus shouldBe Some(ILR)
       context.previousStatuses shouldBe Seq(LTR_EXPIRED, FOO)
       context.statusClass shouldBe "success"
+      context.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsgWithSpace
+      val msgKey = "app.hasSettledStatus"
+      verify(mockMessages, times(1)).apply(msgKey)
+      realMessages(msgKey) should not be msgKey
     }
 
     "return correct status info when both ILR and LTR in reverse order" in {
@@ -191,17 +234,21 @@ class StatusFoundPageContextSpec extends AnyWordSpecLike with Matchers with Opti
       context.previousStatuses shouldBe Seq(LTR_EXPIRED, FOO)
       context.statusClass shouldBe "success"
     }
+  }
 
-    "show status label" in {
-      implicit val messages: Messages =
-        MessagesImpl(
-          Lang("en-UK"),
-          new DefaultMessagesApi(
-            Map("en-UK" -> Map("app.status.EUS_LTR" -> "foo123", "app.status.EUS_ILR" -> "bar456"))))
+  "show status label" should {
+    implicit val messages: Messages =
+      MessagesImpl(
+        Lang("en-UK"),
+        new DefaultMessagesApi(Map("en-UK" -> Map("app.status.EUS_LTR" -> "foo123", "app.status.EUS_ILR" -> "bar456"))))
+    "work for EUS-LTR" in {
       StatusFoundPageContext.immigrationStatusLabel("EUS", "LTR") shouldBe "foo123"
+    }
+    "work for EUS-ILR" in {
       StatusFoundPageContext.immigrationStatusLabel("EUS", "ILR") shouldBe "bar456"
+    }
+    "work for unknown" in {
       StatusFoundPageContext.immigrationStatusLabel("FOO", "BAR") shouldBe "FOO + BAR"
     }
-
   }
 }
