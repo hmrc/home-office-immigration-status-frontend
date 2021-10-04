@@ -21,30 +21,37 @@ import play.api.mvc.Call
 import uk.gov.hmrc.homeofficeimmigrationstatus.models.ImmigrationStatus._
 import uk.gov.hmrc.homeofficeimmigrationstatus.models.{ImmigrationStatus, StatusCheckByNinoRequest, StatusCheckResult}
 
-case class StatusFoundPageContext(query: StatusCheckByNinoRequest, result: StatusCheckResult, searchAgainCall: Call) {
+final case class StatusFoundPageContext(
+  query: StatusCheckByNinoRequest,
+  result: StatusCheckResult,
+  searchAgainCall: Call) {
 
   val mostRecentStatus: Option[ImmigrationStatus] = result.mostRecentStatus
   val previousStatuses: Seq[ImmigrationStatus] = result.previousStatuses
 
-  def currentStatusLabel(implicit messages: Messages): String = mostRecentStatus match {
-    case Some(status) =>
-      (status.productType, status.immigrationStatus) match {
-        case (EUS, LTR)                       => messages("app.hasPreSettledStatus" + status.expiredMessages)
-        case (EUS, ILR)                       => messages("app.hasSettledStatus" + status.expiredMessages)
-        case (pt, LTR) if pt != EUS           => messages("app.nonEUS.LTR" + status.expiredMessages)
-        case (pt, ILR) if pt != EUS           => messages("app.nonEUS.ILR" + status.expiredMessages)
-        case (pt, LTE) if pt != EUS           => messages("app.nonEUS.LTE" + status.expiredMessages)
-        case (EUS, COA_IN_TIME_GRANT)         => messages("app.EUS.COA_IN_TIME_GRANT" + status.expiredMessages)
-        case (productType, immigrationStatus) => s" has FBIS status $productType - $immigrationStatus"
-      }
-    case None => messages("app.hasNoStatus")
+  def currentStatusLabel(implicit messages: Messages): String = {
+    val prefix = "status-found.current."
+    mostRecentStatus match {
+      case Some(status) =>
+        (status.productType, status.immigrationStatus) match {
+          case (EUS, LTR)                       => messages(prefix + "EUS.LTR" + status.expiredMsg)
+          case (EUS, ILR)                       => messages(prefix + "EUS.ILR" + status.expiredMsg)
+          case (pt, LTR) if pt != EUS           => messages(prefix + "nonEUS.LTR" + status.expiredMsg)
+          case (pt, ILR) if pt != EUS           => messages(prefix + "nonEUS.ILR" + status.expiredMsg)
+          case (pt, LTE) if pt != EUS           => messages(prefix + "nonEUS.LTE" + status.expiredMsg)
+          case (EUS, COA_IN_TIME_GRANT)         => messages(prefix + "EUS.COA_IN_TIME_GRANT" + status.expiredMsg)
+          case (EUS, POST_GRACE_PERIOD_COA)     => messages(prefix + "EUS.POST_GRACE_PERIOD_COA_GRANT" + status.expiredMsg)
+          case (FRONTIER_WORKER, PERMIT)        => messages(prefix + "FRONTIER_WORKER.PERMIT" + status.expiredMsg)
+          case (productType, immigrationStatus) => messages(prefix + "hasFBIS", productType, immigrationStatus)
+        }
+      case None => messages("status-found.current.noStatus")
+    }
   }
 
 }
 
 object StatusFoundPageContext {
 
-  //todo what even is this?
   def immigrationStatusLabel(productType: String, status: String)(implicit messages: Messages): String =
     (productType, status) match {
       case (EUS, LTR) => messages("app.status.EUS_LTR")

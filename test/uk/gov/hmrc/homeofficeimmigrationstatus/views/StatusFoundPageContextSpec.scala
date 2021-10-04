@@ -17,7 +17,7 @@
 package uk.gov.hmrc.homeofficeimmigrationstatus.views
 
 import org.mockito.Mockito.{RETURNS_DEEP_STUBS, mock, never, reset, times, verify, when}
-import org.mockito.ArgumentMatchers.{any, anyList, matches}
+import org.mockito.ArgumentMatchers.{any, matches}
 import org.scalatest.wordspec.AnyWordSpecLike
 
 import java.time.LocalDate
@@ -27,20 +27,26 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficeimmigrationstatus.models.{ImmigrationStatus, StatusCheckByNinoRequest, StatusCheckResult}
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import org.scalatest.matchers.should.Matchers
-import org.scalatestplus.play.guice.GuiceOneServerPerSuite
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 
 class StatusFoundPageContextSpec
-    extends AnyWordSpecLike with Matchers with OptionValues with BeforeAndAfterEach with GuiceOneServerPerSuite {
+    extends AnyWordSpecLike with Matchers with OptionValues with BeforeAndAfterEach with GuiceOneAppPerSuite {
 
   val realMessages: Messages = app.injector.instanceOf[MessagesApi].preferred(Seq.empty[Lang])
+  //todo mockito Sugar
   val mockMessages: Messages = mock(classOf[MessagesImpl], RETURNS_DEEP_STUBS)
   val currentStatusLabelMsg = "current status label msg"
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockMessages)
-    when(mockMessages(any[String](), any())).thenReturn(currentStatusLabelMsg)
+    when(mockMessages(matches("status-found\\.current.*"), any())).thenReturn(currentStatusLabelMsg)
   }
+
+  def checkMessagesFile(key: String) =
+    withClue("msg key not defined in messages file") {
+      realMessages(key) should not be key
+    }
 
   //todo nino generator
   val query = StatusCheckByNinoRequest(Nino("RJ301829A"), "Surname", "Forename", "some dob")
@@ -59,14 +65,15 @@ class StatusFoundPageContextSpec
         call
       )
 
-    //todo standardise these message names eg   app.current.status.EUS.ILR.expired
     Seq(
-      ("EUS", "ILR", "app.hasSettledStatus"),
-      ("EUS", "LTR", "app.hasPreSettledStatus"),
-      ("non EUS", "LTR", "app.nonEUS.LTR"),
-      ("non EUS", "ILR", "app.nonEUS.ILR"),
-      ("non EUS", "LTE", "app.nonEUS.LTE"),
-      ("EUS", "COA_IN_TIME_GRANT", "app.EUS.COA_IN_TIME_GRANT")
+      ("EUS", "ILR", "status-found.current.EUS.ILR"),
+      ("EUS", "LTR", "status-found.current.EUS.LTR"),
+      ("non EUS", "LTR", "status-found.current.nonEUS.LTR"),
+      ("non EUS", "ILR", "status-found.current.nonEUS.ILR"),
+      ("non EUS", "LTE", "status-found.current.nonEUS.LTE"),
+      ("EUS", "COA_IN_TIME_GRANT", "status-found.current.EUS.COA_IN_TIME_GRANT"),
+      ("EUS", "POST_GRACE_PERIOD_COA_GRANT", "status-found.current.EUS.POST_GRACE_PERIOD_COA_GRANT"),
+      ("FRONTIER WORKER", "PERMIT", "status-found.current.FRONTIER_WORKER.PERMIT")
     ).foreach {
       case (productType, immigrationStatus, msgKey) =>
         s"productType is $productType and immigrationStatus is $immigrationStatus" should {
@@ -78,7 +85,7 @@ class StatusFoundPageContextSpec
             sut.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
             val msgKeyExpired = s"$msgKey.expired"
             verify(mockMessages, times(1)).apply(msgKeyExpired)
-            realMessages(msgKeyExpired) should not be msgKeyExpired
+            checkMessagesFile(msgKeyExpired)
           }
 
           "give correct in-time info" in {
@@ -87,7 +94,7 @@ class StatusFoundPageContextSpec
 
             sut.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
             verify(mockMessages, times(1)).apply(msgKey)
-            realMessages(msgKey) should not be msgKey
+            checkMessagesFile(msgKey)
           }
         }
     }
@@ -95,9 +102,10 @@ class StatusFoundPageContextSpec
     "the immigration status is unrecognised" should {
       "provide a temporary description" in {
         val context = createContext("FOO", "BAR", None)
+        val msgKey = "status-found.current.hasFBIS"
 
-        context.currentStatusLabel(mockMessages) shouldBe " has FBIS status FOO - BAR"
-        verify(mockMessages, never()).apply(any[String](), any())
+        context.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
+        checkMessagesFile(msgKey)
       }
     }
 
@@ -109,9 +117,9 @@ class StatusFoundPageContextSpec
           call)
 
         context.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
-        val msgKey = "app.hasNoStatus"
+        val msgKey = "status-found.current.noStatus"
         verify(mockMessages, times(1)).apply(msgKey)
-        realMessages(msgKey) should not be msgKey
+        checkMessagesFile(msgKey)
       }
     }
   }
