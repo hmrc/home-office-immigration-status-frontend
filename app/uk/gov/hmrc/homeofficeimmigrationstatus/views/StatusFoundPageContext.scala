@@ -33,18 +33,19 @@ final case class StatusFoundPageContext(
     val prefix = "status-found.current."
     mostRecentStatus match {
       case Some(status) =>
+        def key(key: String): String = prefix + key + status.expiredMsg
         (status.productType, status.immigrationStatus) match {
-          case (EUS, LTR)                       => messages(prefix + "EUS.LTR" + status.expiredMsg)
-          case (EUS, ILR)                       => messages(prefix + "EUS.ILR" + status.expiredMsg)
-          case (pt, LTR) if pt != EUS           => messages(prefix + "nonEUS.LTR" + status.expiredMsg)
-          case (pt, ILR) if pt != EUS           => messages(prefix + "nonEUS.ILR" + status.expiredMsg)
-          case (pt, LTE) if pt != EUS           => messages(prefix + "nonEUS.LTE" + status.expiredMsg)
-          case (EUS, COA_IN_TIME_GRANT)         => messages(prefix + "EUS.COA_IN_TIME_GRANT" + status.expiredMsg)
-          case (EUS, POST_GRACE_PERIOD_COA)     => messages(prefix + "EUS.POST_GRACE_PERIOD_COA_GRANT" + status.expiredMsg)
-          case (FRONTIER_WORKER, PERMIT)        => messages(prefix + "FRONTIER_WORKER.PERMIT" + status.expiredMsg)
+          case (EUS, LTR)                       => messages(key("EUS.LTR"))
+          case (EUS, ILR)                       => messages(key("EUS.ILR"))
+          case (pt, LTR) if pt != EUS           => messages(key("nonEUS.LTR"))
+          case (pt, ILR) if pt != EUS           => messages(key("nonEUS.ILR"))
+          case (pt, LTE) if pt != EUS           => messages(key("nonEUS.LTE"))
+          case (EUS, COA_IN_TIME_GRANT)         => messages(key("EUS.COA_IN_TIME_GRANT"))
+          case (EUS, POST_GRACE_PERIOD_COA)     => messages(key("EUS.POST_GRACE_PERIOD_COA_GRANT"))
+          case (FRONTIER_WORKER, PERMIT)        => messages(key("FRONTIER_WORKER.PERMIT"))
           case (productType, immigrationStatus) => messages(prefix + "hasFBIS", productType, immigrationStatus)
         }
-      case None => messages("status-found.current.noStatus")
+      case None => messages(prefix + "noStatus")
     }
   }
 

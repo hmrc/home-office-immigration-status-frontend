@@ -20,7 +20,7 @@ import java.time.LocalDate
 
 import play.api.libs.json.{Format, Json}
 
-final case class StatusCheckResult(
+case class StatusCheckResult(
   fullName: String,
   dateOfBirth: LocalDate,
   nationality: String, // (ICAO 3 letter acronym - ISO 3166-1)
