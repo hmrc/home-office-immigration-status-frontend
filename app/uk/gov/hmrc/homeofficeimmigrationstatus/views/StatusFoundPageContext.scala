@@ -39,9 +39,9 @@ final case class StatusFoundPageContext(
           case (EUS, ILR)                       => messages(key("EUS.ILR"))
           case (_, LTR)                         => messages(key("nonEUS.LTR"))
           case (_, ILR)                         => messages(key("nonEUS.ILR"))
-          case (pt, LTE) if pt != EUS           => messages(key("nonEUS.LTE"))
-          case (EUS, COA_IN_TIME_GRANT)         => messages(key("EUS.COA_IN_TIME_GRANT"))
-          case (EUS, POST_GRACE_PERIOD_COA)     => messages(key("EUS.POST_GRACE_PERIOD_COA_GRANT"))
+          case (_, LTE)                         => messages(key("nonEUS.LTE"))
+          case (EUS, COA_IN_TIME_GRANT)         => messages(prefix + "EUS.COA")
+          case (EUS, POST_GRACE_PERIOD_COA)     => messages(prefix + "EUS.COA")
           case (FRONTIER_WORKER, PERMIT)        => messages(key("FRONTIER_WORKER.PERMIT"))
           case (productType, immigrationStatus) => messages(prefix + "hasFBIS", productType, immigrationStatus)
         }
