@@ -19,8 +19,9 @@ package uk.gov.hmrc.homeofficeimmigrationstatus.views
 import org.mockito.Mockito.{RETURNS_DEEP_STUBS, mock, never, reset, times, verify, when}
 import org.mockito.ArgumentMatchers.{any, anyList, matches}
 import org.scalatest.wordspec.AnyWordSpecLike
-
 import java.time.LocalDate
+
+import org.openqa.selenium.By
 import play.api.i18n.{DefaultMessagesApi, Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.mvc.Call
 import uk.gov.hmrc.domain.Nino
@@ -95,6 +96,7 @@ class StatusFoundPageContextSpec
         nationality = "IRL",
         statuses = List(ILR)
       )
+
       val context = StatusFoundPageContext(query, result, call)
       context.hasImmigrationStatus shouldBe true
       context.hasExpiredImmigrationStatus shouldBe false
@@ -102,6 +104,8 @@ class StatusFoundPageContextSpec
       context.previousStatuses shouldBe Nil
       context.statusClass shouldBe "success"
       context.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsgWithSpace
+      context.noRecourseToPublicFunds shouldBe "No"
+
       val msgKey = "app.hasSettledStatus"
       verify(mockMessages, times(1)).apply(msgKey)
       realMessages(msgKey) should not be msgKey
@@ -114,6 +118,7 @@ class StatusFoundPageContextSpec
         nationality = "IRL",
         statuses = List(LTR)
       )
+
       val context = StatusFoundPageContext(query, result, call)
       context.hasImmigrationStatus shouldBe true
       context.hasExpiredImmigrationStatus shouldBe false
@@ -121,6 +126,8 @@ class StatusFoundPageContextSpec
       context.previousStatuses shouldBe Nil
       context.statusClass shouldBe "success"
       context.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsgWithSpace
+      context.noRecourseToPublicFunds shouldBe "No"
+
       val msgKey = "app.hasPreSettledStatus"
       verify(mockMessages, times(1)).apply(msgKey)
       realMessages(msgKey) should not be msgKey
@@ -140,6 +147,8 @@ class StatusFoundPageContextSpec
       context.previousStatuses shouldBe Nil
       context.statusClass shouldBe "success"
       context.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
+      context.noRecourseToPublicFunds shouldBe "No"
+
       val msgKey = "app.hasSettledStatus.expired"
       verify(mockMessages, times(1)).apply(msgKey)
       realMessages(msgKey) should not be msgKey
@@ -159,6 +168,8 @@ class StatusFoundPageContextSpec
       context.previousStatuses shouldBe Nil
       context.statusClass shouldBe "success"
       context.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
+      context.noRecourseToPublicFunds shouldBe "No"
+
       val msgKey = "app.hasPreSettledStatus.expired"
       verify(mockMessages, times(1)).apply(msgKey)
       realMessages(msgKey) should not be msgKey
@@ -178,6 +189,8 @@ class StatusFoundPageContextSpec
       context.previousStatuses shouldBe Nil
       context.statusClass shouldBe "error"
       context.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
+      context.noRecourseToPublicFunds shouldBe "Yes"
+
       val msgKey = "app.hasNoStatus"
       verify(mockMessages, times(1)).apply(msgKey)
       realMessages(msgKey) should not be msgKey
@@ -197,6 +210,8 @@ class StatusFoundPageContextSpec
       context.previousStatuses shouldBe Nil
       context.statusClass shouldBe "error"
       context.currentStatusLabel(mockMessages) shouldBe " has FBIS status FOO - BAR"
+      context.noRecourseToPublicFunds shouldBe "Yes"
+
       verify(mockMessages, never()).apply(any[String](), any())
     }
 
@@ -215,6 +230,8 @@ class StatusFoundPageContextSpec
       context.previousStatuses shouldBe Seq(LTR_EXPIRED, FOO)
       context.statusClass shouldBe "success"
       context.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsgWithSpace
+      context.noRecourseToPublicFunds shouldBe "No"
+
       val msgKey = "app.hasSettledStatus"
       verify(mockMessages, times(1)).apply(msgKey)
       realMessages(msgKey) should not be msgKey
@@ -233,6 +250,15 @@ class StatusFoundPageContextSpec
       context.mostRecentStatus shouldBe Some(ILR)
       context.previousStatuses shouldBe Seq(LTR_EXPIRED, FOO)
       context.statusClass shouldBe "success"
+      context.noRecourseToPublicFunds shouldBe "No"
+    }
+
+    "when noRecourseToPublicFunds is true, recourse is set to No and the warning is shown" in {
+
+    }
+
+    "when noRecourseToPublicFunds is false, recourse is set to Yes and the warning and field are hidden" in {
+
     }
   }
 

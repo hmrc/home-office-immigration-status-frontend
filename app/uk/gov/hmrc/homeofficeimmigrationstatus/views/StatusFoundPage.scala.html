@@ -30,6 +30,23 @@
 
     <h1 class="govuk-heading-xl" id="status-found-title"><span id="full-name">@context.result.fullName</span>@context.currentStatusLabel</h1>
 
+    @if(context.noRecourseToPublicFunds == "No") {
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("generic.recourse")</dt>
+            <dd id="recourse" class="govuk-summary-list__value govuk-!-width-one-third">@context.noRecourseToPublicFunds</dd>
+        </div>
+    </dl>
+
+    <div class="govuk-warning-text">
+        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+        <strong class="govuk-warning-text__text">
+            <span class="govuk-warning-text__assistive">Warning</span>
+            @messages("status-found.warning")
+        </strong>
+    </div>
+    }
+
     <dl class="govuk-summary-list">
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("generic.nino")</dt>
@@ -94,6 +111,4 @@
     }
 
     @govukButton(Button(content = Text(messages("generic.searchAgain")), href=Some(context.searchAgainCall.url)))
-
-
 }

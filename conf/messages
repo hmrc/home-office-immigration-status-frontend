@@ -15,6 +15,7 @@ generic.dob.lowercase=date of birth
 generic.nationality=Country of nationality
 generic.searchAgain=Search again
 generic.change=Change
+generic.recourse=Recourse to public funds
 
 # Validation errors
 error.summary.heading=There is a problem
@@ -73,6 +74,7 @@ status-found.expiryDate=Expiry date
 status-found.previous.status=Previous status
 status-found.previous.startDate=Previous start date
 status-found.previous.expiryDate=Previous expiry date
+status-found.warning=You need to check if there are exceptions that may mean a customer has the right to certain benefits, such as Child Benefit.
 
 # Status not available page
 status-not-available.title=Applicant does not have an active status

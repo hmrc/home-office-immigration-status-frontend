@@ -29,9 +29,9 @@ case class StatusFoundPageContext(query: StatusCheckByNinoRequest, result: Statu
   val previousStatuses: Seq[ImmigrationStatus] = result.previousStatuses
 
   val hasImmigrationStatus: Boolean = mostRecentStatus.map(_.productType).contains(EUS) &&
-    mostRecentStatus
-      .map(_.immigrationStatus)
-      .exists(ImmigrationStatus.settledStatusSet.contains)
+    mostRecentStatus.map(_.immigrationStatus).exists(ImmigrationStatus.settledStatusSet.contains)
+
+  val noRecourseToPublicFunds: String = if (mostRecentStatus.exists(_.noRecourseToPublicFunds)) "No" else "Yes"
 
   def today: LocalDate = LocalDate.now()
 
@@ -50,7 +50,6 @@ case class StatusFoundPageContext(query: StatusCheckByNinoRequest, result: Statu
     case Some(s) => s" has FBIS status ${s.productType} - ${s.immigrationStatus}"
     case _       => messages("app.hasNoStatus")
   }
-
 }
 
 object StatusFoundPageContext {
