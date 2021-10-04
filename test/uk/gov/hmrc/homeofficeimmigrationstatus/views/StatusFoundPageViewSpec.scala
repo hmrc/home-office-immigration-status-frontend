@@ -30,7 +30,7 @@ import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.StatusFoundPage
 
 import java.time.LocalDate
 
-class TestViewSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
+class StatusFoundPageViewSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
 
   val sut: StatusFoundPage = inject[StatusFoundPage]
   implicit val messages: Messages = inject[MessagesApi].preferred(Seq.empty[Lang])
@@ -45,14 +45,14 @@ class TestViewSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
 
   val html: HtmlFormat.Appendable = sut(context)(request, messages)
 
-  // we should make a ViewSpec trait with method for this kind of stuff
+  // todo we should make a ViewSpec trait with method for this kind of stuff
   val doc: Document = Jsoup.parse(html.toString())
 
   "some test" must {
     "have a title" in {
       val e: Element = doc.getElementById("status-found-title")
 
-      e.text() mustBe "Pan has no immigration status"
+      e.text() mustBe "Panhas no immigration status"
     }
   }
 
