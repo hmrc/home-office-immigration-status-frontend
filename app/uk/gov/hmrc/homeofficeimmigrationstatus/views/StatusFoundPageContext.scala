@@ -37,8 +37,8 @@ final case class StatusFoundPageContext(
         (status.productType, status.immigrationStatus) match {
           case (EUS, LTR)                       => messages(key("EUS.LTR"))
           case (EUS, ILR)                       => messages(key("EUS.ILR"))
-          case (pt, LTR) if pt != EUS           => messages(key("nonEUS.LTR"))
-          case (pt, ILR) if pt != EUS           => messages(key("nonEUS.ILR"))
+          case (_, LTR)                         => messages(key("nonEUS.LTR"))
+          case (_, ILR)                         => messages(key("nonEUS.ILR"))
           case (pt, LTE) if pt != EUS           => messages(key("nonEUS.LTE"))
           case (EUS, COA_IN_TIME_GRANT)         => messages(key("EUS.COA_IN_TIME_GRANT"))
           case (EUS, POST_GRACE_PERIOD_COA)     => messages(key("EUS.POST_GRACE_PERIOD_COA_GRANT"))
