@@ -20,29 +20,18 @@ import java.time.LocalDate
 
 import play.api.libs.json.{Format, Json}
 
-case class StatusCheckResult(
-  // <name of the migrant that has matched
+final case class StatusCheckResult(
   fullName: String,
-  // Date of birth of person being checked in ISO 8601 format
   dateOfBirth: LocalDate,
-  // <the latest nationality that the matched migrant has provided to the Home Office
-  // (ICAO 3 letter acronym - ISO 3166-1)
-  nationality: String,
+  nationality: String, // (ICAO 3 letter acronym - ISO 3166-1)
   statuses: List[ImmigrationStatus]
 ) {
 
-  // todo test this
-  val mostRecentStatus: Option[ImmigrationStatus] =
-    statuses
-      .sortBy(f = _.statusStartDate.toEpochDay * -1)
-      .headOption
+  private val statusesSortedByDate = statuses.sortBy(f = _.statusStartDate.toEpochDay * -1)
 
-  // todo test this
-  val previousStatuses: Seq[ImmigrationStatus] = {
-    val sorted = statuses
-      .sortBy(f = _.statusStartDate.toEpochDay * -1)
-    if (sorted.isEmpty) Nil else sorted.tail
-  }
+  val mostRecentStatus: Option[ImmigrationStatus] = statusesSortedByDate.headOption
+
+  val previousStatuses: Seq[ImmigrationStatus] = statusesSortedByDate.drop(1)
 
 }
 
