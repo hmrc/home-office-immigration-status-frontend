@@ -65,9 +65,8 @@ class StatusFoundPageViewSpec extends ViewSpec {
       val doc = asDocument(html)
 
       assertRenderedById(doc, "recourse")
-      assertRenderedById(doc, "recourse-text")
-      assertRenderedById(doc, "recourse-warning")
       assertElementHasText(doc, "#recourse-text", messages("status-found.no"))
+      assertElementHasText(doc, "#recourse-warning", "! Warning " + messages("status-found.warning"))
     }
 
     "when noRecourseToPublicFunds is false, recourse is set to Yes and the warning and the field are hidden" in {
@@ -81,6 +80,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
       val html: HtmlFormat.Appendable = sut(context)(request, messages)
       val doc = asDocument(html)
 
+      assertNotRenderedById(doc, "recourse")
       assertNotRenderedById(doc, "recourse-text")
       assertNotRenderedById(doc, "recourse-warning")
     }
