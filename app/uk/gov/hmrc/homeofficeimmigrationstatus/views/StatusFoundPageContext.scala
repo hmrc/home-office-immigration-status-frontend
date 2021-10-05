@@ -31,7 +31,7 @@ case class StatusFoundPageContext(query: StatusCheckByNinoRequest, result: Statu
   val hasImmigrationStatus: Boolean = mostRecentStatus.map(_.productType).contains(EUS) &&
     mostRecentStatus.map(_.immigrationStatus).exists(ImmigrationStatus.settledStatusSet.contains)
 
-  val noRecourseToPublicFunds: String = if (mostRecentStatus.exists(_.noRecourseToPublicFunds)) "No" else "Yes"
+  val displayRecourseToPublicFunds: Boolean = mostRecentStatus.exists(_.noRecourseToPublicFunds)
 
   def today: LocalDate = LocalDate.now()
 

@@ -104,7 +104,7 @@ class StatusFoundPageContextSpec
       context.previousStatuses shouldBe Nil
       context.statusClass shouldBe "success"
       context.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsgWithSpace
-      context.noRecourseToPublicFunds shouldBe "No"
+      context.displayRecourseToPublicFunds shouldBe true
 
       val msgKey = "app.hasSettledStatus"
       verify(mockMessages, times(1)).apply(msgKey)
@@ -126,7 +126,7 @@ class StatusFoundPageContextSpec
       context.previousStatuses shouldBe Nil
       context.statusClass shouldBe "success"
       context.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsgWithSpace
-      context.noRecourseToPublicFunds shouldBe "No"
+      context.displayRecourseToPublicFunds shouldBe true
 
       val msgKey = "app.hasPreSettledStatus"
       verify(mockMessages, times(1)).apply(msgKey)
@@ -147,7 +147,7 @@ class StatusFoundPageContextSpec
       context.previousStatuses shouldBe Nil
       context.statusClass shouldBe "success"
       context.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
-      context.noRecourseToPublicFunds shouldBe "No"
+      context.displayRecourseToPublicFunds shouldBe true
 
       val msgKey = "app.hasSettledStatus.expired"
       verify(mockMessages, times(1)).apply(msgKey)
@@ -168,7 +168,7 @@ class StatusFoundPageContextSpec
       context.previousStatuses shouldBe Nil
       context.statusClass shouldBe "success"
       context.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
-      context.noRecourseToPublicFunds shouldBe "No"
+      context.displayRecourseToPublicFunds shouldBe true
 
       val msgKey = "app.hasPreSettledStatus.expired"
       verify(mockMessages, times(1)).apply(msgKey)
@@ -189,7 +189,7 @@ class StatusFoundPageContextSpec
       context.previousStatuses shouldBe Nil
       context.statusClass shouldBe "error"
       context.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
-      context.noRecourseToPublicFunds shouldBe "Yes"
+      context.displayRecourseToPublicFunds shouldBe false
 
       val msgKey = "app.hasNoStatus"
       verify(mockMessages, times(1)).apply(msgKey)
@@ -210,7 +210,7 @@ class StatusFoundPageContextSpec
       context.previousStatuses shouldBe Nil
       context.statusClass shouldBe "error"
       context.currentStatusLabel(mockMessages) shouldBe " has FBIS status FOO - BAR"
-      context.noRecourseToPublicFunds shouldBe "Yes"
+      context.displayRecourseToPublicFunds shouldBe false
 
       verify(mockMessages, never()).apply(any[String](), any())
     }
@@ -230,7 +230,7 @@ class StatusFoundPageContextSpec
       context.previousStatuses shouldBe Seq(LTR_EXPIRED, FOO)
       context.statusClass shouldBe "success"
       context.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsgWithSpace
-      context.noRecourseToPublicFunds shouldBe "No"
+      context.displayRecourseToPublicFunds shouldBe true
 
       val msgKey = "app.hasSettledStatus"
       verify(mockMessages, times(1)).apply(msgKey)
@@ -250,7 +250,7 @@ class StatusFoundPageContextSpec
       context.mostRecentStatus shouldBe Some(ILR)
       context.previousStatuses shouldBe Seq(LTR_EXPIRED, FOO)
       context.statusClass shouldBe "success"
-      context.noRecourseToPublicFunds shouldBe "No"
+      context.displayRecourseToPublicFunds shouldBe true
     }
   }
 

@@ -67,7 +67,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
       assertRenderedById(doc, "recourse")
       assertRenderedById(doc, "recourse-text")
       assertRenderedById(doc, "recourse-warning")
-      assertElementHasText(doc, "#recourse-text", "No")
+      assertElementHasText(doc, "#recourse-text", messages("status-found.no"))
     }
 
     "when noRecourseToPublicFunds is false, recourse is set to Yes and the warning and the field are hidden" in {

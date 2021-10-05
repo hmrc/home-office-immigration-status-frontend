@@ -75,6 +75,7 @@ status-found.previous.status=Previous status
 status-found.previous.startDate=Previous start date
 status-found.previous.expiryDate=Previous expiry date
 status-found.warning=You need to check if there are exceptions that may mean a customer has the right to certain benefits, such as Child Benefit.
+status-found.no=No
 
 # Status not available page
 status-not-available.title=Applicant does not have an active status
