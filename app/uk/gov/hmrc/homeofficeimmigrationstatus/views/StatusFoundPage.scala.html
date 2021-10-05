@@ -31,14 +31,14 @@
     <h1 class="govuk-heading-xl" id="status-found-title"><span id="full-name">@context.result.fullName</span>@context.currentStatusLabel</h1>
 
     @if(context.noRecourseToPublicFunds == "No") {
-    <dl class="govuk-summary-list">
+    <dl class="govuk-summary-list" id="recourse">
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("generic.recourse")</dt>
-            <dd id="recourse" class="govuk-summary-list__value govuk-!-width-one-third">@context.noRecourseToPublicFunds</dd>
+            <dd id="recourse-text" class="govuk-summary-list__value govuk-!-width-one-third">@context.noRecourseToPublicFunds</dd>
         </div>
     </dl>
 
-    <div class="govuk-warning-text">
+    <div class="govuk-warning-text" id="recourse-warning">
         <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
         <strong class="govuk-warning-text__text">
             <span class="govuk-warning-text__assistive">Warning</span>

@@ -18,19 +18,18 @@ package uk.gov.hmrc.homeofficeimmigrationstatus.views
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
-import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.mvc.{AnyContentAsEmpty, Call}
-import play.api.test.{FakeRequest, Injecting}
+import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficeimmigrationstatus.models.{StatusCheckByNinoRequest, StatusCheckResult}
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.StatusFoundPage
-
 import java.time.LocalDate
 
-class StatusFoundPageViewSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
+import assets.constants.ImmigrationStatusConstant.{ValidStatusNoResourceFalse, ValidStatusNoResourceTrue}
+
+class StatusFoundPageViewSpec extends ViewSpec {
 
   val sut: StatusFoundPage = inject[StatusFoundPage]
   implicit val messages: Messages = inject[MessagesApi].preferred(Seq.empty[Lang])
@@ -48,12 +47,42 @@ class StatusFoundPageViewSpec extends PlaySpec with GuiceOneAppPerSuite with Inj
   // todo we should make a ViewSpec trait with method for this kind of stuff
   val doc: Document = Jsoup.parse(html.toString())
 
-  "some test" must {
-    "have a title" in {
+  "StatusFoundPageViewSpec" must {
+    "status found title must exist in test suit" in {
       val e: Element = doc.getElementById("status-found-title")
-
       e.text() mustBe "Panhas no immigration status"
     }
-  }
 
+    "when noRecourseToPublicFunds is true, recourse is set to No and the warning and the field is shown" in {
+
+      val context = StatusFoundPageContext(
+        StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
+        StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatusNoResourceTrue)),
+        Call("", "/")
+      )
+
+      val html: HtmlFormat.Appendable = sut(context)(request, messages)
+      val doc = asDocument(html)
+
+      assertRenderedById(doc, "recourse")
+      assertRenderedById(doc, "recourse-text")
+      assertRenderedById(doc, "recourse-warning")
+      assertElementHasText(doc, "#recourse-text", "No")
+    }
+
+    "when noRecourseToPublicFunds is false, recourse is set to Yes and the warning and the field are hidden" in {
+
+      val context = StatusFoundPageContext(
+        StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
+        StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatusNoResourceFalse)),
+        Call("", "/")
+      )
+
+      val html: HtmlFormat.Appendable = sut(context)(request, messages)
+      val doc = asDocument(html)
+
+      assertNotRenderedById(doc, "recourse-text")
+      assertNotRenderedById(doc, "recourse-warning")
+    }
+  }
 }

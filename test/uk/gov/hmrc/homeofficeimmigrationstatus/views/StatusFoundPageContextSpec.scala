@@ -252,14 +252,6 @@ class StatusFoundPageContextSpec
       context.statusClass shouldBe "success"
       context.noRecourseToPublicFunds shouldBe "No"
     }
-
-    "when noRecourseToPublicFunds is true, recourse is set to No and the warning is shown" in {
-
-    }
-
-    "when noRecourseToPublicFunds is false, recourse is set to Yes and the warning and field are hidden" in {
-
-    }
   }
 
   "show status label" should {
