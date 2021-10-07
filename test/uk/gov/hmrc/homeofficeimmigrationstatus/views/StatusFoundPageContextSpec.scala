@@ -73,7 +73,7 @@ class StatusFoundPageContextSpec
       ("non EUS", "LTE", "status-found.current.nonEUS.LTE"),
       ("EUS", "COA_IN_TIME_GRANT", "status-found.current.EUS.COA"),
       ("EUS", "POST_GRACE_PERIOD_COA_GRANT", "status-found.current.EUS.COA"),
-      ("FRONTIER WORKER", "PERMIT", "status-found.current.FRONTIER_WORKER.PERMIT")
+      ("FRONTIER_WORKER", "PERMIT", "status-found.current.FRONTIER_WORKER.PERMIT")
     ).foreach {
       case (productType, immigrationStatus, msgKey) =>
         s"productType is $productType and immigrationStatus is $immigrationStatus" should {
@@ -94,7 +94,7 @@ class StatusFoundPageContextSpec
       ("non EUS", "LTR", "status-found.current.nonEUS.LTR"),
       ("non EUS", "ILR", "status-found.current.nonEUS.ILR"),
       ("non EUS", "LTE", "status-found.current.nonEUS.LTE"),
-      ("FRONTIER WORKER", "PERMIT", "status-found.current.FRONTIER_WORKER.PERMIT")
+      ("FRONTIER_WORKER", "PERMIT", "status-found.current.FRONTIER_WORKER.PERMIT")
     ).foreach {
       case (productType, immigrationStatus, msgKey) =>
         s"productType is $productType and immigrationStatus is $immigrationStatus and is expired" should {
