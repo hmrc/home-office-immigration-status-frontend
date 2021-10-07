@@ -98,12 +98,16 @@ class StatusFoundPageViewSpec extends ViewSpec {
     "not have the history section" when {
       "there is not previous status" in {
 
-        assertNotRenderedById(doc, "")
+        assertNotRenderedById(doc, "previousStatuses")
       }
     }
 
     "have the history section" when {
-      "there is previous statuses" in {}
+      val context = buildContext(statuses = List(ValidStatusNoResourceTrue, ValidStatusNoResourceTrue))
+      val doc: Document = asDocument(sut(context)(request, messages))
+      "there is previous statuses" in {
+        assertRenderedById(doc, "previousStatuses")
+      }
     }
 
     "have the search again button" in {}
