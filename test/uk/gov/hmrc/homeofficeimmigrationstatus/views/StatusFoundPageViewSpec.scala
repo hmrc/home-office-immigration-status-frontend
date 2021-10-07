@@ -28,6 +28,7 @@ import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.StatusFoundPage
 import java.time.LocalDate
 import assets.constants.ImmigrationStatusConstant.{ValidStatusNoResourceFalse, ValidStatusNoResourceTrue}
 import org.jsoup.select.Elements
+import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.routes
 
 class StatusFoundPageViewSpec extends ViewSpec {
 
@@ -97,7 +98,6 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
     "not have the history section" when {
       "there is not previous status" in {
-
         assertNotRenderedById(doc, "previousStatuses")
       }
     }
@@ -107,9 +107,14 @@ class StatusFoundPageViewSpec extends ViewSpec {
       val doc: Document = asDocument(sut(context)(request, messages))
       "there is previous statuses" in {
         assertRenderedById(doc, "previousStatuses")
+        //this section is all subject to change and should be a separate view anyway, not testing in this pr.
       }
     }
 
-    "have the search again button" in {}
+    "have the search again button" in {
+      val button = doc.select("#content > a")
+
+      button.attr("href") mustBe routes.HomeOfficeImmigrationStatusFrontendController.showStart.url
+    }
   }
 }
