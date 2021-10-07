@@ -52,7 +52,7 @@ class StatusFoundPageViewSpec extends PlaySpec with GuiceOneAppPerSuite with Inj
     "have a title" in {
       val e: Element = doc.getElementById("status-found-title")
 
-      e.text() mustBe "Panhas no immigration status"
+      e.text() mustBe "Pan has no immigration status"
     }
   }
 
