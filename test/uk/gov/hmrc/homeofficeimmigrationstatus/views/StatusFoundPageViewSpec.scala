@@ -16,73 +16,96 @@
 
 package uk.gov.hmrc.homeofficeimmigrationstatus.views
 
-import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.mvc.{AnyContentAsEmpty, Call}
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.homeofficeimmigrationstatus.models.{StatusCheckByNinoRequest, StatusCheckResult}
+import uk.gov.hmrc.homeofficeimmigrationstatus.models.{ImmigrationStatus, StatusCheckByNinoRequest, StatusCheckResult}
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.StatusFoundPage
-import java.time.LocalDate
 
+import java.time.LocalDate
 import assets.constants.ImmigrationStatusConstant.{ValidStatusNoResourceFalse, ValidStatusNoResourceTrue}
+import org.jsoup.select.Elements
 
 class StatusFoundPageViewSpec extends ViewSpec {
 
   val sut: StatusFoundPage = inject[StatusFoundPage]
-  implicit val messages: Messages = inject[MessagesApi].preferred(Seq.empty[Lang])
 
-  val context = StatusFoundPageContext(
-    StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
-    StatusCheckResult("Pan", LocalDate.now(), "", Nil),
-    Call("", "/")
-  )
+  def buildContext(statuses: List[ImmigrationStatus] = List(ValidStatusNoResourceTrue)): StatusFoundPageContext =
+    StatusFoundPageContext(
+      //todo nino gen
+      StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
+      StatusCheckResult("Pan", LocalDate.now(), "D", statuses),
+      Call("", "/")
+    )
 
-  implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+  "StatusFoundPageView" must {
+    val context = buildContext()
+    val doc: Document = asDocument(sut(context)(request, messages))
 
-  val html: HtmlFormat.Appendable = sut(context)(request, messages)
-
-  // todo we should make a ViewSpec trait with method for this kind of stuff
-  val doc: Document = Jsoup.parse(html.toString())
-
-  "StatusFoundPageViewSpec" must {
-    "status found title must exist in test suit" in {
+    "have a status found title" in pendingUntilFixed { //todo fixed in HOSS2-140
       val e: Element = doc.getElementById("status-found-title")
-      e.text() mustBe "Panhas no immigration status"
+
+      e.text() mustBe "Pan has no immigration status"
     }
 
-    "when noRecourseToPublicFunds is true, recourse is set to No and the warning and the field is shown" in {
+    "have recourse to public funds field" when {
+      "noRecourseToPublicFunds is true" in {
+        val html: HtmlFormat.Appendable = sut(buildContext(List(ValidStatusNoResourceTrue)))(request, messages)
+        val doc = asDocument(html)
 
-      val context = StatusFoundPageContext(
-        StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
-        StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatusNoResourceTrue)),
-        Call("", "/")
-      )
-
-      val html: HtmlFormat.Appendable = sut(context)(request, messages)
-      val doc = asDocument(html)
-
-      assertRenderedById(doc, "recourse")
-      assertElementHasText(doc, "#recourse-text", messages("status-found.no"))
-      assertElementHasText(doc, "#recourse-warning", "! Warning " + messages("status-found.warning"))
+        assertRenderedById(doc, "recourse")
+        assertElementHasText(doc, "#recourse-text", messages("status-found.no"))
+        assertElementHasText(doc, "#recourse-warning", "! Warning " + messages("status-found.warning"))
+      }
     }
 
-    "when noRecourseToPublicFunds is false, recourse is set to Yes and the warning and the field are hidden" in {
+    "not have recourse to public funds field" when {
+      "noRecourseToPublicFunds is false" in {
+        val context = buildContext(List(ValidStatusNoResourceFalse))
 
-      val context = StatusFoundPageContext(
-        StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
-        StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatusNoResourceFalse)),
-        Call("", "/")
-      )
+        val html: HtmlFormat.Appendable = sut(context)(request, messages)
+        val doc = asDocument(html)
 
-      val html: HtmlFormat.Appendable = sut(context)(request, messages)
-      val doc = asDocument(html)
-
-      assertNotRenderedById(doc, "recourse")
-      assertNotRenderedById(doc, "recourse-text")
-      assertNotRenderedById(doc, "recourse-warning")
+        assertNotRenderedById(doc, "recourse")
+        assertNotRenderedById(doc, "recourse-text")
+        assertNotRenderedById(doc, "recourse-warning")
+      }
     }
+
+    "have all of the things in the list in the correct order" in {
+      List(
+        (context.query.nino.formatted, "generic.nino", "nino"),
+        (context.result.dobFormatted(messages.lang.locale), "generic.dob", "dob"),
+        (context.result.countryName.get, "generic.nationality", "nationality"),
+        ( //todo move this to a view model. redic
+          context.mostRecentStatus.map(a => DateFormat.format(messages.lang.locale)(a.statusStartDate)).get,
+          "status-found.startDate",
+          "startDate"),
+        (
+          context.mostRecentStatus.map(a => DateFormat.format(messages.lang.locale)(a.statusEndDate.get)).get,
+          "status-found.expiryDate",
+          "expiryDate"),
+      ).zipWithIndex.foreach {
+        case ((data, msgKey, id), index) =>
+          val row: Elements = doc.select(s"#details > .govuk-summary-list__row:nth-child(${index + 1})")
+          assertOneThirdRow(row, messages(msgKey), data, id)
+      }
+    }
+
+    "not have the history section" when {
+      "there is not previous status" in {
+
+        assertNotRenderedById(doc, "")
+      }
+    }
+
+    "have the history section" when {
+      "there is previous statuses" in {}
+    }
+
+    "have the search again button" in {}
   }
 }
