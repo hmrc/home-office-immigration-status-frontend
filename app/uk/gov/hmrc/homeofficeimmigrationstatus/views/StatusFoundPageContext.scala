@@ -66,8 +66,10 @@ final case class StatusFoundPageContext(
       "TEMP_WORKER"     -> "Temporary Worker (FBIS)"
     ).withDefaultValue("Unknown Immigratiomn Route")(productType)
 
-  val immigrationRoute = getImmigrationStatus(mostRecentStatus.map(_.productType).get)
-
+  def immigrationRoute =
+    if (mostRecentStatus.exists(!_.productType.isEmpty())) {
+      getImmigrationStatus(mostRecentStatus.map(_.productType).get)
+    } else "Unkown Immigration Route"
 }
 
 object StatusFoundPageContext {

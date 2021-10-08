@@ -84,5 +84,22 @@ class StatusFoundPageViewSpec extends ViewSpec {
       assertNotRenderedById(doc, "recourse-text")
       assertNotRenderedById(doc, "recourse-warning")
     }
+
+    "Immigration route" when {
+      "exists and EUS displays" in {
+
+        val context = StatusFoundPageContext(
+          StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
+          StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatusNoResourceTrue)),
+          Call("", "/")
+        )
+
+        val html: HtmlFormat.Appendable = sut(context)(request, messages)
+        val doc = asDocument(html)
+
+        assertRenderedById(doc, "route")
+        assertElementHasText(doc, "#immigrationRoute", "EU Settlement Scheme")
+      }
+    }
   }
 }
