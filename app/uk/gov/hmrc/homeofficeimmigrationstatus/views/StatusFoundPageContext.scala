@@ -33,6 +33,23 @@ case class StatusFoundPageContext(query: StatusCheckByNinoRequest, result: Statu
       .map(_.immigrationStatus)
       .exists(ImmigrationStatus.settledStatusSet.contains)
 
+  def getImmigrationStatus(productType: String) =
+    Map(
+      "EUS"             -> "EU Settlement Scheme",
+      "STUDY"           -> "Student (FBIS)",
+      "DEPENDANT"       -> "Dependants of Skilled workers and Students (FBIS)",
+      "WORK"            -> "Worker (FBIS)",
+      "FRONTIER_WORKER" -> "Frontier worker (FBIS)",
+      "BNO"             -> "British National Overseas (FBIS)",
+      "BNO_LOTR"        -> "British National Overseas (FBIS)",
+      "GRADUATE"        -> "Graduate (FBIS)",
+      "SPORTSPERSON"    -> "International Sportsperson (FBIS)",
+      "SETTLEMENT"      -> "British National Overseas (FBIS)",
+      "TEMP_WORKER"     -> "Temporary Worker (FBIS)"
+    ).withDefaultValue("Unknown Immigratiomn Route")(productType)
+
+  val immigrationRoute = getImmigrationStatus(mostRecentStatus.map(_.productType).get)
+
   def today: LocalDate = LocalDate.now()
 
   val hasExpiredImmigrationStatus: Boolean = hasImmigrationStatus && mostRecentStatus.exists(_.hasExpired)
@@ -50,7 +67,6 @@ case class StatusFoundPageContext(query: StatusCheckByNinoRequest, result: Statu
     case Some(s) => s" has FBIS status ${s.productType} - ${s.immigrationStatus}"
     case _       => messages("app.hasNoStatus")
   }
-
 }
 
 object StatusFoundPageContext {
