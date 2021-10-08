@@ -29,14 +29,7 @@ final case class StatusFoundPageContext(
   val mostRecentStatus: Option[ImmigrationStatus] = result.mostRecentStatus
   val previousStatuses: Seq[ImmigrationStatus] = result.previousStatuses
 
-  val hasImmigrationStatus: Boolean = mostRecentStatus.map(_.productType).contains(EUS) &&
-    mostRecentStatus.map(_.immigrationStatus).exists(ImmigrationStatus.settledStatusSet.contains)
-
   val displayRecourseToPublicFunds: Boolean = mostRecentStatus.exists(_.noRecourseToPublicFunds)
-
-  val hasExpiredImmigrationStatus: Boolean = hasImmigrationStatus && mostRecentStatus.exists(_.expiredMsg.nonEmpty)
-
-  val statusClass: String = if (hasImmigrationStatus) "success" else "error"
 
   def currentStatusLabel(implicit messages: Messages): String = {
     val prefix = "status-found.current."
