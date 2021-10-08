@@ -33,15 +33,24 @@ case class ImmigrationStatus(
   noRecourseToPublicFunds: Boolean
 ) {
 
-  val hasExpired: Boolean = statusEndDate.exists(_.isBefore(LocalDate.now))
+  private val hasExpired: Boolean = statusEndDate.exists(_.isBefore(LocalDate.now))
+
+  val expiredMsg: String = if (hasExpired) ".expired" else ""
 
 }
 
 object ImmigrationStatus {
 
+  //todo proper enum?
   val EUS = "EUS"
+  val FRONTIER_WORKER = "FRONTIER_WORKER"
+
   val LTR = "LTR"
   val ILR = "ILR"
+  val LTE = "LTE"
+  val COA_IN_TIME_GRANT = "COA_IN_TIME_GRANT"
+  val POST_GRACE_PERIOD_COA = "POST_GRACE_PERIOD_COA_GRANT"
+  val PERMIT = "PERMIT"
 
   val settledStatusSet: Set[String] = Set(ILR, LTR)
 

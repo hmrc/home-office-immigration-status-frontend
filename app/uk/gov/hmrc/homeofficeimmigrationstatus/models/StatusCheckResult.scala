@@ -23,29 +23,20 @@ import uk.gov.hmrc.homeofficeimmigrationstatus.views.{DateFormat, ISO31661Alpha3
 import java.util.Locale
 
 case class StatusCheckResult(
-  // <name of the migrant that has matched
   fullName: String,
-  // Date of birth of person being checked in ISO 8601 format
   dateOfBirth: LocalDate,
-  // <the latest nationality that the matched migrant has provided to the Home Office
-  // (ICAO 3 letter acronym - ISO 3166-1)
-  nationality: String,
+  nationality: String, // (ICAO 3 letter acronym - ISO 3166-1)
   statuses: List[ImmigrationStatus]
 ) {
   //todo seperate these to view model?
   val countryName: Option[String] = ISO31661Alpha3.getCountryNameFor(nationality)
   def dobFormatted(locale: Locale): String = DateFormat.format(locale)(dateOfBirth)
 
-  val mostRecentStatus: Option[ImmigrationStatus] =
-    statuses
-      .sortBy(f = _.statusStartDate.toEpochDay * -1)
-      .headOption
+  private val statusesSortedByDate = statuses.sortBy(f = _.statusStartDate.toEpochDay * -1)
 
-  val previousStatuses: Seq[ImmigrationStatus] = {
-    val sorted = statuses
-      .sortBy(f = _.statusStartDate.toEpochDay * -1)
-    if (sorted.isEmpty) Nil else sorted.tail
-  }
+  val mostRecentStatus: Option[ImmigrationStatus] = statusesSortedByDate.headOption
+
+  val previousStatuses: Seq[ImmigrationStatus] = statusesSortedByDate.drop(1)
 
 }
 

@@ -39,7 +39,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
       //todo nino gen
       StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
       StatusCheckResult("Pan", LocalDate.now(), "D", statuses),
-      Call("", "/")
+      Call("", "/expected")
     )
 
   "StatusFoundPageView" must {
@@ -114,7 +114,8 @@ class StatusFoundPageViewSpec extends ViewSpec {
     "have the search again button" in {
       val button = doc.select("#content > a")
 
-      button.attr("href") mustBe routes.HomeOfficeImmigrationStatusFrontendController.showStart.url
+      button.text() mustBe "Search again"
+      button.attr("href") mustBe "/expected"
     }
   }
 }
