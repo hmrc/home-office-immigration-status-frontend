@@ -114,7 +114,6 @@ class StatusFoundPageViewSpec extends ViewSpec {
     "have the search again button" in {
       val button = doc.select("#content > a")
 
-      println(button.attr("href"))
       button.attr("href") mustBe routes.HomeOfficeImmigrationStatusFrontendController.showStart.url
     }
   }
