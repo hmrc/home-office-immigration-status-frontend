@@ -17,9 +17,7 @@
 package uk.gov.hmrc.homeofficeimmigrationstatus.views
 
 import org.jsoup.nodes.{Document, Element}
-import play.api.i18n.{Lang, Messages, MessagesApi}
-import play.api.mvc.{AnyContentAsEmpty, Call}
-import play.api.test.FakeRequest
+import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficeimmigrationstatus.models.{ImmigrationStatus, StatusCheckByNinoRequest, StatusCheckResult}
@@ -28,7 +26,6 @@ import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.StatusFoundPage
 import java.time.LocalDate
 import assets.constants.ImmigrationStatusConstant.{ValidStatusNoResourceFalse, ValidStatusNoResourceTrue}
 import org.jsoup.select.Elements
-import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.routes
 
 class StatusFoundPageViewSpec extends ViewSpec {
 
@@ -46,10 +43,10 @@ class StatusFoundPageViewSpec extends ViewSpec {
     val context = buildContext()
     val doc: Document = asDocument(sut(context)(request, messages))
 
-    "have a status found title" in pendingUntilFixed { //todo fixed in HOSS2-140
+    "have a status found title" in { //todo fixed in HOSS2-140
       val e: Element = doc.getElementById("status-found-title")
 
-      e.text() mustBe "Pan has no immigration status"
+      e.text() mustBe "Pan has settled status"
     }
 
     "have recourse to public funds field" when {
