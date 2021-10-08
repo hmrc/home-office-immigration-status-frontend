@@ -52,19 +52,19 @@ class StatusFoundPageContextSpec
   val query = StatusCheckByNinoRequest(Nino("RJ301829A"), "Surname", "Forename", "some dob")
   val call = Call("GET", "/")
 
-  "currentStatusLabel" when {
-    def createContext(pt: String, is: String, endDate: Option[LocalDate]) =
-      StatusFoundPageContext(
-        query,
-        StatusCheckResult(
-          fullName = "Some name",
-          dateOfBirth = LocalDate.now,
-          nationality = "Some nationality",
-          statuses = List(ImmigrationStatus(LocalDate.MIN, endDate, pt, is, noRecourseToPublicFunds = true))
-        ),
-        call
-      )
+  def createContext(pt: String, is: String, endDate: Option[LocalDate], noRecourseToPublicFunds: Boolean = true) =
+    StatusFoundPageContext(
+      query,
+      StatusCheckResult(
+        fullName = "Some name",
+        dateOfBirth = LocalDate.now,
+        nationality = "Some nationality",
+        statuses = List(ImmigrationStatus(LocalDate.MIN, endDate, pt, is, noRecourseToPublicFunds))
+      ),
+      call
+    )
 
+  "currentStatusLabel" when {
     Seq(
       ("EUS", "ILR", "status-found.current.EUS.ILR"),
       ("EUS", "LTR", "status-found.current.EUS.LTR"),
@@ -146,12 +146,42 @@ class StatusFoundPageContextSpec
   }
 
   "previousStatuses" should {
-    "return the results most recent" in {
+    "return previous statuses" in {
       val mockResult: StatusCheckResult = mock(classOf[StatusCheckResult])
       val fakeImmigrationStatus = ImmigrationStatus(LocalDate.now(), None, "TEST", "STATUS", true)
       when(mockResult.previousStatuses).thenReturn(Seq(fakeImmigrationStatus))
 
       StatusFoundPageContext(null, mockResult, null).previousStatuses shouldBe Seq(fakeImmigrationStatus)
+    }
+  }
+
+  "displayNoResourceToPublicFunds" should {
+    "return true when noRecourseToPublicFunds is true" in {
+      val context = createContext("FOO", "BAR", None, true)
+      assert(context.displayRecourseToPublicFunds == true)
+    }
+
+    "return false" when {
+
+      "most recent is none" in {
+        val context = StatusFoundPageContext(
+          query,
+          StatusCheckResult(
+            fullName = "Some name",
+            dateOfBirth = LocalDate.now,
+            nationality = "Some nationality",
+            statuses = Nil
+          ),
+          call
+        )
+
+        assert(context.displayRecourseToPublicFunds == false)
+      }
+
+      "noRecourseToPublicFunds is false" in {
+        val context = createContext("FOO", "BAR", None, false)
+        assert(context.displayRecourseToPublicFunds == false)
+      }
     }
   }
 

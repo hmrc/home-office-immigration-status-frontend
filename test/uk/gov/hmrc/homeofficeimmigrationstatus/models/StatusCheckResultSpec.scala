@@ -79,5 +79,4 @@ class StatusCheckResultSpec extends PlaySpec {
       }
     }
   }
-
 }
