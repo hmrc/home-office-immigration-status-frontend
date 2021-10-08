@@ -44,6 +44,7 @@ object ImmigrationStatus {
   //todo proper enum?
   val EUS = "EUS"
   val FRONTIER_WORKER = "FRONTIER_WORKER"
+
   val LTR = "LTR"
   val ILR = "ILR"
   val LTE = "LTE"
