@@ -15,7 +15,6 @@ generic.dob.lowercase=date of birth
 generic.nationality=Country of nationality
 generic.searchAgain=Search again
 generic.change=Change
-generic.recourse=Recourse to public funds
 
 # Validation errors
 error.summary.heading=There is a problem
@@ -37,11 +36,6 @@ error.browser.title.prefix = Error:
 # Service specific messages
 app.titleSuffix=Check immigration status - GOV.UK
 app.name=Check immigration status
-app.hasSettledStatus=has settled status
-app.hasSettledStatus.expired=’s settled status has ended
-app.hasPreSettledStatus=has pre-settled status
-app.hasPreSettledStatus.expired=’s pre-settled status has ended
-app.hasNoStatus=has no immigration status
 app.hasNoActiveStatus=does not have an active status
 app.status.EUS_LTR=Pre settled status
 app.status.EUS_ILR=Settled status
@@ -67,15 +61,31 @@ date.month = Month
 date.year = Year
 
 # Status page
-status-found.title=Applicant
-status-found.status=Status
-status-found.startDate=Start date
-status-found.expiryDate=Expiry date
-status-found.previous.status=Previous status
-status-found.previous.startDate=Previous start date
-status-found.previous.expiryDate=Previous expiry date
+status-found.title='Applicant'
+status-found.status='Status'
+status-found.startDate='Start date'
+status-found.expiryDate='Expiry date'
+status-found.previous.status='Previous status'
+status-found.previous.startDate='Previous start date'
+status-found.previous.expiryDate='Previous expiry date'
+status-found.current.EUS.ILR=' has settled status'
+status-found.current.EUS.ILR.expired='’s settled status has ended'
+status-found.current.EUS.LTR=' has pre-settled status'
+status-found.current.EUS.LTR.expired='’s pre-settled status has ended'
+status-found.current.nonEUS.LTR=' has leave to remain'
+status-found.current.nonEUS.LTR.expired='’s leave to remain has ended'
+status-found.current.nonEUS.ILR=' has indefinite leave to remain'
+status-found.current.nonEUS.ILR.expired='’s indefinite leave to remain has ended'
+status-found.current.nonEUS.LTE=' has leave to enter'
+status-found.current.nonEUS.LTE.expired='’s leave to enter has ended'
+status-found.current.EUS.COA=' has a pending EU Settlement Scheme application'
+status-found.current.FRONTIER_WORKER.PERMIT=' has a frontier worker permit'
+status-found.current.FRONTIER_WORKER.PERMIT.expired='’s frontier worker permit has ended'
+status-found.current.hasFBIS=' has FBIS status '{0}' - '{1}''
+status-found.current.noStatus=' has no immigration status'
 status-found.warning=You need to check if there are exceptions that may mean a customer has the right to certain benefits, such as Child Benefit.
 status-found.no=No
+status-found.norecourse=Recourse to public funds
 
 # Status not available page
 status-not-available.title=Applicant does not have an active status
@@ -87,8 +97,8 @@ status-not-available.list-item2=Nothing associated with the account
 status-check-failure.title=A match has not been found
 status-check-failure.heading2CustomerDetails=Customer details
 status-check-failure.listParagraph=This may be for a number of reasons, including:
-status-check-failure.list-item1=The details are incorrect
-status-check-failure.list-item2=The customer has not applied to the EU Settlement Scheme
+status-check-failure.list-item1=The details entered are incorrect
+status-check-failure.list-item2=The customer’s information has not been updated by the Home Office
 status-check-failure.contact-helpdesk-link=contact the IT help desk (opens in new tab)
 status-check-failure.contact-helpdesk-text=If you need to escalate this
 

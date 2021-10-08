@@ -16,53 +16,67 @@
 
 package uk.gov.hmrc.homeofficeimmigrationstatus.models
 
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpecLike
-
 import java.time.LocalDate
-import org.scalatest.OptionValues
+import org.scalatestplus.play.PlaySpec
 
-class StatusCheckResultSpec extends AnyWordSpecLike with Matchers with OptionValues {
+class StatusCheckResultSpec extends PlaySpec {
 
-  val expectedResult: ImmigrationStatus =
-    ImmigrationStatus(LocalDate.parse("2015-02-11"), None, "C", "D", noRecourseToPublicFunds = true)
+  def makeImmigrationStatus(daysAgo: Int = 0): ImmigrationStatus =
+    ImmigrationStatus(
+      LocalDate.now.minusDays(daysAgo),
+      None,
+      "some product type",
+      "some immigration status",
+      noRecourseToPublicFunds = true)
 
-  "StatusCheckResultSpec" should {
-
-    val formInputWithNoImmigration = StatusCheckResult(
-      "A",
-      LocalDate.parse("1971-01-01"),
-      "B",
-      List()
-    )
-
+  "mostRecentStatus" must {
     "return none when there is no immigration status" in {
-      formInputWithNoImmigration.mostRecentStatus shouldBe None
+      val sut = StatusCheckResult("some name", LocalDate.now, "some nationality", Nil)
+
+      sut.mostRecentStatus mustBe None
     }
 
     "return the immigration status when there is only one immigration status" in {
-      val formInputWithOneImmigrationStatus = StatusCheckResult(
-        "A",
-        LocalDate.parse("1971-01-01"),
-        "B",
-        List(expectedResult)
-      )
+      val expected = makeImmigrationStatus()
+      val sut = StatusCheckResult("some name", LocalDate.now, "some nationality", List(expected))
 
-      formInputWithOneImmigrationStatus.mostRecentStatus shouldBe Some(expectedResult)
+      sut.mostRecentStatus mustBe Some(expected)
     }
 
     "return the most recent immigration status when there is more than one immigration status" in {
-      val formInputWithManyImmigrationStatuses = StatusCheckResult(
-        "A",
-        LocalDate.parse("1971-01-01"),
-        "B",
-        List(
-          ImmigrationStatus(LocalDate.parse("2010-01-02"), None, "A", "B", noRecourseToPublicFunds = false),
-          expectedResult)
-      )
+      val expected = makeImmigrationStatus()
+      val olderStatus = makeImmigrationStatus(1)
 
-      formInputWithManyImmigrationStatuses.mostRecentStatus shouldBe Some(expectedResult)
+      val sut = StatusCheckResult("some name", LocalDate.now, "some nationality", List(olderStatus, expected))
 
+      sut.mostRecentStatus mustBe Some(expected)
+    }
+  }
+
+  "previousStatuses" must {
+    "return an empty list" when {
+      "there are no immigration statuses" in {
+        val sut = StatusCheckResult("some name", LocalDate.now, "some nationality", Nil)
+
+        sut.previousStatuses mustBe Nil
+      }
+      "there is only 1 immigration status" in {
+        val sut = StatusCheckResult("some name", LocalDate.now, "some nationality", List(makeImmigrationStatus()))
+
+        sut.previousStatuses mustBe Nil
+      }
+    }
+    "return everything but the most recent status" in {
+      val mostRecent = makeImmigrationStatus()
+      val others = List(3, 1, 2).map(makeImmigrationStatus)
+
+      val sut = StatusCheckResult("some name", LocalDate.now, "some nationality", mostRecent +: others)
+
+      val expected = List(1, 2, 3).map(makeImmigrationStatus)
+
+      withClue("the status are also sorted in start date order") {
+        sut.previousStatuses mustBe expected
+      }
     }
   }
 

@@ -50,7 +50,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
   "StatusFoundPageViewSpec" must {
     "status found title must exist in test suit" in {
       val e: Element = doc.getElementById("status-found-title")
-      e.text() mustBe "Panhas no immigration status"
+      e.text() mustBe "Pan has no immigration status"
     }
 
     "when noRecourseToPublicFunds is true, recourse is set to No and the warning and the field is shown" in {
