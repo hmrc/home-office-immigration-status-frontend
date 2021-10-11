@@ -9,36 +9,35 @@
 @locale = @{messages.lang.locale}
 
 @if(previousStatuses.nonEmpty) {
+    <aside id="previousStatuses">
+        <h2 class="govuk-heading-l">Previous status</h2>
 
-<aside id="previousStatuses">
-    <h2 class="govuk-heading-l">Previous status</h2>
+        @previousStatuses.zipWithIndex.map { case (status, index) =>
 
-    @previousStatuses.zipWithIndex.map { case (status, index) =>
+        @*<!--todo use the summary lists like in found page view --> *@
 
-    @*<!--todo use the summary lists like in found page view --> *@
+        <dl class="govuk-summary-list">
 
-    <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("status-found.previous.status")</dt>
+                <dd id="status-previous-@index" class="govuk-summary-list__value govuk-!-width-one-third">@StatusFoundPageContext.immigrationStatusLabel(status.productType, status.immigrationStatus)</dd>
+            </div>
 
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("status-found.previous.status")</dt>
-            <dd id="status-previous-@index" class="govuk-summary-list__value govuk-!-width-one-third">@StatusFoundPageContext.immigrationStatusLabel(status.productType, status.immigrationStatus)</dd>
-        </div>
+            @Some(status).map(_.statusStartDate).map(DateFormat.format(locale)).map { statusStartDate =>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("status-found.previous.startDate")</dt>
+                <dd id="startDate-previous-@index" class="govuk-summary-list__value govuk-!-width-one-third">@statusStartDate</dd>
+            </div>
+            }.getOrElse("")
 
-        @Some(status).map(_.statusStartDate).map(DateFormat.format(locale)).map { statusStartDate =>
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("status-found.previous.startDate")</dt>
-            <dd id="startDate-previous-@index" class="govuk-summary-list__value govuk-!-width-one-third">@statusStartDate</dd>
-        </div>
-        }.getOrElse("")
+            @Some(status).flatMap(_.statusEndDate).map(DateFormat.format(locale)).map { statusEndDate =>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("status-found.previous.expiryDate")</dt>
+                <dd id="expiryDate-previous-@index" class="govuk-summary-list__value govuk-!-width-one-third">@statusEndDate</dd>
+            </div>
+            }.getOrElse("")
 
-        @Some(status).flatMap(_.statusEndDate).map(DateFormat.format(locale)).map { statusEndDate =>
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("status-found.previous.expiryDate")</dt>
-            <dd id="expiryDate-previous-@index" class="govuk-summary-list__value govuk-!-width-one-third">@statusEndDate</dd>
-        </div>
-        }.getOrElse("")
-
-    </dl>
-    }
-</aside>
+        </dl>
+        }
+    </aside>
 }
