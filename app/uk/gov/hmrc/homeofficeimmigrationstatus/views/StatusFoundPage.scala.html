@@ -31,11 +31,13 @@
 
 @locale = @{messages.lang.locale}
 
+@*<!--todo This list creation should be done else where, context or vm -->*@
 @*<!--Todo change this name when rows are grouped by stuff --> *@
 @stuffRows = @{Seq(
     if(context.displayRecourseToPublicFunds)Some(Row("recourse", "status-found.norecourse", messages("status-found.no"))) else None
 ).flatten}
 
+@*<!--todo This list creation should be done else where, context or vm -->*@
 @*<!--todo move all this most recent date code to a view model -->*@
 @detailRows = @{Seq(
     Some(Row("nino", "generic.nino", context.query.nino.formatted)),

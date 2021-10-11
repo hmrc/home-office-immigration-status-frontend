@@ -58,6 +58,9 @@ trait ViewSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
   def assertRenderedById(doc: Document, id: String) =
     assert(doc.getElementById(id) != null, "\n\nElement " + id + " was not rendered on the page.\n")
 
+  def assertRenderedByCssSelector(doc: Document, cssSelector: String) =
+    assert(doc.select(cssSelector) != null, "\n\nElement " + cssSelector + " was not rendered on the page.\n")
+
   def assertNotRenderedById(doc: Document, id: String) =
     assert(doc.getElementById(id) == null, "\n\nElement " + id + " was rendered on the page.\n")
 
