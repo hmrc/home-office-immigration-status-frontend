@@ -1,64 +1,64 @@
 # ALPHA Banner
 # ----------------------------------------------------------
-feedback.before = This is a new service. Your
-feedback.link = feedback
-feedback.after = will help us to improve it.
+feedback.before =' This is a new service. Your'
+feedback.link =' feedback'
+feedback.after =' will help us to improve it.'
 
 # Generic content
-generic.nino=National Insurance number
-generic.givenName=First name
-generic.givenName.lowercase=first name
-generic.familyName=Surname
-generic.familyName.lowercase=surname
-generic.dob=Date of birth
-generic.dob.lowercase=date of birth
-generic.nationality=Country of nationality
-generic.searchAgain=Search again
-generic.change=Change
+generic.nino='National Insurance number'
+generic.givenName='First name'
+generic.givenName.lowercase='first name'
+generic.familyName='Surname'
+generic.familyName.lowercase='surname'
+generic.dob='Date of birth'
+generic.dob.lowercase='date of birth'
+generic.nationality='Country of nationality'
+generic.searchAgain='Search again'
+generic.change='Change'
 
 # Validation errors
-error.summary.heading=There is a problem
-error.prefix=Error:
-error.email=Enter a valid email address
-error.dateOfBirth.required=Enter date of birth in the correct format
-error.dateOfBirth.invalid-format=Invalid date of birth
-error.year.invalid-format=Enter a year of birth
-error.day.invalid-format=Enter a day of birth
-error.month.invalid-format=Enter a month of birth
-error.nino.required=Enter National Insurance number in the correct format
-error.nino.invalid-format=Invalid National Insurance number
-error.familyName.required=Enter surname
-error.familyName.invalid-format=Invalid surname
-error.givenName.required=Enter first name
-error.givenName.invalid-format=Invalid first name
-error.browser.title.prefix = Error:
+error.summary.heading='There is a problem'
+error.prefix='Error:'
+error.email='Enter a valid email address'
+error.dateOfBirth.required='Enter date of birth in the correct format'
+error.dateOfBirth.invalid-format='Invalid date of birth'
+error.year.invalid-format='Enter a year of birth'
+error.day.invalid-format='Enter a day of birth'
+error.month.invalid-format='Enter a month of birth'
+error.nino.required='Enter National Insurance number in the correct format'
+error.nino.invalid-format='Invalid National Insurance number'
+error.familyName.required='Enter surname'
+error.familyName.invalid-format='Invalid surname'
+error.givenName.required='Enter first name'
+error.givenName.invalid-format='Invalid first name'
+error.browser.title.prefix =' Error:'
 
 # Service specific messages
-app.titleSuffix=Check immigration status - GOV.UK
-app.name=Check immigration status
-app.hasNoActiveStatus=does not have an active status
-app.status.EUS_LTR=Pre settled status
-app.status.EUS_ILR=Settled status
+app.titleSuffix='Check immigration status - GOV.UK'
+app.name='Check immigration status'
+app.hasNoActiveStatus='does not have an active status'
+app.status.EUS_LTR='Pre settled status'
+app.status.EUS_ILR='Settled status'
 
 # Lookup page
-lookup.title=Enter the customer’s details
-lookup.title.Error=Error: Enter the customer’s details
-lookup.nino.label=National Insurance number
-lookup.nino.hint=For example, ‘QQ 12 34 56 C’.
-lookup.nino.ariaDescribedBy=nino-hint
-lookup.nino.ariaDescribedByError=nino-error
-lookup.givenName.label=First name
-lookup.givenName.ariaDescribedByError=givenName-error
-lookup.familyName.label=Surname
-lookup.familyName.ariaDescribedByError=familyName-error
-lookup.dateOfBirth.label=Date of birth
-lookup.dateOfBirth.hint=For example, 31 3 1980
-lookup.inputMode=numeric
-lookup.hintDOBid=dob-hint
-lookup.hintDOBIderror=dateOfBirth-error
-date.day = Day
-date.month = Month
-date.year = Year
+lookup.title='Enter the customer’s details'
+lookup.title.Error='Error: Enter the customer’s details'
+lookup.nino.label='National Insurance number'
+lookup.nino.hint='For example, ‘QQ 12 34 56 C’.'
+lookup.nino.ariaDescribedBy='nino-hint'
+lookup.nino.ariaDescribedByError='nino-error'
+lookup.givenName.label='First name'
+lookup.givenName.ariaDescribedByError='givenName-error'
+lookup.familyName.label='Surname'
+lookup.familyName.ariaDescribedByError='familyName-error'
+lookup.dateOfBirth.label='Date of birth'
+lookup.dateOfBirth.hint='For example, 31 3 1980'
+lookup.inputMode='numeric'
+lookup.hintDOBid='dob-hint'
+lookup.hintDOBIderror='dateOfBirth-error'
+date.day =' Day'
+date.month =' Month'
+date.year =' Year'
 
 # Status page
 status-found.title='Applicant'
@@ -83,58 +83,58 @@ status-found.current.FRONTIER_WORKER.PERMIT=' has a frontier worker permit'
 status-found.current.FRONTIER_WORKER.PERMIT.expired='’s frontier worker permit has ended'
 status-found.current.hasFBIS=' has FBIS status '{0}' - '{1}''
 status-found.current.noStatus=' has no immigration status'
-status-found.warning=You need to check if there are exceptions that may mean a customer has the right to certain benefits, such as Child Benefit.
-status-found.no=No
-status-found.norecourse=Recourse to public funds
+status-found.warning='You need to check if there are exceptions that may mean a customer has the right to certain benefits, such as Child Benefit.'
+status-found.no='No'
+status-found.norecourse='Recourse to public funds'
 
 # Status not available page
-status-not-available.title=Applicant does not have an active status
-status-not-available.listParagraph=This may be for a number of reasons, including:
-status-not-available.list-item1=The status ended over six months ago
-status-not-available.list-item2=Nothing associated with the account
+status-not-available.title='Applicant does not have an active status'
+status-not-available.listParagraph='This may be for a number of reasons, including:'
+status-not-available.list-item1='The status ended over six months ago'
+status-not-available.list-item2='Nothing associated with the account'
 
 # Failure page
-status-check-failure.title=A match has not been found
-status-check-failure.heading2CustomerDetails=Customer details
-status-check-failure.listParagraph=This may be for a number of reasons, including:
-status-check-failure.list-item1=The details entered are incorrect
-status-check-failure.list-item2=The customer’s information has not been updated by the Home Office
-status-check-failure.contact-helpdesk-link=contact the IT help desk (opens in new tab)
-status-check-failure.contact-helpdesk-text=If you need to escalate this
+status-check-failure.title='A match has not been found'
+status-check-failure.heading2CustomerDetails='Customer details'
+status-check-failure.listParagraph='This may be for a number of reasons, including:'
+status-check-failure.list-item1='The details entered are incorrect'
+status-check-failure.list-item2='The customer’s information has not been updated by the Home Office'
+status-check-failure.contact-helpdesk-link='contact the IT help desk (opens in new tab)'
+status-check-failure.contact-helpdesk-text='If you need to escalate this'
 
-status-check-failure-conflict.title=A unique match has not been found
-status-check-failure-conflict.listParagraph=This is because there are multiple matches with these details
+status-check-failure-conflict.title='A unique match has not been found'
+status-check-failure-conflict.listParagraph='This is because there are multiple matches with these details'
 
-button.continue=Continue
-button.submit=Submit
+button.continue='Continue'
+button.submit='Submit'
 
 # Global errors
-external.error.500.title=Service unavailable
-external.error.500.heading=Sorry, the service is unavailable
-external.error.500.message=Try again later.
-external.error.500.listParagraph=This could be for a number of reasons, including:
-external.error.500.list-item1=An external service error
-external.error.500.list-item2=Too many users on the service
+external.error.500.title='Service unavailable'
+external.error.500.heading='Sorry, the service is unavailable'
+external.error.500.message='Try again later.'
+external.error.500.listParagraph='This could be for a number of reasons, including:'
+external.error.500.list-item1='An external service error'
+external.error.500.list-item2='Too many users on the service'
 
-internal.error.500.title=There is a problem with the service
-internal.error.500.heading=Sorry, there is a problem with the service
-internal.error.500.message=Contact the Helpline.
+internal.error.500.title='There is a problem with the service'
+internal.error.500.heading='Sorry, there is a problem with the service'
+internal.error.500.message='Contact the Helpline.'
 
 # Shuttering
-shuttering.heading=Sorry, the service is unavailable
-shuttering.title=Service unavailable
+shuttering.heading='Sorry, the service is unavailable'
+shuttering.title='Service unavailable'
 
 # Accessibility
-accessibility.title=Accessibility statement for check immigration status
+accessibility.title='Accessibility statement for check immigration status'
 
 # Footer Links
-footer.links.support_links.text=Support links
-footer.links.help_page.text=Help using GOV.UK
-footer.links.help_page.url=https://www.gov.uk/help
-footer.links.cookies.text=Cookies
-footer.links.cookies.url=/help/cookies
-footer.links.accessibility.text=Accessibility statement
-footer.links.privacy_policy.text=Privacy policy
-footer.links.privacy_policy.url=/help/privacy
-footer.links.terms_and_conditions.text=Terms and conditions
-footer.links.terms_and_conditions.url=/help/terms-and-conditions
+footer.links.support_links.text='Support links'
+footer.links.help_page.text='Help using GOV.UK'
+footer.links.help_page.url='https://www.gov.uk/help'
+footer.links.cookies.text='Cookies'
+footer.links.cookies.url='/help/cookies'
+footer.links.accessibility.text='Accessibility statement'
+footer.links.privacy_policy.text='Privacy policy'
+footer.links.privacy_policy.url='/help/privacy'
+footer.links.terms_and_conditions.text='Terms and conditions'
+footer.links.terms_and_conditions.url='/help/terms-and-conditions'
