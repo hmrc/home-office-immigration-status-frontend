@@ -1,8 +1,8 @@
 # ALPHA Banner
 # ----------------------------------------------------------
-feedback.before ='This is a new service. Your'
-feedback.link ='feedback'
-feedback.after ='will help us to improve it.'
+feedback.before='This is a new service. Your'
+feedback.link='feedback'
+feedback.after='will help us to improve it.'
 
 # Generic content
 generic.nino='National Insurance number'
@@ -31,7 +31,7 @@ error.familyName.required='Enter surname'
 error.familyName.invalid-format='Invalid surname'
 error.givenName.required='Enter first name'
 error.givenName.invalid-format='Invalid first name'
-error.browser.title.prefix ='Error:'
+error.browser.title.prefix='Error:'
 
 # Service specific messages
 app.titleSuffix='Check immigration status - GOV.UK'
@@ -56,9 +56,9 @@ lookup.dateOfBirth.hint='For example, 31 3 1980'
 lookup.inputMode='numeric'
 lookup.hintDOBid='dob-hint'
 lookup.hintDOBIderror='dateOfBirth-error'
-date.day ='Day'
-date.month ='Month'
-date.year ='Year'
+date.day='Day'
+date.month='Month'
+date.year='Year'
 
 # Status page
 status-found.title='Applicant'
