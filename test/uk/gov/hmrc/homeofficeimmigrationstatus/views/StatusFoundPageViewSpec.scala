@@ -27,7 +27,7 @@ import uk.gov.hmrc.homeofficeimmigrationstatus.models.{StatusCheckByNinoRequest,
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.StatusFoundPage
 import java.time.LocalDate
 
-import assets.constants.ImmigrationStatusConstant.{ValidStatusNoResourceFalse, ValidStatusNoResourceTrue}
+import assets.constants.ImmigrationStatusConstant.{ValidStatus, ValidStatusCustomProductType, ValidStatusNoResourceFalse}
 
 class StatusFoundPageViewSpec extends ViewSpec {
 
@@ -36,7 +36,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
   val context = StatusFoundPageContext(
     StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
-    StatusCheckResult("Pan", LocalDate.now(), "", Nil),
+    StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatus)),
     Call("", "/")
   )
 
@@ -50,14 +50,14 @@ class StatusFoundPageViewSpec extends ViewSpec {
   "StatusFoundPageViewSpec" must {
     "status found title must exist in test suit" in {
       val e: Element = doc.getElementById("status-found-title")
-      e.text() mustBe "Pan has no immigration status"
+      e.text() mustBe "Pan has settled status"
     }
 
     "when noRecourseToPublicFunds is true, recourse is set to No and the warning and the field is shown" in {
 
       val context = StatusFoundPageContext(
         StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
-        StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatusNoResourceTrue)),
+        StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatus)),
         Call("", "/")
       )
 
@@ -86,11 +86,11 @@ class StatusFoundPageViewSpec extends ViewSpec {
     }
 
     "Immigration route" when {
-      "exists and EUS displays" in {
+      "EUS displays" in {
 
         val context = StatusFoundPageContext(
           StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
-          StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatusNoResourceTrue)),
+          StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatus)),
           Call("", "/")
         )
 
@@ -99,6 +99,160 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
         assertRenderedById(doc, "route")
         assertElementHasText(doc, "#immigrationRoute", "EU Settlement Scheme")
+      }
+
+      "STUDY displays" in {
+        val context = StatusFoundPageContext(
+          StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
+          StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatusCustomProductType("STUDY"))),
+          Call("", "/")
+        )
+
+        val html: HtmlFormat.Appendable = sut(context)(request, messages)
+        val doc = asDocument(html)
+
+        assertRenderedById(doc, "route")
+        assertElementHasText(doc, "#immigrationRoute", "Student (FBIS)")
+      }
+
+      "DEPENDANT displays" in {
+        val context = StatusFoundPageContext(
+          StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
+          StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatusCustomProductType("DEPENDANT"))),
+          Call("", "/")
+        )
+
+        val html: HtmlFormat.Appendable = sut(context)(request, messages)
+        val doc = asDocument(html)
+
+        assertRenderedById(doc, "route")
+        assertElementHasText(doc, "#immigrationRoute", "Dependants of Skilled workers and Students (FBIS)")
+      }
+
+      "WORK displays" in {
+        val context = StatusFoundPageContext(
+          StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
+          StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatusCustomProductType("WORK"))),
+          Call("", "/")
+        )
+
+        val html: HtmlFormat.Appendable = sut(context)(request, messages)
+        val doc = asDocument(html)
+
+        assertRenderedById(doc, "route")
+        assertElementHasText(doc, "#immigrationRoute", "Worker (FBIS)")
+      }
+
+      "FRONTIER_WORKER displays" in {
+        val context = StatusFoundPageContext(
+          StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
+          StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatusCustomProductType("FRONTIER_WORKER"))),
+          Call("", "/")
+        )
+
+        val html: HtmlFormat.Appendable = sut(context)(request, messages)
+        val doc = asDocument(html)
+
+        assertRenderedById(doc, "route")
+        assertElementHasText(doc, "#immigrationRoute", "Frontier worker (FBIS)")
+      }
+
+      "BNO displays" in {
+        val context = StatusFoundPageContext(
+          StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
+          StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatusCustomProductType("BNO"))),
+          Call("", "/")
+        )
+
+        val html: HtmlFormat.Appendable = sut(context)(request, messages)
+        val doc = asDocument(html)
+
+        assertRenderedById(doc, "route")
+        assertElementHasText(doc, "#immigrationRoute", "British National Overseas (FBIS)")
+      }
+
+      "BNO_LOTR displays" in {
+        val context = StatusFoundPageContext(
+          StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
+          StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatusCustomProductType("BNO_LOTR"))),
+          Call("", "/")
+        )
+
+        val html: HtmlFormat.Appendable = sut(context)(request, messages)
+        val doc = asDocument(html)
+
+        assertRenderedById(doc, "route")
+        assertElementHasText(doc, "#immigrationRoute", "British National Overseas (FBIS)")
+      }
+
+      "GRADUATE displays" in {
+        val context = StatusFoundPageContext(
+          StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
+          StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatusCustomProductType("GRADUATE"))),
+          Call("", "/")
+        )
+
+        val html: HtmlFormat.Appendable = sut(context)(request, messages)
+        val doc = asDocument(html)
+
+        assertRenderedById(doc, "route")
+        assertElementHasText(doc, "#immigrationRoute", "Graduate (FBIS)")
+      }
+
+      "SPORTSPERSON displays" in {
+        val context = StatusFoundPageContext(
+          StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
+          StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatusCustomProductType("SPORTSPERSON"))),
+          Call("", "/")
+        )
+
+        val html: HtmlFormat.Appendable = sut(context)(request, messages)
+        val doc = asDocument(html)
+
+        assertRenderedById(doc, "route")
+        assertElementHasText(doc, "#immigrationRoute", "International Sportsperson (FBIS)")
+      }
+
+      "SETTLEMENT displays" in {
+        val context = StatusFoundPageContext(
+          StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
+          StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatusCustomProductType("SETTLEMENT"))),
+          Call("", "/")
+        )
+
+        val html: HtmlFormat.Appendable = sut(context)(request, messages)
+        val doc = asDocument(html)
+
+        assertRenderedById(doc, "route")
+        assertElementHasText(doc, "#immigrationRoute", "British National Overseas (FBIS)")
+      }
+
+      "TEMP_WORKER displays" in {
+        val context = StatusFoundPageContext(
+          StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
+          StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatusCustomProductType("TEMP_WORKER"))),
+          Call("", "/")
+        )
+
+        val html: HtmlFormat.Appendable = sut(context)(request, messages)
+        val doc = asDocument(html)
+
+        assertRenderedById(doc, "route")
+        assertElementHasText(doc, "#immigrationRoute", "Temporary Worker (FBIS)")
+      }
+
+      "Error with ProductType displays" in {
+        val context = StatusFoundPageContext(
+          StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
+          StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatusCustomProductType("error"))),
+          Call("", "/")
+        )
+
+        val html: HtmlFormat.Appendable = sut(context)(request, messages)
+        val doc = asDocument(html)
+
+        assertRenderedById(doc, "route")
+        assertElementHasText(doc, "#immigrationRoute", "error")
       }
     }
   }

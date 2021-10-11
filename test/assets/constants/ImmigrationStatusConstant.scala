@@ -21,7 +21,7 @@ import uk.gov.hmrc.homeofficeimmigrationstatus.models.{ImmigrationStatus}
 
 object ImmigrationStatusConstant {
 
-  val ValidStatusNoResourceTrue = ImmigrationStatus(
+  val ValidStatus = ImmigrationStatus(
     statusStartDate = LocalDate.parse("2021-01-01"),
     statusEndDate = None,
     productType = "EUS",
@@ -35,5 +35,13 @@ object ImmigrationStatusConstant {
     productType = "EUS",
     immigrationStatus = "ILR",
     noRecourseToPublicFunds = false
+  )
+
+  def ValidStatusCustomProductType(typeName: String) = ImmigrationStatus(
+    statusStartDate = LocalDate.parse("2021-01-01"),
+    statusEndDate = None,
+    productType = typeName,
+    immigrationStatus = "ILR",
+    noRecourseToPublicFunds = true
   )
 }

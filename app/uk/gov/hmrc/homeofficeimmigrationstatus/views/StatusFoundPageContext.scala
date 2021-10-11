@@ -51,29 +51,27 @@ final case class StatusFoundPageContext(
     }
   }
 
-  def getImmigrationStatus(productType: String) =
-    Map(
-      "EUS"             -> "EU Settlement Scheme",
-      "STUDY"           -> "Student (FBIS)",
-      "DEPENDANT"       -> "Dependants of Skilled workers and Students (FBIS)",
-      "WORK"            -> "Worker (FBIS)",
-      "FRONTIER_WORKER" -> "Frontier worker (FBIS)",
-      "BNO"             -> "British National Overseas (FBIS)",
-      "BNO_LOTR"        -> "British National Overseas (FBIS)",
-      "GRADUATE"        -> "Graduate (FBIS)",
-      "SPORTSPERSON"    -> "International Sportsperson (FBIS)",
-      "SETTLEMENT"      -> "British National Overseas (FBIS)",
-      "TEMP_WORKER"     -> "Temporary Worker (FBIS)"
-    ).withDefaultValue("Unknown Immigratiomn Route")(productType)
+  def getImmigrationStatus(productType: String)(implicit messages: Messages) =
+    productType match {
+      case "EUS"             => messages("immigration.eus")
+      case "STUDY"           => messages("immigration.study")
+      case "DEPENDANT"       => messages("immigration.dependant")
+      case "WORK"            => messages("immigration.work")
+      case "FRONTIER_WORKER" => messages("immigration.frontier")
+      case "BNO"             => messages("immigration.bno")
+      case "BNO_LOTR"        => messages("immigration.bno_lotr")
+      case "GRADUATE"        => messages("immigration.graduate")
+      case "SPORTSPERSON"    => messages("immigration.sportsperson")
+      case "SETTLEMENT"      => messages("immigration.settlement")
+      case "TEMP_WORKER"     => messages("immigration.temp_worker")
+      case _                 => productType
+    }
 
-  def immigrationRoute =
-    if (mostRecentStatus.exists(!_.productType.isEmpty())) {
-      getImmigrationStatus(mostRecentStatus.map(_.productType).get)
-    } else "Unkown Immigration Route"
+  def immigrationRoute(implicit messages: Messages) =
+    getImmigrationStatus(mostRecentStatus.map(_.productType).getOrElse("Unkown Immigration Route"))
 }
 
 object StatusFoundPageContext {
-
   def immigrationStatusLabel(productType: String, status: String)(implicit messages: Messages): String =
     (productType, status) match {
       case (EUS, LTR) => messages("app.status.EUS_LTR")
