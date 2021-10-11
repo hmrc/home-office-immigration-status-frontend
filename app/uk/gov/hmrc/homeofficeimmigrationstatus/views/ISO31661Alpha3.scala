@@ -23,9 +23,9 @@ package uk.gov.hmrc.homeofficeimmigrationstatus.views
   */
 object ISO31661Alpha3 {
 
-  def getCountryNameFor(code: String): Option[String] =
-    if (code == "D") Some("Germany") // an exception required by the Home Office API
-    else code2Country.get(code)
+  def getCountryNameFor(code: String): String =
+    if (code == "D") "Germany" // an exception required by the Home Office API
+    else code2Country.getOrElse(code, code)
 
   final private val code2Country = Map(
     "ABW" -> "Aruba",

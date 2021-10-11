@@ -15,6 +15,7 @@ generic.dob.lowercase='date of birth'
 generic.nationality='Country of nationality'
 generic.searchAgain='Search again'
 generic.change='Change'
+generic.warning='Warning'
 
 # Validation errors
 error.summary.heading='There is a problem'

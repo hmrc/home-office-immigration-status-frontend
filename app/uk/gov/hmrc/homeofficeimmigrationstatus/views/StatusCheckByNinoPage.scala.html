@@ -20,11 +20,11 @@
 @this(
     govukWrapper: govuk_wrapper,
     formHelper: FormWithCSRF,
-    errorSummary: helpers.errorSummary,
+    errorSummary: components.errorSummary,
     govukButton : GovukButton,
-    inputText: helpers.inputText,
-    inputDate: helpers.inputDate,
-    fieldset: helpers.fieldset
+    inputText: components.inputText,
+    inputDate: components.inputDate,
+    fieldset: components.fieldset
 )
 
 @(statusCheckForm: Form[StatusCheckByNinoRequest],submitFormCall: Call)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)

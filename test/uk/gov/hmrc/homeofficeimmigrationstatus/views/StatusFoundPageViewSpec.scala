@@ -43,7 +43,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
     val context = buildContext()
     val doc: Document = asDocument(sut(context)(request, messages))
 
-    "have a status found title" in { //todo fixed in HOSS2-140
+    "have a status found title" in {
       val e: Element = doc.getElementById("status-found-title")
 
       e.text() mustBe "Pan has settled status"
@@ -54,8 +54,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
         val html: HtmlFormat.Appendable = sut(buildContext(List(ValidStatusNoResourceTrue)))(request, messages)
         val doc = asDocument(html)
 
-        assertRenderedById(doc, "recourse")
-        assertElementHasText(doc, "#recourse-text", messages("status-found.no"))
+        assertElementHasText(doc, "#recourse", messages("status-found.no"))
         assertElementHasText(doc, "#recourse-warning", "! Warning " + messages("status-found.warning"))
       }
     }
@@ -68,7 +67,6 @@ class StatusFoundPageViewSpec extends ViewSpec {
         val doc = asDocument(html)
 
         assertNotRenderedById(doc, "recourse")
-        assertNotRenderedById(doc, "recourse-text")
         assertNotRenderedById(doc, "recourse-warning")
       }
     }
@@ -77,7 +75,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
       List(
         (context.query.nino.formatted, "generic.nino", "nino"),
         (context.result.dobFormatted(messages.lang.locale), "generic.dob", "dob"),
-        (context.result.countryName.get, "generic.nationality", "nationality"),
+        (context.result.countryName, "generic.nationality", "nationality"),
         ( //todo move this to a view model. redic
           context.mostRecentStatus.map(a => DateFormat.format(messages.lang.locale)(a.statusStartDate)).get,
           "status-found.startDate",
@@ -104,7 +102,6 @@ class StatusFoundPageViewSpec extends ViewSpec {
       val doc: Document = asDocument(sut(context)(request, messages))
       "there is previous statuses" in {
         assertRenderedById(doc, "previousStatuses")
-        //this section is all subject to change and should be a separate view anyway, not testing in this pr.
       }
     }
 
