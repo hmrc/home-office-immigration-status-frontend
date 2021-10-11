@@ -31,23 +31,23 @@
     <h1 class="govuk-heading-xl" id="status-found-title"><span id="full-name">@context.result.fullName</span>@context.currentStatusLabel</h1>
 
     @if(context.displayRecourseToPublicFunds) {
-    <dl class="govuk-summary-list" id="recourse">
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("status-found.norecourse")</dt>
-            <dd id="recourse-text" class="govuk-summary-list__value govuk-!-width-one-third">@messages("status-found.no")</dd>
-        </div>
-    </dl>
+        <dl class="govuk-summary-list" id="recourse">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("status-found.norecourse")</dt>
+                <dd id="recourse-text" class="govuk-summary-list__value govuk-!-width-one-third">@messages("status-found.no")</dd>
+            </div>
+        </dl>
 
-    <div class="govuk-warning-text" id="recourse-warning">
-        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-        <strong class="govuk-warning-text__text">
-            <span class="govuk-warning-text__assistive">Warning</span>
-            @messages("status-found.warning")
-        </strong>
-    </div>
+        <div class="govuk-warning-text" id="recourse-warning">
+            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+            <strong class="govuk-warning-text__text">
+                <span class="govuk-warning-text__assistive">Warning</span>
+                @messages("status-found.warning")
+            </strong>
+        </div>
     }
 
-    <dl class="govuk-summary-list">
+    <dl class="govuk-summary-list" id="details">
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("generic.nino")</dt>
             <dd id="nino" class="govuk-summary-list__value govuk-!-width-one-third">@context.query.nino.formatted</dd>
@@ -55,12 +55,12 @@
 
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("generic.dob")</dt>
-            <dd id="dob" class="govuk-summary-list__value govuk-!-width-one-third">@DateFormat.format(locale)(context.result.dateOfBirth)</dd>
+            <dd id="dob" class="govuk-summary-list__value govuk-!-width-one-third">@context.result.dobFormatted(locale)</dd>
         </div>
 
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("generic.nationality")</dt>
-            <dd id="nationality" class="govuk-summary-list__value govuk-!-width-one-third">@ISO31661Alpha3.getCountryNameFor(context.result.nationality)</dd>
+            <dd id="nationality" class="govuk-summary-list__value govuk-!-width-one-third">@context.result.countryName</dd>
         </div>
 
         @context.mostRecentStatus.map(_.statusStartDate).map(DateFormat.format(locale)).map { statusStartDate =>
@@ -81,33 +81,35 @@
 
     @if(context.previousStatuses.nonEmpty) {
 
-        <h2 class="govuk-heading-l">Previous status</h2>
+        <aside id="previousStatuses">
+            <h2 class="govuk-heading-l">Previous status</h2>
 
-        @context.previousStatuses.zipWithIndex.map { case (status, index) =>
+            @context.previousStatuses.zipWithIndex.map { case (status, index) =>
 
-            <dl class="govuk-summary-list">
+                <dl class="govuk-summary-list">
 
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("status-found.previous.status")</dt>
-                    <dd id="status-previous-@index" class="govuk-summary-list__value govuk-!-width-one-third">@StatusFoundPageContext.immigrationStatusLabel(status.productType, status.immigrationStatus)</dd>
-                </div>
-
-                @Some(status).map(_.statusStartDate).map(DateFormat.format(locale)).map { statusStartDate =>
                     <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("status-found.previous.startDate")</dt>
-                        <dd id="startDate-previous-@index" class="govuk-summary-list__value govuk-!-width-one-third">@statusStartDate</dd>
+                        <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("status-found.previous.status")</dt>
+                        <dd id="status-previous-@index" class="govuk-summary-list__value govuk-!-width-one-third">@StatusFoundPageContext.immigrationStatusLabel(status.productType, status.immigrationStatus)</dd>
                     </div>
-                }.getOrElse("")
 
-                @Some(status).flatMap(_.statusEndDate).map(DateFormat.format(locale)).map { statusEndDate =>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("status-found.previous.expiryDate")</dt>
-                        <dd id="expiryDate-previous-@index" class="govuk-summary-list__value govuk-!-width-one-third">@statusEndDate</dd>
-                    </div>
-                }.getOrElse("")
+                    @Some(status).map(_.statusStartDate).map(DateFormat.format(locale)).map { statusStartDate =>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("status-found.previous.startDate")</dt>
+                            <dd id="startDate-previous-@index" class="govuk-summary-list__value govuk-!-width-one-third">@statusStartDate</dd>
+                        </div>
+                    }.getOrElse("")
 
-            </dl>
-        }
+                    @Some(status).flatMap(_.statusEndDate).map(DateFormat.format(locale)).map { statusEndDate =>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("status-found.previous.expiryDate")</dt>
+                            <dd id="expiryDate-previous-@index" class="govuk-summary-list__value govuk-!-width-one-third">@statusEndDate</dd>
+                        </div>
+                    }.getOrElse("")
+
+                </dl>
+            }
+        </aside>
     }
 
     @govukButton(Button(content = Text(messages("generic.searchAgain")), href=Some(context.searchAgainCall.url)))

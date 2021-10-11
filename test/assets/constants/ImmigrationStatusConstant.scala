@@ -23,7 +23,7 @@ object ImmigrationStatusConstant {
 
   val ValidStatusNoResourceTrue = ImmigrationStatus(
     statusStartDate = LocalDate.parse("2021-01-01"),
-    statusEndDate = None,
+    statusEndDate = Some(LocalDate.now().plusDays(1)),
     productType = "EUS",
     immigrationStatus = "ILR",
     noRecourseToPublicFunds = true

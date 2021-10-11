@@ -17,8 +17,10 @@
 package uk.gov.hmrc.homeofficeimmigrationstatus.models
 
 import java.time.LocalDate
-
 import play.api.libs.json.{Format, Json}
+import uk.gov.hmrc.homeofficeimmigrationstatus.views.{DateFormat, ISO31661Alpha3}
+
+import java.util.Locale
 
 case class StatusCheckResult(
   fullName: String,
@@ -26,6 +28,9 @@ case class StatusCheckResult(
   nationality: String, // (ICAO 3 letter acronym - ISO 3166-1)
   statuses: List[ImmigrationStatus]
 ) {
+  //todo seperate these to view model?
+  val countryName: Option[String] = ISO31661Alpha3.getCountryNameFor(nationality)
+  def dobFormatted(locale: Locale): String = DateFormat.format(locale)(dateOfBirth)
 
   private val statusesSortedByDate = statuses.sortBy(f = _.statusStartDate.toEpochDay * -1)
 
