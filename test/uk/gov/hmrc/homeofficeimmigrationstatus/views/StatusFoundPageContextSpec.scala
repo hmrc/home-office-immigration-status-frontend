@@ -213,8 +213,8 @@ class StatusFoundPageContextSpec
     "populate the row objects correctly" when {
       val context = createContext("PT", "IS", Some(LocalDate.now()))
       Seq(
-        ("immigrationRoute", "status-found.route", context.immigrationRoute(realMessages).get),
-        ("recourse", "status-found.norecourse", realMessages("status-found.no"))
+        ("route", "status-found.route", context.immigrationRoute(realMessages).get),
+        ("recourse-text", "status-found.norecourse", realMessages("status-found.no"))
       ).foreach {
         case (id, msgKey, data) =>
           s"row is for $id" in {

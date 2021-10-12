@@ -54,7 +54,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
         val html: HtmlFormat.Appendable = sut(buildContext(List(ValidStatus)))(request, messages)
         val doc = asDocument(html)
 
-        assertElementHasText(doc, "#recourse", messages("status-found.no"))
+        assertElementHasText(doc, "#recourse-text", messages("status-found.no"))
         assertElementHasText(doc, "#recourse-warning", "! Warning " + messages("status-found.warning"))
       }
     }
@@ -111,8 +111,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
         val html: HtmlFormat.Appendable = sut(buildContext(List(ValidStatusNoRecourceFalse)))(request, messages)
         val doc = asDocument(html)
 
-        assertRenderedById(doc, "immigrationRoute")
-        assertElementHasText(doc, "#immigrationRoute", "EU Settlement Scheme")
+        assertElementHasText(doc, "#route", "EU Settlement Scheme")
       }
 
       "STUDY displays" in {
@@ -121,8 +120,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
         val doc = asDocument(html)
 
-        assertRenderedById(doc, "immigrationRoute")
-        assertElementHasText(doc, "#immigrationRoute", "Student (FBIS)")
+        assertElementHasText(doc, "#route", "Student (FBIS)")
       }
 
       "DEPENDANT displays" in {
@@ -131,8 +129,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
         val doc = asDocument(html)
 
-        assertRenderedById(doc, "immigrationRoute")
-        assertElementHasText(doc, "#immigrationRoute", "Dependants of Skilled workers and Students (FBIS)")
+        assertElementHasText(doc, "#route", "Dependants of Skilled workers and Students (FBIS)")
       }
 
       "WORK displays" in {
@@ -141,8 +138,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
         val doc = asDocument(html)
 
-        assertRenderedById(doc, "immigrationRoute")
-        assertElementHasText(doc, "#immigrationRoute", "Worker (FBIS)")
+        assertElementHasText(doc, "#route", "Worker (FBIS)")
       }
 
       "FRONTIER_WORKER displays" in {
@@ -151,8 +147,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
         val doc = asDocument(html)
 
-        assertRenderedById(doc, "immigrationRoute")
-        assertElementHasText(doc, "#immigrationRoute", "Frontier worker (FBIS)")
+        assertElementHasText(doc, "#route", "Frontier worker (FBIS)")
       }
 
       "BNO displays" in {
@@ -161,8 +156,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
         val doc = asDocument(html)
 
-        assertRenderedById(doc, "immigrationRoute")
-        assertElementHasText(doc, "#immigrationRoute", "British National Overseas (FBIS)")
+        assertElementHasText(doc, "#route", "British National Overseas (FBIS)")
       }
 
       "BNO_LOTR displays" in {
@@ -171,8 +165,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
         val doc = asDocument(html)
 
-        assertRenderedById(doc, "immigrationRoute")
-        assertElementHasText(doc, "#immigrationRoute", "British National Overseas (FBIS)")
+        assertElementHasText(doc, "#route", "British National Overseas (FBIS)")
       }
 
       "GRADUATE displays" in {
@@ -181,8 +174,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
         val doc = asDocument(html)
 
-        assertRenderedById(doc, "immigrationRoute")
-        assertElementHasText(doc, "#immigrationRoute", "Graduate (FBIS)")
+        assertElementHasText(doc, "#route", "Graduate (FBIS)")
       }
 
       "SPORTSPERSON displays" in {
@@ -191,8 +183,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
         val doc = asDocument(html)
 
-        assertRenderedById(doc, "immigrationRoute")
-        assertElementHasText(doc, "#immigrationRoute", "International Sportsperson (FBIS)")
+        assertElementHasText(doc, "#route", "International Sportsperson (FBIS)")
       }
 
       "SETTLEMENT displays" in {
@@ -201,8 +192,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
         val doc = asDocument(html)
 
-        assertRenderedById(doc, "immigrationRoute")
-        assertElementHasText(doc, "#immigrationRoute", "British National Overseas (FBIS)")
+        assertElementHasText(doc, "#route", "British National Overseas (FBIS)")
       }
 
       "TEMP_WORKER displays" in {
@@ -211,8 +201,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
         val doc = asDocument(html)
 
-        assertRenderedById(doc, "immigrationRoute")
-        assertElementHasText(doc, "#immigrationRoute", "Temporary Worker (FBIS)")
+        assertElementHasText(doc, "#route", "Temporary Worker (FBIS)")
       }
 
       "Error with ProductType displays" in {
@@ -222,8 +211,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
         val doc = asDocument(html)
 
-        assertRenderedById(doc, "immigrationRoute")
-        assertElementHasText(doc, "#immigrationRoute", "error")
+        assertElementHasText(doc, "#route", "error")
       }
     }
   }
