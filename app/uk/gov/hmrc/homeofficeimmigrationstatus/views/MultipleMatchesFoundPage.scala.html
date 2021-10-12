@@ -21,9 +21,9 @@
 @this(
     govukButton : GovukButton,
     govukWrapper: govuk_wrapper
-)
+)(implicit appConfig: AppConfig)
 
-@(query: StatusCheckByNinoRequest, statusCheckError:StatusCheckError, changeCall: Call, searchAgainCall: Call)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(query: StatusCheckByNinoRequest, statusCheckError:StatusCheckError, changeCall: Call, searchAgainCall: Call)(implicit request: Request[_], messages: Messages)
 
 @locale = @{messages.lang.locale}
 
