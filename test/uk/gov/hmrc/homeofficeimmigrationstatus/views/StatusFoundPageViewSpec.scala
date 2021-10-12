@@ -72,21 +72,15 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
     "have all of the things in the list in the correct order" in {
       List(
-        (context.query.nino.formatted, "generic.nino", "nino"),
-        (context.result.dobFormatted(messages.lang.locale), "generic.dob", "dob"),
-        (context.result.countryName, "generic.nationality", "nationality"),
-        ( //todo move this to a view model. redic
-          context.mostRecentStatus.map(a => DateFormat.format(messages.lang.locale)(a.statusStartDate)).get,
-          "status-found.startDate",
-          "startDate"),
-        (
-          context.mostRecentStatus.map(a => DateFormat.format(messages.lang.locale)(a.statusEndDate.get)).get,
-          "status-found.expiryDate",
-          "expiryDate"),
+        "nino",
+        "dob",
+        "nationality",
+        "startDate",
+        "expiryDate",
       ).zipWithIndex.foreach {
-        case ((data, msgKey, id), index) =>
+        case (id, index) =>
           val row: Elements = doc.select(s"#details > .govuk-summary-list__row:nth-child(${index + 1})")
-          assertOneThirdRow(row, messages(msgKey), data, id)
+          row.select("dd").attr("id") mustBe id
       }
     }
 

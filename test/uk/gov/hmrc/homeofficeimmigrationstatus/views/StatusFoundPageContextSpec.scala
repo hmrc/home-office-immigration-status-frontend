@@ -28,6 +28,7 @@ import uk.gov.hmrc.homeofficeimmigrationstatus.models.{ImmigrationStatus, Status
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import uk.gov.hmrc.homeofficeimmigrationstatus.viewmodels.RowViewModel
 
 class StatusFoundPageContextSpec
     extends AnyWordSpecLike with Matchers with OptionValues with BeforeAndAfterEach with GuiceOneAppPerSuite {
@@ -180,6 +181,45 @@ class StatusFoundPageContextSpec
       "noRecourseToPublicFunds is false" in {
         val context = createContext("FOO", "BAR", None, false)
         assert(context.displayRecourseToPublicFunds == false)
+      }
+    }
+  }
+
+  "detailRows" must {
+    "populate the row objects correctly" when {
+      val context = createContext("PT", "IS", Some(LocalDate.now()))
+      Seq(
+        ("nino", "generic.nino", query.nino.formatted),
+        ("dob", "generic.dob", context.result.dobFormatted(realMessages.lang.locale)),
+        ("nationality", "generic.nationality", context.result.countryName),
+        (
+          "startDate",
+          "status-found.startDate",
+          DateFormat.format(realMessages.lang.locale)(context.mostRecentStatus.get.statusStartDate)),
+        (
+          "expiryDate",
+          "status-found.expiryDate",
+          DateFormat.format(realMessages.lang.locale)(context.mostRecentStatus.get.statusEndDate.get))
+      ).foreach {
+        case (id, msgKey, data) =>
+          s"row is for $id" in {
+            assert(context.detailRows(realMessages).contains(RowViewModel(id, msgKey, data)))
+          }
+      }
+    }
+  }
+
+  "stuffRows" must {
+    "populate the row objects correctly" when {
+      val context = createContext("PT", "IS", Some(LocalDate.now()))
+      Seq(
+        ("immigrationRoute", "status-found.route", context.immigrationRoute(realMessages).get),
+        ("recourse", "status-found.norecourse", realMessages("status-found.no"))
+      ).foreach {
+        case (id, msgKey, data) =>
+          s"row is for $id" in {
+            assert(context.stuffRows(realMessages).contains(RowViewModel(id, msgKey, data)))
+          }
       }
     }
   }
