@@ -162,7 +162,6 @@ class StatusFoundPageContextSpec
     }
 
     "return false" when {
-
       "most recent is none" in {
         val context = StatusFoundPageContext(
           query,
