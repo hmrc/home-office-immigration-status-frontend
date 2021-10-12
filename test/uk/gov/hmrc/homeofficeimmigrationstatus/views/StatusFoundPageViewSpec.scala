@@ -48,12 +48,10 @@ class StatusFoundPageViewSpec extends ViewSpec {
       e.text() mustBe "Pan has settled status"
     }
 
-    "have recourse to public funds fie ld" when {
+    "have recourse to public funds field" when {
       "noRecourseToPublicFunds is true" in {
 
-        val context = buildContext(List(ValidStatus))
-
-        val html: HtmlFormat.Appendable = sut(context)(request, messages)
+        val html: HtmlFormat.Appendable = sut(buildContext(List(ValidStatus)))(request, messages)
         val doc = asDocument(html)
 
         assertRenderedById(doc, "recourse")
@@ -64,9 +62,8 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
     "not have recourse to public funds field" when {
       "noRecourseToPublicFunds is false" in {
-        val context = buildContext(List(ValidStatusNoRecourceFalse))
 
-        val html: HtmlFormat.Appendable = sut(context)(request, messages)
+        val html: HtmlFormat.Appendable = sut(buildContext(List(ValidStatusNoRecourceFalse)))(request, messages)
         val doc = asDocument(html)
 
         assertNotRenderedById(doc, "recourse")
@@ -120,13 +117,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
     "Immigration route" when {
       "EUS displays" in {
 
-        val context = StatusFoundPageContext(
-          StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
-          StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatus)),
-          Call("", "/")
-        )
-
-        val html: HtmlFormat.Appendable = sut(context)(request, messages)
+        val html: HtmlFormat.Appendable = sut(buildContext(List(ValidStatusNoRecourceFalse)))(request, messages)
         val doc = asDocument(html)
 
         assertRenderedById(doc, "route")
@@ -134,13 +125,9 @@ class StatusFoundPageViewSpec extends ViewSpec {
       }
 
       "STUDY displays" in {
-        val context = StatusFoundPageContext(
-          StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
-          StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatusCustomProductType("STUDY"))),
-          Call("", "/")
-        )
+        val html: HtmlFormat.Appendable =
+          sut(buildContext(List(ValidStatusCustomProductType("STUDY"))))(request, messages)
 
-        val html: HtmlFormat.Appendable = sut(context)(request, messages)
         val doc = asDocument(html)
 
         assertRenderedById(doc, "route")
@@ -148,13 +135,9 @@ class StatusFoundPageViewSpec extends ViewSpec {
       }
 
       "DEPENDANT displays" in {
-        val context = StatusFoundPageContext(
-          StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
-          StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatusCustomProductType("DEPENDANT"))),
-          Call("", "/")
-        )
+        val html: HtmlFormat.Appendable =
+          sut(buildContext(List(ValidStatusCustomProductType("DEPENDANT"))))(request, messages)
 
-        val html: HtmlFormat.Appendable = sut(context)(request, messages)
         val doc = asDocument(html)
 
         assertRenderedById(doc, "route")
@@ -162,13 +145,9 @@ class StatusFoundPageViewSpec extends ViewSpec {
       }
 
       "WORK displays" in {
-        val context = StatusFoundPageContext(
-          StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
-          StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatusCustomProductType("WORK"))),
-          Call("", "/")
-        )
+        val html: HtmlFormat.Appendable =
+          sut(buildContext(List(ValidStatusCustomProductType("WORK"))))(request, messages)
 
-        val html: HtmlFormat.Appendable = sut(context)(request, messages)
         val doc = asDocument(html)
 
         assertRenderedById(doc, "route")
@@ -176,13 +155,9 @@ class StatusFoundPageViewSpec extends ViewSpec {
       }
 
       "FRONTIER_WORKER displays" in {
-        val context = StatusFoundPageContext(
-          StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
-          StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatusCustomProductType("FRONTIER_WORKER"))),
-          Call("", "/")
-        )
+        val html: HtmlFormat.Appendable =
+          sut(buildContext(List(ValidStatusCustomProductType("FRONTIER_WORKER"))))(request, messages)
 
-        val html: HtmlFormat.Appendable = sut(context)(request, messages)
         val doc = asDocument(html)
 
         assertRenderedById(doc, "route")
@@ -190,13 +165,9 @@ class StatusFoundPageViewSpec extends ViewSpec {
       }
 
       "BNO displays" in {
-        val context = StatusFoundPageContext(
-          StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
-          StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatusCustomProductType("BNO"))),
-          Call("", "/")
-        )
+        val html: HtmlFormat.Appendable =
+          sut(buildContext(List(ValidStatusCustomProductType("BNO"))))(request, messages)
 
-        val html: HtmlFormat.Appendable = sut(context)(request, messages)
         val doc = asDocument(html)
 
         assertRenderedById(doc, "route")
@@ -204,13 +175,9 @@ class StatusFoundPageViewSpec extends ViewSpec {
       }
 
       "BNO_LOTR displays" in {
-        val context = StatusFoundPageContext(
-          StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
-          StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatusCustomProductType("BNO_LOTR"))),
-          Call("", "/")
-        )
+        val html: HtmlFormat.Appendable =
+          sut(buildContext(List(ValidStatusCustomProductType("BNO_LOTR"))))(request, messages)
 
-        val html: HtmlFormat.Appendable = sut(context)(request, messages)
         val doc = asDocument(html)
 
         assertRenderedById(doc, "route")
@@ -218,13 +185,9 @@ class StatusFoundPageViewSpec extends ViewSpec {
       }
 
       "GRADUATE displays" in {
-        val context = StatusFoundPageContext(
-          StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
-          StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatusCustomProductType("GRADUATE"))),
-          Call("", "/")
-        )
+        val html: HtmlFormat.Appendable =
+          sut(buildContext(List(ValidStatusCustomProductType("GRADUATE"))))(request, messages)
 
-        val html: HtmlFormat.Appendable = sut(context)(request, messages)
         val doc = asDocument(html)
 
         assertRenderedById(doc, "route")
@@ -232,13 +195,9 @@ class StatusFoundPageViewSpec extends ViewSpec {
       }
 
       "SPORTSPERSON displays" in {
-        val context = StatusFoundPageContext(
-          StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
-          StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatusCustomProductType("SPORTSPERSON"))),
-          Call("", "/")
-        )
+        val html: HtmlFormat.Appendable =
+          sut(buildContext(List(ValidStatusCustomProductType("SPORTSPERSON"))))(request, messages)
 
-        val html: HtmlFormat.Appendable = sut(context)(request, messages)
         val doc = asDocument(html)
 
         assertRenderedById(doc, "route")
@@ -246,13 +205,9 @@ class StatusFoundPageViewSpec extends ViewSpec {
       }
 
       "SETTLEMENT displays" in {
-        val context = StatusFoundPageContext(
-          StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
-          StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatusCustomProductType("SETTLEMENT"))),
-          Call("", "/")
-        )
+        val html: HtmlFormat.Appendable =
+          sut(buildContext(List(ValidStatusCustomProductType("SETTLEMENT"))))(request, messages)
 
-        val html: HtmlFormat.Appendable = sut(context)(request, messages)
         val doc = asDocument(html)
 
         assertRenderedById(doc, "route")
@@ -260,13 +215,9 @@ class StatusFoundPageViewSpec extends ViewSpec {
       }
 
       "TEMP_WORKER displays" in {
-        val context = StatusFoundPageContext(
-          StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
-          StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatusCustomProductType("TEMP_WORKER"))),
-          Call("", "/")
-        )
+        val html: HtmlFormat.Appendable =
+          sut(buildContext(List(ValidStatusCustomProductType("TEMP_WORKER"))))(request, messages)
 
-        val html: HtmlFormat.Appendable = sut(context)(request, messages)
         val doc = asDocument(html)
 
         assertRenderedById(doc, "route")
@@ -274,13 +225,10 @@ class StatusFoundPageViewSpec extends ViewSpec {
       }
 
       "Error with ProductType displays" in {
-        val context = StatusFoundPageContext(
-          StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
-          StatusCheckResult("Pan", LocalDate.now(), "", List(ValidStatusCustomProductType("error"))),
-          Call("", "/")
-        )
 
-        val html: HtmlFormat.Appendable = sut(context)(request, messages)
+        val html: HtmlFormat.Appendable =
+          sut(buildContext(List(ValidStatusCustomProductType("error"))))(request, messages)
+
         val doc = asDocument(html)
 
         assertRenderedById(doc, "route")
