@@ -51,7 +51,7 @@ final case class StatusFoundPageContext(
     }
   }
 
-  def getImmigrationStatus(productType: String)(implicit messages: Messages) =
+  def getImmigrationRoute(productType: String)(implicit messages: Messages) =
     productType match {
       case "EUS"             => messages("immigration.eus")
       case "STUDY"           => messages("immigration.study")
@@ -68,7 +68,7 @@ final case class StatusFoundPageContext(
     }
 
   def immigrationRoute(implicit messages: Messages) =
-    getImmigrationStatus(mostRecentStatus.map(_.productType).getOrElse("Unkown Immigration Route"))
+    mostRecentStatus.map(status => getImmigrationRoute(status.productType))
 }
 
 object StatusFoundPageContext {
