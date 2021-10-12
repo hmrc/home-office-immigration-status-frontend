@@ -50,10 +50,28 @@ final case class StatusFoundPageContext(
       case None => messages(prefix + "noStatus")
     }
   }
+
+  def getImmigrationRoute(productType: String)(implicit messages: Messages) =
+    productType match {
+      case "EUS"             => messages("immigration.eus")
+      case "STUDY"           => messages("immigration.study")
+      case "DEPENDANT"       => messages("immigration.dependant")
+      case "WORK"            => messages("immigration.work")
+      case "FRONTIER_WORKER" => messages("immigration.frontier")
+      case "BNO"             => messages("immigration.bno")
+      case "BNO_LOTR"        => messages("immigration.bno_lotr")
+      case "GRADUATE"        => messages("immigration.graduate")
+      case "SPORTSPERSON"    => messages("immigration.sportsperson")
+      case "SETTLEMENT"      => messages("immigration.settlement")
+      case "TEMP_WORKER"     => messages("immigration.temp_worker")
+      case _                 => productType
+    }
+
+  def immigrationRoute(implicit messages: Messages) =
+    mostRecentStatus.map(status => getImmigrationRoute(status.productType))
 }
 
 object StatusFoundPageContext {
-
   def immigrationStatusLabel(productType: String, status: String)(implicit messages: Messages): String =
     (productType, status) match {
       case (EUS, LTR) => messages("app.status.EUS_LTR")

@@ -34,6 +34,7 @@
 @*<!--todo This list creation should be done else where, context or vm -->*@
 @*<!--Todo change this name when rows are grouped by stuff --> *@
 @stuffRows = @{Seq(
+    context.immigrationRoute.map(route => Row("immigrationRoute", "status-found.route", route)),
     if(context.displayRecourseToPublicFunds)Some(Row("recourse", "status-found.norecourse", messages("status-found.no"))) else None
 ).flatten}
 
