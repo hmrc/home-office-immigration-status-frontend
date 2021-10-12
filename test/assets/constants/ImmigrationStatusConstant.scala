@@ -23,13 +23,13 @@ object ImmigrationStatusConstant {
 
   val ValidStatus = ImmigrationStatus(
     statusStartDate = LocalDate.parse("2021-01-01"),
-    statusEndDate = None,
+    statusEndDate = Some(LocalDate.now().plusDays(1)),
     productType = "EUS",
     immigrationStatus = "ILR",
     noRecourseToPublicFunds = true
   )
 
-  val ValidStatusNoResourceFalse = ImmigrationStatus(
+  val ValidStatusNoRecourceFalse = ImmigrationStatus(
     statusStartDate = LocalDate.parse("2021-01-01"),
     statusEndDate = None,
     productType = "EUS",
