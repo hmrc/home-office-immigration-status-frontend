@@ -24,7 +24,8 @@
     govukWrapper: govuk_wrapper,
     summaryList: components.SummaryList,
     previousStatuses: components.PreviousStatuses,
-    warning: GovukWarningText
+    warning: GovukWarningText,
+    details: GovukDetails
 )(implicit appConfig: AppConfig)
 
 @(context: StatusFoundPageContext)(implicit request: Request[_], messages: Messages)
@@ -46,7 +47,9 @@
 
     @summaryList("details", context.detailRows)
 
-    @previousStatuses(context.previousStatuses)
+    @if(context.previousStatuses.nonEmpty) {
+        @details(Details(id = Some("previousStatuses"), summary = Text(messages("status-found.detailsLabel")), content = HtmlContent(previousStatuses(context.previousStatuses))))
+    }
 
     @govukButton(Button(content = Text(messages("generic.searchAgain")), href=Some(context.searchAgainCall.url)))
 }

@@ -16,16 +16,48 @@
 
 package uk.gov.hmrc.homeofficeimmigrationstatus.views.components
 
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
+import org.jsoup.select.Elements
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.ViewSpec
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.components.PreviousStatuses
+import java.time.LocalDate
+import uk.gov.hmrc.homeofficeimmigrationstatus.models.ImmigrationStatus
 
 class PreviousStatusesComponentSpec extends ViewSpec {
 
   val sut: PreviousStatuses = inject[PreviousStatuses]
 
-  //this page is subject to be changed a lot in future tickets, not testing the old code just to delete later.
-  //todo the rest of this spec
+  val singleStatus = Seq(
+    ImmigrationStatus(
+      statusStartDate = LocalDate.parse("2012-01-01"),
+      statusEndDate = Some(LocalDate.parse("2013-01-01")),
+      productType = "EUS",
+      immigrationStatus = "ILR",
+      noRecourseToPublicFunds = true
+    ))
+
+  val threeStatuses = Seq(
+    ImmigrationStatus(
+      statusStartDate = LocalDate.parse("2013-01-01"),
+      productType = "EUS",
+      immigrationStatus = "ILR",
+      noRecourseToPublicFunds = true
+    ),
+    ImmigrationStatus(
+      statusStartDate = LocalDate.parse("2011-01-01"),
+      statusEndDate = Some(LocalDate.parse("2012-01-01")),
+      productType = "EUS",
+      immigrationStatus = "LTR",
+      noRecourseToPublicFunds = false
+    ),
+    ImmigrationStatus(
+      statusStartDate = LocalDate.parse("2009-01-01"),
+      statusEndDate = Some(LocalDate.parse("2010-01-01")),
+      productType = "WORK",
+      immigrationStatus = "LTR",
+      noRecourseToPublicFunds = true
+    )
+  )
 
   "PreviousStatusesComponent" must {
     "show nothing" when {
@@ -35,6 +67,41 @@ class PreviousStatusesComponentSpec extends ViewSpec {
 
         doc.toString mustBe emptyDocument.toString
       }
+    }
+
+    "display a single status" when {
+      "only one status is passed in" in {
+        val doc: Document = asDocument(sut(singleStatus)(messages))
+        assertRenderedById(doc, "history-0")
+      }
+    }
+
+    "display multiple statuses" when {
+      "multiple are passed in" in {
+        val doc: Document = asDocument(sut(threeStatuses)(messages))
+        assertRenderedById(doc, "history-0")
+        assertRenderedById(doc, "history-1")
+        assertRenderedById(doc, "history-2")
+      }
+    }
+
+    "have all of the things in the list in the correct order" in {
+      val doc: Document = asDocument(sut(singleStatus)(messages))
+      List(
+        ("Settled status", "status-found.previous.status", "status-previous-0"),
+        ("placeholder", "status-found.previous.recourse", "recourse-previous-0"),
+        ("01 January 2012", "status-found.previous.startDate", "startDate-previous-0"),
+        ("01 January 2013", "status-found.previous.expiryDate", "expiryDate-previous-0")
+      ).zipWithIndex.foreach {
+        case ((data, msgKey, id), index) =>
+          val row: Elements = doc.select(s"#history-0 > .govuk-summary-list__row:nth-child(${index + 1})")
+          assertOneThirdRow(row, messages(msgKey), data, id)
+      }
+    }
+
+    "not display the end date where it is not passed in" in {
+      val doc: Document = asDocument(sut(threeStatuses)(messages))
+      assertNotRenderedById(doc, "expiryDate-previous-0")
     }
   }
 }
