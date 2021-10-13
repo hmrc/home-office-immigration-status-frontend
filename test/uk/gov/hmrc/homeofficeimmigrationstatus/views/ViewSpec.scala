@@ -70,9 +70,23 @@ trait ViewSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
     val keyElement = e.select("dt")
     assert(keyElement.text() == key)
     assert(keyElement.hasClass("govuk-summary-list__key govuk-!-width-one-third"))
-    val valueElement = e.select("dd")
+    val valueElement = e.select("dd:nth-of-type(1)")
     assert(valueElement.text() == value)
     assert(valueElement.attr("id") == id)
     assert(valueElement.hasClass("govuk-summary-list__value govuk-!-width-one-third"))
+  }
+
+  def assertOneThirdRowWithAction(
+    e: Elements,
+    key: String,
+    value: String,
+    id: String,
+    actionText: String,
+    actionUrl: String): Assertion = {
+    assertOneThirdRow(e, key, value, id)
+    val actionElement = e.select("dd:nth-of-type(2)")
+    assert(actionElement.hasClass("govuk-summary-list__actions govuk-!-width-one-third"))
+    assert(actionElement.select("a").text() == actionText)
+    assert(actionElement.select("a").attr("href") == actionUrl)
   }
 }

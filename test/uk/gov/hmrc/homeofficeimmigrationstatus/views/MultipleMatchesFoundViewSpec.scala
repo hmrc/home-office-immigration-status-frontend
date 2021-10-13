@@ -21,6 +21,7 @@ import org.jsoup.nodes.{Document, Element}
 import play.api.mvc.Call
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
+import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.routes
 import uk.gov.hmrc.homeofficeimmigrationstatus.models.{StatusCheckByNinoRequest, StatusCheckError}
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.MultipleMatchesFoundPage
 
@@ -33,9 +34,9 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
 
   val error: StatusCheckError = StatusCheckError("errorcode")
 
-  //surely these arent dynamic and can just be got by reverse routes.
+  //todo surely these arent dynamic and can just be got by reverse routes.
   val changeCall = Call("GET", "/change")
-  val searchAgainCall = Call("GET", "search-again")
+  val searchAgainCall = Call("GET", "/search-again")
 
   "MultipleMatchesFoundPage" must {
     val doc: Document = asDocument(sut(query, error, changeCall, searchAgainCall)(request, messages))
@@ -46,7 +47,43 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
     }
 
     "have paragraph text" in {
-      doc.select("p .govuk-body").text() mustBe messages("status-check-failure-conflict.listParagraph")
+      doc.select(".govuk-body").text() mustBe messages("status-check-failure-conflict.listParagraph")
+    }
+
+    "have personal details heading" in {
+      val e: Element = doc.getElementById("personal-details")
+
+      e.text() mustBe messages("status-check-failure.heading2CustomerDetails")
+    }
+
+    "have all of the things in the list in the correct order" in {
+      List(
+        (query.nino.formatted, "generic.nino", "nino", "generic.nino"),
+        (query.givenName, "generic.givenName", "givenName", "generic.givenName.lowercase"),
+        (query.familyName, "generic.familyName", "familyName", "generic.familyName.lowercase"),
+        (
+          DateFormat.formatDatePattern(messages.lang.locale)(query.dateOfBirth),
+          "generic.dob",
+          "dob",
+          "generic.dob.lowercase")
+      ).zipWithIndex.foreach {
+        case ((data, msgKey, id, actionText), index) =>
+          val row = doc.select(s"#inputted-data > .govuk-summary-list__row:nth-child(${index + 1})")
+          assertOneThirdRowWithAction(
+            row,
+            messages(msgKey),
+            data,
+            id,
+            s"${messages("generic.change")} ${messages(actionText)}",
+            changeCall.url)
+      }
+    }
+
+    "have the search again button" in {
+      val button = doc.select("#content > a")
+
+      button.text() mustBe "Search again"
+      button.attr("href") mustBe routes.HomeOfficeImmigrationStatusFrontendController.showStart.url
     }
   }
 
