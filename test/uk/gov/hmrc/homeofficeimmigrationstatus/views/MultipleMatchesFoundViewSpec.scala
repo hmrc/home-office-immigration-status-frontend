@@ -18,11 +18,9 @@ package uk.gov.hmrc.homeofficeimmigrationstatus.views
 
 import org.joda.time.LocalDate
 import org.jsoup.nodes.{Document, Element}
-import play.api.mvc.Call
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
 import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.routes
-import uk.gov.hmrc.homeofficeimmigrationstatus.models.{StatusCheckByNinoRequest, StatusCheckError}
+import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoRequest
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.MultipleMatchesFoundPage
 
 class MultipleMatchesFoundViewSpec extends ViewSpec {
@@ -31,11 +29,9 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
 
   //todo nino gen
   val query = StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", LocalDate.now().toString)
-
-  val error: StatusCheckError = StatusCheckError("errorcode")
+  val doc: Document = asDocument(sut(query)(request, messages))
 
   "MultipleMatchesFoundPage" must {
-    val doc: Document = asDocument(sut(query, error)(request, messages))
     "have a status conflict title" in {
       val e: Element = doc.getElementById("status-check-failure-conflict-title")
 

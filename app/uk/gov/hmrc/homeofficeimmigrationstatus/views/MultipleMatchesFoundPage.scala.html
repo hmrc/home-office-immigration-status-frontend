@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.homeofficeimmigrationstatus.models.{StatusCheckByNinoRequest, StatusCheckError}
+@import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoRequest
 @import uk.gov.hmrc.homeofficeimmigrationstatus.views.DateFormat
 @import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.routes
 @import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
@@ -24,7 +24,7 @@
     govukWrapper: govuk_wrapper
 )(implicit appConfig: AppConfig)
 
-@(query: StatusCheckByNinoRequest, statusCheckError:StatusCheckError)(implicit request: Request[_], messages: Messages)
+@(query: StatusCheckByNinoRequest)(implicit request: Request[_], messages: Messages)
 
 @changeCall = @{routes.HomeOfficeImmigrationStatusFrontendController.showStatusCheckByNino}
 
