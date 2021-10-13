@@ -67,6 +67,7 @@ status-found.status='Status'
 status-found.startDate='Start date'
 status-found.expiryDate='Expiry date'
 status-found.previous.status='Previous status'
+status-found.previous.recourse='Recourse to public funds'
 status-found.previous.startDate='Previous start date'
 status-found.previous.expiryDate='Previous expiry date'
 status-found.current.EUS.ILR=' has settled status'
@@ -88,6 +89,7 @@ status-found.warning='You need to check if there are exceptions that may mean a 
 status-found.no='No'
 status-found.norecourse='Recourse to public funds'
 status-found.route='Immigration route'
+status-found.detailsLabel='View past information about the customer (from the last six months)'
 
 # Status not available page
 status-not-available.title='Applicant does not have an active status'
