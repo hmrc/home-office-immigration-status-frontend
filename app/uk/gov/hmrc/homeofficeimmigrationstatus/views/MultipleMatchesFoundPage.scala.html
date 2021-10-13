@@ -24,7 +24,9 @@
     govukWrapper: govuk_wrapper
 )(implicit appConfig: AppConfig)
 
-@(query: StatusCheckByNinoRequest, statusCheckError:StatusCheckError, changeCall: Call, searchAgainCall: Call)(implicit request: Request[_], messages: Messages)
+@(query: StatusCheckByNinoRequest, statusCheckError:StatusCheckError)(implicit request: Request[_], messages: Messages)
+
+@changeCall = @{routes.HomeOfficeImmigrationStatusFrontendController.showStatusCheckByNino}
 
 @locale = @{messages.lang.locale}
 

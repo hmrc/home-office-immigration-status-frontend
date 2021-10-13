@@ -34,12 +34,8 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
 
   val error: StatusCheckError = StatusCheckError("errorcode")
 
-  //todo surely these arent dynamic and can just be got by reverse routes.
-  val changeCall = Call("GET", "/change")
-  val searchAgainCall = Call("GET", "/search-again")
-
   "MultipleMatchesFoundPage" must {
-    val doc: Document = asDocument(sut(query, error, changeCall, searchAgainCall)(request, messages))
+    val doc: Document = asDocument(sut(query, error)(request, messages))
     "have a status conflict title" in {
       val e: Element = doc.getElementById("status-check-failure-conflict-title")
 
@@ -75,7 +71,8 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
             data,
             id,
             s"${messages("generic.change")} ${messages(actionText)}",
-            changeCall.url)
+            routes.HomeOfficeImmigrationStatusFrontendController.showStatusCheckByNino.url
+          )
       }
     }
 
