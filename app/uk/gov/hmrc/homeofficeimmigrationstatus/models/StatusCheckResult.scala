@@ -29,7 +29,7 @@ case class StatusCheckResult(
   statuses: List[ImmigrationStatus]
 ) {
   //todo seperate these to view model?
-  val countryName: Option[String] = ISO31661Alpha3.getCountryNameFor(nationality)
+  val countryName: String = ISO31661Alpha3.getCountryNameFor(nationality)
   def dobFormatted(locale: Locale): String = DateFormat.format(locale)(dateOfBirth)
 
   private val statusesSortedByDate = statuses.sortBy(f = _.statusStartDate.toEpochDay * -1)

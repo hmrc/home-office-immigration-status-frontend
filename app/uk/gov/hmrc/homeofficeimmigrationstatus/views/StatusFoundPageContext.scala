@@ -19,6 +19,7 @@ package uk.gov.hmrc.homeofficeimmigrationstatus.views
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import uk.gov.hmrc.homeofficeimmigrationstatus.models.ImmigrationStatus._
+import uk.gov.hmrc.homeofficeimmigrationstatus.viewmodels.{RowViewModel => Row}
 import uk.gov.hmrc.homeofficeimmigrationstatus.models.{ImmigrationStatus, StatusCheckByNinoRequest, StatusCheckResult}
 
 final case class StatusFoundPageContext(
@@ -28,6 +29,27 @@ final case class StatusFoundPageContext(
 
   val mostRecentStatus: Option[ImmigrationStatus] = result.mostRecentStatus
   val previousStatuses: Seq[ImmigrationStatus] = result.previousStatuses
+
+  //todo change name of this when grouped properly
+  def stuffRows(implicit messages: Messages) =
+    Seq(
+      immigrationRoute.map(route => Row("immigrationRoute", "status-found.route", route)),
+      if (displayRecourseToPublicFunds)
+        Some(Row("recourse-text", "status-found.norecourse", messages("status-found.no")))
+      else None
+    ).flatten
+
+  def detailRows(implicit messages: Messages) =
+    Seq(
+      Some(Row("nino", "generic.nino", query.nino.formatted)),
+      Some(Row("dob", "generic.dob", result.dobFormatted(messages.lang.locale))),
+      Some(Row("nationality", "generic.nationality", result.countryName)),
+      mostRecentStatus.map(s =>
+        Row("startDate", "status-found.startDate", DateFormat.format(messages.lang.locale)(s.statusStartDate))),
+      mostRecentStatus.flatMap(s =>
+        s.statusEndDate.map(date =>
+          Row("expiryDate", "status-found.expiryDate", DateFormat.format(messages.lang.locale)(date))))
+    ).flatten
 
   def displayRecourseToPublicFunds: Boolean = mostRecentStatus.exists(_.noRecourseToPublicFunds)
 
@@ -50,10 +72,28 @@ final case class StatusFoundPageContext(
       case None => messages(prefix + "noStatus")
     }
   }
+
+  def getImmigrationRoute(productType: String)(implicit messages: Messages) =
+    productType match {
+      case "EUS"             => messages("immigration.eus")
+      case "STUDY"           => messages("immigration.study")
+      case "DEPENDANT"       => messages("immigration.dependant")
+      case "WORK"            => messages("immigration.work")
+      case "FRONTIER_WORKER" => messages("immigration.frontier")
+      case "BNO"             => messages("immigration.bno")
+      case "BNO_LOTR"        => messages("immigration.bno_lotr")
+      case "GRADUATE"        => messages("immigration.graduate")
+      case "SPORTSPERSON"    => messages("immigration.sportsperson")
+      case "SETTLEMENT"      => messages("immigration.settlement")
+      case "TEMP_WORKER"     => messages("immigration.temp_worker")
+      case _                 => productType
+    }
+
+  def immigrationRoute(implicit messages: Messages) =
+    mostRecentStatus.map(status => getImmigrationRoute(status.productType))
 }
 
 object StatusFoundPageContext {
-
   def immigrationStatusLabel(productType: String, status: String)(implicit messages: Messages): String =
     (productType, status) match {
       case (EUS, LTR) => messages("app.status.EUS_LTR")

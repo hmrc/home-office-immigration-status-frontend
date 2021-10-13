@@ -24,14 +24,14 @@ import uk.gov.hmrc.homeofficeimmigrationstatus.models.{ImmigrationStatus, Status
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.StatusFoundPage
 
 import java.time.LocalDate
-import assets.constants.ImmigrationStatusConstant.{ValidStatusNoResourceFalse, ValidStatusNoResourceTrue}
 import org.jsoup.select.Elements
+import assets.constants.ImmigrationStatusConstant.{ValidStatus, ValidStatusCustomProductType, ValidStatusNoRecourceFalse}
 
 class StatusFoundPageViewSpec extends ViewSpec {
 
   val sut: StatusFoundPage = inject[StatusFoundPage]
 
-  def buildContext(statuses: List[ImmigrationStatus] = List(ValidStatusNoResourceTrue)): StatusFoundPageContext =
+  def buildContext(statuses: List[ImmigrationStatus] = List(ValidStatus)): StatusFoundPageContext =
     StatusFoundPageContext(
       //todo nino gen
       StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
@@ -43,18 +43,17 @@ class StatusFoundPageViewSpec extends ViewSpec {
     val context = buildContext()
     val doc: Document = asDocument(sut(context)(request, messages))
 
-    "have a status found title" in { //todo fixed in HOSS2-140
+    "have a status found title" in {
       val e: Element = doc.getElementById("status-found-title")
-
       e.text() mustBe "Pan has settled status"
     }
 
     "have recourse to public funds field" when {
       "noRecourseToPublicFunds is true" in {
-        val html: HtmlFormat.Appendable = sut(buildContext(List(ValidStatusNoResourceTrue)))(request, messages)
+
+        val html: HtmlFormat.Appendable = sut(buildContext(List(ValidStatus)))(request, messages)
         val doc = asDocument(html)
 
-        assertRenderedById(doc, "recourse")
         assertElementHasText(doc, "#recourse-text", messages("status-found.no"))
         assertElementHasText(doc, "#recourse-warning", "! Warning " + messages("status-found.warning"))
       }
@@ -62,34 +61,26 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
     "not have recourse to public funds field" when {
       "noRecourseToPublicFunds is false" in {
-        val context = buildContext(List(ValidStatusNoResourceFalse))
 
-        val html: HtmlFormat.Appendable = sut(context)(request, messages)
+        val html: HtmlFormat.Appendable = sut(buildContext(List(ValidStatusNoRecourceFalse)))(request, messages)
         val doc = asDocument(html)
 
         assertNotRenderedById(doc, "recourse")
-        assertNotRenderedById(doc, "recourse-text")
         assertNotRenderedById(doc, "recourse-warning")
       }
     }
 
     "have all of the things in the list in the correct order" in {
       List(
-        (context.query.nino.formatted, "generic.nino", "nino"),
-        (context.result.dobFormatted(messages.lang.locale), "generic.dob", "dob"),
-        (context.result.countryName.get, "generic.nationality", "nationality"),
-        ( //todo move this to a view model. redic
-          context.mostRecentStatus.map(a => DateFormat.format(messages.lang.locale)(a.statusStartDate)).get,
-          "status-found.startDate",
-          "startDate"),
-        (
-          context.mostRecentStatus.map(a => DateFormat.format(messages.lang.locale)(a.statusEndDate.get)).get,
-          "status-found.expiryDate",
-          "expiryDate"),
+        "nino",
+        "dob",
+        "nationality",
+        "startDate",
+        "expiryDate",
       ).zipWithIndex.foreach {
-        case ((data, msgKey, id), index) =>
+        case (id, index) =>
           val row: Elements = doc.select(s"#details > .govuk-summary-list__row:nth-child(${index + 1})")
-          assertOneThirdRow(row, messages(msgKey), data, id)
+          row.select("dd").attr("id") mustBe id
       }
     }
 
@@ -100,11 +91,10 @@ class StatusFoundPageViewSpec extends ViewSpec {
     }
 
     "have the history section" when {
-      val context = buildContext(statuses = List(ValidStatusNoResourceTrue, ValidStatusNoResourceTrue))
+      val context = buildContext(statuses = List(ValidStatus, ValidStatus))
       val doc: Document = asDocument(sut(context)(request, messages))
       "there is previous statuses" in {
         assertRenderedById(doc, "previousStatuses")
-        //this section is all subject to change and should be a separate view anyway, not testing in this pr.
       }
     }
 
@@ -113,6 +103,116 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
       button.text() mustBe "Search again"
       button.attr("href") mustBe "/expected"
+    }
+
+    "Immigration route" when {
+      "EUS displays" in {
+
+        val html: HtmlFormat.Appendable = sut(buildContext(List(ValidStatusNoRecourceFalse)))(request, messages)
+        val doc = asDocument(html)
+
+        assertElementHasText(doc, "#immigrationRoute", "EU Settlement Scheme")
+      }
+
+      "STUDY displays" in {
+        val html: HtmlFormat.Appendable =
+          sut(buildContext(List(ValidStatusCustomProductType("STUDY"))))(request, messages)
+
+        val doc = asDocument(html)
+
+        assertElementHasText(doc, "#immigrationRoute", "Student (FBIS)")
+      }
+
+      "DEPENDANT displays" in {
+        val html: HtmlFormat.Appendable =
+          sut(buildContext(List(ValidStatusCustomProductType("DEPENDANT"))))(request, messages)
+
+        val doc = asDocument(html)
+
+        assertElementHasText(doc, "#immigrationRoute", "Dependants of Skilled workers and Students (FBIS)")
+      }
+
+      "WORK displays" in {
+        val html: HtmlFormat.Appendable =
+          sut(buildContext(List(ValidStatusCustomProductType("WORK"))))(request, messages)
+
+        val doc = asDocument(html)
+
+        assertElementHasText(doc, "#immigrationRoute", "Worker (FBIS)")
+      }
+
+      "FRONTIER_WORKER displays" in {
+        val html: HtmlFormat.Appendable =
+          sut(buildContext(List(ValidStatusCustomProductType("FRONTIER_WORKER"))))(request, messages)
+
+        val doc = asDocument(html)
+
+        assertElementHasText(doc, "#immigrationRoute", "Frontier worker (FBIS)")
+      }
+
+      "BNO displays" in {
+        val html: HtmlFormat.Appendable =
+          sut(buildContext(List(ValidStatusCustomProductType("BNO"))))(request, messages)
+
+        val doc = asDocument(html)
+
+        assertElementHasText(doc, "#immigrationRoute", "British National Overseas (FBIS)")
+      }
+
+      "BNO_LOTR displays" in {
+        val html: HtmlFormat.Appendable =
+          sut(buildContext(List(ValidStatusCustomProductType("BNO_LOTR"))))(request, messages)
+
+        val doc = asDocument(html)
+
+        assertElementHasText(doc, "#immigrationRoute", "British National Overseas (FBIS)")
+      }
+
+      "GRADUATE displays" in {
+        val html: HtmlFormat.Appendable =
+          sut(buildContext(List(ValidStatusCustomProductType("GRADUATE"))))(request, messages)
+
+        val doc = asDocument(html)
+
+        assertElementHasText(doc, "#immigrationRoute", "Graduate (FBIS)")
+      }
+
+      "SPORTSPERSON displays" in {
+        val html: HtmlFormat.Appendable =
+          sut(buildContext(List(ValidStatusCustomProductType("SPORTSPERSON"))))(request, messages)
+
+        val doc = asDocument(html)
+
+        assertElementHasText(doc, "#immigrationRoute", "International Sportsperson (FBIS)")
+      }
+
+      "SETTLEMENT displays" in {
+        val html: HtmlFormat.Appendable =
+          sut(buildContext(List(ValidStatusCustomProductType("SETTLEMENT"))))(request, messages)
+
+        val doc = asDocument(html)
+
+        assertElementHasText(doc, "#immigrationRoute", "British National Overseas (FBIS)")
+      }
+
+      "TEMP_WORKER displays" in {
+        val html: HtmlFormat.Appendable =
+          sut(buildContext(List(ValidStatusCustomProductType("TEMP_WORKER"))))(request, messages)
+
+        val doc = asDocument(html)
+
+        assertElementHasText(doc, "#immigrationRoute", "Temporary Worker (FBIS)")
+      }
+
+      "Error with ProductType displays" in {
+
+        val html: HtmlFormat.Appendable =
+          sut(buildContext(List(ValidStatusCustomProductType("error"))))(request, messages)
+
+        val doc = asDocument(html)
+
+        assertElementHasText(doc, "#immigrationRoute", "error")
+      }
     }
   }
 }
