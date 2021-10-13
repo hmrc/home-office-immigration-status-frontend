@@ -141,8 +141,9 @@ footer.links.privacy_policy.url='/help/privacy'
 footer.links.terms_and_conditions.text='Terms and conditions'
 footer.links.terms_and_conditions.url='/help/terms-and-conditions'
 
-#Immigration Status
+#Immigration Route
 immigration.eus='EU Settlement Scheme'
+immigration.eu='EU Settlement'
 immigration.study='Student (FBIS)'
 immigration.dependant='Dependants of Skilled workers and Students (FBIS)'
 immigration.work='Worker (FBIS)'
@@ -153,3 +154,14 @@ immigration.graduate='Graduate (FBIS)'
 immigration.sportsperson='International Sportsperson (FBIS)'
 immigration.settlement='British National Overseas (FBIS)'
 immigration.temp_worker='Temporary Worker (FBIS)'
+
+#Immigration Status
+immigration.ilr='Indefinite leave to remain'
+immigration.ltr='Leave to remain'
+immigration.ltefbis='Leave to enter (FBIS)'
+immigration.ltrfbis='Leave to remain (FBIS)'
+immigration.permit='Permit (FBIS)'
+immigration.bnolotr='Leave outside the rules (FBIS)'
+immigration.coa='Certificate of application (In time)'
+immigration.post='Certificate of application (Out of time)'
+immigration.settle='Settlement (FBIS)'
