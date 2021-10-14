@@ -14,16 +14,19 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.homeofficeimmigrationstatus.models.{StatusCheckByNinoRequest, StatusCheckError}
+@import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoRequest
 @import uk.gov.hmrc.homeofficeimmigrationstatus.views.DateFormat
+@import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.routes
 @import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
 
 @this(
     govukButton : GovukButton,
     govukWrapper: govuk_wrapper
-)
+)(implicit appConfig: AppConfig)
 
-@(query: StatusCheckByNinoRequest, statusCheckError:StatusCheckError, changeCall: Call, searchAgainCall: Call)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(query: StatusCheckByNinoRequest)(implicit request: Request[_], messages: Messages)
+
+@changeCall = @{routes.HomeOfficeImmigrationStatusFrontendController.showStatusCheckByNino}
 
 @locale = @{messages.lang.locale}
 
@@ -35,7 +38,7 @@
 
     <h2 class="govuk-heading-m" id="personal-details">@messages("status-check-failure.heading2CustomerDetails")</h2>
 
-    <dl class="govuk-summary-list">
+    <dl class="govuk-summary-list" id="inputted-data">
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("generic.nino")</dt>
             <dd id="nino" class="govuk-summary-list__value govuk-!-width-one-third">@query.nino.formatted</dd>
@@ -77,6 +80,6 @@
         </div>
     </dl>
 
-    @govukButton(Button(content = Text(messages("generic.searchAgain")), href=Some(searchAgainCall.url)))
+    @govukButton(Button(content = Text(messages("generic.searchAgain")), href=Some(routes.HomeOfficeImmigrationStatusFrontendController.showStart.url)))
 
 }
