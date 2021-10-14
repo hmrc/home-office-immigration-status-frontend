@@ -14,19 +14,12 @@
 * limitations under the License.
 *@
 
-@import uk.gov.hmrc.homeofficeimmigrationstatus.viewmodels.RowViewModel
+@import uk.gov.hmrc.homeofficeimmigrationstatus.viewmodels.RowHtml
 
 @this()
 
-@(id: String, rows: Seq[RowViewModel])(implicit messages: Messages)
+@(id: String, rows: Seq[RowHtml])(implicit messages: Messages)
 
 <dl class="govuk-summary-list" id=@id>
-
-    @rows.map{ row =>
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages(row.messageKey)</dt>
-            <dd id=@{row.id} class="govuk-summary-list__value govuk-!-width-one-third">@{row.data}</dd>
-        </div>
-    }
-
+    @rows.map(_.html)
 </dl>
