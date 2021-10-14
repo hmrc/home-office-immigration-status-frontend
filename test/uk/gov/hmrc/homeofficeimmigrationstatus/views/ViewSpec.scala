@@ -29,7 +29,7 @@ import play.twirl.api.Html
 
 trait ViewSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
 
-  val messages: Messages = inject[MessagesApi].preferred(Seq.empty[Lang])
+  lazy val messages: Messages = inject[MessagesApi].preferred(Seq.empty[Lang])
   val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
 
   def asDocument(html: Html): Document = Jsoup.parse(html.toString())

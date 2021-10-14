@@ -160,7 +160,7 @@ class HomeOfficeImmigrationStatusFrontendController @Inject()(
 
     case StatusCheckFailure(_, query, error) =>
       if (error.errCode == "ERR_CONFLICT") Ok(multipleMatchesFoundPage(query))
-      else Ok(statusCheckFailurePage(query, error, getCallFor(StatusCheckByNino(Some(query))), getCallFor(Start)))
+      else Ok(statusCheckFailurePage(query))
 
   }
 

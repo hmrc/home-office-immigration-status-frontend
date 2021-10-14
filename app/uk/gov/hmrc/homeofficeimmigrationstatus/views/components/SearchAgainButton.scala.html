@@ -1,0 +1,7 @@
+@import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.routes
+
+@this(govukButton : GovukButton)
+
+@()(implicit messages: Messages)
+
+@govukButton(Button(content = Text(messages("generic.searchAgain")), href=Some(routes.HomeOfficeImmigrationStatusFrontendController.showStart.url)))

@@ -15,22 +15,15 @@
  *@
 
 @import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoRequest
-@import uk.gov.hmrc.homeofficeimmigrationstatus.views.DateFormat
-@import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.routes
-@import uk.gov.hmrc.homeofficeimmigrationstatus.viewmodels.{RowWithActionViewModel => Row}
 @import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
 
 @this(
-    govukButton : GovukButton,
     govukWrapper: govuk_wrapper,
-    summaryList: components.SummaryList
+    showChangeQuery: components.ShowChangeQuery,
+    searchAgainButton : components.SearchAgainButton
 )(implicit appConfig: AppConfig)
 
 @(query: StatusCheckByNinoRequest)(implicit request: Request[_], messages: Messages)
-
-@changeCall = @{routes.HomeOfficeImmigrationStatusFrontendController.showStatusCheckByNino}
-
-@locale = @{messages.lang.locale}
 
 @govukWrapper(title = messages("status-check-failure-conflict.title")) {
 
@@ -40,14 +33,8 @@
 
     <h2 class="govuk-heading-m" id="personal-details">@messages("status-check-failure.heading2CustomerDetails")</h2>
 
-    @summaryList("inputted-data", Seq(
-        Row("nino", "generic.nino", query.nino.formatted, "change-nino"),
-        Row("givenName", "generic.givenName", query.givenName, "change-given-name", "generic.givenName.lowercase"),
-        Row("familyName", "generic.familyName", query.familyName, "change-family-name", "generic.familyName.lowercase"),
-        Row("dob", "generic.dob", DateFormat.formatDatePattern(locale)(query.dateOfBirth), "change-dob", "generic.dob.lowercase")
-        )
-    )
+    @showChangeQuery(query)
 
-    @govukButton(Button(content = Text(messages("generic.searchAgain")), href=Some(routes.HomeOfficeImmigrationStatusFrontendController.showStart.url)))
+    @searchAgainButton()
 
 }
