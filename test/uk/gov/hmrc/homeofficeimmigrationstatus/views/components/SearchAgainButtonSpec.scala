@@ -28,7 +28,7 @@ class SearchAgainButtonSpec extends ViewSpec {
   "SearchAgainButton" must {
     val button = doc.select("a")
     "have the content" in {
-      button.text() mustBe "Search again"
+      button.text() mustBe messages("generic.searchAgain")
     }
     "link to the correct place" in {
       button.attr("href") mustBe routes.HomeOfficeImmigrationStatusFrontendController.showStart.url
