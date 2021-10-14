@@ -18,12 +18,10 @@ package uk.gov.hmrc.homeofficeimmigrationstatus.views
 
 import org.joda.time.LocalDate
 import org.jsoup.nodes.{Document, Element}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, verify, when}
+import org.mockito.Mockito.{mock, verify}
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoRequest
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.MultipleMatchesFoundPage
@@ -40,9 +38,6 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
       bind[SearchAgainButton].toInstance(mockSearchAgainButton)
     )
     .build()
-
-  when(mockShowChangeQuery.apply(any())(any())).thenReturn(HtmlFormat.empty)
-  when(mockSearchAgainButton.apply()(any())).thenReturn(HtmlFormat.empty)
 
   lazy val sut = inject[MultipleMatchesFoundPage]
 
