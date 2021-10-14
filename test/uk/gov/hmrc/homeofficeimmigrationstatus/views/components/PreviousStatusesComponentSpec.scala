@@ -16,17 +16,12 @@
 
 package uk.gov.hmrc.homeofficeimmigrationstatus.views.components
 
-import org.jsoup.nodes.{Document, Element}
+import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
-import uk.gov.hmrc.homeofficeimmigrationstatus.views.{StatusFoundPageContext, ViewSpec}
+import uk.gov.hmrc.homeofficeimmigrationstatus.views.ViewSpec
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.components.PreviousStatuses
 import java.time.LocalDate
-
-import assets.constants.ImmigrationStatusConstant.{ValidStatus, ValidStatusCustomImmigrationStatus}
-import play.api.mvc.Call
-import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.homeofficeimmigrationstatus.models.{ImmigrationStatus, StatusCheckByNinoRequest, StatusCheckResult}
+import uk.gov.hmrc.homeofficeimmigrationstatus.models.ImmigrationStatus
 
 class PreviousStatusesComponentSpec extends ViewSpec {
 

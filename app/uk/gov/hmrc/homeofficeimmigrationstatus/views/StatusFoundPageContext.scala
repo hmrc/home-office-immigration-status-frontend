@@ -18,7 +18,6 @@ package uk.gov.hmrc.homeofficeimmigrationstatus.views
 
 import play.api.i18n.Messages
 import play.api.mvc.Call
-import sun.nio.cs.ext.ISO2022_KR
 import uk.gov.hmrc.homeofficeimmigrationstatus.models.ImmigrationStatus._
 import uk.gov.hmrc.homeofficeimmigrationstatus.viewmodels.{RowViewModel => Row}
 import uk.gov.hmrc.homeofficeimmigrationstatus.models.{ImmigrationStatus, StatusCheckByNinoRequest, StatusCheckResult}

@@ -17,9 +17,7 @@
 package uk.gov.hmrc.homeofficeimmigrationstatus.models
 
 import java.time.LocalDate
-
 import play.api.libs.json.{Format, Json}
-import play.filters.cors.CORSConfig.Origins.Matching
 
 case class ImmigrationStatus(
   // start date of this status
@@ -33,11 +31,8 @@ case class ImmigrationStatus(
   // right to public funds status for this person
   noRecourseToPublicFunds: Boolean
 ) {
-
   private val hasExpired: Boolean = statusEndDate.exists(_.isBefore(LocalDate.now))
-
   val expiredMsg: String = if (hasExpired) ".expired" else ""
-
 }
 
 object ImmigrationStatus {
