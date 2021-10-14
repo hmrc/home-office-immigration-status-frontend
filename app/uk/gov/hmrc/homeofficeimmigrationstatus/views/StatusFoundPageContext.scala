@@ -18,6 +18,7 @@ package uk.gov.hmrc.homeofficeimmigrationstatus.views
 
 import play.api.i18n.Messages
 import play.api.mvc.Call
+import sun.nio.cs.ext.ISO2022_KR
 import uk.gov.hmrc.homeofficeimmigrationstatus.models.ImmigrationStatus._
 import uk.gov.hmrc.homeofficeimmigrationstatus.viewmodels.{RowViewModel => Row}
 import uk.gov.hmrc.homeofficeimmigrationstatus.models.{ImmigrationStatus, StatusCheckByNinoRequest, StatusCheckResult}
@@ -89,123 +90,34 @@ final case class StatusFoundPageContext(
       case _                 => productType
     }
 
-  def getImmigrationStatus(productType: String, immigrationStatus: String)(implicit messages: Messages) =
-    productType match {
-      case "EUS" => immigrationStatus match {
-        case "ILR" => "%a - %b".format(messages("immigration.eus"),messages("immigration.ilr"))
-        case "LTR" => messages("immigration.eus") + messages("immigration.ltr")
-        case _ => messages("immigration.eus")
-      }
-      case "STUDY" => immigrationStatus match {
-        case "LTE" => messages("immigration.study") + messages("immigration.ltefbis")
-        case "LTR" => messages("immigration.study") + messages("immigration.ltrfbis")
-        case _ => messages("immigration.study")
-      }
-      case "DEPENDANT" => immigrationStatus match {
-        case "LTE" => messages("immigration.dependant") + messages("immigration.ltefbis")
-        case "LTR" => messages("immigration.dependant") + messages("immigration.ltrfbis")
-        case _ => messages("immigration.dependant")
-      }
-      case "WORK" => immigrationStatus match {
-        case "LTE" => messages("immigration.work") + messages("immigration.ltefbis")
-        case "LTR" => messages("immigration.work") + messages("immigration.ltrfbis")
-        case _ => messages("immigration.work")
-      }
-      case "FRONTIER_WORKER" => immigrationStatus match {
-        case "PERMIT" => messages("immigration.frontier") + messages("immigration.permit")
-        case _ => messages("immigration.frontier")
-      }
-      case "BNO" => immigrationStatus match {
-        case "LTE" => messages("immigration.bno") + messages("immigration.ltefbis")
-        case "LTR" => messages("immigration.bno") + messages("immigration.ltrfbis")
-        case _ => messages("immigration.bno")
-      }
-      case "BNO_LOTR" => immigrationStatus match {
-        case "LTE" => messages("immigration.bno_lotr") + messages("immigration.bnolotr")
-        case "LTR" => messages("immigration.bno_lotr") + messages("immigration.bnolotr")
-        case _ => messages("immigration.bno_lotr")
-      }
-      case "GRADUATE" => immigrationStatus match {
-        case "LTR" => messages("immigration.graduate") + messages("immigration.ltrfbis")
-        case _ => messages("immigration.graduate")
-      }
-      case "EU" => immigrationStatus match {
-        case "COA_IN_TIME_GRANT" => messages("immigration.eu") + messages("immigration.coa")
-        case "POST_GRACE_PERIOD_COA_GRANT" => messages("immigration.eu") + messages("immigration.post")
-        case _ => messages("immigration.eu")
-      }
-      case "SPORTSPERSON" => immigrationStatus match {
-        case "LTE" => messages("immigration.sportsperson") + messages("immigration.ltefbis")
-        case "LTR" => messages("immigration.sportsperson") + messages("immigration.ltrfbis")
-        case _ => messages("immigration.sportsperson")
-      }
-      case "SETTLEMENT" => immigrationStatus match {
-        case "ILR" => messages("immigration.settlement") + messages("immigration.settle")
-        case _ => messages("immigration.settlement")
-      }
-      case "TEMP_WORKER" => immigrationStatus match {
-        case "LTE" => messages("immigration.temp_worker") + messages("immigration.ltefbis")
-        case "LTR" => messages("immigration.temp_worker") + messages("immigration.ltrfbis")
-        case _ => messages("immigration.temp_worker")
-      }
-      case _                 => productType
-    }
-
-  def buildStatusMessage(productType: String, status: String)(implicit messages: Messages) = {
-
-    productType match {
-      case "EUS" => status match {
-        case "ILR" => messages("immigration.ilr")
-        case "LTR" => messages("immigration.ltr")
-      }
-      case "BNO_LOTR" => messages("immigration.bnolotr")
-      case "SETTLEMENT" => messages("immigration.settle")
-      case _ => status match {
-        case "LTR" => messages("immigration.ltrfbis")
-        case "LTE" => messages("immigration.ltefbis")
-        case "PERMIT" => messages("immigration.permit")
-        case "COA_IN_TIME_GRANT" => messages("immigration.coa")
-        case "POST_GRACE_PERIOD_COA_GRANT" => messages("immigration.post")
-        case _ => status
-      }
-    }
-  }
-
-  def buildStatusMessageSecondAttempt(productType: String, status: String)(implicit messages: Messages) =
-    (productType, status) match {
-      case ("EUS", "ILR") => messages("immigration.ilr")
-      case ("EUS", "ILR") => messages("immigration.ilr")
-      case ("BNO_LOTR", _) => messages("immigration.bnolotr")
-      case ("SETTLEMENT", _) => messages("immigration.settle")
-      case (_,"LTR") => messages("immigration.ltrfbis")
-      case (_,"LTE") => messages("immigration.ltefbis")
-      case (_,"PERMIT") => messages("immigration.permit")
-      case (_,"COA_IN_TIME_GRANT") => messages("immigration.coa")
-      case (_,"POST_GRACE_PERIOD_COA_GRANT") => messages("immigration.post")
-    }
-
-  def immigrationStatusSecondAttempt(implicit messages: Messages) = {
-    mostRecentStatus.map(status => getImmigrationRoute(status.productType) + " - " +
-      buildStatusMessage(status.productType,status.immigrationStatus))
-  }
-
-  def immigrationStatusThirdAttempt(implicit messages: Messages) = {
-    mostRecentStatus.map(status => getImmigrationRoute(status.productType) + " - " +
-      buildStatusMessage(status.productType,status.immigrationStatus))
-  }
-
   def immigrationRoute(implicit messages: Messages) =
     mostRecentStatus.map(status => getImmigrationRoute(status.productType))
-
-  def immigrationStatus(implicit messages: Messages) =
-    mostRecentStatus.map(status => getImmigrationStatus(status.productType, status.immigrationStatus))
 }
 
 object StatusFoundPageContext {
   def immigrationStatusLabel(productType: String, status: String)(implicit messages: Messages): String =
     (productType, status) match {
-      case (EUS, LTR) => messages("app.status.EUS_LTR")
-      case (EUS, ILR) => messages("app.status.EUS_ILR")
-      case _          => s"$productType + $status"
+      case (EUS, ILR)                   => messages("immigration.eu.ilr")
+      case (EUS, LTR)                   => messages("immigration.eu.ltr")
+      case (STUDY, LTE)                 => messages("immigration.study.lte")
+      case (STUDY, LTR)                 => messages("immigration.study.ltr")
+      case (DEPENDANT, LTE)             => messages("immigration.dependant.lte")
+      case (DEPENDANT, LTR)             => messages("immigration.dependant.ltr")
+      case (WORK, LTE)                  => messages("immigration.worker.lte")
+      case (WORK, LTR)                  => messages("immigration.worker.ltr")
+      case (FRONTIER_WORKER, PERMIT)    => messages("immigration.frontier-worker.permit")
+      case (BNO, LTE)                   => messages("immigration.bno.lte")
+      case (BNO, LTR)                   => messages("immigration.bno.ltr")
+      case (BNO_LOTR, LTE)              => messages("immigration.bno.lotr.lte")
+      case (BNO_LOTR, LTR)              => messages("immigration.bno.lotr.ltr")
+      case (GRADUATE, LTR)              => messages("immigration.graduate.ltr")
+      case (EUS, COA_IN_TIME_GRANT)     => messages("immigration.eus.coa")
+      case (EUS, POST_GRACE_PERIOD_COA) => messages("immigration.eus.post")
+      case (SPORTSPERSON, LTR)          => messages("immigration.sportsperson.ltr")
+      case (SPORTSPERSON, LTE)          => messages("immigration.sportsperson.lte")
+      case (SETTLEMENT, ILR)            => messages("immigration.bno.settlement")
+      case (TEMP_WORKER, LTR)           => messages("immigration.temp-worker.ltr")
+      case (TEMP_WORKER, LTE)           => messages("immigration.temp-worker.lte")
+      case _                            => s"$productType - $status"
     }
 }

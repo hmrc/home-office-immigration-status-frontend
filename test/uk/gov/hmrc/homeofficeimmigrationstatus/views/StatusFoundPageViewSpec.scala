@@ -25,7 +25,7 @@ import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.StatusFoundPage
 
 import java.time.LocalDate
 import org.jsoup.select.Elements
-import assets.constants.ImmigrationStatusConstant.{ValidStatus, ValidStatusCustomProductType, ValidStatusNoRecourceFalse}
+import assets.constants.ImmigrationStatusConstant._
 
 class StatusFoundPageViewSpec extends ViewSpec {
 
@@ -201,25 +201,6 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
         val doc = asDocument(html)
         assertElementHasText(doc, "#immigrationRoute", "error")
-      }
-    }
-
-    "Immigration Status" when {
-      "EUS" in {
-        "ILR" in {
-          val html: HtmlFormat.Appendable =
-            sut(buildContext(List(ValidStatusCustomProductType("error"))))(request, messages)
-
-          val doc = asDocument(html)
-          assertElementHasText(doc, "#s\"status-previous-$index\"", "EU Settlement Scheme - Indefinite leave to remain")
-        }
-        "LTR" in {
-          val html: HtmlFormat.Appendable =
-            sut(buildContext(List(ValidStatusCustomProductType("error"))))(request, messages)
-
-          val doc = asDocument(html)
-          assertElementHasText(doc, "#s\"status-previous-$index\"", "EU Settlement Scheme - Leave to remain")
-        }
       }
     }
   }
