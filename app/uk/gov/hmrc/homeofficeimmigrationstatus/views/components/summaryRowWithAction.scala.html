@@ -1,0 +1,14 @@
+
+@import uk.gov.hmrc.homeofficeimmigrationstatus.viewmodels.RowWithActionViewModel
+
+@(row: RowWithActionViewModel)(implicit messages: Messages)
+
+<div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages(row.messageKey)</dt>
+    <dd id=@{row.id} class="govuk-summary-list__value govuk-!-width-one-third">@{row.data}</dd>
+    <dd class="govuk-summary-list__actions govuk-!-width-one-third">
+        <a class="govuk-link" href=@row.actionUrl id=@row.actionId>@messages(row.actionMessageKey)
+            <span class="govuk-visually-hidden">@messages(row.spanMessageKey)</span>
+        </a>
+    </dd>
+</div>
