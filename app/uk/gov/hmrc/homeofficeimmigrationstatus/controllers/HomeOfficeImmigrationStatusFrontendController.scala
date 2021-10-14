@@ -159,8 +159,7 @@ class HomeOfficeImmigrationStatusFrontendController @Inject()(
       Ok(statusNotAvailablePage(StatusNotAvailablePageContext(query, getCallFor(Start))))
 
     case StatusCheckFailure(_, query, error) =>
-      if (error.errCode == "ERR_CONFLICT")
-        Ok(multipleMatchesFoundPage(query, error, getCallFor(StatusCheckByNino(Some(query))), getCallFor(Start)))
+      if (error.errCode == "ERR_CONFLICT") Ok(multipleMatchesFoundPage(query))
       else Ok(statusCheckFailurePage(query, error, getCallFor(StatusCheckByNino(Some(query))), getCallFor(Start)))
 
   }

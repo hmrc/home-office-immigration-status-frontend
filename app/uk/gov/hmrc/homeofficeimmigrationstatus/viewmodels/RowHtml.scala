@@ -18,8 +18,7 @@ package uk.gov.hmrc.homeofficeimmigrationstatus.viewmodels
 
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.components.summaryRow
 
-final case class RowViewModel(id: String, messageKey: String, data: String) extends RowHtml {
-  override def html(implicit messages: Messages): HtmlFormat.Appendable = summaryRow(this)
+trait RowHtml {
+  def html(implicit messages: Messages): HtmlFormat.Appendable
 }
