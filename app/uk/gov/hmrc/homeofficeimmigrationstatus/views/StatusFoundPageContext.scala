@@ -96,8 +96,27 @@ final case class StatusFoundPageContext(
 object StatusFoundPageContext {
   def immigrationStatusLabel(productType: String, status: String)(implicit messages: Messages): String =
     (productType, status) match {
-      case (EUS, LTR) => messages("app.status.EUS_LTR")
-      case (EUS, ILR) => messages("app.status.EUS_ILR")
-      case _          => s"$productType + $status"
+      case (EUS, ILR)                   => messages("immigration.eu.ilr")
+      case (EUS, LTR)                   => messages("immigration.eu.ltr")
+      case (STUDY, LTE)                 => messages("immigration.study.lte")
+      case (STUDY, LTR)                 => messages("immigration.study.ltr")
+      case (DEPENDANT, LTE)             => messages("immigration.dependant.lte")
+      case (DEPENDANT, LTR)             => messages("immigration.dependant.ltr")
+      case (WORK, LTE)                  => messages("immigration.worker.lte")
+      case (WORK, LTR)                  => messages("immigration.worker.ltr")
+      case (FRONTIER_WORKER, PERMIT)    => messages("immigration.frontier-worker.permit")
+      case (BNO, LTE)                   => messages("immigration.bno.lte")
+      case (BNO, LTR)                   => messages("immigration.bno.ltr")
+      case (BNO_LOTR, LTE)              => messages("immigration.bno.lotr.lte")
+      case (BNO_LOTR, LTR)              => messages("immigration.bno.lotr.ltr")
+      case (GRADUATE, LTR)              => messages("immigration.graduate.ltr")
+      case (EUS, COA_IN_TIME_GRANT)     => messages("immigration.eus.coa")
+      case (EUS, POST_GRACE_PERIOD_COA) => messages("immigration.eus.post")
+      case (SPORTSPERSON, LTR)          => messages("immigration.sportsperson.ltr")
+      case (SPORTSPERSON, LTE)          => messages("immigration.sportsperson.lte")
+      case (SETTLEMENT, ILR)            => messages("immigration.bno.settlement")
+      case (TEMP_WORKER, LTR)           => messages("immigration.temp-worker.ltr")
+      case (TEMP_WORKER, LTE)           => messages("immigration.temp-worker.lte")
+      case _                            => s"$productType - $status"
     }
 }

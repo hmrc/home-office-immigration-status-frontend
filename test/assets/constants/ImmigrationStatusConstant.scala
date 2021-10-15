@@ -44,4 +44,12 @@ object ImmigrationStatusConstant {
     immigrationStatus = "ILR",
     noRecourseToPublicFunds = true
   )
+
+  def ValidStatusCustomImmigrationStatus(typeName: String, status: String) = ImmigrationStatus(
+    statusStartDate = LocalDate.parse("2021-01-01"),
+    statusEndDate = None,
+    productType = typeName,
+    immigrationStatus = status,
+    noRecourseToPublicFunds = true
+  )
 }

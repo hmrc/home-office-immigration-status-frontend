@@ -228,7 +228,7 @@ class StatusFoundPageContextSpec
     implicit val messages: Messages =
       MessagesImpl(
         Lang("en-UK"),
-        new DefaultMessagesApi(Map("en-UK" -> Map("app.status.EUS_LTR" -> "foo123", "app.status.EUS_ILR" -> "bar456"))))
+        new DefaultMessagesApi(Map("en-UK" -> Map("immigration.eu.ltr" -> "foo123", "immigration.eu.ilr" -> "bar456"))))
     "work for EUS-LTR" in {
       StatusFoundPageContext.immigrationStatusLabel("EUS", "LTR") shouldBe "foo123"
     }
@@ -236,7 +236,7 @@ class StatusFoundPageContextSpec
       StatusFoundPageContext.immigrationStatusLabel("EUS", "ILR") shouldBe "bar456"
     }
     "work for unknown" in {
-      StatusFoundPageContext.immigrationStatusLabel("FOO", "BAR") shouldBe "FOO + BAR"
+      StatusFoundPageContext.immigrationStatusLabel("FOO", "BAR") shouldBe "FOO - BAR"
     }
   }
 }
