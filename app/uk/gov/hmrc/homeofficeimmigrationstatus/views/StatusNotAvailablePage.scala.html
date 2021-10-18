@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.homeofficeimmigrationstatus.views.{DateFormat, ISO31661Alpha3, StatusNotAvailablePageContext}
+@import uk.gov.hmrc.homeofficeimmigrationstatus.views.{DateFormat, StatusNotAvailablePageContext}
 @import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.homeofficeimmigrationstatus.viewmodels.{RowViewModel => Row}
@@ -26,8 +26,6 @@
 )
 
 @(context: StatusNotAvailablePageContext)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
-
-@locale = @{messages.lang.locale}
 
 @govukWrapper(title = messages("status-not-available.title")) {
 
