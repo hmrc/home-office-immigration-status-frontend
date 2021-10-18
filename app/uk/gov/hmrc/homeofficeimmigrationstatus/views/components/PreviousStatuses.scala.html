@@ -14,7 +14,7 @@
 @previousStatuses.zipWithIndex.map { case (status, index) =>
     @summaryList(s"history-$index", Seq(
         Some(Row(s"status-previous-$index", "status-found.previous.status", StatusFoundPageContext.immigrationStatusLabel(status.productType, status.immigrationStatus))),
-        Some(Row(s"recourse-previous-$index", "status-found.previous.recourse", "placeholder")),
+        Some(Row(s"recourse-previous-$index", "status-found.previous.recourse", messages("status-found.previous.noRecourseToPublicFunds." + status.noRecourseToPublicFunds))),
         Some(Row(s"startDate-previous-$index", "status-found.previous.startDate", DateFormat.format(locale)(status.statusStartDate))),
         status.statusEndDate.map(endDate => Row(s"expiryDate-previous-$index", "status-found.previous.expiryDate", DateFormat.format(locale)(endDate)))
     ).flatten)
