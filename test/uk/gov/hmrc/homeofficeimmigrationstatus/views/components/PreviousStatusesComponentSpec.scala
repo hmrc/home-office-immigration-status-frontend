@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.homeofficeimmigrationstatus.views.components
 
-import org.jsoup.nodes.{Document, Element}
+import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.ViewSpec
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.components.PreviousStatuses
@@ -35,6 +35,16 @@ class PreviousStatusesComponentSpec extends ViewSpec {
       immigrationStatus = "ILR",
       noRecourseToPublicFunds = true
     ))
+
+  def singleStatusCustomImmigrationStatus(productType: String, immigrationStatus: String) =
+    Seq(
+      ImmigrationStatus(
+        statusStartDate = LocalDate.parse("2012-01-01"),
+        statusEndDate = Some(LocalDate.parse("2013-01-01")),
+        productType = productType,
+        immigrationStatus = immigrationStatus,
+        noRecourseToPublicFunds = true
+      ))
 
   val threeStatuses = Seq(
     ImmigrationStatus(
@@ -88,7 +98,7 @@ class PreviousStatusesComponentSpec extends ViewSpec {
     "have all of the things in the list in the correct order" in {
       val doc: Document = asDocument(sut(singleStatus)(messages))
       List(
-        ("Settled status", "status-found.previous.status", "status-previous-0"),
+        ("EU Settlement Scheme - Indefinite leave to remain", "status-found.previous.status", "status-previous-0"),
         ("placeholder", "status-found.previous.recourse", "recourse-previous-0"),
         ("01 January 2012", "status-found.previous.startDate", "startDate-previous-0"),
         ("01 January 2013", "status-found.previous.expiryDate", "expiryDate-previous-0")
@@ -102,6 +112,157 @@ class PreviousStatusesComponentSpec extends ViewSpec {
     "not display the end date where it is not passed in" in {
       val doc: Document = asDocument(sut(threeStatuses)(messages))
       assertNotRenderedById(doc, "expiryDate-previous-0")
+    }
+
+    "ImmigrationStatus displays correct status" when {
+      "EUS" when {
+        "ILR" in {
+          val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("EUS", "ILR"))(messages))
+          assertRenderedById(doc, "status-previous-0")
+          assertElementHasText(doc, "#status-previous-0", "EU Settlement Scheme - Indefinite leave to remain")
+        }
+        "LTR" in {
+          val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("EUS", "LTR"))(messages))
+          assertRenderedById(doc, "status-previous-0")
+          assertElementHasText(doc, "#status-previous-0", "EU Settlement Scheme - Leave to remain")
+        }
+      }
+
+      "STUDY" when {
+        "LTE" in {
+          val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("STUDY", "LTE"))(messages))
+          assertRenderedById(doc, "status-previous-0")
+          assertElementHasText(doc, "#status-previous-0", "Student - Leave to enter (FBIS)")
+        }
+        "LTR" in {
+          val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("STUDY", "LTR"))(messages))
+          assertRenderedById(doc, "status-previous-0")
+          assertElementHasText(doc, "#status-previous-0", "Student - Leave to remain (FBIS)")
+        }
+      }
+
+      "DEPENDANT" when {
+        "LTE" in {
+          val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("DEPENDANT", "LTE"))(messages))
+          assertRenderedById(doc, "status-previous-0")
+          assertElementHasText(
+            doc,
+            "#status-previous-0",
+            "Dependants of Skilled workers and Students - Leave to enter (FBIS)")
+        }
+        "LTR" in {
+          val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("DEPENDANT", "LTR"))(messages))
+          assertRenderedById(doc, "status-previous-0")
+          assertElementHasText(
+            doc,
+            "#status-previous-0",
+            "Dependants of Skilled workers and Students - Leave to remain (FBIS)")
+        }
+      }
+
+      "WORK" when {
+        "LTE" in {
+          val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("WORK", "LTE"))(messages))
+          assertRenderedById(doc, "status-previous-0")
+          assertElementHasText(doc, "#status-previous-0", "Worker - Leave to enter (FBIS)")
+        }
+        "LTR" in {
+          val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("WORK", "LTR"))(messages))
+          assertRenderedById(doc, "status-previous-0")
+          assertElementHasText(doc, "#status-previous-0", "Worker - Leave to remain (FBIS)")
+        }
+      }
+
+      "FRONTIER_WORKER" when {
+        "PERMIT" in {
+          val doc: Document =
+            asDocument(sut(singleStatusCustomImmigrationStatus("FRONTIER_WORKER", "PERMIT"))(messages))
+          assertRenderedById(doc, "status-previous-0")
+          assertElementHasText(doc, "#status-previous-0", "Frontier worker - Permit (FBIS)")
+        }
+      }
+
+      "BNO" when {
+        "LTE" in {
+          val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("BNO", "LTE"))(messages))
+          assertRenderedById(doc, "status-previous-0")
+          assertElementHasText(doc, "#status-previous-0", "British National Overseas - Leave to enter (FBIS)")
+        }
+        "LTR" in {
+          val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("BNO", "LTR"))(messages))
+          assertRenderedById(doc, "status-previous-0")
+          assertElementHasText(doc, "#status-previous-0", "British National Overseas - Leave to remain (FBIS)")
+        }
+      }
+
+      "BNO_LOTR" when {
+        "LTE" in {
+          val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("BNO_LOTR", "LTE"))(messages))
+          assertRenderedById(doc, "status-previous-0")
+          assertElementHasText(doc, "#status-previous-0", "British National Overseas - Leave outside the rules (FBIS)")
+        }
+        "LTR" in {
+          val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("BNO_LOTR", "LTR"))(messages))
+          assertRenderedById(doc, "status-previous-0")
+          assertElementHasText(doc, "#status-previous-0", "British National Overseas - Leave outside the rules (FBIS)")
+        }
+      }
+
+      "GRADUATE" when {
+        "LTR" in {
+          val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("GRADUATE", "LTR"))(messages))
+          assertRenderedById(doc, "status-previous-0")
+          assertElementHasText(doc, "#status-previous-0", "Graduate - Leave to remain (FBIS)")
+        }
+      }
+
+      "EUS" when {
+        "COA_IN_TIME_GRANT" in {
+          val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("EUS", "COA_IN_TIME_GRANT"))(messages))
+          assertRenderedById(doc, "status-previous-0")
+          assertElementHasText(doc, "#status-previous-0", "EU Settlement - Certificate of application (In time)")
+        }
+        "POST_GRACE_PERIOD_COA_GRANT" in {
+          val doc: Document =
+            asDocument(sut(singleStatusCustomImmigrationStatus("EUS", "POST_GRACE_PERIOD_COA_GRANT"))(messages))
+          assertRenderedById(doc, "status-previous-0")
+          assertElementHasText(doc, "#status-previous-0", "EU Settlement - Certificate of application (Out of time)")
+        }
+      }
+
+      "SPORTSPERSON" when {
+        "LTR" in {
+          val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("SPORTSPERSON", "LTR"))(messages))
+          assertRenderedById(doc, "status-previous-0")
+          assertElementHasText(doc, "#status-previous-0", "International Sportsperson - Leave to remain (FBIS)")
+        }
+        "LTE" in {
+          val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("SPORTSPERSON", "LTE"))(messages))
+          assertRenderedById(doc, "status-previous-0")
+          assertElementHasText(doc, "#status-previous-0", "International Sportsperson - Leave to enter (FBIS)")
+        }
+      }
+
+      "SETTLEMENT" when {
+        "LTR" in {
+          val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("SETTLEMENT", "ILR"))(messages))
+          assertRenderedById(doc, "status-previous-0")
+          assertElementHasText(doc, "#status-previous-0", "British National Overseas - Settlement (FBIS)")
+        }
+      }
+
+      "TEMP_WORKER" when {
+        "LTR" in {
+          val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("TEMP_WORKER", "LTR"))(messages))
+          assertRenderedById(doc, "status-previous-0")
+          assertElementHasText(doc, "#status-previous-0", "Temporary Worker - Leave to remain (FBIS)")
+        }
+        "LTE" in {
+          val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("TEMP_WORKER", "LTE"))(messages))
+          assertRenderedById(doc, "status-previous-0")
+          assertElementHasText(doc, "#status-previous-0", "Temporary Worker - Leave to enter (FBIS)")
+        }
+      }
     }
   }
 }

@@ -25,7 +25,7 @@ import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.StatusFoundPage
 
 import java.time.LocalDate
 import org.jsoup.select.Elements
-import assets.constants.ImmigrationStatusConstant.{ValidStatus, ValidStatusCustomProductType, ValidStatusNoRecourceFalse}
+import assets.constants.ImmigrationStatusConstant._
 
 class StatusFoundPageViewSpec extends ViewSpec {
 
@@ -50,8 +50,9 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
     "have recourse to public funds field" when {
       "noRecourseToPublicFunds is true" in {
+        val html: HtmlFormat.Appendable =
+          sut(buildContext(List(ValidStatus)))(request, messages)
 
-        val html: HtmlFormat.Appendable = sut(buildContext(List(ValidStatus)))(request, messages)
         val doc = asDocument(html)
 
         assertElementHasText(doc, "#recourse-text", messages("status-found.no"))
@@ -61,8 +62,9 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
     "not have recourse to public funds field" when {
       "noRecourseToPublicFunds is false" in {
+        val html: HtmlFormat.Appendable =
+          sut(buildContext(List(ValidStatusNoRecourceFalse)))(request, messages)
 
-        val html: HtmlFormat.Appendable = sut(buildContext(List(ValidStatusNoRecourceFalse)))(request, messages)
         val doc = asDocument(html)
 
         assertNotRenderedById(doc, "recourse")
@@ -100,17 +102,16 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
     "have the search again button" in {
       val button = doc.select("#content > a")
-
       button.text() mustBe "Search again"
       button.attr("href") mustBe "/expected"
     }
 
     "Immigration route" when {
       "EUS displays" in {
+        val html: HtmlFormat.Appendable =
+          sut(buildContext(List(ValidStatusNoRecourceFalse)))(request, messages)
 
-        val html: HtmlFormat.Appendable = sut(buildContext(List(ValidStatusNoRecourceFalse)))(request, messages)
         val doc = asDocument(html)
-
         assertElementHasText(doc, "#immigrationRoute", "EU Settlement Scheme")
       }
 
@@ -119,7 +120,6 @@ class StatusFoundPageViewSpec extends ViewSpec {
           sut(buildContext(List(ValidStatusCustomProductType("STUDY"))))(request, messages)
 
         val doc = asDocument(html)
-
         assertElementHasText(doc, "#immigrationRoute", "Student (FBIS)")
       }
 
@@ -128,7 +128,6 @@ class StatusFoundPageViewSpec extends ViewSpec {
           sut(buildContext(List(ValidStatusCustomProductType("DEPENDANT"))))(request, messages)
 
         val doc = asDocument(html)
-
         assertElementHasText(doc, "#immigrationRoute", "Dependants of Skilled workers and Students (FBIS)")
       }
 
@@ -137,7 +136,6 @@ class StatusFoundPageViewSpec extends ViewSpec {
           sut(buildContext(List(ValidStatusCustomProductType("WORK"))))(request, messages)
 
         val doc = asDocument(html)
-
         assertElementHasText(doc, "#immigrationRoute", "Worker (FBIS)")
       }
 
@@ -146,7 +144,6 @@ class StatusFoundPageViewSpec extends ViewSpec {
           sut(buildContext(List(ValidStatusCustomProductType("FRONTIER_WORKER"))))(request, messages)
 
         val doc = asDocument(html)
-
         assertElementHasText(doc, "#immigrationRoute", "Frontier worker (FBIS)")
       }
 
@@ -155,7 +152,6 @@ class StatusFoundPageViewSpec extends ViewSpec {
           sut(buildContext(List(ValidStatusCustomProductType("BNO"))))(request, messages)
 
         val doc = asDocument(html)
-
         assertElementHasText(doc, "#immigrationRoute", "British National Overseas (FBIS)")
       }
 
@@ -164,7 +160,6 @@ class StatusFoundPageViewSpec extends ViewSpec {
           sut(buildContext(List(ValidStatusCustomProductType("BNO_LOTR"))))(request, messages)
 
         val doc = asDocument(html)
-
         assertElementHasText(doc, "#immigrationRoute", "British National Overseas (FBIS)")
       }
 
@@ -173,7 +168,6 @@ class StatusFoundPageViewSpec extends ViewSpec {
           sut(buildContext(List(ValidStatusCustomProductType("GRADUATE"))))(request, messages)
 
         val doc = asDocument(html)
-
         assertElementHasText(doc, "#immigrationRoute", "Graduate (FBIS)")
       }
 
@@ -182,7 +176,6 @@ class StatusFoundPageViewSpec extends ViewSpec {
           sut(buildContext(List(ValidStatusCustomProductType("SPORTSPERSON"))))(request, messages)
 
         val doc = asDocument(html)
-
         assertElementHasText(doc, "#immigrationRoute", "International Sportsperson (FBIS)")
       }
 
@@ -191,7 +184,6 @@ class StatusFoundPageViewSpec extends ViewSpec {
           sut(buildContext(List(ValidStatusCustomProductType("SETTLEMENT"))))(request, messages)
 
         val doc = asDocument(html)
-
         assertElementHasText(doc, "#immigrationRoute", "British National Overseas (FBIS)")
       }
 
@@ -200,17 +192,14 @@ class StatusFoundPageViewSpec extends ViewSpec {
           sut(buildContext(List(ValidStatusCustomProductType("TEMP_WORKER"))))(request, messages)
 
         val doc = asDocument(html)
-
         assertElementHasText(doc, "#immigrationRoute", "Temporary Worker (FBIS)")
       }
 
       "Error with ProductType displays" in {
-
         val html: HtmlFormat.Appendable =
           sut(buildContext(List(ValidStatusCustomProductType("error"))))(request, messages)
 
         val doc = asDocument(html)
-
         assertElementHasText(doc, "#immigrationRoute", "error")
       }
     }
