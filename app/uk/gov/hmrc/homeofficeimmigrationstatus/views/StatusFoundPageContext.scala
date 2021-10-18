@@ -41,7 +41,7 @@ final case class StatusFoundPageContext(
 
   def detailRows(implicit messages: Messages) =
     Seq(
-      Some(Row("nino", "generic.nino", query.nino.formatted)),
+      Some(Row("nino", "generic.nino", query.nino.nino)),
       Some(Row("dob", "generic.dob", result.dobFormatted(messages.lang.locale))),
       Some(Row("nationality", "generic.nationality", result.countryName)),
       mostRecentStatus.map(s =>
