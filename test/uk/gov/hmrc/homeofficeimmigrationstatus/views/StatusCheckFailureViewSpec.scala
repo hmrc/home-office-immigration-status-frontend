@@ -19,15 +19,15 @@ package uk.gov.hmrc.homeofficeimmigrationstatus.views
 import org.joda.time.LocalDate
 import org.jsoup.nodes.{Document, Element}
 import org.mockito.Mockito.{mock, verify}
-import play.api.Application
 import play.api.inject.bind
+import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoRequest
-import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.MultipleMatchesFoundPage
+import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.StatusCheckFailurePage
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.components.{SearchAgainButton, ShowChangeQuery}
 
-class MultipleMatchesFoundViewSpec extends ViewSpec {
+class StatusCheckFailureViewSpec extends ViewSpec {
 
   val mockShowChangeQuery: ShowChangeQuery = mock(classOf[ShowChangeQuery])
   val mockSearchAgainButton: SearchAgainButton = mock(classOf[SearchAgainButton])
@@ -35,25 +35,33 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
       bind[ShowChangeQuery].toInstance(mockShowChangeQuery),
-      bind[SearchAgainButton].toInstance(mockSearchAgainButton)
+      bind[SearchAgainButton].toInstance(mockSearchAgainButton),
     )
     .build()
 
-  lazy val sut = inject[MultipleMatchesFoundPage]
+  lazy val sut: StatusCheckFailurePage = inject[StatusCheckFailurePage]
 
   //todo nino gen
   val query = StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", LocalDate.now().toString)
   lazy val doc: Document = asDocument(sut(query)(request, messages))
 
-  "MultipleMatchesFoundPage" must {
+  "StatusCheckFailurePage" must {
     "have a status conflict title" in {
-      val e: Element = doc.getElementById("status-check-failure-conflict-title")
+      val e: Element = doc.getElementById("status-check-failure-title")
 
-      e.text() mustBe messages("status-check-failure-conflict.title")
+      e.text() mustBe messages("status-check-failure.title")
     }
 
     "have paragraph text" in {
-      doc.select(".govuk-body").text() mustBe messages("status-check-failure-conflict.listParagraph")
+      doc.select(".govuk-body").text() mustBe messages("status-check-failure.listParagraph")
+    }
+
+    "have the bullet points" when {
+      List(1, 2).foreach { n =>
+        s"is bullet point number $n" in {
+          doc.getElementById(s"item$n").text() mustBe messages(s"status-check-failure.list-item$n")
+        }
+      }
     }
 
     "have personal details heading" in {
