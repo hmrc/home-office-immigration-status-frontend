@@ -191,15 +191,7 @@ class StatusFoundPageContextSpec
       Seq(
         ("nino", "generic.nino", query.nino.formatted),
         ("dob", "generic.dob", context.result.dobFormatted(realMessages.lang.locale)),
-        ("nationality", "generic.nationality", context.result.countryName),
-        (
-          "startDate",
-          "status-found.startDate",
-          DateFormat.format(realMessages.lang.locale)(context.mostRecentStatus.get.statusStartDate)),
-        (
-          "expiryDate",
-          "status-found.expiryDate",
-          DateFormat.format(realMessages.lang.locale)(context.mostRecentStatus.get.statusEndDate.get))
+        ("nationality", "generic.nationality", context.result.countryName)
       ).foreach {
         case (id, msgKey, data) =>
           s"row is for $id" in {
@@ -209,16 +201,24 @@ class StatusFoundPageContextSpec
     }
   }
 
-  "stuffRows" must {
+  "immigrationStatusRows" must {
     "populate the row objects correctly" when {
       val context = createContext("PT", "IS", Some(LocalDate.now()))
       Seq(
         ("immigrationRoute", "status-found.route", context.immigrationRoute(realMessages).get),
+        (
+          "startDate",
+          "status-found.startDate",
+          DateFormat.format(realMessages.lang.locale)(context.mostRecentStatus.get.statusStartDate)),
+        (
+          "expiryDate",
+          "status-found.expiryDate",
+          DateFormat.format(realMessages.lang.locale)(context.mostRecentStatus.get.statusEndDate.get)),
         ("recourse-text", "status-found.norecourse", realMessages("status-found.no"))
       ).foreach {
         case (id, msgKey, data) =>
           s"row is for $id" in {
-            assert(context.stuffRows(realMessages).contains(RowViewModel(id, msgKey, data)))
+            assert(context.immigrationStatusRows(realMessages).contains(RowViewModel(id, msgKey, data)))
           }
       }
     }

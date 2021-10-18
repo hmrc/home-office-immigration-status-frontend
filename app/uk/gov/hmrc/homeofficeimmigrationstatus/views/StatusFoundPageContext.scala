@@ -31,25 +31,25 @@ final case class StatusFoundPageContext(
   val previousStatuses: Seq[ImmigrationStatus] = result.previousStatuses
 
   //todo change name of this when grouped properly
-  def stuffRows(implicit messages: Messages) =
+  def immigrationStatusRows(implicit messages: Messages): Seq[Row] =
     Seq(
       immigrationRoute.map(route => Row("immigrationRoute", "status-found.route", route)),
+      mostRecentStatus.map(s =>
+        Row("startDate", "status-found.startDate", DateFormat.format(messages.lang.locale)(s.statusStartDate))),
+      mostRecentStatus.flatMap(s =>
+        s.statusEndDate.map(date =>
+          Row("expiryDate", "status-found.expiryDate", DateFormat.format(messages.lang.locale)(date)))),
       if (displayRecourseToPublicFunds)
         Some(Row("recourse-text", "status-found.norecourse", messages("status-found.no")))
       else None
     ).flatten
 
-  def detailRows(implicit messages: Messages) =
+  def detailRows(implicit messages: Messages): Seq[Row] =
     Seq(
-      Some(Row("nino", "generic.nino", query.nino.formatted)),
-      Some(Row("dob", "generic.dob", result.dobFormatted(messages.lang.locale))),
-      Some(Row("nationality", "generic.nationality", result.countryName)),
-      mostRecentStatus.map(s =>
-        Row("startDate", "status-found.startDate", DateFormat.format(messages.lang.locale)(s.statusStartDate))),
-      mostRecentStatus.flatMap(s =>
-        s.statusEndDate.map(date =>
-          Row("expiryDate", "status-found.expiryDate", DateFormat.format(messages.lang.locale)(date))))
-    ).flatten
+      Row("nino", "generic.nino", query.nino.formatted),
+      Row("dob", "generic.dob", result.dobFormatted(messages.lang.locale)),
+      Row("nationality", "generic.nationality", result.countryName)
+    )
 
   def displayRecourseToPublicFunds: Boolean = mostRecentStatus.exists(_.noRecourseToPublicFunds)
 

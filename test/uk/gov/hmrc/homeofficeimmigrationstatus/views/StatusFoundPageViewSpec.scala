@@ -74,14 +74,16 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
     "have all of the things in the list in the correct order" in {
       List(
-        "nino",
-        "dob",
-        "nationality",
+        "immigrationRoute",
         "startDate",
         "expiryDate",
+        "recourse-text",
+        "nino",
+        "dob",
+        "nationality"
       ).zipWithIndex.foreach {
         case (id, index) =>
-          val row: Elements = doc.select(s"#details > .govuk-summary-list__row:nth-child(${index + 1})")
+          val row: Element = doc.select(s".govuk-summary-list__row").get(index)
           row.select("dd").attr("id") mustBe id
       }
     }
