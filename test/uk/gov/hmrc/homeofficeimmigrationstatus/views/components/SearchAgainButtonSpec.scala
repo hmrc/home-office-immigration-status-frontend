@@ -34,5 +34,4 @@ class SearchAgainButtonSpec extends ViewSpec {
       button.attr("href") mustBe routes.HomeOfficeImmigrationStatusFrontendController.showStart.url
     }
   }
-
 }

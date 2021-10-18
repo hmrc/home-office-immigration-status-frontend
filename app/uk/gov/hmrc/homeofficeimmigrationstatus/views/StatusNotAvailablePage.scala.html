@@ -23,9 +23,9 @@
     govukButton : GovukButton,
     govukWrapper: govuk_wrapper,
     summaryList: components.SummaryList,
-)
+)(implicit appConfig: AppConfig)
 
-@(context: StatusNotAvailablePageContext)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(context: StatusNotAvailablePageContext)(implicit request: Request[_], messages: Messages)
 
 @govukWrapper(title = messages("status-not-available.title")) {
 
@@ -34,9 +34,9 @@
         @messages("app.hasNoActiveStatus")
     </h1>
 
-    <p class="govuk-body">@messages("status-not-available.listParagraph")</p>
+    <p class="govuk-body" id="not-available-paragraph">@messages("status-not-available.listParagraph")</p>
 
-    <ul class="govuk-list govuk-list--bullet">
+    <ul class="govuk-list govuk-list--bullet" id="not-available-list">
         <li id="item1">@messages("status-not-available.list-item1")</li>
         <li id="item2">@messages("status-not-available.list-item2")</li>
     </ul>

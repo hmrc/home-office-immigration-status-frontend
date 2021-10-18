@@ -16,18 +16,21 @@
 
 package uk.gov.hmrc.homeofficeimmigrationstatus.views
 
+import assets.constants.ImmigrationStatusConstant.ValidStatus
 import org.joda.time.LocalDate
 import org.jsoup.nodes.{Document, Element}
 import org.mockito.Mockito.{mock, verify}
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.routes
+import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.StatusNotAvailablePage
 import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoRequest
-import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.MultipleMatchesFoundPage
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.components.{SearchAgainButton, ShowChangeQuery}
 
-class MultipleMatchesFoundViewSpec extends ViewSpec {
+class StatusNotAvailableViewSpec extends ViewSpec {
 
   val mockShowChangeQuery: ShowChangeQuery = mock(classOf[ShowChangeQuery])
   val mockSearchAgainButton: SearchAgainButton = mock(classOf[SearchAgainButton])
@@ -39,35 +42,31 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
     )
     .build()
 
-  lazy val sut = inject[MultipleMatchesFoundPage]
+  lazy val sut: StatusNotAvailablePage = inject[StatusNotAvailablePage]
 
-  //todo nino gen
-  val query = StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", LocalDate.now().toString)
+  val nino = StatusCheckByNinoRequest(Nino("AB123456C"), "Applicant", "", LocalDate.now().toString)
+
+  val query =
+    StatusNotAvailablePageContext(nino, routes.HomeOfficeImmigrationStatusFrontendController.showStatusNotAvailable)
+
   lazy val doc: Document = asDocument(sut(query)(request, messages))
 
-  "MultipleMatchesFoundPage" must {
+  "StatusNotAvailable" must {
     "have a status conflict title" in {
-      val e: Element = doc.getElementById("status-check-failure-conflict-title")
-
-      e.text() mustBe messages("status-check-failure-conflict.title")
+      val e: Element = doc.getElementById("status-not-available-title")
+      e.text() mustBe messages("status-not-available.title")
     }
 
-    "have paragraph text" in {
-      doc.select(".govuk-body").text() mustBe messages("status-check-failure-conflict.listParagraph")
+    "status has paragraph list" in {
+      assertElementHasText(doc, "#not-available-paragraph", messages("status-not-available.listParagraph"))
     }
 
-    "have personal details heading" in {
-      val e: Element = doc.getElementById("personal-details")
-
-      e.text() mustBe messages("status-check-failure.heading2CustomerDetails")
-    }
-
-    "have the show and change query section" in {
-      verify(mockShowChangeQuery).apply(query)(messages)
-    }
-
-    "have the search again button" in {
-      verify(mockSearchAgainButton).apply()(messages)
+    "have a status list content" in {
+      assertElementHasText(
+        doc,
+        "#not-available-list",
+        messages("status-not-available.list-item1") + " "
+          + messages("status-not-available.list-item2"))
     }
   }
 }
