@@ -30,7 +30,6 @@ final case class StatusFoundPageContext(
   val mostRecentStatus: Option[ImmigrationStatus] = result.mostRecentStatus
   val previousStatuses: Seq[ImmigrationStatus] = result.previousStatuses
 
-  //todo change name of this when grouped properly
   def immigrationStatusRows(implicit messages: Messages): Seq[Row] =
     Seq(
       immigrationRoute.map(route => Row("immigrationRoute", "status-found.route", route)),

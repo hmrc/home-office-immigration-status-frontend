@@ -34,7 +34,6 @@
 
     <h1 class="govuk-heading-xl" id="status-found-title"><span id="full-name">@context.result.fullName</span>@context.currentStatusLabel</h1>
 
-    @*<!--Todo change this name when rows are grouped by stuff --> *@
     @summaryList("immigrationStatus", context.immigrationStatusRows)
 
     @if(context.displayRecourseToPublicFunds) {
