@@ -41,6 +41,7 @@ class HomeOfficeImmigrationStatusFrontendController @Inject()(
     extends FrontendController(controllerComponents) with I18nSupport {
 
   val onPageLoad: Action[AnyContent] =
+    // This should clear the mongo state so that the search again buttons work
     (identify) {
       Redirect(routes.StatusCheckByNinoController.onPageLoad)
     }

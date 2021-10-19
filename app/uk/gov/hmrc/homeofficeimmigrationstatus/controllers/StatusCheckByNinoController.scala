@@ -72,6 +72,7 @@ class StatusCheckByNinoController @Inject()(
             Future.successful(
               BadRequest(statusCheckByNinoPage(formWithErrors, routes.StatusCheckByNinoController.onSubmit))),
           query => {
+            // This should set the mongo state with the request and the response/error
             val enrichedQuery = enrichWithDateRange(query, appConfig.defaultQueryTimeRangeInMonths)
             homeOfficeImmigrationStatusProxyConnector.statusPublicFundsByNino(enrichedQuery).map {
               case StatusCheckResponse(correlationId, Some(error), _) =>
