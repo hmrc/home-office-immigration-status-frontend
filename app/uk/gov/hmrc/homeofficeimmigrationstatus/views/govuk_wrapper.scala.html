@@ -22,8 +22,7 @@
     govukBackLink: GovukBackLink,
     govukPhaseBanner: GovukPhaseBanner,
     hmrcHead: HmrcHead,
-    hmrcStandardHeader: HmrcStandardHeader,
-    hmrcStandardFooter: HmrcStandardFooter,
+    hmrcHeader: HmrcInternalHeader,
     hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
     hmrcScripts: HmrcScripts
 )
@@ -79,10 +78,9 @@
 @govukLayout(
     pageTitle = Some(titleWithSuffix),
     headBlock = Some(hmrcHead(Some(head))),
-    headerBlock = Some(hmrcStandardHeader(
-        serviceName = Some(messages("app.name")),
-        serviceUrl = None
-    )),
+    headerBlock = Some(hmrcHeader(InternalHeader(
+        serviceName = Some(messages("app.name"))
+    ))),
     beforeContentBlock = Some(beforeContentBlock),
     footerItems = HossFooterLinks.items,
     bodyEndBlock = Some(scripts)
