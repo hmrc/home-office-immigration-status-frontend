@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.homeofficeimmigrationstatus.views
 
+import play.api.i18n.Messages
 import play.api.mvc.Call
 import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoRequest
 import uk.gov.hmrc.homeofficeimmigrationstatus.viewmodels.{RowViewModel => Row}
@@ -24,11 +25,11 @@ case class StatusNotAvailablePageContext(query: StatusCheckByNinoRequest, search
 
   def fullName: String = s"${query.givenName} ${query.familyName}"
 
-  def notAvailablePersonalData =
+  def notAvailablePersonalData(implicit messages: Messages) =
     Seq(
       Row("nino", "generic.nino", query.nino.formatted),
       Row("givenName", "generic.givenName", query.givenName),
       Row("familyName", "generic.familyName", query.familyName),
-      Row("dob", "generic.dob", query.dateOfBirth)
+      Row("dob", "generic.dob", DateFormat.formatDatePattern(messages.lang.locale)(query.dateOfBirth))
     )
 }
