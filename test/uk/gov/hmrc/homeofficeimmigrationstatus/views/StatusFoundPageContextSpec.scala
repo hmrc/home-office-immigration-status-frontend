@@ -16,10 +16,9 @@
 
 package uk.gov.hmrc.homeofficeimmigrationstatus.views
 
-import org.mockito.Mockito.{RETURNS_DEEP_STUBS, mock, never, reset, times, verify, when}
+import org.mockito.Mockito.{RETURNS_DEEP_STUBS, mock, reset, times, verify, when}
 import org.mockito.ArgumentMatchers.{any, matches}
 import org.scalatest.wordspec.AnyWordSpecLike
-
 import java.time.LocalDate
 import play.api.i18n.{DefaultMessagesApi, Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.mvc.Call

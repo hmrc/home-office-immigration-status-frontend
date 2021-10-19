@@ -5,16 +5,15 @@ import play.api.inject.bind
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.Duration
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.homeofficeimmigrationstatus.journeys.HomeOfficeImmigrationStatusFrontendJourneyModel.State.{Start, StatusCheckByNino, StatusFound, StatusNotAvailable}
 import uk.gov.hmrc.homeofficeimmigrationstatus.models.{StatusCheckByNinoRequest, StatusCheckError, StatusCheckResult}
 import uk.gov.hmrc.homeofficeimmigrationstatus.services.HomeOfficeImmigrationStatusFrontendJourneyServiceWithHeaderCarrier
 import uk.gov.hmrc.homeofficeimmigrationstatus.stubs.{HomeOfficeImmigrationStatusStubs, JourneyTestData}
 import uk.gov.hmrc.homeofficeimmigrationstatus.support.{AppISpec, InMemoryJourneyService, TestJourneyService}
-import uk.gov.hmrc.http.HeaderCarrier
-
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration.Duration
 
 class HomeOfficeImmigrationStatusFrontendControllerISpec
     extends HomeOfficeImmigrationStatusFrontendControllerISpecSetup with HomeOfficeImmigrationStatusStubs

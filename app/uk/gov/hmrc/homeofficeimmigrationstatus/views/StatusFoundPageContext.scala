@@ -34,9 +34,12 @@ final case class StatusFoundPageContext(
   def stuffRows(implicit messages: Messages) =
     Seq(
       immigrationRoute.map(route => Row("immigrationRoute", "status-found.route", route)),
-      if (displayRecourseToPublicFunds)
-        Some(Row("recourse-text", "status-found.norecourse", messages("status-found.no")))
-      else None
+      Some(
+        Row(
+          "recourse-text",
+          "status-found.norecourse",
+          if (displayRecourseToPublicFunds) messages("status-found.no")
+          else messages("status-found.yes")))
     ).flatten
 
   def detailRows(implicit messages: Messages) =
