@@ -35,7 +35,6 @@ import scala.concurrent.ExecutionContext
 class StatusFoundController @Inject()(
   identify: IdentifierAction,
   override val messagesApi: MessagesApi,
-  override val config: Configuration,
   val actionBuilder: DefaultActionBuilder,
   val authConnector: AuthConnector,
   val env: Environment,
@@ -43,7 +42,7 @@ class StatusFoundController @Inject()(
   controllerComponents: MessagesControllerComponents,
   statusFoundPage: StatusFoundPage,
 )(implicit val appConfig: AppConfig)
-    extends FrontendController(controllerComponents) with I18nSupport with AuthActions {
+    extends FrontendController(controllerComponents) with I18nSupport {
 
   val onPageLoad: Action[AnyContent] =
     (identify) { implicit request =>

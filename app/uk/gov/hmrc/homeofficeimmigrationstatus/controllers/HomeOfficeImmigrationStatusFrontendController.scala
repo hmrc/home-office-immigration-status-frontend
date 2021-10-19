@@ -33,13 +33,12 @@ import scala.concurrent.ExecutionContext
 class HomeOfficeImmigrationStatusFrontendController @Inject()(
   identify: IdentifierAction,
   override val messagesApi: MessagesApi,
-  override val config: Configuration,
   val actionBuilder: DefaultActionBuilder,
   val authConnector: AuthConnector,
   val env: Environment,
   controllerComponents: MessagesControllerComponents
 )(implicit val appConfig: AppConfig)
-    extends FrontendController(controllerComponents) with I18nSupport with AuthActions {
+    extends FrontendController(controllerComponents) with I18nSupport {
 
   val onPageLoad: Action[AnyContent] =
     (identify) {

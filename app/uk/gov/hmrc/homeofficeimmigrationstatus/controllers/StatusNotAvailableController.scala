@@ -36,7 +36,6 @@ import scala.concurrent.ExecutionContext
 class StatusNotAvailableController @Inject()(
   identify: IdentifierAction,
   override val messagesApi: MessagesApi,
-  override val config: Configuration,
   val actionBuilder: DefaultActionBuilder,
   val authConnector: AuthConnector,
   val env: Environment,
@@ -44,7 +43,7 @@ class StatusNotAvailableController @Inject()(
   controllerComponents: MessagesControllerComponents,
   statusNotAvailablePage: StatusNotAvailablePage,
 )(implicit val appConfig: AppConfig)
-    extends FrontendController(controllerComponents) with I18nSupport with AuthActions {
+    extends FrontendController(controllerComponents) with I18nSupport {
 
   val onPageLoad: Action[AnyContent] =
     (identify) { implicit request =>

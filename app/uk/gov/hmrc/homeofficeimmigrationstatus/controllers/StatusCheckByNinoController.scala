@@ -40,7 +40,6 @@ import java.time.{LocalDate, ZoneId}
 class StatusCheckByNinoController @Inject()(
   identify: IdentifierAction,
   override val messagesApi: MessagesApi,
-  override val config: Configuration,
   val actionBuilder: DefaultActionBuilder,
   val authConnector: AuthConnector,
   val env: Environment,
@@ -49,7 +48,7 @@ class StatusCheckByNinoController @Inject()(
   formProvider: StatusCheckByNinoFormProvider,
   statusCheckByNinoPage: StatusCheckByNinoPage
 )(implicit val appConfig: AppConfig, ec: ExecutionContext)
-    extends FrontendController(controllerComponents) with I18nSupport with AuthActions {
+    extends FrontendController(controllerComponents) with I18nSupport {
 
   val onPageLoad: Action[AnyContent] =
     (identify) { implicit request =>
