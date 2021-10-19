@@ -16,12 +16,18 @@
 
 package uk.gov.hmrc.homeofficeimmigrationstatus.controllers
 
+import play.api.data.Form
+import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.auth.core.AuthConnector
+import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
+import uk.gov.hmrc.homeofficeimmigrationstatus.connectors.HomeOfficeImmigrationStatusProxyConnector
+import uk.gov.hmrc.homeofficeimmigrationstatus.models.{StatusCheckByNinoRequest, StatusCheckRange}
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html._
+import uk.gov.hmrc.homeofficeimmigrationstatus.views.{StatusFoundPageContext, StatusNotAvailablePageContext}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.actions.IdentifierAction
@@ -30,20 +36,26 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class HomeOfficeImmigrationStatusFrontendController @Inject()(
+class StatusCheckFailureController @Inject()(
   identify: IdentifierAction,
   override val messagesApi: MessagesApi,
   override val config: Configuration,
   val actionBuilder: DefaultActionBuilder,
   val authConnector: AuthConnector,
   val env: Environment,
-  controllerComponents: MessagesControllerComponents
+  homeOfficeImmigrationStatusProxyConnector: HomeOfficeImmigrationStatusProxyConnector,
+  controllerComponents: MessagesControllerComponents,
+  statusCheckFailurePage: StatusCheckFailurePage,
+  multipleMatchesFoundPage: MultipleMatchesFoundPage
 )(implicit val appConfig: AppConfig)
     extends FrontendController(controllerComponents) with I18nSupport with AuthActions {
 
   val onPageLoad: Action[AnyContent] =
-    (identify) {
-      Redirect(routes.StatusCheckByNinoController.onPageLoad)
+    (identify) { implicit request =>
+      val query = ???
+      val errCode = ???
+      if (errCode == "ERR_CONFLICT") Ok(multipleMatchesFoundPage(query))
+      else Ok(statusCheckFailurePage(query))
     }
 
 }

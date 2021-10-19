@@ -19,38 +19,10 @@ package uk.gov.hmrc.homeofficeimmigrationstatus.services
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Format
 import uk.gov.hmrc.crypto.ApplicationCrypto
-import uk.gov.hmrc.homeofficeimmigrationstatus.journeys.{HomeOfficeImmigrationStatusFrontendJourneyModel, HomeOfficeImmigrationStatusFrontendJourneyStateFormats}
 import uk.gov.hmrc.homeofficeimmigrationstatus.repository.CacheRepository
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.fsm.PersistentJourneyService
-
-trait HomeOfficeImmigrationStatusFrontendJourneyService[RequestContext]
-    extends PersistentJourneyService[RequestContext] {
-
-  val journeyKey: String = "HomeOfficeImmigrationStatusJourney"
-
-  override val model: HomeOfficeImmigrationStatusFrontendJourneyModel.type =
-    HomeOfficeImmigrationStatusFrontendJourneyModel
-
-  // do not keep errors in the journey history
-  override val breadcrumbsRetentionStrategy: Breadcrumbs => Breadcrumbs =
-    _.filterNot(_.isInstanceOf[model.IsError])
-}
-
-trait HomeOfficeImmigrationStatusFrontendJourneyServiceWithHeaderCarrier
-    extends HomeOfficeImmigrationStatusFrontendJourneyService[HeaderCarrier]
 
 @Singleton
 case class MongoDBCachedHomeOfficeImmigrationStatusFrontendJourneyService @Inject()(
   cacheRepository: CacheRepository,
   applicationCrypto: ApplicationCrypto)
-    extends MongoDBCachedJourneyService[HeaderCarrier]
-    with HomeOfficeImmigrationStatusFrontendJourneyServiceWithHeaderCarrier {
-
-  override val stateFormats: Format[model.State] =
-    HomeOfficeImmigrationStatusFrontendJourneyStateFormats.formats
-
-  override def getJourneyId(hc: HeaderCarrier): Option[String] =
-    hc.extraHeaders.find(_._1 == journeyKey).map(_._2)
-
-}

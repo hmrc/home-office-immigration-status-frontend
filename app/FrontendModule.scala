@@ -17,14 +17,9 @@
 import com.google.inject.AbstractModule
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.homeofficeimmigrationstatus.repository.{CacheRepository, JourneyCacheRepository}
-import uk.gov.hmrc.homeofficeimmigrationstatus.services.{HomeOfficeImmigrationStatusFrontendJourneyServiceWithHeaderCarrier, MongoDBCachedHomeOfficeImmigrationStatusFrontendJourneyService}
 
 class FrontendModule(val environment: Environment, val configuration: Configuration) extends AbstractModule {
 
-  override def configure(): Unit = {
+  override def configure(): Unit =
     bind(classOf[CacheRepository]).to(classOf[JourneyCacheRepository])
-
-    bind(classOf[HomeOfficeImmigrationStatusFrontendJourneyServiceWithHeaderCarrier])
-      .to(classOf[MongoDBCachedHomeOfficeImmigrationStatusFrontendJourneyService])
-  }
 }
