@@ -16,10 +16,9 @@
 
 package uk.gov.hmrc.homeofficeimmigrationstatus.views
 
-import org.mockito.Mockito.{RETURNS_DEEP_STUBS, mock, never, reset, times, verify, when}
+import org.mockito.Mockito.{RETURNS_DEEP_STUBS, mock, reset, times, verify, when}
 import org.mockito.ArgumentMatchers.{any, matches}
 import org.scalatest.wordspec.AnyWordSpecLike
-
 import java.time.LocalDate
 import play.api.i18n.{DefaultMessagesApi, Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.mvc.Call
@@ -53,14 +52,14 @@ class StatusFoundPageContextSpec
   val query = StatusCheckByNinoRequest(Nino("RJ301829A"), "Surname", "Forename", "some dob")
   val call = Call("GET", "/")
 
-  def createContext(pt: String, is: String, endDate: Option[LocalDate], noRecourseToPublicFunds: Boolean = true) =
+  def createContext(pt: String, is: String, endDate: Option[LocalDate], hasRecourseToPublicFunds: Boolean = false) =
     StatusFoundPageContext(
       query,
       StatusCheckResult(
         fullName = "Some name",
         dateOfBirth = LocalDate.now,
         nationality = "Some nationality",
-        statuses = List(ImmigrationStatus(LocalDate.MIN, endDate, pt, is, noRecourseToPublicFunds))
+        statuses = List(ImmigrationStatus(LocalDate.MIN, endDate, pt, is, hasRecourseToPublicFunds))
       ),
       call
     )
@@ -157,12 +156,12 @@ class StatusFoundPageContextSpec
   }
 
   "displayNoResourceToPublicFunds" should {
-    "return true when noRecourseToPublicFunds is true" in {
+    "return false when noRecourseToPublicFunds is true" in {
       val context = createContext("FOO", "BAR", None, true)
-      assert(context.displayRecourseToPublicFunds == true)
+      assert(context.hasRecourseToPublicFunds == false)
     }
 
-    "return false" when {
+    "return true" when {
       "most recent is none" in {
         val context = StatusFoundPageContext(
           query,
@@ -175,12 +174,12 @@ class StatusFoundPageContextSpec
           call
         )
 
-        assert(context.displayRecourseToPublicFunds == false)
+        assert(context.hasRecourseToPublicFunds == true)
       }
 
       "noRecourseToPublicFunds is false" in {
         val context = createContext("FOO", "BAR", None, false)
-        assert(context.displayRecourseToPublicFunds == false)
+        assert(context.hasRecourseToPublicFunds == true)
       }
     }
   }
@@ -214,7 +213,7 @@ class StatusFoundPageContextSpec
           "expiryDate",
           "status-found.expiryDate",
           DateFormat.format(realMessages.lang.locale)(context.mostRecentStatus.get.statusEndDate.get)),
-        ("recourse-text", "status-found.norecourse", realMessages("status-found.no"))
+        ("recourse-text", "status-found.norecourse", realMessages("status-found.yes"))
       ).foreach {
         case (id, msgKey, data) =>
           s"row is for $id" in {

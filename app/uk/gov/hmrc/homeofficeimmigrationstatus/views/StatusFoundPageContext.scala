@@ -38,9 +38,12 @@ final case class StatusFoundPageContext(
       mostRecentStatus.flatMap(s =>
         s.statusEndDate.map(date =>
           Row("expiryDate", "status-found.expiryDate", DateFormat.format(messages.lang.locale)(date)))),
-      if (displayRecourseToPublicFunds)
-        Some(Row("recourse-text", "status-found.norecourse", messages("status-found.no")))
-      else None
+      Some(
+        Row(
+          "recourse-text",
+          "status-found.norecourse",
+          if (hasRecourseToPublicFunds) messages("status-found.yes")
+          else messages("status-found.no")))
     ).flatten
 
   def detailRows(implicit messages: Messages): Seq[Row] =
@@ -50,7 +53,7 @@ final case class StatusFoundPageContext(
       Row("nationality", "generic.nationality", result.countryName)
     )
 
-  def displayRecourseToPublicFunds: Boolean = mostRecentStatus.exists(_.noRecourseToPublicFunds)
+  def hasRecourseToPublicFunds: Boolean = !mostRecentStatus.exists(_.noRecourseToPublicFunds)
 
   def currentStatusLabel(implicit messages: Messages): String = {
     val prefix = "status-found.current."

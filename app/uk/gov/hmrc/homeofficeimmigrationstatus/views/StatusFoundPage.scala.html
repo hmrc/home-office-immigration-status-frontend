@@ -36,7 +36,7 @@
 
     @summaryList("immigrationStatus", context.immigrationStatusRows)
 
-    @if(context.displayRecourseToPublicFunds) {
+    @if(!context.hasRecourseToPublicFunds) {
         @warning(WarningText(
             iconFallbackText = messages("generic.warning"),
             content = Text(messages("status-found.warning")),
