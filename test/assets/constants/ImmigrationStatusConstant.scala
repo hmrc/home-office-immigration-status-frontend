@@ -26,15 +26,15 @@ object ImmigrationStatusConstant {
     statusEndDate = Some(LocalDate.now().plusDays(1)),
     productType = "EUS",
     immigrationStatus = "ILR",
-    noRecourseToPublicFunds = true
+    noRecourseToPublicFunds = false
   )
 
-  val ValidStatusNoRecourceFalse = ImmigrationStatus(
+  val ValidStatusNoRecourceTrue = ImmigrationStatus(
     statusStartDate = LocalDate.parse("2021-01-01"),
     statusEndDate = None,
     productType = "EUS",
     immigrationStatus = "ILR",
-    noRecourseToPublicFunds = false
+    noRecourseToPublicFunds = true
   )
 
   def ValidStatusCustomProductType(typeName: String) = ImmigrationStatus(

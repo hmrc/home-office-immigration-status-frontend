@@ -38,8 +38,8 @@ final case class StatusFoundPageContext(
         Row(
           "recourse-text",
           "status-found.norecourse",
-          if (displayRecourseToPublicFunds) messages("status-found.no")
-          else messages("status-found.yes")))
+          if (hasRecourseToPublicFunds) messages("status-found.yes")
+          else messages("status-found.no")))
     ).flatten
 
   def detailRows(implicit messages: Messages) =
@@ -54,7 +54,7 @@ final case class StatusFoundPageContext(
           Row("expiryDate", "status-found.expiryDate", DateFormat.format(messages.lang.locale)(date))))
     ).flatten
 
-  def displayRecourseToPublicFunds: Boolean = mostRecentStatus.exists(_.noRecourseToPublicFunds)
+  def hasRecourseToPublicFunds: Boolean = mostRecentStatus.exists(_.noRecourseToPublicFunds)
 
   def currentStatusLabel(implicit messages: Messages): String = {
     val prefix = "status-found.current."

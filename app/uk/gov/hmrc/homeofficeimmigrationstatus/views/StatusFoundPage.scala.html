@@ -37,7 +37,7 @@
     @*<!--Todo change this name when rows are grouped by stuff --> *@
     @summaryList("stuff", context.stuffRows)
 
-    @if(context.displayRecourseToPublicFunds) {
+    @if(!context.hasRecourseToPublicFunds) {
         @warning(WarningText(
             iconFallbackText = messages("generic.warning"),
             content = Text(messages("status-found.warning")),

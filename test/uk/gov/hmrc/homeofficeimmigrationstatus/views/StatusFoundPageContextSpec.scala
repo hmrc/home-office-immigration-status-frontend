@@ -52,14 +52,14 @@ class StatusFoundPageContextSpec
   val query = StatusCheckByNinoRequest(Nino("RJ301829A"), "Surname", "Forename", "some dob")
   val call = Call("GET", "/")
 
-  def createContext(pt: String, is: String, endDate: Option[LocalDate], noRecourseToPublicFunds: Boolean = true) =
+  def createContext(pt: String, is: String, endDate: Option[LocalDate], hasRecourseToPublicFunds: Boolean = false) =
     StatusFoundPageContext(
       query,
       StatusCheckResult(
         fullName = "Some name",
         dateOfBirth = LocalDate.now,
         nationality = "Some nationality",
-        statuses = List(ImmigrationStatus(LocalDate.MIN, endDate, pt, is, noRecourseToPublicFunds))
+        statuses = List(ImmigrationStatus(LocalDate.MIN, endDate, pt, is, hasRecourseToPublicFunds))
       ),
       call
     )
@@ -158,7 +158,7 @@ class StatusFoundPageContextSpec
   "displayNoResourceToPublicFunds" should {
     "return true when noRecourseToPublicFunds is true" in {
       val context = createContext("FOO", "BAR", None, true)
-      assert(context.displayRecourseToPublicFunds == true)
+      assert(context.hasRecourseToPublicFunds == true)
     }
 
     "return false" when {
@@ -174,12 +174,12 @@ class StatusFoundPageContextSpec
           call
         )
 
-        assert(context.displayRecourseToPublicFunds == false)
+        assert(context.hasRecourseToPublicFunds == false)
       }
 
       "noRecourseToPublicFunds is false" in {
         val context = createContext("FOO", "BAR", None, false)
-        assert(context.displayRecourseToPublicFunds == false)
+        assert(context.hasRecourseToPublicFunds == false)
       }
     }
   }
