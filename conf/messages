@@ -86,6 +86,7 @@ status-found.current.FRONTIER_WORKER.PERMIT.expired='’s frontier worker permit
 status-found.current.hasFBIS=' has FBIS status '{0}' - '{1}''
 status-found.current.noStatus=' has no immigration status'
 status-found.warning='You need to check if there are exceptions that may mean a customer has the right to certain benefits, such as Child Benefit.'
+status-found.yes='Yes'
 status-found.no='No'
 status-found.norecourse='Recourse to public funds'
 status-found.route='Immigration route'

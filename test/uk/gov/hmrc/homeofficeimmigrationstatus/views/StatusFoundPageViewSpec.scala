@@ -49,26 +49,24 @@ class StatusFoundPageViewSpec extends ViewSpec {
     }
 
     "have recourse to public funds field" when {
-      "noRecourseToPublicFunds is true" in {
+      "noRecourseToPublicFunds is true, and no warning is shown" in {
         val html: HtmlFormat.Appendable =
           sut(buildContext(List(ValidStatus)))(request, messages)
 
         val doc = asDocument(html)
 
-        assertElementHasText(doc, "#recourse-text", messages("status-found.no"))
-        assertElementHasText(doc, "#recourse-warning", "! Warning " + messages("status-found.warning"))
+        assertElementHasText(doc, "#recourse-text", messages("status-found.yes"))
+        assertNotRenderedById(doc, "recourse-warning")
       }
-    }
 
-    "not have recourse to public funds field" when {
-      "noRecourseToPublicFunds is false" in {
+      "noRecourseToPublicFunds is false, and the warning is shown" in {
         val html: HtmlFormat.Appendable =
-          sut(buildContext(List(ValidStatusNoRecourceFalse)))(request, messages)
+          sut(buildContext(List(ValidStatusNoRecourceTrue)))(request, messages)
 
         val doc = asDocument(html)
 
-        assertNotRenderedById(doc, "recourse")
-        assertNotRenderedById(doc, "recourse-warning")
+        assertElementHasText(doc, "#recourse-text", messages("status-found.no"))
+        assertElementHasText(doc, "#recourse-warning", "! Warning " + messages("status-found.warning"))
       }
     }
 
@@ -109,7 +107,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
     "Immigration route" when {
       "EUS displays" in {
         val html: HtmlFormat.Appendable =
-          sut(buildContext(List(ValidStatusNoRecourceFalse)))(request, messages)
+          sut(buildContext(List(ValidStatusNoRecourceTrue)))(request, messages)
 
         val doc = asDocument(html)
         assertElementHasText(doc, "#immigrationRoute", "EU Settlement Scheme")
