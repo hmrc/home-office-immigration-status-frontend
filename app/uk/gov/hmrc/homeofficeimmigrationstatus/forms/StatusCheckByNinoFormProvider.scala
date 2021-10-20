@@ -22,7 +22,7 @@ import play.api.data.Form
 import play.api.data.Forms._
 import javax.inject.{Inject, Singleton}
 
-class StatusCheckByNinoFormProvider @Inject() extends FormFieldMappings {
+class StatusCheckByNinoFormProvider extends FormFieldMappings {
 
   def apply(): Form[StatusCheckByNinoRequest] = Form[StatusCheckByNinoRequest](
     mapping(

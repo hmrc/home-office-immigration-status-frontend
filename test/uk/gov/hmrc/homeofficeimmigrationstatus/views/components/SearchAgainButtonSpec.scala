@@ -31,7 +31,7 @@ class SearchAgainButtonSpec extends ViewSpec {
       button.text() mustBe messages("generic.searchAgain")
     }
     "link to the correct place" in {
-      button.attr("href") mustBe routes.HomeOfficeImmigrationStatusFrontendController.showStart.url
+      button.attr("href") mustBe routes.HomeOfficeImmigrationStatusFrontendController.onPageLoad.url
     }
   }
 

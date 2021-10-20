@@ -24,26 +24,23 @@ import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.actions.IdentifierAction
+import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.actions.AuthAction
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class HomeOfficeImmigrationStatusFrontendController @Inject()(
-  identify: IdentifierAction,
+class LandingController @Inject()(
+  authorise: AuthAction,
   override val messagesApi: MessagesApi,
   val actionBuilder: DefaultActionBuilder,
-  val authConnector: AuthConnector,
-  val env: Environment,
   controllerComponents: MessagesControllerComponents
 )(implicit val appConfig: AppConfig)
     extends FrontendController(controllerComponents) with I18nSupport {
 
   val onPageLoad: Action[AnyContent] =
-    // This should clear the mongo state so that the search again buttons work
-    (identify) {
-      Redirect(routes.StatusCheckByNinoController.onPageLoad)
+    (authorise) { implicit request =>
+      Redirect(routes.StatusCheckByNinoController.onPageLoad).removingFromSession("query")
     }
 
 }

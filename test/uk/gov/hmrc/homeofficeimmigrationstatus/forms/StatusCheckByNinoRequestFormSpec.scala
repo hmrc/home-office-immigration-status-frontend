@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.homeofficeimmigrationstatus.controllers
+package uk.gov.hmrc.homeofficeimmigrationstatus.forms
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
@@ -23,8 +23,14 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoRequest
 import org.scalatest.OptionValues
 import org.scalacheck.Gen
+import play.api.data.Form
 
 class StatusCheckByNinoRequestFormSpec extends AnyWordSpecLike with Matchers with OptionValues {
+
+  val form: Form[StatusCheckByNinoRequest] = {
+    val provider = new StatusCheckByNinoFormProvider()
+    provider()
+  }
 
   val formOutput: StatusCheckByNinoRequest = StatusCheckByNinoRequest(
     nino = Nino("RJ301829A"),
@@ -42,9 +48,9 @@ class StatusCheckByNinoRequestFormSpec extends AnyWordSpecLike with Matchers wit
 
   "StatusCheckByNinoRequestForm" should {
 
-    "bind some input fields and return StatusCheckByNinoRequest and fill it back" in {
-      val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
+    //todo NINO GEN
 
+    "bind some input fields and return StatusCheckByNinoRequest and fill it back" in {
       form.bind(formInput).value shouldBe Some(formOutput)
       form.fill(formOutput).data shouldBe formInput
     }
@@ -52,13 +58,11 @@ class StatusCheckByNinoRequestFormSpec extends AnyWordSpecLike with Matchers wit
     "NINO tests" should {
 
       "report an error when NINO is missing" in {
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("nino", "")
         form.bind(input).errors shouldBe List(FormError("nino", "error.nino.required"))
       }
 
       "report an error when NINO is invalid" in {
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("nino", "invalid")
         form.bind(input).errors shouldBe List(FormError("nino", "error.nino.invalid-format"))
       }
@@ -80,19 +84,16 @@ class StatusCheckByNinoRequestFormSpec extends AnyWordSpecLike with Matchers wit
           .sample
           .value
 
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("nino", generatedOption)
         form.bind(input).errors shouldBe List(FormError("nino", "error.nino.invalid-format"))
       }
 
       "report an error when NINO is to short" in {
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("nino", "AA123456")
         form.bind(input).errors shouldBe List(FormError("nino", "error.nino.invalid-format"))
       }
 
       "report an error when NINO is to long" in {
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("nino", "AA123456AA")
         form.bind(input).errors shouldBe List(FormError("nino", "error.nino.invalid-format"))
       }
@@ -102,7 +103,6 @@ class StatusCheckByNinoRequestFormSpec extends AnyWordSpecLike with Matchers wit
         val generatedOptionSecondPlace = Gen.oneOf("D", "F", "I", "Q", "U", "V").sample.value
         val baseNINO = "123456A"
 
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("nino", generatedOptionFirstPlace + generatedOptionSecondPlace + baseNINO)
         form.bind(input).errors shouldBe List(FormError("nino", "error.nino.invalid-format"))
       }
@@ -111,7 +111,6 @@ class StatusCheckByNinoRequestFormSpec extends AnyWordSpecLike with Matchers wit
         val generatedOption = Gen.oneOf("D", "F", "I", "Q", "U", "V").sample.value
         val baseNINO = "A123456A"
 
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("nino", generatedOption + baseNINO)
         form.bind(input).errors shouldBe List(FormError("nino", "error.nino.invalid-format"))
       }
@@ -120,7 +119,6 @@ class StatusCheckByNinoRequestFormSpec extends AnyWordSpecLike with Matchers wit
         val generatedOption = Gen.oneOf("D", "F", "I", "Q", "U", "V", "O").sample.value
         val baseNINO = "123456A"
 
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("nino", "A" + generatedOption + baseNINO)
         form.bind(input).errors shouldBe List(FormError("nino", "error.nino.invalid-format"))
       }
@@ -129,7 +127,6 @@ class StatusCheckByNinoRequestFormSpec extends AnyWordSpecLike with Matchers wit
         val generatedOption = Gen.oneOf("BG", "GB", "NK", "KN", "TN", "TN", "ZZ").sample.value
         val baseNINO = "123456A"
 
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("nino", "BG" + generatedOption + baseNINO)
         form.bind(input).errors shouldBe List(FormError("nino", "error.nino.invalid-format"))
       }
@@ -139,7 +136,6 @@ class StatusCheckByNinoRequestFormSpec extends AnyWordSpecLike with Matchers wit
         val prefix = "AA"
         val suffix = "A"
 
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("nino", prefix + "12345" + suffix)
         form.bind(input).errors shouldBe List(FormError("nino", "error.nino.invalid-format"))
       }
@@ -149,13 +145,11 @@ class StatusCheckByNinoRequestFormSpec extends AnyWordSpecLike with Matchers wit
         val prefix = "AA"
         val suffix = "A"
 
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("nino", prefix + "12A456" + suffix)
         form.bind(input).errors shouldBe List(FormError("nino", "error.nino.invalid-format"))
       }
 
       "not error when valid prefix passed" in {
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("nino", "AA123456A")
         form.bind(input).errors shouldBe List()
       }
@@ -164,7 +158,6 @@ class StatusCheckByNinoRequestFormSpec extends AnyWordSpecLike with Matchers wit
         val generatedOption = Gen.oneOf("A", "B", "C", "D").sample.value
         val baseNINO = "AA123456"
 
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("nino", baseNINO + generatedOption)
         form.bind(input).errors shouldBe List()
       }
@@ -173,7 +166,6 @@ class StatusCheckByNinoRequestFormSpec extends AnyWordSpecLike with Matchers wit
         val generatedOption = Gen.oneOf("E", "F", "G", "H").sample.value
         val baseNINO = "AA123456"
 
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("nino", baseNINO + generatedOption)
         form.bind(input).errors shouldBe List(FormError("nino", "error.nino.invalid-format"))
       }
@@ -182,7 +174,6 @@ class StatusCheckByNinoRequestFormSpec extends AnyWordSpecLike with Matchers wit
         val generatedOption = Gen.oneOf("!", "£", "#", "%").sample.value
         val baseNINO = "AA123456"
 
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("nino", baseNINO + generatedOption)
         form.bind(input).errors shouldBe List(FormError("nino", "error.nino.invalid-format"))
       }
@@ -191,38 +182,32 @@ class StatusCheckByNinoRequestFormSpec extends AnyWordSpecLike with Matchers wit
     "First Name tests" should {
 
       "report an error when givenName is missing" in {
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("givenName", "")
         form.bind(input).errors shouldBe List(FormError("givenName", "error.givenName.required"))
       }
 
       "report an error when givenName only numbers invalid" in {
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("givenName", "11267162")
         form.bind(input).errors shouldBe List(FormError("givenName", "error.givenName.invalid-format"))
       }
 
       "report an error when special characters are used" in {
         val generatedOption = Gen.oneOf("!", "£", "#", "%").sample.value
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("givenName", generatedOption)
         form.bind(input).errors shouldBe List(FormError("givenName", "error.givenName.invalid-format"))
       }
 
       "not error reported when givenName is atleast one character long" in {
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("givenName", "a")
         form.bind(input).errors shouldBe List()
       }
 
       "not report an error when givenName contains a -" in {
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("givenName", "-")
         form.bind(input).errors shouldBe List()
       }
 
       "not report an error when givenName contains is a -" in {
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("givenName", "a-b")
         form.bind(input).errors shouldBe List()
       }
@@ -231,38 +216,32 @@ class StatusCheckByNinoRequestFormSpec extends AnyWordSpecLike with Matchers wit
     "Family Name Tests" should {
 
       "report an error when familyName is missing" in {
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("familyName", "")
         form.bind(input).errors shouldBe List(FormError("familyName", "error.familyName.required"))
       }
 
       "report an error when familyName is too short" in {
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("familyName", "A")
         form.bind(input).errors shouldBe List(FormError("familyName", "error.familyName.invalid-format"))
       }
 
       "no error reported when familyName is two or more characters" in {
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("familyName", "Aa")
         form.bind(input).errors shouldBe List()
       }
 
       "report an error when familyName only numbers are used" in {
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("familyName", "11267162")
         form.bind(input).errors shouldBe List(FormError("familyName", "error.familyName.invalid-format"))
       }
 
       "report an error when special characters are used" in {
         val generatedOption = Gen.oneOf("!", "£", "#", "%").sample.value
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("familyName", generatedOption)
         form.bind(input).errors shouldBe List(FormError("familyName", "error.familyName.invalid-format"))
       }
 
       "not report an error when givenName contains is a -" in {
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("familyName", "a-b")
         form.bind(input).errors shouldBe List()
       }
@@ -271,19 +250,16 @@ class StatusCheckByNinoRequestFormSpec extends AnyWordSpecLike with Matchers wit
     "Date of Birth (DOB)" should {
 
       "report an errpr when dateOfBirth.day is missing" in {
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("dateOfBirth.day", "")
         form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
       }
 
       "report an error when dateOfBirth.month is missing" in {
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("dateOfBirth.month", "")
         form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
       }
 
       "report an error when dateOfBirth.year is missing" in {
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("dateOfBirth.year", "")
         form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
       }
@@ -295,25 +271,21 @@ class StatusCheckByNinoRequestFormSpec extends AnyWordSpecLike with Matchers wit
           .sample
           .value
 
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("dateOfBirth.day", generatedOption)
         form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
       }
 
       "report an error when dateOfBirth.day is invalid - contains digit and wildcard" in {
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("dateOfBirth.day", "0X")
         form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
       }
 
       "report an error when dateOfBirth.day is invalid - contains value out-of-scope" in {
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("dateOfBirth.day", "32")
         form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
       }
 
       "report an error when dateOfBirth.day is invalid - contains negative value" in {
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("dateOfBirth.day", "-5")
         form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
       }
@@ -324,25 +296,21 @@ class StatusCheckByNinoRequestFormSpec extends AnyWordSpecLike with Matchers wit
           .sample
           .value
 
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("dateOfBirth.month", generatedOption)
         form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
       }
 
       "report an error when dateOfBirth.month is invalid - contains digit and wildcard" in {
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("dateOfBirth.month", "1X")
         form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
       }
 
       "report an error when dateOfBirth.month is invalid - contains value out-of-scope" in {
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("dateOfBirth.month", "13")
         form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
       }
 
       "report an error when dateOfBirth.month is invalid - contains negative value" in {
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("dateOfBirth.month", "-5")
         form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
       }
@@ -353,31 +321,26 @@ class StatusCheckByNinoRequestFormSpec extends AnyWordSpecLike with Matchers wit
           .sample
           .value
 
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("dateOfBirth.year", generatedOption)
         form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
       }
 
       "report an error when dateOfBirth.year is invalid - too short" in {
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("dateOfBirth.year", "193")
         form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
       }
 
       "report an error when dateOfBirth.year is invalid - contains letter" in {
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("dateOfBirth.year", "197B")
         form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
       }
 
       "report an error when dateOfBirth.year is invalid - contains value out-of-scope" in {
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("dateOfBirth.year", "999123")
         form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
       }
 
       "report an error when dateOfBirth.year is invalid - contains negative value" in {
-        val form = HomeOfficeImmigrationStatusFrontendController.StatusCheckByNinoRequestForm
         val input = formInput.updated("dateOfBirth.month", "-5")
         form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
       }

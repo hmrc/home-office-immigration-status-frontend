@@ -29,30 +29,27 @@ import uk.gov.hmrc.homeofficeimmigrationstatus.models.{StatusCheckByNinoRequest,
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.actions.IdentifierAction
+import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.actions.AuthAction
 import uk.gov.hmrc.homeofficeimmigrationstatus.forms.StatusCheckByNinoFormProvider
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import java.time.{LocalDate, ZoneId}
+import play.api.libs.json.Json
 
 @Singleton
 class StatusCheckByNinoController @Inject()(
-  identify: IdentifierAction,
+  authorise: AuthAction,
   override val messagesApi: MessagesApi,
-  val actionBuilder: DefaultActionBuilder,
-  val authConnector: AuthConnector,
-  val env: Environment,
-  homeOfficeImmigrationStatusProxyConnector: HomeOfficeImmigrationStatusProxyConnector,
   controllerComponents: MessagesControllerComponents,
   formProvider: StatusCheckByNinoFormProvider,
   statusCheckByNinoPage: StatusCheckByNinoPage
-)(implicit val appConfig: AppConfig, ec: ExecutionContext)
+)(implicit val appConfig: AppConfig)
     extends FrontendController(controllerComponents) with I18nSupport {
 
   val onPageLoad: Action[AnyContent] =
-    (identify) { implicit request =>
-      val maybeQuery: Option[StatusCheckByNinoRequest] = ???
+    (authorise) { implicit request =>
+      val maybeQuery: Option[StatusCheckByNinoRequest] =
+        request.session.get("query").map(Json.parse).flatMap(_.asOpt[StatusCheckByNinoRequest])
       Ok(
         statusCheckByNinoPage(
           maybeQuery
@@ -64,35 +61,16 @@ class StatusCheckByNinoController @Inject()(
     }
 
   val onSubmit: Action[AnyContent] =
-    (identify).async { implicit request =>
+    (authorise) { implicit request =>
       formProvider()
         .bindFromRequest()
         .fold(
           formWithErrors =>
-            Future.successful(
-              BadRequest(statusCheckByNinoPage(formWithErrors, routes.StatusCheckByNinoController.onSubmit))),
+            BadRequest(statusCheckByNinoPage(formWithErrors, routes.StatusCheckByNinoController.onSubmit)),
           query => {
-            // This should set the mongo state with the request and the response/error
-            val enrichedQuery = enrichWithDateRange(query, appConfig.defaultQueryTimeRangeInMonths)
-            homeOfficeImmigrationStatusProxyConnector.statusPublicFundsByNino(enrichedQuery).map {
-              case StatusCheckResponse(correlationId, Some(error), _) =>
-                Redirect(routes.StatusCheckFailureController.onPageLoad)
-              case StatusCheckResponse(correlationId, _, Some(result)) if !result.statuses.isEmpty =>
-                Redirect(routes.StatusFoundController.onPageLoad)
-              case StatusCheckResponse(correlationId, _, _) =>
-                Redirect(routes.StatusNotAvailableController.onPageLoad)
-            }
+            Redirect(routes.StatusResultController.onPageLoad).addingToSession("query" -> Json.toJson(query).toString)
           }
         )
     }
-
-  def enrichWithDateRange(query: StatusCheckByNinoRequest, timeRangeInMonths: Int) = {
-    val startDate = query.statusCheckRange
-      .flatMap(_.startDate)
-      .getOrElse(LocalDate.now(ZoneId.of("UTC")).minusMonths(timeRangeInMonths))
-    val endDate =
-      query.statusCheckRange.flatMap(_.endDate).getOrElse(LocalDate.now(ZoneId.of("UTC")))
-    query.copy(statusCheckRange = Some(StatusCheckRange(Some(startDate), Some(endDate))))
-  }
 
 }

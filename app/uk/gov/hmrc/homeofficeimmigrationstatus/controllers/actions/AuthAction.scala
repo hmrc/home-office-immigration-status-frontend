@@ -34,7 +34,7 @@ import play.api.Environment
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class IdentifierAction @Inject()(
+class AuthAction @Inject()(
   val env: Environment,
   override val authConnector: AuthConnector,
   appConfig: AppConfig,

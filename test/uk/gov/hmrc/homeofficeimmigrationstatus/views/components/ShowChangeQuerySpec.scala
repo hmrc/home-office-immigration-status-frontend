@@ -52,7 +52,7 @@ class ShowChangeQuerySpec extends ViewSpec {
             data,
             id,
             s"${messages("generic.change")} ${messages(actionText)}",
-            routes.HomeOfficeImmigrationStatusFrontendController.showStatusCheckByNino.url
+            routes.StatusCheckByNinoController.onPageLoad.url
           )
       }
     }
