@@ -16,23 +16,23 @@
 
 package uk.gov.hmrc.homeofficeimmigrationstatus.forms
 
-import uk.gov.hmrc.homeofficeimmigrationstatus.models.{StatusCheckByNinoRequest, StatusCheckRange}
+import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoFormModel
 import uk.gov.hmrc.domain.Nino
 import play.api.data.Form
 import play.api.data.Forms._
 import javax.inject.{Inject, Singleton}
+import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
 
 class StatusCheckByNinoFormProvider extends FormFieldMappings {
 
-  def apply(): Form[StatusCheckByNinoRequest] = Form[StatusCheckByNinoRequest](
+  def apply(): Form[StatusCheckByNinoFormModel] = Form[StatusCheckByNinoFormModel] {
     mapping(
       "nino" -> uppercaseNormalizedText
         .verifying(validNino())
         .transform(Nino.apply, (n: Nino) => n.toString),
       "givenName"   -> trimmedName.verifying(validName("givenName", 1)),
       "familyName"  -> trimmedName.verifying(validName("familyName", 2)),
-      "dateOfBirth" -> dateOfBirthMapping,
-      "range"       -> ignored[Option[StatusCheckRange]](None)
-    )(StatusCheckByNinoRequest.apply)(StatusCheckByNinoRequest.unapply)
-  )
+      "dateOfBirth" -> dateOfBirthMapping
+    )(StatusCheckByNinoFormModel.apply)(StatusCheckByNinoFormModel.unapply)
+  }
 }

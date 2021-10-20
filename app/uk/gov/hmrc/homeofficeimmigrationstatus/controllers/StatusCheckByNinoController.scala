@@ -25,7 +25,7 @@ import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
 import uk.gov.hmrc.homeofficeimmigrationstatus.connectors.HomeOfficeImmigrationStatusProxyConnector
-import uk.gov.hmrc.homeofficeimmigrationstatus.models.{StatusCheckByNinoRequest, StatusCheckRange, StatusCheckResponse}
+import uk.gov.hmrc.homeofficeimmigrationstatus.models.{StatusCheckByNinoFormModel, StatusCheckByNinoRequest, StatusCheckRange, StatusCheckResponse}
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -48,8 +48,8 @@ class StatusCheckByNinoController @Inject()(
 
   val onPageLoad: Action[AnyContent] =
     (authorise) { implicit request =>
-      val maybeQuery: Option[StatusCheckByNinoRequest] =
-        request.session.get("query").map(Json.parse).flatMap(_.asOpt[StatusCheckByNinoRequest])
+      val maybeQuery: Option[StatusCheckByNinoFormModel] =
+        request.session.get("query").map(Json.parse).flatMap(_.asOpt[StatusCheckByNinoFormModel])
       Ok(
         statusCheckByNinoPage(
           maybeQuery

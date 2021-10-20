@@ -28,11 +28,10 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.actions.AuthAction
 import uk.gov.hmrc.homeofficeimmigrationstatus.connectors.HomeOfficeImmigrationStatusProxyConnector
 import uk.gov.hmrc.homeofficeimmigrationstatus.views._
-import uk.gov.hmrc.homeofficeimmigrationstatus.models.{StatusCheckByNinoRequest, StatusCheckRange, StatusCheckResponse}
+import uk.gov.hmrc.homeofficeimmigrationstatus.models.{StatusCheckByNinoFormModel, StatusCheckByNinoRequest, StatusCheckRange, StatusCheckResponse}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import java.time.{LocalDate, ZoneId}
 import play.api.libs.json.Json
 
 @Singleton
@@ -50,13 +49,13 @@ class StatusResultController @Inject()(
 
   val onPageLoad: Action[AnyContent] =
     (authorise).async { implicit request =>
-      val query: Option[StatusCheckByNinoRequest] =
-        request.session.get("query").map(Json.parse).flatMap(_.asOpt[StatusCheckByNinoRequest])
-      query match {
-        case Some(req) =>
-          val enrichedQuery = enrichWithDateRange(req, appConfig.defaultQueryTimeRangeInMonths)
+      val maybeQuery: Option[StatusCheckByNinoFormModel] =
+        request.session.get("query").map(Json.parse).flatMap(_.asOpt[StatusCheckByNinoFormModel])
+      maybeQuery match {
+        case Some(query) =>
+          val req = query.toRequest(appConfig.defaultQueryTimeRangeInMonths)
           homeOfficeImmigrationStatusProxyConnector
-            .statusPublicFundsByNino(enrichedQuery)
+            .statusPublicFundsByNino(req)
             .map(result => displayResults(req, result))
         case None =>
           Future.successful(Redirect(routes.StatusCheckByNinoController.onPageLoad))
@@ -75,14 +74,5 @@ class StatusResultController @Inject()(
       case _ =>
         Ok(statusNotAvailablePage(StatusNotAvailablePageContext(query, routes.LandingController.onPageLoad)))
     }
-
-  def enrichWithDateRange(query: StatusCheckByNinoRequest, timeRangeInMonths: Int) = {
-    val startDate = query.statusCheckRange
-      .flatMap(_.startDate)
-      .getOrElse(LocalDate.now(ZoneId.of("UTC")).minusMonths(timeRangeInMonths))
-    val endDate =
-      query.statusCheckRange.flatMap(_.endDate).getOrElse(LocalDate.now(ZoneId.of("UTC")))
-    query.copy(statusCheckRange = Some(StatusCheckRange(Some(startDate), Some(endDate))))
-  }
 
 }
