@@ -54,7 +54,7 @@ final case class StatusFoundPageContext(
           Row("expiryDate", "status-found.expiryDate", DateFormat.format(messages.lang.locale)(date))))
     ).flatten
 
-  def hasRecourseToPublicFunds: Boolean = mostRecentStatus.exists(_.noRecourseToPublicFunds)
+  def hasRecourseToPublicFunds: Boolean = !mostRecentStatus.exists(_.noRecourseToPublicFunds)
 
   def currentStatusLabel(implicit messages: Messages): String = {
     val prefix = "status-found.current."

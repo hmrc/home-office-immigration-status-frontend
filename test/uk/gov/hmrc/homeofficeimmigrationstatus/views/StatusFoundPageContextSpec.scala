@@ -156,12 +156,12 @@ class StatusFoundPageContextSpec
   }
 
   "displayNoResourceToPublicFunds" should {
-    "return true when noRecourseToPublicFunds is true" in {
+    "return false when noRecourseToPublicFunds is true" in {
       val context = createContext("FOO", "BAR", None, true)
-      assert(context.hasRecourseToPublicFunds == true)
+      assert(context.hasRecourseToPublicFunds == false)
     }
 
-    "return false" when {
+    "return true" when {
       "most recent is none" in {
         val context = StatusFoundPageContext(
           query,
@@ -174,12 +174,12 @@ class StatusFoundPageContextSpec
           call
         )
 
-        assert(context.hasRecourseToPublicFunds == false)
+        assert(context.hasRecourseToPublicFunds == true)
       }
 
       "noRecourseToPublicFunds is false" in {
         val context = createContext("FOO", "BAR", None, false)
-        assert(context.hasRecourseToPublicFunds == false)
+        assert(context.hasRecourseToPublicFunds == true)
       }
     }
   }
@@ -213,7 +213,7 @@ class StatusFoundPageContextSpec
       val context = createContext("PT", "IS", Some(LocalDate.now()))
       Seq(
         ("immigrationRoute", "status-found.route", context.immigrationRoute(realMessages).get),
-        ("recourse-text", "status-found.norecourse", realMessages("status-found.no"))
+        ("recourse-text", "status-found.norecourse", realMessages("status-found.yes"))
       ).foreach {
         case (id, msgKey, data) =>
           s"row is for $id" in {
