@@ -34,10 +34,9 @@
 
     <h1 class="govuk-heading-xl" id="status-found-title"><span id="full-name">@context.result.fullName</span>@context.currentStatusLabel</h1>
 
-    @*<!--Todo change this name when rows are grouped by stuff --> *@
-    @summaryList("stuff", context.stuffRows)
+    @summaryList("immigrationStatus", context.immigrationStatusRows)
 
-    @if(context.displayRecourseToPublicFunds) {
+    @if(!context.hasRecourseToPublicFunds) {
         @warning(WarningText(
             iconFallbackText = messages("generic.warning"),
             content = Text(messages("status-found.warning")),
