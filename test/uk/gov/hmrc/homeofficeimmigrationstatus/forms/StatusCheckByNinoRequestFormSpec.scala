@@ -20,19 +20,19 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.data.FormError
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoRequest
+import uk.gov.hmrc.homeofficeimmigrationstatus.models.{StatusCheckByNinoFormModel, StatusCheckByNinoRequest}
 import org.scalatest.OptionValues
 import org.scalacheck.Gen
 import play.api.data.Form
 
 class StatusCheckByNinoRequestFormSpec extends AnyWordSpecLike with Matchers with OptionValues {
 
-  val form: Form[StatusCheckByNinoRequest] = {
+  val form: Form[StatusCheckByNinoFormModel] = {
     val provider = new StatusCheckByNinoFormProvider()
     provider()
   }
 
-  val formOutput: StatusCheckByNinoRequest = StatusCheckByNinoRequest(
+  val formOutput: StatusCheckByNinoFormModel = StatusCheckByNinoFormModel(
     nino = Nino("RJ301829A"),
     givenName = "Jan",
     familyName = "Kowalski",

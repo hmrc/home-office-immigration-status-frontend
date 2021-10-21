@@ -19,7 +19,7 @@ package uk.gov.hmrc.homeofficeimmigrationstatus.views.components
 import org.joda.time.LocalDate
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.routes
-import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoRequest
+import uk.gov.hmrc.homeofficeimmigrationstatus.models.{StatusCheckByNinoFormModel, StatusCheckByNinoRequest}
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.{DateFormat, ViewSpec}
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.components.ShowChangeQuery
 
@@ -28,7 +28,7 @@ class ShowChangeQuerySpec extends ViewSpec {
   val sut = inject[ShowChangeQuery]
 
   //todo nino gen
-  val query = StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", LocalDate.now().toString)
+  val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "Pan", "", LocalDate.now().toString)
 
   val doc = asDocument(sut(query)(messages))
 

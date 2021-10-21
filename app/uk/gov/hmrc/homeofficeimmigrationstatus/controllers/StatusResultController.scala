@@ -17,28 +17,24 @@
 package uk.gov.hmrc.homeofficeimmigrationstatus.controllers
 
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.Json
 import play.api.mvc._
-import play.api.{Configuration, Environment}
-import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
-import uk.gov.hmrc.homeofficeimmigrationstatus.views.html._
-import uk.gov.hmrc.homeofficeimmigrationstatus.views.StatusFoundPageContext
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.actions.AuthAction
 import uk.gov.hmrc.homeofficeimmigrationstatus.connectors.HomeOfficeImmigrationStatusProxyConnector
+import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.actions.AuthAction
+import uk.gov.hmrc.homeofficeimmigrationstatus.models.{StatusCheckByNinoFormModel, StatusCheckByNinoRequest, StatusCheckResponse}
 import uk.gov.hmrc.homeofficeimmigrationstatus.views._
-import uk.gov.hmrc.homeofficeimmigrationstatus.models.{StatusCheckByNinoFormModel, StatusCheckByNinoRequest, StatusCheckRange, StatusCheckResponse}
+import uk.gov.hmrc.homeofficeimmigrationstatus.views.html._
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import play.api.libs.json.Json
 
 @Singleton
 class StatusResultController @Inject()(
   authorise: AuthAction,
   override val messagesApi: MessagesApi,
-  homeOfficeImmigrationStatusProxyConnector: HomeOfficeImmigrationStatusProxyConnector,
+  homeOfficeConnector: HomeOfficeImmigrationStatusProxyConnector,
   controllerComponents: MessagesControllerComponents,
   statusFoundPage: StatusFoundPage,
   statusCheckFailurePage: StatusCheckFailurePage,
@@ -53,23 +49,23 @@ class StatusResultController @Inject()(
         request.session.get("query").map(Json.parse).flatMap(_.asOpt[StatusCheckByNinoFormModel])
       maybeQuery match {
         case Some(query) =>
-          val req = query.toRequest(appConfig.defaultQueryTimeRangeInMonths)
-          homeOfficeImmigrationStatusProxyConnector
+          val req = query.toRequest(appConfig.defaultQueryTimeRangeInMonths) //todo move this to a service
+          homeOfficeConnector
             .statusPublicFundsByNino(req)
-            .map(result => displayResults(req, result))
+            .map(result => displayResults(query, result))
         case None =>
           Future.successful(Redirect(routes.StatusCheckByNinoController.onPageLoad))
       }
 
     }
 
-  def displayResults(query: StatusCheckByNinoRequest, statusCheckResponse: StatusCheckResponse)(
+  def displayResults(query: StatusCheckByNinoFormModel, statusCheckResponse: StatusCheckResponse)(
     implicit request: Request[AnyContent]): Result =
     statusCheckResponse match {
       case StatusCheckResponse(_, Some(error), _) =>
         if (error.errCode == "ERR_CONFLICT") Ok(multipleMatchesFoundPage(query))
         else Ok(statusCheckFailurePage(query))
-      case StatusCheckResponse(_, _, Some(result)) if !result.statuses.isEmpty =>
+      case StatusCheckResponse(_, _, Some(result)) if result.statuses.nonEmpty =>
         Ok(statusFoundPage(StatusFoundPageContext(query, result, routes.LandingController.onPageLoad)))
       case _ =>
         Ok(statusNotAvailablePage(StatusNotAvailablePageContext(query, routes.LandingController.onPageLoad)))

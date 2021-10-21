@@ -33,14 +33,12 @@ import scala.concurrent.ExecutionContext
 class LandingController @Inject()(
   authorise: AuthAction,
   override val messagesApi: MessagesApi,
-  val actionBuilder: DefaultActionBuilder,
   controllerComponents: MessagesControllerComponents
 )(implicit val appConfig: AppConfig)
     extends FrontendController(controllerComponents) with I18nSupport {
 
-  val onPageLoad: Action[AnyContent] =
-    (authorise) { implicit request =>
-      Redirect(routes.StatusCheckByNinoController.onPageLoad).removingFromSession("query")
-    }
+  val onPageLoad: Action[AnyContent] = authorise { implicit request =>
+    Redirect(routes.StatusCheckByNinoController.onPageLoad).removingFromSession("query")
+  }
 
 }

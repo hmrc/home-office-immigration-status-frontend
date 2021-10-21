@@ -31,7 +31,7 @@ class AccessibilityStatementController @Inject()(
 )(implicit val appConfig: AppConfig)
     extends FrontendController(controllerComponents) {
 
-  val showPage: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(accessibilityStatementPage()))
+  val showPage: Action[AnyContent] = Action { implicit request =>
+    Ok(accessibilityStatementPage())
   }
 }

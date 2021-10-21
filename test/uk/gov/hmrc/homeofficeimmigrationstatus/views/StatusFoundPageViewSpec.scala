@@ -16,16 +16,15 @@
 
 package uk.gov.hmrc.homeofficeimmigrationstatus.views
 
+import assets.constants.ImmigrationStatusConstant._
 import org.jsoup.nodes.{Document, Element}
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.homeofficeimmigrationstatus.models.{ImmigrationStatus, StatusCheckByNinoRequest, StatusCheckResult}
+import uk.gov.hmrc.homeofficeimmigrationstatus.models.{ImmigrationStatus, StatusCheckByNinoFormModel, StatusCheckResult}
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.StatusFoundPage
 
 import java.time.LocalDate
-import org.jsoup.select.Elements
-import assets.constants.ImmigrationStatusConstant._
 
 class StatusFoundPageViewSpec extends ViewSpec {
 
@@ -34,7 +33,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
   def buildContext(statuses: List[ImmigrationStatus] = List(ValidStatus)): StatusFoundPageContext =
     StatusFoundPageContext(
       //todo nino gen
-      StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", ""),
+      StatusCheckByNinoFormModel(Nino("AB123456C"), "Pan", "", ""),
       StatusCheckResult("Pan", LocalDate.now(), "D", statuses),
       Call("", "/expected")
     )

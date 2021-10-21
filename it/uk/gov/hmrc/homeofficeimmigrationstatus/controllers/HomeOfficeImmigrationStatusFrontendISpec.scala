@@ -1,101 +1,101 @@
 package uk.gov.hmrc.homeofficeimmigrationstatus.controllers
 
-import java.util.UUID
-
 import org.scalatest.concurrent.ScalaFutures
 import play.api.Application
-import play.api.libs.json.Format
+import play.api.libs.json.Json
 import play.api.libs.ws.{WSClient, WSRequest}
 import play.api.mvc.{CookieHeaderEncoding, Session, SessionCookieBaker}
-import uk.gov.hmrc.crypto.ApplicationCrypto
-import uk.gov.hmrc.homeofficeimmigrationstatus.journeys.HomeOfficeImmigrationStatusFrontendJourneyStateFormats
-import uk.gov.hmrc.homeofficeimmigrationstatus.repository.CacheRepository
-import uk.gov.hmrc.homeofficeimmigrationstatus.services.{HomeOfficeImmigrationStatusFrontendJourneyService, MongoDBCachedJourneyService}
+import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoFormModel
 import uk.gov.hmrc.homeofficeimmigrationstatus.stubs.{HomeOfficeImmigrationStatusStubs, JourneyTestData}
-import uk.gov.hmrc.homeofficeimmigrationstatus.support.{ServerISpec, TestJourneyService}
-
-import scala.concurrent.ExecutionContext.Implicits.global
+import uk.gov.hmrc.homeofficeimmigrationstatus.support.ServerISpec
 
 class HomeOfficeImmigrationStatusFrontendISpec
     extends HomeOfficeImmigrationStatusFrontendISpecSetup with HomeOfficeImmigrationStatusStubs with JourneyTestData {
 
-  import journey.model.State._
-
+  //todo seperate these per end point
   "HomeOfficeImmigrationStatusFrontend" when {
 
     "GET /check-immigration-status/" should {
       "show the lookup page" in {
-        implicit val journeyId: JourneyId = JourneyId()
         givenAuthorisedForStride("TBC", "StrideUserId")
 
         val result = request("/").get().futureValue
 
         result.status shouldBe 200
         result.body should include(htmlEscapedMessage("lookup.title"))
-        journey.getState shouldBe StatusCheckByNino()
+      }
+    }
+
+    "GET /check-immigration-status/check-with-nino" should {
+      "show the lookup page" in {
+        givenAuthorisedForStride("TBC", "StrideUserId")
+
+        val result = request("/check-with-nino").get().futureValue
+
+        result.status shouldBe 200
+        result.body should include(htmlEscapedMessage("lookup.title"))
       }
     }
 
     "POST /check-immigration-status/check-with-nino" should {
-      "submit the lookup form and show match found" in {
-        implicit val journeyId: JourneyId = JourneyId()
-        journey.setState(StatusCheckByNino())
+      "redirect to the result page" in {
+        givenAuthorisedForStride("TBC", "StrideUserId")
+
+        val payload = Map(
+          "dateOfBirth.year"  -> "2001",
+          "dateOfBirth.month" -> "01",
+          "dateOfBirth.day"   -> "31",
+          "familyName"        -> "Jane",
+          "givenName"         -> "Doe",
+          "nino"              -> "RJ301829A")
+
+        val result = request("/check-with-nino").post(payload).futureValue
+
+        result.status shouldBe 200
+        result.body should include(htmlEscapedMessage("lookup.title"))
+      }
+    }
+
+    "GET /check-immigration-status/status-result" should {
+      "POST to the HO and show match found" in {
         givenStatusCheckSucceeds()
         givenAuthorisedForStride("TBC", "StrideUserId")
 
-        val payload = Map(
-          "dateOfBirth.year"  -> "2001",
-          "dateOfBirth.month" -> "01",
-          "dateOfBirth.day"   -> "31",
-          "familyName"        -> "Jane",
-          "givenName"         -> "Doe",
-          "nino"              -> "RJ301829A")
+        val query = StatusCheckByNinoFormModel(Nino("RJ301829A"), "Doe", "Jane", "2001-01-31")
 
-        val result = request("/check-with-nino").post(payload).futureValue
+        val result = request("/status-result", Some(query)).get().futureValue
 
         result.status shouldBe 200
         result.body should include(htmlEscapedMessage("status-found.title"))
-        journey.getState shouldBe StatusFound(correlationId, validQuery, expectedResultWithSingleStatus)
       }
 
-      "submit the lookup form and show error page" in {
-        implicit val journeyId: JourneyId = JourneyId()
-        journey.setState(StatusCheckByNino())
+      "POST to the HO and show error page" in {
         givenAnExternalServiceError()
         givenAuthorisedForStride("TBC", "StrideUserId")
 
-        val payload = Map(
-          "dateOfBirth.year"  -> "2001",
-          "dateOfBirth.month" -> "01",
-          "dateOfBirth.day"   -> "31",
-          "familyName"        -> "Jane",
-          "givenName"         -> "Doe",
-          "nino"              -> "RJ301829A")
+        val query = StatusCheckByNinoFormModel(Nino("RJ301829A"), "Doe", "Jane", "2001-01-31")
 
-        val result = request("/check-with-nino").post(payload).futureValue
+        val result = request("/status-result", Some(query)).get().futureValue
 
-        result.status shouldBe 200
+        result.status shouldBe 200 //todo really?
         result.body should include(htmlEscapedMessage("external.error.500.title"))
         result.body should include(htmlEscapedMessage("external.error.500.heading"))
         result.body should include(htmlEscapedMessage("external.error.500.message"))
         result.body should include(htmlEscapedMessage("external.error.500.listParagraph"))
         result.body should include(htmlEscapedMessage("external.error.500.list-item1"))
         result.body should include(htmlEscapedMessage("external.error.500.list-item2"))
-
-        journey.getState shouldBe StatusCheckByNino()
       }
     }
 
     "GET /check-immigration-status/foo" should {
       "return an error page not found" in {
-        implicit val journeyId: JourneyId = JourneyId()
         givenAuthorisedForStride("TBC", "StrideUserId")
 
         val result = request("/foo").get().futureValue
 
         result.status shouldBe 404
         result.body should include("This page can’t be found")
-        journey.get shouldBe None
       }
     }
   }
@@ -106,34 +106,22 @@ trait HomeOfficeImmigrationStatusFrontendISpecSetup extends ServerISpec with Sca
 
   override def fakeApplication: Application = appBuilder.build()
 
-  lazy val wsClient: WSClient = app.injector.instanceOf[WSClient]
   lazy val sessionCookieBaker: SessionCookieBaker = app.injector.instanceOf[SessionCookieBaker]
   lazy val cookieHeaderEncoding: CookieHeaderEncoding = app.injector.instanceOf[CookieHeaderEncoding]
 
-  case class JourneyId(value: String = UUID.randomUUID().toString)
-
-  // define test service capable of manipulating journey state
-  lazy val journey: TestJourneyService[JourneyId] with HomeOfficeImmigrationStatusFrontendJourneyService[JourneyId] with MongoDBCachedJourneyService[JourneyId] = new TestJourneyService[JourneyId] with HomeOfficeImmigrationStatusFrontendJourneyService[JourneyId]
-  with MongoDBCachedJourneyService[JourneyId] {
-
-    override lazy val cacheRepository: CacheRepository = app.injector.instanceOf[CacheRepository]
-    override lazy val applicationCrypto: ApplicationCrypto = app.injector.instanceOf[ApplicationCrypto]
-
-    override val stateFormats: Format[model.State] =
-      HomeOfficeImmigrationStatusFrontendJourneyStateFormats.formats
-
-    override def getJourneyId(journeyId: JourneyId): Option[String] = Some(journeyId.value)
-  }
+  lazy val wsClient: WSClient = app.injector.instanceOf[WSClient]
 
   val baseUrl: String = s"http://localhost:$port/check-immigration-status"
 
-  def request(path: String)(implicit journeyId: JourneyId): WSRequest =
+  def request(path: String, session: Option[StatusCheckByNinoFormModel] = None): WSRequest =
     wsClient
       .url(s"$baseUrl$path")
       .withHttpHeaders(
         play.api.http.HeaderNames.COOKIE -> cookieHeaderEncoding.encodeCookieHeader(
-          Seq(
-            sessionCookieBaker.encodeAsCookie(Session(Map(journey.journeyKey -> journeyId.value)))
-          )))
+          session.toSeq.map(query =>
+            sessionCookieBaker.encodeAsCookie(Session(Map("query" -> Json.toJson(query).toString())))
+          )
+        )
+      )
 
 }
