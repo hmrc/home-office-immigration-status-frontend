@@ -27,7 +27,7 @@ import uk.gov.hmrc.homeofficeimmigrationstatus.views.html._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
-
+import scala.util.Try
 @Singleton
 class StatusCheckByNinoController @Inject()(
   authorise: AuthAction,
@@ -40,13 +40,19 @@ class StatusCheckByNinoController @Inject()(
 
   val onPageLoad: Action[AnyContent] =
     (authorise) { implicit request =>
-      val maybeQuery: Option[StatusCheckByNinoFormModel] =
-        request.session.get("query").map(Json.parse).flatMap(_.asOpt[StatusCheckByNinoFormModel])
+      val maybeQuery: Option[StatusCheckByNinoFormModel] = {
+        request.session
+          .get("query")
+          .flatMap(query => Try(Json.parse(query).as[StatusCheckByNinoFormModel]).toOption)
+      }
       Ok(
         statusCheckByNinoPage(
-          maybeQuery
-            .map(query => formProvider().fill(query))
-            .getOrElse(formProvider()),
+          {
+            val blankForm = formProvider()
+            maybeQuery
+              .map(query => blankForm.fill(query))
+              .getOrElse(blankForm)
+          },
           routes.StatusCheckByNinoController.onSubmit
         )
       )

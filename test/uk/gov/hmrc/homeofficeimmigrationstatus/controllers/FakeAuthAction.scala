@@ -16,23 +16,18 @@
 
 package uk.gov.hmrc.homeofficeimmigrationstatus.controllers
 
-import play.api.mvc._
-import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
+import akka.stream.Materializer
+import com.google.inject.Inject
+import play.api.mvc.{AnyContent, BodyParser, BodyParsers, Request, Result}
 import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.actions.AuthAction
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton
-class LandingController @Inject()(
-  authorise: AuthAction,
-  controllerComponents: MessagesControllerComponents
-)(implicit val appConfig: AppConfig)
-    extends FrontendController(controllerComponents) {
+class FakeAuthAction @Inject()(implicit materializer: Materializer) extends AuthAction {
+  override def parser: BodyParser[AnyContent] = new BodyParsers.Default()
 
-  val onPageLoad: Action[AnyContent] = authorise { implicit request =>
-    Redirect(routes.StatusCheckByNinoController.onPageLoad)
-      .removingFromSession("query")
-  }
+  override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] =
+    block(request)
 
+  override protected def executionContext: ExecutionContext = ???
 }

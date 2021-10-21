@@ -16,23 +16,22 @@
 
 package uk.gov.hmrc.homeofficeimmigrationstatus.controllers
 
-import play.api.mvc._
-import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
-import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.actions.AuthAction
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import play.api.http.Status.OK
+import play.api.test.Helpers.{contentAsString, status}
+import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.AccessibilityStatementPage
 
-import javax.inject.{Inject, Singleton}
+class AccessibilityStatementControllerSpec extends ControllerSpec {
 
-@Singleton
-class LandingController @Inject()(
-  authorise: AuthAction,
-  controllerComponents: MessagesControllerComponents
-)(implicit val appConfig: AppConfig)
-    extends FrontendController(controllerComponents) {
+  lazy val sut = inject[AccessibilityStatementController]
+  lazy val view = inject[AccessibilityStatementPage]
 
-  val onPageLoad: Action[AnyContent] = authorise { implicit request =>
-    Redirect(routes.StatusCheckByNinoController.onPageLoad)
-      .removingFromSession("query")
+  "showPage" must {
+    "show the accessibilityStatementPage" in {
+      val result = sut.showPage(request)
+
+      status(result) mustBe OK
+      contentAsString(result) mustBe view()(request, messages, appConfig).toString
+    }
   }
 
 }

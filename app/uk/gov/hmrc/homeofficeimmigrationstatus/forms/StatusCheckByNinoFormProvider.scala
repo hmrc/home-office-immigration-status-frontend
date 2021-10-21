@@ -23,6 +23,7 @@ import play.api.data.Forms._
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
 
+@Singleton
 class StatusCheckByNinoFormProvider extends FormFieldMappings {
 
   def apply(): Form[StatusCheckByNinoFormModel] = Form[StatusCheckByNinoFormModel] {

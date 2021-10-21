@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.homeofficeimmigrationstatus.controllers.actions
 
-import com.google.inject.Inject
+import com.google.inject.{ImplementedBy, Inject}
 import play.api.Logger
 import play.api.mvc.Results.Forbidden
 import play.api.mvc._
@@ -34,13 +34,13 @@ import play.api.Environment
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthAction @Inject()(
+class AuthActionImpl @Inject()(
   val env: Environment,
   override val authConnector: AuthConnector,
   appConfig: AppConfig,
   val parser: BodyParsers.Default
 )(implicit val executionContext: ExecutionContext)
-    extends ActionBuilder[Request, AnyContent] with AuthorisedFunctions with AuthRedirects {
+    extends AuthAction with AuthorisedFunctions with AuthRedirects {
 
   val config = appConfig.configuration
 
@@ -74,3 +74,6 @@ class AuthAction @Inject()(
   }
 
 }
+
+@ImplementedBy(classOf[AuthActionImpl])
+trait AuthAction extends ActionBuilder[Request, AnyContent]
