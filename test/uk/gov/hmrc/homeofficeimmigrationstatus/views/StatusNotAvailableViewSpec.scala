@@ -66,5 +66,15 @@ class StatusNotAvailableViewSpec extends ViewSpec {
         messages("status-not-available.list-item1") + " "
           + messages("status-not-available.list-item2"))
     }
+
+    "have the summary list" in {
+      assertRenderedById(doc, "notAvailablePersonalData")
+    }
+
+    "have the search again button" in {
+      val button = doc.select("#content > a")
+      button.text() mustBe "Search again"
+      button.attr("href") mustBe "/check-immigration-status/status-not-available"
+    }
   }
 }
