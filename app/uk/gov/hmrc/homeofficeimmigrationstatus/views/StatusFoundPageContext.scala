@@ -37,7 +37,7 @@ final case class StatusFoundPageContext(
         Row("startDate", "status-found.startDate", DateFormat.format(messages.lang.locale)(s.statusStartDate))),
       mostRecentStatus.flatMap(s =>
         s.statusEndDate.map(date =>
-          Row("expiryDate", "status-found.expiryDate", DateFormat.format(messages.lang.locale)(date)))),
+          Row("expiryDate", "status-found.endDate", DateFormat.format(messages.lang.locale)(date)))),
       Some(
         Row(
           "recourse-text",

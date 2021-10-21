@@ -211,7 +211,7 @@ class StatusFoundPageContextSpec
           DateFormat.format(realMessages.lang.locale)(context.mostRecentStatus.get.statusStartDate)),
         (
           "expiryDate",
-          "status-found.expiryDate",
+          "status-found.endDate",
           DateFormat.format(realMessages.lang.locale)(context.mostRecentStatus.get.statusEndDate.get)),
         ("recourse-text", "status-found.norecourse", realMessages("status-found.yes"))
       ).foreach {
