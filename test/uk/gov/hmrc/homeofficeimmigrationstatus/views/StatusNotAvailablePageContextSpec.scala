@@ -46,7 +46,7 @@ class StatusNotAvailablePageContextSpec
 
   def createContext = StatusNotAvailablePageContext(query, call)
 
-  "detailRows" must {
+  "notAvailablePersonalData" must {
     "populate the row objects correctly" when {
       Seq(
         ("nino", "generic.nino", query.nino.formatted),
