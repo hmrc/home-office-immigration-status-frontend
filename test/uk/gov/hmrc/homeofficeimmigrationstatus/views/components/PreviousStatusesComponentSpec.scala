@@ -100,7 +100,7 @@ class PreviousStatusesComponentSpec extends ViewSpec {
       List(
         ("EU Settlement Scheme - Indefinite leave to remain", "status-found.previous.status", "status-previous-0"),
         ("01 January 2012", "status-found.previous.startDate", "startDate-previous-0"),
-        ("01 January 2013", "status-found.previous.expiryDate", "expiryDate-previous-0"),
+        ("01 January 2013", "status-found.previous.endDate", "expiryDate-previous-0"),
         ("No", "status-found.previous.recourse", "recourse-previous-0")
       ).zipWithIndex.foreach {
         case ((data, msgKey, id), index) =>

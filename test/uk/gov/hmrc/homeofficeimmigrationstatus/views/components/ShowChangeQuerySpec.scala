@@ -35,7 +35,7 @@ class ShowChangeQuerySpec extends ViewSpec {
   "showChangeQuery" must {
     "have all of the things in the list in the correct order" in {
       List(
-        (query.nino.formatted, "generic.nino", "nino", "generic.nino"),
+        (query.nino.nino, "generic.nino", "nino", "generic.nino"),
         (query.givenName, "generic.givenName", "givenName", "generic.givenName.lowercase"),
         (query.familyName, "generic.familyName", "familyName", "generic.familyName.lowercase"),
         (

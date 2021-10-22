@@ -189,7 +189,7 @@ class StatusFoundPageContextSpec
     "populate the row objects correctly" when {
       val context = createContext("PT", "IS", Some(LocalDate.now()))
       Seq(
-        ("nino", "generic.nino", query.nino.formatted),
+        ("nino", "generic.nino", query.nino.nino),
         ("dob", "generic.dob", context.result.dobFormatted(realMessages.lang.locale)),
         ("nationality", "generic.nationality", context.result.countryName)
       ).foreach {
@@ -212,7 +212,7 @@ class StatusFoundPageContextSpec
           DateFormat.format(realMessages.lang.locale)(context.mostRecentStatus.get.statusStartDate)),
         (
           "expiryDate",
-          "status-found.expiryDate",
+          "status-found.endDate",
           DateFormat.format(realMessages.lang.locale)(context.mostRecentStatus.get.statusEndDate.get)),
         ("recourse-text", "status-found.norecourse", realMessages("status-found.yes"))
       ).foreach {

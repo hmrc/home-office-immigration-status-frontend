@@ -37,7 +37,7 @@ final case class StatusFoundPageContext(
         Row("startDate", "status-found.startDate", DateFormat.format(messages.lang.locale)(s.statusStartDate))),
       mostRecentStatus.flatMap(s =>
         s.statusEndDate.map(date =>
-          Row("expiryDate", "status-found.expiryDate", DateFormat.format(messages.lang.locale)(date)))),
+          Row("expiryDate", "status-found.endDate", DateFormat.format(messages.lang.locale)(date)))),
       Some(
         Row(
           "recourse-text",
@@ -48,7 +48,7 @@ final case class StatusFoundPageContext(
 
   def detailRows(implicit messages: Messages): Seq[Row] =
     Seq(
-      Row("nino", "generic.nino", query.nino.formatted),
+      Row("nino", "generic.nino", query.nino.nino),
       Row("dob", "generic.dob", result.dobFormatted(messages.lang.locale)),
       Row("nationality", "generic.nationality", result.countryName)
     )
