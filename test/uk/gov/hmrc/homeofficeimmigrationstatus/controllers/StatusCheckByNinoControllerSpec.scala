@@ -18,7 +18,7 @@ package uk.gov.hmrc.homeofficeimmigrationstatus.controllers
 
 import org.joda.time.LocalDate
 import org.mockito.ArgumentMatchers.{any, refEq, eq => is}
-import org.mockito.Mockito.{mock, reset, spy, verify, when}
+import org.mockito.Mockito.{mock, reset, verify, when}
 import play.api.Application
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}

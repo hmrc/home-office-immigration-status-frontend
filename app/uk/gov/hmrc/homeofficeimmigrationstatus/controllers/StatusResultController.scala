@@ -29,6 +29,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 @Singleton
 class StatusResultController @Inject()(
@@ -46,7 +47,7 @@ class StatusResultController @Inject()(
   val onPageLoad: Action[AnyContent] =
     (authorise).async { implicit request =>
       val maybeQuery: Option[StatusCheckByNinoFormModel] =
-        request.session.get("query").map(Json.parse).flatMap(_.asOpt[StatusCheckByNinoFormModel])
+        request.session.get("query").flatMap(query => Try(Json.parse(query).as[StatusCheckByNinoFormModel]).toOption)
       maybeQuery match {
         case Some(query) =>
           val req = query.toRequest(appConfig.defaultQueryTimeRangeInMonths) //todo move this to a service
@@ -59,7 +60,7 @@ class StatusResultController @Inject()(
 
     }
 
-  def displayResults(query: StatusCheckByNinoFormModel, statusCheckResponse: StatusCheckResponse)(
+  private def displayResults(query: StatusCheckByNinoFormModel, statusCheckResponse: StatusCheckResponse)(
     implicit request: Request[AnyContent]): Result =
     statusCheckResponse match {
       case StatusCheckResponse(_, Some(error), _) =>
