@@ -188,7 +188,7 @@ class StatusFoundPageContextSpec
     "populate the row objects correctly" when {
       val context = createContext("PT", "IS", Some(LocalDate.now()))
       Seq(
-        ("nino", "generic.nino", query.nino.formatted),
+        ("nino", "generic.nino", query.nino.nino),
         ("dob", "generic.dob", context.result.dobFormatted(realMessages.lang.locale)),
         ("nationality", "generic.nationality", context.result.countryName)
       ).foreach {

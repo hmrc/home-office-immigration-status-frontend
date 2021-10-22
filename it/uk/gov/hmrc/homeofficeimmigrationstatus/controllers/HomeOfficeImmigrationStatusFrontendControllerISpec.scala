@@ -175,7 +175,7 @@ class HomeOfficeImmigrationStatusFrontendControllerISpec
         val result = controller.showStatusFound(fakeRequest)
         status(result) shouldBe 200
         checkHtmlResultWithBodyText(result, htmlEscapedMessage("status-found.title"))
-        checkHtmlResultWithBodyText(result, query.nino.formatted)
+        checkHtmlResultWithBodyText(result, query.nino.nino)
         checkHtmlResultWithBodyText(result, expectedResult.fullName)
         checkHtmlResultWithBodyText(result, "31 January 2001")
       }
@@ -207,7 +207,7 @@ class HomeOfficeImmigrationStatusFrontendControllerISpec
         val result = controller.showStatusNotAvailable(fakeRequest)
         status(result) shouldBe 200
         checkHtmlResultWithBodyText(result, htmlEscapedMessage("status-not-available.title"))
-        checkHtmlResultWithBodyText(result, query.nino.formatted)
+        checkHtmlResultWithBodyText(result, query.nino.nino)
         checkHtmlResultWithBodyText(result, s"${query.givenName} ${query.familyName}")
         checkHtmlResultWithBodyText(result, "31 January 2001")
       }
@@ -224,7 +224,7 @@ class HomeOfficeImmigrationStatusFrontendControllerISpec
 
         status(result) shouldBe 200
         checkHtmlResultWithBodyText(result, htmlEscapedMessage("status-check-failure.title"))
-        checkHtmlResultWithBodyText(result, query.nino.formatted)
+        checkHtmlResultWithBodyText(result, query.nino.nino)
         checkHtmlResultWithBodyText(result, query.givenName)
         checkHtmlResultWithBodyText(result, query.familyName)
         checkHtmlResultWithBodyText(result, "31 January 2001")
@@ -240,7 +240,7 @@ class HomeOfficeImmigrationStatusFrontendControllerISpec
         status(result) shouldBe 200
         checkHtmlResultWithBodyText(result, htmlEscapedMessage("status-check-failure-conflict.title"))
         checkHtmlResultWithBodyText(result, htmlEscapedMessage("status-check-failure-conflict.listParagraph"))
-        checkHtmlResultWithBodyText(result, query.nino.formatted)
+        checkHtmlResultWithBodyText(result, query.nino.nino)
         checkHtmlResultWithBodyText(result, query.givenName)
         checkHtmlResultWithBodyText(result, query.familyName)
         checkHtmlResultWithBodyText(result, "31 January 2001")

@@ -48,7 +48,7 @@ final case class StatusFoundPageContext(
 
   def detailRows(implicit messages: Messages): Seq[Row] =
     Seq(
-      Row("nino", "generic.nino", query.nino.formatted),
+      Row("nino", "generic.nino", query.nino.nino),
       Row("dob", "generic.dob", result.dobFormatted(messages.lang.locale)),
       Row("nationality", "generic.nationality", result.countryName)
     )
