@@ -20,11 +20,12 @@ import org.joda.time.LocalDate
 import org.mockito.ArgumentMatchers.{any, refEq, eq => is}
 import org.mockito.Mockito.{mock, reset, spy, verify, when}
 import play.api.Application
-import play.api.http.Status.OK
+import play.api.data.FormBinding.Implicits.formBinding
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
-import play.api.test.Helpers.{contentAsString, status}
+import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.actions.AuthAction
@@ -95,18 +96,61 @@ class StatusCheckByNinoControllerSpec extends ControllerSpec {
   "onSubmit" must {
     "redirect to result page" when {
       "form binds correct data" in {
-        val result = sut.onSubmit(request)
+        val now = LocalDate.now()
+        val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "pan", "peter", now.toString)
+        val requestWithForm = request.withFormUrlEncodedBody(
+          "dateOfBirth.year"  -> now.getYear.toString,
+          "dateOfBirth.month" -> now.getMonthOfYear.toString,
+          "dateOfBirth.day"   -> now.getDayOfMonth.toString,
+          "familyName"        -> query.familyName,
+          "givenName"         -> query.givenName,
+          "nino"              -> query.nino.nino
+        )
+        val result = sut.onSubmit(requestWithForm)
 
-        status(result) mustBe OK
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result).get mustBe routes.StatusResultController.onPageLoad.url
 
-        withClue("The session should contain the valid form answers"){
-
+        withClue("The session should contain the valid form answers") {
+          val updatedSession = await(result).session(requestWithForm)
+          updatedSession.get("query").get mustBe Json.toJson(query).toString
         }
       }
     }
     "return the errored form" when {
-      "the form does not bind" in {
+      val form = inject[StatusCheckByNinoFormProvider].apply()
+      "the submitted form is empty" in {
+        val result = sut.onSubmit(request)
+        val formWithErrors = form.bindFromRequest()(request, implicitly)
 
+        status(result) mustBe BAD_REQUEST
+        contentAsString(result) mustBe fakeView.toString
+        verify(mockView).apply(refEq(formWithErrors, "mapping"), any())(is(request), any(), any())
+        withClue("The session should contain the valid form answers") {
+          val updatedSession = await(result).session(request)
+          updatedSession.get("query") must not be defined
+        }
+      }
+
+      "the form has errors" in {
+        val requestWithForm = request.withFormUrlEncodedBody(
+          "dateOfBirth.year"  -> "blah",
+          "dateOfBirth.month" -> "blah",
+          "dateOfBirth.day"   -> "blah",
+          "familyName"        -> "blah",
+          "givenName"         -> "blah",
+          "nino"              -> "blah"
+        )
+        val result = sut.onSubmit(requestWithForm)
+        val formWithErrors = form.bindFromRequest()(requestWithForm, implicitly)
+
+        status(result) mustBe BAD_REQUEST
+        contentAsString(result) mustBe fakeView.toString
+        verify(mockView).apply(refEq(formWithErrors, "mapping"), any())(is(requestWithForm), any(), any())
+        withClue("The session should contain the valid form answers") {
+          val updatedSession = await(result).session(request)
+          updatedSession.get("query") must not be defined
+        }
       }
     }
   }
