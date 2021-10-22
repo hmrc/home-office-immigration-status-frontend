@@ -49,9 +49,19 @@ class StatusFoundPageViewSpec extends ViewSpec {
     }
 
     "have recourse to public funds field" when {
-      "noRecourseToPublicFunds is true" in {
+      "noRecourseToPublicFunds is true, and no warning is shown" in {
         val html: HtmlFormat.Appendable =
           sut(buildContext(List(ValidStatus)))(request, messages)
+
+        val doc = asDocument(html)
+
+        assertElementHasText(doc, "#recourse-text", messages("status-found.yes"))
+        assertNotRenderedById(doc, "recourse-warning")
+      }
+
+      "noRecourseToPublicFunds is false, and the warning is shown" in {
+        val html: HtmlFormat.Appendable =
+          sut(buildContext(List(ValidStatusNoRecourceTrue)))(request, messages)
 
         val doc = asDocument(html)
 
@@ -60,28 +70,18 @@ class StatusFoundPageViewSpec extends ViewSpec {
       }
     }
 
-    "not have recourse to public funds field" when {
-      "noRecourseToPublicFunds is false" in {
-        val html: HtmlFormat.Appendable =
-          sut(buildContext(List(ValidStatusNoRecourceFalse)))(request, messages)
-
-        val doc = asDocument(html)
-
-        assertNotRenderedById(doc, "recourse")
-        assertNotRenderedById(doc, "recourse-warning")
-      }
-    }
-
     "have all of the things in the list in the correct order" in {
       List(
-        "nino",
-        "dob",
-        "nationality",
+        "immigrationRoute",
         "startDate",
         "expiryDate",
+        "recourse-text",
+        "nino",
+        "dob",
+        "nationality"
       ).zipWithIndex.foreach {
         case (id, index) =>
-          val row: Elements = doc.select(s"#details > .govuk-summary-list__row:nth-child(${index + 1})")
+          val row: Element = doc.select(s".govuk-summary-list__row").get(index)
           row.select("dd").attr("id") mustBe id
       }
     }
@@ -109,7 +109,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
     "Immigration route" when {
       "EUS displays" in {
         val html: HtmlFormat.Appendable =
-          sut(buildContext(List(ValidStatusNoRecourceFalse)))(request, messages)
+          sut(buildContext(List(ValidStatusNoRecourceTrue)))(request, messages)
 
         val doc = asDocument(html)
         assertElementHasText(doc, "#immigrationRoute", "EU Settlement Scheme")
