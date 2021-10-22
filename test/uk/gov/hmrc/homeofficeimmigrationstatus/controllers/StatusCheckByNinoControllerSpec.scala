@@ -80,14 +80,33 @@ class StatusCheckByNinoControllerSpec extends ControllerSpec {
       }
 
       "the query can not be read on the session" in {
-        val requestWithQuery = request.withSession("query" -> "{}")
+        val requestWithQuery = request.withSession("query" -> "unreadable query")
         val result = sut.onPageLoad(requestWithQuery)
 
         status(result) mustBe OK
         contentAsString(result) mustBe fakeView.toString
         withClue("the form was prefilled with a previous query, how?") {
-          verify(mockView).apply(refEq(emptyForm, "mapping"), any())(is(request), any(), any())
+          verify(mockView).apply(refEq(emptyForm, "mapping"), any())(is(requestWithQuery), any(), any())
         }
+      }
+    }
+  }
+
+  "onSubmit" must {
+    "redirect to result page" when {
+      "form binds correct data" in {
+        val result = sut.onSubmit(request)
+
+        status(result) mustBe OK
+
+        withClue("The session should contain the valid form answers"){
+
+        }
+      }
+    }
+    "return the errored form" when {
+      "the form does not bind" in {
+
       }
     }
   }
