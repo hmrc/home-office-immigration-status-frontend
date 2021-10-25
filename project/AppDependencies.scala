@@ -10,7 +10,6 @@ object AppDependencies {
     "uk.gov.hmrc"       %% "play-frontend-hmrc"               % "0.88.0-play-28",
     "uk.gov.hmrc"       %% "play-partials"                    % "8.0.0-play-28",
     "uk.gov.hmrc"       %% "agent-kenshoo-monitoring"         % "4.8.0-play-28",
-    "uk.gov.hmrc"       %% "play-fsm"                         % "0.84.0-play-28",
     "uk.gov.hmrc"       %% "domain"                           % "6.2.0-play-28",
     "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28"               % "0.53.0",
     "uk.gov.hmrc"       %% "json-encryption"                  % "4.10.0-play-28",
