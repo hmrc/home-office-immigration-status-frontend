@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.homeofficeimmigrationstatus.controllers
+package uk.gov.hmrc.homeofficeimmigrationstatus.forms
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.data.validation.{Constraint, Invalid, Valid}
-import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.FormFieldMappings.validName
 import org.scalatest.OptionValues
 
-class FormFieldMappingsSpec extends AnyWordSpecLike with Matchers with OptionValues {
+class FormFieldMappingsSpec extends AnyWordSpecLike with Matchers with OptionValues with FormFieldMappings {
 
   val validateName: Constraint[String] = validName(fieldName = "bar", minLenInc = 0)
   val invalid: Invalid = Invalid("error.bar.invalid-format")

@@ -1,11 +1,11 @@
 
-@import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoRequest
+@import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoFormModel
 @import uk.gov.hmrc.homeofficeimmigrationstatus.views.DateFormat
 @import uk.gov.hmrc.homeofficeimmigrationstatus.viewmodels.{RowWithActionViewModel => Row}
 
 @this(summaryList: SummaryList)
 
-@(query: StatusCheckByNinoRequest)(implicit messages: Messages)
+@(query: StatusCheckByNinoFormModel)(implicit messages: Messages)
 
 @locale = @{messages.lang.locale}
 

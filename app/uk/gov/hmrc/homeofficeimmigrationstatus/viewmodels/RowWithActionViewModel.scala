@@ -34,7 +34,7 @@ final case class RowWithActionViewModel(
 }
 
 object RowWithActionViewModel {
-  private val changeInputUrl = routes.HomeOfficeImmigrationStatusFrontendController.showStatusCheckByNino.url
+  private val changeInputUrl = routes.StatusCheckByNinoController.onPageLoad.url
   private val changeMessageKey = "generic.change"
 
   def apply(

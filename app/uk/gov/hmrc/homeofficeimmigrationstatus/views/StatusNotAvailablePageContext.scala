@@ -17,9 +17,9 @@
 package uk.gov.hmrc.homeofficeimmigrationstatus.views
 
 import play.api.mvc.Call
-import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoRequest
+import uk.gov.hmrc.homeofficeimmigrationstatus.models.{StatusCheckByNinoFormModel, StatusCheckByNinoRequest}
 
-case class StatusNotAvailablePageContext(query: StatusCheckByNinoRequest, searchAgainCall: Call) {
+case class StatusNotAvailablePageContext(query: StatusCheckByNinoFormModel, searchAgainCall: Call) {
 
   def fullName: String = s"${query.givenName} ${query.familyName}"
 

@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.homeofficeimmigrationstatus.controllers
+package uk.gov.hmrc.homeofficeimmigrationstatus.forms
 
 import play.api.data.Forms.of
 import play.api.data.Mapping
 import play.api.data.format.Formats._
 import play.api.data.validation._
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.DateFieldHelper._
+import uk.gov.hmrc.homeofficeimmigrationstatus.forms.helpers.ValidateHelper
+import uk.gov.hmrc.homeofficeimmigrationstatus.forms.helpers.DateFieldHelper._
 
-object FormFieldMappings {
+trait FormFieldMappings {
 
   def dateOfBirthMapping: Mapping[String] = dateFieldsMapping(validDobDateFormat)
 

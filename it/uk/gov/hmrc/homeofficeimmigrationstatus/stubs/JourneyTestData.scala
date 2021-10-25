@@ -1,16 +1,15 @@
 package uk.gov.hmrc.homeofficeimmigrationstatus.stubs
 
 import java.time.LocalDate
-
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.homeofficeimmigrationstatus.models.{ImmigrationStatus, StatusCheckByNinoRequest, StatusCheckResult}
+import uk.gov.hmrc.homeofficeimmigrationstatus.models.{ImmigrationStatus, StatusCheckByNinoRequest, StatusCheckRange, StatusCheckResult}
 
 trait JourneyTestData {
 
   val correlationId: String = scala.util.Random.alphanumeric.take(64).mkString
 
   val validQuery: StatusCheckByNinoRequest =
-    StatusCheckByNinoRequest(Nino("RJ301829A"), "Doe", "Jane", "2001-01-31")
+    StatusCheckByNinoRequest(Nino("RJ301829A"), "Doe", "Jane", "2001-01-31", StatusCheckRange(None, None))
 
   val expectedResultWithSingleStatus: StatusCheckResult = StatusCheckResult(
     fullName = "Jane Doe",

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.homeofficeimmigrationstatus.controllers
+package uk.gov.hmrc.homeofficeimmigrationstatus.forms.helpers
 
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoRequest
+@import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoFormModel
 @import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
 
 @this(
@@ -27,7 +27,7 @@
     fieldset: components.fieldset
 )
 
-@(statusCheckForm: Form[StatusCheckByNinoRequest],submitFormCall: Call)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(statusCheckForm: Form[StatusCheckByNinoFormModel],submitFormCall: Call)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @govukWrapper(title = if(statusCheckForm.hasErrors) messages("lookup.title.Error") else messages("lookup.title")) {
 

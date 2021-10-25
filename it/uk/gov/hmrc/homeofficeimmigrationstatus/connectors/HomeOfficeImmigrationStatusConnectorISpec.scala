@@ -125,9 +125,8 @@ trait HomeOfficeImmigrationStatusConnectorISpecSetup extends AppISpec with HomeO
     "Doe",
     "Jane",
     "2001-01-31",
-    Some(
       StatusCheckRange(
         Some(LocalDate.now(ZoneId.of("UTC")).minusMonths(queryMonths)),
-        Some(LocalDate.now(ZoneId.of("UTC")))))
+        Some(LocalDate.now(ZoneId.of("UTC"))))
   )
 }

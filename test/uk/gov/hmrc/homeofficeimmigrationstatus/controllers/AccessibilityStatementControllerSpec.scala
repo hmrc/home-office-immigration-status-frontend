@@ -16,22 +16,22 @@
 
 package uk.gov.hmrc.homeofficeimmigrationstatus.controllers
 
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
+import play.api.http.Status.OK
+import play.api.test.Helpers.{contentAsString, status}
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.AccessibilityStatementPage
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+class AccessibilityStatementControllerSpec extends ControllerSpec {
 
-@Singleton
-class AccessibilityStatementController @Inject()(
-  controllerComponents: MessagesControllerComponents,
-  accessibilityStatementPage: AccessibilityStatementPage
-)(implicit val appConfig: AppConfig)
-    extends FrontendController(controllerComponents) {
+  lazy val sut = inject[AccessibilityStatementController]
+  lazy val view = inject[AccessibilityStatementPage]
 
-  val showPage: Action[AnyContent] = Action { implicit request =>
-    Ok(accessibilityStatementPage())
+  "showPage" must {
+    "show the accessibilityStatementPage" in {
+      val result = sut.showPage(request)
+
+      status(result) mustBe OK
+      contentAsString(result) mustBe view()(request, messages, appConfig).toString
+    }
   }
+
 }

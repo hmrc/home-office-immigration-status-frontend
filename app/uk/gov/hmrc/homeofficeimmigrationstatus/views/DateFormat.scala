@@ -20,7 +20,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.DateFieldHelper
+import uk.gov.hmrc.homeofficeimmigrationstatus.forms.helpers.DateFieldHelper
 
 object DateFormat {
 

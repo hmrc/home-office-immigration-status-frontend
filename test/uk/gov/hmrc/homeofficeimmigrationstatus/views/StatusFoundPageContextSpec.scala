@@ -16,18 +16,19 @@
 
 package uk.gov.hmrc.homeofficeimmigrationstatus.views
 
-import org.mockito.Mockito.{RETURNS_DEEP_STUBS, mock, reset, times, verify, when}
 import org.mockito.ArgumentMatchers.{any, matches}
+import org.mockito.Mockito._
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
-import java.time.LocalDate
-import play.api.i18n.{DefaultMessagesApi, Lang, Messages, MessagesApi, MessagesImpl}
+import org.scalatest.{BeforeAndAfterEach, OptionValues}
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.i18n._
 import play.api.mvc.Call
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.homeofficeimmigrationstatus.models.{ImmigrationStatus, StatusCheckByNinoRequest, StatusCheckResult}
-import org.scalatest.{BeforeAndAfterEach, OptionValues}
-import org.scalatest.matchers.should.Matchers
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import uk.gov.hmrc.homeofficeimmigrationstatus.models.{ImmigrationStatus, StatusCheckByNinoFormModel, StatusCheckResult}
 import uk.gov.hmrc.homeofficeimmigrationstatus.viewmodels.RowViewModel
+
+import java.time.LocalDate
 
 class StatusFoundPageContextSpec
     extends AnyWordSpecLike with Matchers with OptionValues with BeforeAndAfterEach with GuiceOneAppPerSuite {
@@ -49,7 +50,7 @@ class StatusFoundPageContextSpec
     }
 
   //todo nino generator
-  val query = StatusCheckByNinoRequest(Nino("RJ301829A"), "Surname", "Forename", "some dob")
+  val query = StatusCheckByNinoFormModel(Nino("RJ301829A"), "Surname", "Forename", "some dob")
   val call = Call("GET", "/")
 
   def createContext(pt: String, is: String, endDate: Option[LocalDate], hasRecourseToPublicFunds: Boolean = false) =

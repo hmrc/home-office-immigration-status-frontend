@@ -52,7 +52,7 @@ class AuditService @Inject()(val auditConnector: AuditConnector) {
   private[services] def createEvent(
     event: HomeOfficeImmigrationStatusFrontendEvent,
     transactionName: String,
-    details: (String, Any)*)(implicit hc: HeaderCarrier, request: Request[Any], ec: ExecutionContext): DataEvent = {
+    details: (String, Any)*)(implicit hc: HeaderCarrier, request: Request[Any]): DataEvent = {
 
     val detail = hc.toAuditDetails(details.map(pair => pair._1 -> pair._2.toString): _*)
     val tags = hc.toAuditTags(transactionName, request.path)

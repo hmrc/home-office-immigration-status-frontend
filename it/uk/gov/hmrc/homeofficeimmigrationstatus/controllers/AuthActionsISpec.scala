@@ -1,15 +1,13 @@
 package uk.gov.hmrc.homeofficeimmigrationstatus.controllers
 
-import play.api.mvc.{AnyContentAsEmpty, Result}
+import play.api.Application
+import play.api.mvc.AnyContentAsEmpty
 import play.api.mvc.Results._
-import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import play.api.{Application, Configuration, Environment}
-import uk.gov.hmrc.auth.core.AuthConnector
+import play.api.test.{FakeRequest, Injecting}
+import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.actions.AuthAction
 import uk.gov.hmrc.homeofficeimmigrationstatus.support.AppISpec
-import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
-
-import scala.concurrent.Future
+import uk.gov.hmrc.http.SessionKeys
 
 class AuthActionsISpec extends AuthActionISpecSetup {
 
@@ -19,24 +17,16 @@ class AuthActionsISpec extends AuthActionISpecSetup {
 
       givenAuthorisedForStride("TBC", "StrideUserId")
 
-      val result = TestController.withAuthorisedWithStrideGroup("TBC")
+      val result = TestController.test()(request)
 
       status(result) shouldBe 200
-      contentAsString(result) should include("StrideUserId")
-    }
-
-    "redirect to log in page when user not enrolled for the service" in {
-      givenAuthorisedForStride("TBC", "StrideUserId")
-
-      val result = TestController.withAuthorisedWithStrideGroup("OTHER")
-      status(result) shouldBe 303
-      redirectLocation(result).get should include("/stride/sign-in")
+      contentAsString(result) shouldBe "Passed Auth"
     }
 
     "redirect to log in page when user not authenticated" in {
       givenRequestIsNotAuthorised("SessionRecordNotFound")
 
-      val result = TestController.withAuthorisedWithStrideGroup("TBC")
+      val result = TestController.test()(request)
       status(result) shouldBe 303
       redirectLocation(result).get should include("/stride/sign-in")
     }
@@ -44,7 +34,7 @@ class AuthActionsISpec extends AuthActionISpecSetup {
     "redirect to log in page when user authenticated with different provider" in {
       givenRequestIsNotAuthorised("UnsupportedAuthProvider")
 
-      val result = TestController.withAuthorisedWithStrideGroup("TBC")
+      val result = TestController.test()(request)
       status(result) shouldBe 303
       redirectLocation(result).get should include("/stride/sign-in")
     }
@@ -52,26 +42,15 @@ class AuthActionsISpec extends AuthActionISpecSetup {
 
 }
 
-trait AuthActionISpecSetup extends AppISpec {
+trait AuthActionISpecSetup extends AppISpec with Injecting {
 
   override def fakeApplication: Application = appBuilder.build()
 
-  object TestController extends AuthActions {
+  implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(SessionKeys.authToken -> "Bearer XYZ")
 
-    override def authConnector: AuthConnector = app.injector.instanceOf[AuthConnector]
+  object TestController {
+    val sut = inject[AuthAction]
 
-    override def config: Configuration = app.injector.instanceOf[Configuration]
-
-    override def env: Environment = app.injector.instanceOf[Environment]
-
-    implicit val hc: HeaderCarrier = HeaderCarrier()
-    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(SessionKeys.authToken -> "Bearer XYZ")
-
-    import scala.concurrent.ExecutionContext.Implicits.global
-
-    def withAuthorisedWithStrideGroup[A](group: String): Future[Result] =
-      super.authorisedWithStrideGroup(group) { pid =>
-        Future.successful(Ok(pid))
-      }
+    def test() = sut(Ok("Passed Auth"))
   }
 }
