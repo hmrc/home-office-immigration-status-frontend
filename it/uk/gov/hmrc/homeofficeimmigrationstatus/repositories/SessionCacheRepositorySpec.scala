@@ -1,30 +1,19 @@
 package uk.gov.hmrc.homeofficeimmigrationstatus.repositories
 
-import play.api.Application
+import org.scalatestplus.play.PlaySpec
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.Injecting
-import uk.gov.hmrc.homeofficeimmigrationstatus.support.AppISpec
 
-class SessionCacheRepositorySpec extends AppISpec with Injecting {
+class SessionCacheRepositorySpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
 
-  override def fakeApplication: Application = appBuilder.build()
-
-  val sut = inject[SessionCacheRepository]
-
-  "get" must {
-    "get a saved query" in {
-
-    }
-  }
-
-  "set" must {
-    "save a query" in {
-
-    }
-  }
+  lazy val sut: SessionCacheRepository = inject[SessionCacheRepository]
 
   "db" must {
     "have a defined TTL" in {
+      val ttlIndex = sut.indexes.find(_.name.contains("lastUpdatedTTL"))
 
+      ttlIndex mustBe defined
+      assert(ttlIndex.get.options.contains("expireAfterSeconds"))
     }
   }
 

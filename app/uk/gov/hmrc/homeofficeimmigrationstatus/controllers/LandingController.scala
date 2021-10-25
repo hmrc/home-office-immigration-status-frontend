@@ -17,20 +17,23 @@
 package uk.gov.hmrc.homeofficeimmigrationstatus.controllers
 
 import play.api.mvc._
-import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
 import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.actions.AuthAction
+import uk.gov.hmrc.homeofficeimmigrationstatus.repositories.SessionCacheRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class LandingController @Inject()(
   authorise: AuthAction,
-  controllerComponents: MessagesControllerComponents
-)(implicit val appConfig: AppConfig)
+  controllerComponents: MessagesControllerComponents,
+  sessionCacheRepository: SessionCacheRepository
+)(implicit ec: ExecutionContext)
     extends FrontendController(controllerComponents) {
 
   val onPageLoad: Action[AnyContent] = authorise { implicit request =>
+    sessionCacheRepository.removeById(request.session.apply("id"))
     Redirect(routes.StatusCheckByNinoController.onPageLoad)
       .removingFromSession("query")
   }

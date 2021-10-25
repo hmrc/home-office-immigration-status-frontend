@@ -29,7 +29,10 @@ class AppConfig @Inject()(servicesConfig: ServicesConfig, val configuration: Con
   val shuttered: Boolean = configuration.getOptional[Boolean]("isShuttered").getOrElse(false)
   val authBaseUrl: String = servicesConfig.baseUrl("auth")
   val homeOfficeImmigrationStatusProxyBaseUrl: String = servicesConfig.baseUrl("home-office-immigration-status-proxy")
-  val mongoSessionExpiration: Duration = servicesConfig.getDuration("mongodb.session.expiration")
+
+  val mongoCollectionName = servicesConfig.getString("mongodb.collectionName")
+  val mongoSessionExpiration: Int = servicesConfig.getInt("mongodb.ttl.seconds")
+
   val authorisedStrideGroup: String = servicesConfig.getString("authorisedStrideGroup")
   val defaultQueryTimeRangeInMonths: Int = servicesConfig.getInt("defaultQueryTimeRangeInMonths")
   val gtmId: String = servicesConfig.getString("google-tag-manager.id")
