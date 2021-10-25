@@ -33,7 +33,7 @@ class SessionCacheRepository @Inject()(
       collectionName = appConfig.mongoCollectionName,
       mongo = mongoComponent.mongoConnector.db,
       domainFormat = FormQueryModel.formats,
-      idFormat = ???
+      idFormat = implicitly
     ) {
 
   private val TTL = Index(

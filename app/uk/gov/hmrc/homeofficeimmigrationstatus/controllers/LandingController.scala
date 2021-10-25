@@ -18,8 +18,10 @@ package uk.gov.hmrc.homeofficeimmigrationstatus.controllers
 
 import play.api.mvc._
 import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.actions.AuthAction
-import uk.gov.hmrc.homeofficeimmigrationstatus.repositories.SessionCacheRepository
+import uk.gov.hmrc.homeofficeimmigrationstatus.services.SessionCacheService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -28,13 +30,14 @@ import scala.concurrent.ExecutionContext
 class LandingController @Inject()(
   authorise: AuthAction,
   controllerComponents: MessagesControllerComponents,
-  sessionCacheRepository: SessionCacheRepository
+  sessionCacheService: SessionCacheService
 )(implicit ec: ExecutionContext)
     extends FrontendController(controllerComponents) {
 
-  val onPageLoad: Action[AnyContent] = authorise { implicit request =>
-    sessionCacheRepository.removeById(request.session.apply("id"))
-    Redirect(routes.StatusCheckByNinoController.onPageLoad)
-      .removingFromSession("query")
+  val onPageLoad: Action[AnyContent] = authorise.async { implicit request =>
+    implicit val hc: HeaderCarrier =
+      HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+    val deletion = sessionCacheService.delete
+    deletion.map(_ => Redirect(routes.StatusCheckByNinoController.onPageLoad))
   }
 }

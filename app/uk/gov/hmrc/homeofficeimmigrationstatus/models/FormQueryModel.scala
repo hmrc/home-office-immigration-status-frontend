@@ -24,26 +24,10 @@ import java.time.LocalDateTime
 import scala.util.{Failure, Success}
 
 case class FormQueryModel(
-  id: BSONObjectID,
+  id: String,
   data: StatusCheckByNinoFormModel,
-  lastUpdated: LocalDateTime = LocalDateTime.now()) {
-  id.stringify
-}
+  lastUpdated: LocalDateTime = LocalDateTime.now())
 
 object FormQueryModel {
   implicit val formats: Format[FormQueryModel] = mongoEntity { Json.format[FormQueryModel] }
-
-  implicit val objectIdRead: Reads[String] = Reads[String] { json =>
-    (json \ "$id" \"$oid").validate[String].flatMap { str =>
-      JsSuccess(str)
-    }
-  }
-
-  implicit val objectIdWrite: Writes[String] = new Writes[String] {
-    def writes(objectId: String): JsValue = Json.obj(
-      "$oid" -> objectId
-    )
-  }
-
-  implicit val idFormats: Format[String] = Format(objectIdRead, objectIdWrite)
 }
