@@ -18,27 +18,35 @@ package uk.gov.hmrc.homeofficeimmigrationstatus.controllers
 
 import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{redirectLocation, status}
+import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.Mockito.{mock, reset, verify, when}
+
+import scala.concurrent.Future
 
 class LandingControllerSpec extends ControllerSpec {
 
-  lazy val sut = inject[LandingController]
+  val sut = inject[LandingController]
+
+  override def beforeEach(): Unit = {
+    reset(mockSessionCacheService)
+    super.beforeEach
+  }
 
   "onPageLoad" must {
 
     "redirect to check by nino" in {
+      when(mockSessionCacheService.delete(any(), any())).thenReturn(Future.unit)
       val result = sut.onPageLoad(request)
-
       status(result) mustBe SEE_OTHER
       redirectLocation(result).get mustBe routes.StatusCheckByNinoController.onPageLoad.url
     }
 
     "clear the query from the session" in {
-      val requestWithQuery = request.withSession("query" -> "some defined query")
-      val result = sut.onPageLoad(requestWithQuery)
-
-      val updatedSession = await(result).session(requestWithQuery)
-      updatedSession.get("query") must not be defined
+      when(mockSessionCacheService.delete(any(), any())).thenReturn(Future.unit)
+      await(sut.onPageLoad(request))
+      verify(mockSessionCacheService).delete(any(), any())
     }
+
   }
 
 }

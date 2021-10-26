@@ -22,10 +22,11 @@ import play.api.mvc._
 import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
 import uk.gov.hmrc.homeofficeimmigrationstatus.connectors.HomeOfficeImmigrationStatusProxyConnector
 import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.actions.AuthAction
-import uk.gov.hmrc.homeofficeimmigrationstatus.models.{StatusCheckByNinoFormModel, StatusCheckByNinoRequest, StatusCheckResponse}
+import uk.gov.hmrc.homeofficeimmigrationstatus.models.{FormQueryModel, StatusCheckByNinoFormModel, StatusCheckByNinoRequest, StatusCheckResponse}
 import uk.gov.hmrc.homeofficeimmigrationstatus.views._
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.homeofficeimmigrationstatus.services.SessionCacheService
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,23 +41,23 @@ class StatusResultController @Inject()(
   statusFoundPage: StatusFoundPage,
   statusCheckFailurePage: StatusCheckFailurePage,
   statusNotAvailablePage: StatusNotAvailablePage,
-  multipleMatchesFoundPage: MultipleMatchesFoundPage
+  multipleMatchesFoundPage: MultipleMatchesFoundPage,
+  sessionCacheService: SessionCacheService
 )(implicit val appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(controllerComponents) with I18nSupport {
 
   val onPageLoad: Action[AnyContent] =
     (authorise).async { implicit request =>
-      val maybeQuery: Option[StatusCheckByNinoFormModel] =
-        request.session.get("query").flatMap(query => Try(Json.parse(query).as[StatusCheckByNinoFormModel]).toOption)
-      maybeQuery match {
-        case Some(query) =>
-          val req = query.toRequest(appConfig.defaultQueryTimeRangeInMonths) //todo move this to a service
-          homeOfficeConnector
-            .statusPublicFundsByNino(req)
-            .map(result => displayResults(query, result))
-        case None =>
-          Future.successful(Redirect(routes.StatusCheckByNinoController.onPageLoad))
-      }
+      sessionCacheService.get.flatMap(maybeQuery =>
+        maybeQuery match {
+          case Some(FormQueryModel(_, query, _)) =>
+            val req = query.toRequest(appConfig.defaultQueryTimeRangeInMonths) //todo move this to a service
+            homeOfficeConnector
+              .statusPublicFundsByNino(req)
+              .map(result => displayResults(query, result))
+          case None =>
+            Future.successful(Redirect(routes.StatusCheckByNinoController.onPageLoad))
+      })
     }
 
   private def displayResults(query: StatusCheckByNinoFormModel, statusCheckResponse: StatusCheckResponse)(
