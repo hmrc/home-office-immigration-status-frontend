@@ -57,7 +57,6 @@ class StatusResultController @Inject()(
         case None =>
           Future.successful(Redirect(routes.StatusCheckByNinoController.onPageLoad))
       }
-
     }
 
   private def displayResults(query: StatusCheckByNinoFormModel, statusCheckResponse: StatusCheckResponse)(
@@ -71,5 +70,4 @@ class StatusResultController @Inject()(
       case _ =>
         Ok(statusNotAvailablePage(StatusNotAvailablePageContext(query, routes.LandingController.onPageLoad)))
     }
-
 }

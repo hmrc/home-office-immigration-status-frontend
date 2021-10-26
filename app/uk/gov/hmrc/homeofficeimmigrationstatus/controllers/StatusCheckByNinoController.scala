@@ -70,5 +70,4 @@ class StatusCheckByNinoController @Inject()(
           }
         )
     }
-
 }

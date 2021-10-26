@@ -34,5 +34,4 @@ class LandingController @Inject()(
     Redirect(routes.StatusCheckByNinoController.onPageLoad)
       .removingFromSession("query")
   }
-
 }

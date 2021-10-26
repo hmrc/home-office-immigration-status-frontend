@@ -111,10 +111,7 @@ class StatusResultControllerSpec extends ControllerSpec {
 
         status(result) mustBe OK
         contentAsString(result) mustBe inject[StatusNotAvailablePage]
-          .apply(StatusNotAvailablePageContext(query, routes.LandingController.onPageLoad))(
-            request,
-            messages,
-            appConfig)
+          .apply(StatusNotAvailablePageContext(query, routes.LandingController.onPageLoad))(request, messages)
           .toString
         verifyConnector()
       }
@@ -144,5 +141,4 @@ class StatusResultControllerSpec extends ControllerSpec {
       }
     }
   }
-
 }
