@@ -20,38 +20,40 @@ import play.api.i18n.Messages
 import play.api.mvc.Call
 import uk.gov.hmrc.homeofficeimmigrationstatus.models.ImmigrationStatus._
 import uk.gov.hmrc.homeofficeimmigrationstatus.viewmodels.{RowViewModel => Row}
-import uk.gov.hmrc.homeofficeimmigrationstatus.models.{ImmigrationStatus, StatusCheckByNinoRequest, StatusCheckResult}
+import uk.gov.hmrc.homeofficeimmigrationstatus.models.{ImmigrationStatus, StatusCheckByNinoFormModel, StatusCheckByNinoRequest, StatusCheckResult}
 
 final case class StatusFoundPageContext(
-  query: StatusCheckByNinoRequest,
+  query: StatusCheckByNinoFormModel,
   result: StatusCheckResult,
   searchAgainCall: Call) {
 
   val mostRecentStatus: Option[ImmigrationStatus] = result.mostRecentStatus
   val previousStatuses: Seq[ImmigrationStatus] = result.previousStatuses
 
-  //todo change name of this when grouped properly
-  def stuffRows(implicit messages: Messages) =
+  def immigrationStatusRows(implicit messages: Messages): Seq[Row] =
     Seq(
       immigrationRoute.map(route => Row("immigrationRoute", "status-found.route", route)),
-      if (displayRecourseToPublicFunds)
-        Some(Row("recourse-text", "status-found.norecourse", messages("status-found.no")))
-      else None
-    ).flatten
-
-  def detailRows(implicit messages: Messages) =
-    Seq(
-      Some(Row("nino", "generic.nino", query.nino.formatted)),
-      Some(Row("dob", "generic.dob", result.dobFormatted(messages.lang.locale))),
-      Some(Row("nationality", "generic.nationality", result.countryName)),
       mostRecentStatus.map(s =>
         Row("startDate", "status-found.startDate", DateFormat.format(messages.lang.locale)(s.statusStartDate))),
       mostRecentStatus.flatMap(s =>
         s.statusEndDate.map(date =>
-          Row("expiryDate", "status-found.expiryDate", DateFormat.format(messages.lang.locale)(date))))
+          Row("expiryDate", "status-found.endDate", DateFormat.format(messages.lang.locale)(date)))),
+      Some(
+        Row(
+          "recourse-text",
+          "status-found.norecourse",
+          if (hasRecourseToPublicFunds) messages("status-found.yes")
+          else messages("status-found.no")))
     ).flatten
 
-  def displayRecourseToPublicFunds: Boolean = mostRecentStatus.exists(_.noRecourseToPublicFunds)
+  def detailRows(implicit messages: Messages): Seq[Row] =
+    Seq(
+      Row("nino", "generic.nino", query.nino.nino),
+      Row("dob", "generic.dob", result.dobFormatted(messages.lang.locale)),
+      Row("nationality", "generic.nationality", result.countryName)
+    )
+
+  def hasRecourseToPublicFunds: Boolean = !mostRecentStatus.exists(_.noRecourseToPublicFunds)
 
   def currentStatusLabel(implicit messages: Messages): String = {
     val prefix = "status-found.current."

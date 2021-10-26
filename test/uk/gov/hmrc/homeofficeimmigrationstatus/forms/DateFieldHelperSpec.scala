@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.homeofficeimmigrationstatus.controllers
+package uk.gov.hmrc.homeofficeimmigrationstatus.forms
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 
 import java.time.LocalDate
 import play.api.data.validation.{Invalid, ValidationError}
-import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.DateFieldHelper._
+import uk.gov.hmrc.homeofficeimmigrationstatus.forms.helpers.DateFieldHelper._
 import org.scalatest.OptionValues
 
 class DateFieldHelperSpec extends AnyWordSpecLike with Matchers with OptionValues {

@@ -19,7 +19,7 @@ package uk.gov.hmrc.homeofficeimmigrationstatus.views.components
 import org.joda.time.LocalDate
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.routes
-import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoRequest
+import uk.gov.hmrc.homeofficeimmigrationstatus.models.{StatusCheckByNinoFormModel, StatusCheckByNinoRequest}
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.{DateFormat, ViewSpec}
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.components.ShowChangeQuery
 
@@ -28,14 +28,14 @@ class ShowChangeQuerySpec extends ViewSpec {
   val sut = inject[ShowChangeQuery]
 
   //todo nino gen
-  val query = StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", LocalDate.now().toString)
+  val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "Pan", "", LocalDate.now().toString)
 
   val doc = asDocument(sut(query)(messages))
 
   "showChangeQuery" must {
     "have all of the things in the list in the correct order" in {
       List(
-        (query.nino.formatted, "generic.nino", "nino", "generic.nino"),
+        (query.nino.nino, "generic.nino", "nino", "generic.nino"),
         (query.givenName, "generic.givenName", "givenName", "generic.givenName.lowercase"),
         (query.familyName, "generic.familyName", "familyName", "generic.familyName.lowercase"),
         (
@@ -52,7 +52,7 @@ class ShowChangeQuerySpec extends ViewSpec {
             data,
             id,
             s"${messages("generic.change")} ${messages(actionText)}",
-            routes.HomeOfficeImmigrationStatusFrontendController.showStatusCheckByNino.url
+            routes.StatusCheckByNinoController.onPageLoad.url
           )
       }
     }

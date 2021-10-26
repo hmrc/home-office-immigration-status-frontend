@@ -23,7 +23,7 @@ import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoRequest
+import uk.gov.hmrc.homeofficeimmigrationstatus.models.{StatusCheckByNinoFormModel, StatusCheckByNinoRequest}
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.MultipleMatchesFoundPage
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.components.{SearchAgainButton, ShowChangeQuery}
 
@@ -42,7 +42,7 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
   lazy val sut = inject[MultipleMatchesFoundPage]
 
   //todo nino gen
-  val query = StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", LocalDate.now().toString)
+  val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "Pan", "", LocalDate.now().toString)
   lazy val doc: Document = asDocument(sut(query)(request, messages))
 
   "MultipleMatchesFoundPage" must {

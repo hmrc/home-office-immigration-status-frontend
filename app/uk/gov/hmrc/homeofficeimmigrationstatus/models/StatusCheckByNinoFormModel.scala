@@ -20,7 +20,7 @@ import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.domain.Nino
 import java.time.{LocalDate, ZoneId}
 
-case class StatusCheckByNinoRequest(
+case class StatusCheckByNinoFormModel(
   // National insurance number
   nino: Nino,
   // Given name required for search
@@ -28,16 +28,20 @@ case class StatusCheckByNinoRequest(
   // Family name required for search
   familyName: String,
   // Date of birth of the person being checked in ISO 8601 format (can contain wildcards for day or month)
-  dateOfBirth: String,
-  // Status check range, default to 6 months back
-  statusCheckRange: StatusCheckRange
+  dateOfBirth: String
 ) {
-
-  def toUpperCase: StatusCheckByNinoRequest =
-    copy(givenName = this.givenName.toUpperCase, familyName = this.familyName.toUpperCase)
-
+  def toRequest(timeRangeInMonths: Int): StatusCheckByNinoRequest = {
+    val range = StatusCheckByNinoFormModel.statusCheckRange(timeRangeInMonths)
+    StatusCheckByNinoRequest(nino, givenName, familyName, dateOfBirth, range)
+  }
 }
 
-object StatusCheckByNinoRequest {
-  implicit val formats: OFormat[StatusCheckByNinoRequest] = Json.format[StatusCheckByNinoRequest]
+object StatusCheckByNinoFormModel {
+  implicit val formats: OFormat[StatusCheckByNinoFormModel] = Json.format[StatusCheckByNinoFormModel]
+
+  private def statusCheckRange(timeRangeInMonths: Int): StatusCheckRange = {
+    val startDate = LocalDate.now(ZoneId.of("UTC")).minusMonths(timeRangeInMonths)
+    val endDate = LocalDate.now(ZoneId.of("UTC"))
+    StatusCheckRange(Some(startDate), Some(endDate))
+  }
 }

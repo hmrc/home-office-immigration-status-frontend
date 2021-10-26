@@ -24,7 +24,7 @@ import uk.gov.hmrc.domain.Nino
 class StatusCheckByNinoRequestSpec extends AnyWordSpecLike with Matchers with OptionValues {
 
   val expectedResult: StatusCheckByNinoRequest =
-    StatusCheckByNinoRequest(Nino("RJ301829A"), "DOE", "JANE", "1971-01-01", None)
+    StatusCheckByNinoRequest(Nino("RJ301829A"), "DOE", "JANE", "1971-01-01", StatusCheckRange(None, None))
 
   "StatusCheckByNinoRequestSpec" should {
 
@@ -32,7 +32,8 @@ class StatusCheckByNinoRequestSpec extends AnyWordSpecLike with Matchers with Op
       Nino("RJ301829A"),
       "Doe",
       "Jane",
-      "1971-01-01"
+      "1971-01-01",
+      StatusCheckRange(None, None)
     )
 
     "return givenName and falilyName in uppercase" in {

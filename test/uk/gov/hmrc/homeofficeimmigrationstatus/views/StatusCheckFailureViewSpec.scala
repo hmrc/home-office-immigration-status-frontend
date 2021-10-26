@@ -19,11 +19,11 @@ package uk.gov.hmrc.homeofficeimmigrationstatus.views
 import org.joda.time.LocalDate
 import org.jsoup.nodes.{Document, Element}
 import org.mockito.Mockito.{mock, verify}
-import play.api.inject.bind
 import play.api.Application
+import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoRequest
+import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoFormModel
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.StatusCheckFailurePage
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.components.{SearchAgainButton, ShowChangeQuery}
 
@@ -42,7 +42,7 @@ class StatusCheckFailureViewSpec extends ViewSpec {
   lazy val sut: StatusCheckFailurePage = inject[StatusCheckFailurePage]
 
   //todo nino gen
-  val query = StatusCheckByNinoRequest(Nino("AB123456C"), "Pan", "", LocalDate.now().toString)
+  val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "Pan", "", LocalDate.now().toString)
   lazy val doc: Document = asDocument(sut(query)(request, messages))
 
   "StatusCheckFailurePage" must {

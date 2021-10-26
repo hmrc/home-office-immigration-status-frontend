@@ -99,13 +99,32 @@ class PreviousStatusesComponentSpec extends ViewSpec {
       val doc: Document = asDocument(sut(singleStatus)(messages))
       List(
         ("EU Settlement Scheme - Indefinite leave to remain", "status-found.previous.status", "status-previous-0"),
-        ("placeholder", "status-found.previous.recourse", "recourse-previous-0"),
         ("01 January 2012", "status-found.previous.startDate", "startDate-previous-0"),
-        ("01 January 2013", "status-found.previous.expiryDate", "expiryDate-previous-0")
+        ("01 January 2013", "status-found.previous.endDate", "expiryDate-previous-0"),
+        ("No", "status-found.previous.recourse", "recourse-previous-0")
       ).zipWithIndex.foreach {
         case ((data, msgKey, id), index) =>
           val row: Elements = doc.select(s"#history-0 > .govuk-summary-list__row:nth-child(${index + 1})")
           assertOneThirdRow(row, messages(msgKey), data, id)
+      }
+    }
+
+    "display noRecourseToPublicFunds field" when {
+      Seq(true, false).foreach { bool =>
+        s"is $bool" in {
+          val doc: Document = asDocument(sut(singleStatus.map(_.copy(noRecourseToPublicFunds = bool)))(messages))
+          val e = doc.getElementById("recourse-previous-0")
+          e.text() mustBe messages(s"status-found.previous.noRecourseToPublicFunds.$bool")
+        }
+      }
+      "each status is different" in {
+        val doc = asDocument(sut(threeStatuses)(messages))
+        doc.getElementById("recourse-previous-0").text() mustBe messages(
+          "status-found.previous.noRecourseToPublicFunds.true")
+        doc.getElementById("recourse-previous-1").text() mustBe messages(
+          "status-found.previous.noRecourseToPublicFunds.false")
+        doc.getElementById("recourse-previous-2").text() mustBe messages(
+          "status-found.previous.noRecourseToPublicFunds.true")
       }
     }
 

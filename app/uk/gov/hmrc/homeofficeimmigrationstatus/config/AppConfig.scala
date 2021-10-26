@@ -23,7 +23,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.Duration
 
 @Singleton
-class AppConfig @Inject()(servicesConfig: ServicesConfig, configuration: Configuration) {
+class AppConfig @Inject()(servicesConfig: ServicesConfig, val configuration: Configuration) {
 
   val appName: String = servicesConfig.getString("appName")
   val shuttered: Boolean = configuration.getOptional[Boolean]("isShuttered").getOrElse(false)

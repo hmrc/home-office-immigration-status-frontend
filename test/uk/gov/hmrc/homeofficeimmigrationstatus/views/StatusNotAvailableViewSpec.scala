@@ -25,7 +25,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.routes
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.StatusNotAvailablePage
-import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoRequest
+import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoFormModel
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.components.{SearchAgainButton, ShowChangeQuery}
 
 class StatusNotAvailableViewSpec extends ViewSpec {
@@ -42,10 +42,10 @@ class StatusNotAvailableViewSpec extends ViewSpec {
 
   lazy val sut: StatusNotAvailablePage = inject[StatusNotAvailablePage]
 
-  val nino = StatusCheckByNinoRequest(Nino("AB123456C"), "Applicant", "", LocalDate.now().toString)
+  val nino = StatusCheckByNinoFormModel(Nino("AB123456C"), "Applicant", "", LocalDate.now().toString)
 
   val query =
-    StatusNotAvailablePageContext(nino, routes.HomeOfficeImmigrationStatusFrontendController.showStatusNotAvailable)
+    StatusNotAvailablePageContext(nino, routes.LandingController.onPageLoad)
 
   lazy val doc: Document = asDocument(sut(query)(request, messages))
 
@@ -74,7 +74,7 @@ class StatusNotAvailableViewSpec extends ViewSpec {
     "have the search again button" in {
       val button = doc.select("#content > a")
       button.text() mustBe "Search again"
-      button.attr("href") mustBe "/check-immigration-status/status-not-available"
+      button.attr("href") mustBe "/check-immigration-status"
     }
   }
 }

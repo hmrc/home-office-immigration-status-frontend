@@ -25,7 +25,7 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.mvc.Call
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoRequest
+import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoFormModel
 import uk.gov.hmrc.homeofficeimmigrationstatus.viewmodels.RowViewModel
 
 class StatusNotAvailablePageContextSpec
@@ -41,7 +41,7 @@ class StatusNotAvailablePageContextSpec
     when(mockMessages(matches("status-not-available\\.current.*"), any())).thenReturn(currentStatusLabelMsg)
   }
 
-  val query = StatusCheckByNinoRequest(Nino("RJ301829A"), "Surname", "Forename", "2001")
+  val query = StatusCheckByNinoFormModel(Nino("RJ301829A"), "Surname", "Forename", "2001")
   val call = Call("GET", "/")
 
   def createContext = StatusNotAvailablePageContext(query, call)

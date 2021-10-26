@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.homeofficeimmigrationstatus.repository
+package uk.gov.hmrc.homeofficeimmigrationstatus.controllers
+
+import play.api.mvc._
+import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
+import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.actions.AuthAction
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
-import uk.gov.hmrc.mongo.{MongoComponent, TimestampSupport}
-
-import scala.concurrent.ExecutionContext
 
 @Singleton
-class JourneyCacheRepository @Inject()(
-  appConfig: AppConfig,
-  mongoComponent: MongoComponent,
-  timestampSupport: TimestampSupport
-)(implicit ec: ExecutionContext)
-    extends CacheRepository(
-      mongoComponent = mongoComponent,
-      collectionName = "journeys",
-      ttl = appConfig.mongoSessionExpiration,
-      timestampSupport = timestampSupport
-    )
+class LandingController @Inject()(
+  authorise: AuthAction,
+  controllerComponents: MessagesControllerComponents
+)(implicit val appConfig: AppConfig)
+    extends FrontendController(controllerComponents) {
+
+  val onPageLoad: Action[AnyContent] = authorise { implicit request =>
+    Redirect(routes.StatusCheckByNinoController.onPageLoad)
+      .removingFromSession("query")
+  }
+}

@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.homeofficeimmigrationstatus.controllers
+package uk.gov.hmrc.homeofficeimmigrationstatus.controllers.actions
 
+import com.google.inject.{ImplementedBy, Inject}
 import play.api.Logger
 import play.api.mvc.Results.Forbidden
-import play.api.mvc.{Request, Result}
+import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Credentials
@@ -26,31 +27,43 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.homeofficeimmigrationstatus.support.CallOps
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
+import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
+import play.api.Environment
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait AuthActions extends AuthorisedFunctions with AuthRedirects {
+class AuthActionImpl @Inject()(
+  val env: Environment,
+  override val authConnector: AuthConnector,
+  appConfig: AppConfig,
+  val parser: BodyParsers.Default
+)(implicit val executionContext: ExecutionContext)
+    extends AuthAction with AuthorisedFunctions with AuthRedirects {
 
-  protected def authorisedWithStrideGroup[A](authorisedStrideGroup: String)(body: String => Future[Result])(
-    implicit
-    request: Request[A],
-    hc: HeaderCarrier,
-    ec: ExecutionContext): Future[Result] = {
+  val config = appConfig.configuration
+
+  override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] = {
+
+    implicit val hc: HeaderCarrier =
+      HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+
     val authPredicate =
-      if (authorisedStrideGroup == "ANY") AuthProviders(PrivilegedApplication)
-      else Enrolment(authorisedStrideGroup) and AuthProviders(PrivilegedApplication)
+      if (appConfig.authorisedStrideGroup == "ANY") AuthProviders(PrivilegedApplication)
+      else Enrolment(appConfig.authorisedStrideGroup) and AuthProviders(PrivilegedApplication)
+
     authorised(authPredicate)
       .retrieve(credentials and allEnrolments) {
         case Some(Credentials(authProviderId, _)) ~ enrollments =>
           val userRoles = enrollments.enrolments.map(_.key).mkString("[", ",", "]")
           Logger(getClass).info(s"User $authProviderId has been authorized with $userRoles")
-          body(authProviderId)
+          block(request)
 
         case None ~ enrollments =>
           Future.successful(Forbidden)
       }
-      .recover(handleFailure)
+      .recover(handleFailure(request))
   }
 
   def handleFailure(implicit request: Request[_]): PartialFunction[Throwable, Result] = {
@@ -61,3 +74,6 @@ trait AuthActions extends AuthorisedFunctions with AuthRedirects {
   }
 
 }
+
+@ImplementedBy(classOf[AuthActionImpl])
+trait AuthAction extends ActionBuilder[Request, AnyContent]

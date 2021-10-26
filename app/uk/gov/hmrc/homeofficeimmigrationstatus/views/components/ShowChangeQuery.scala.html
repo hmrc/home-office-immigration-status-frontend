@@ -1,16 +1,16 @@
 
-@import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoRequest
+@import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoFormModel
 @import uk.gov.hmrc.homeofficeimmigrationstatus.views.DateFormat
 @import uk.gov.hmrc.homeofficeimmigrationstatus.viewmodels.{RowWithActionViewModel => Row}
 
 @this(summaryList: SummaryList)
 
-@(query: StatusCheckByNinoRequest)(implicit messages: Messages)
+@(query: StatusCheckByNinoFormModel)(implicit messages: Messages)
 
 @locale = @{messages.lang.locale}
 
 @summaryList("inputted-data", Seq(
-    Row("nino", "generic.nino", query.nino.formatted, "change-nino"),
+    Row("nino", "generic.nino", query.nino.nino, "change-nino"),
     Row("givenName", "generic.givenName", query.givenName, "change-given-name", "generic.givenName.lowercase"),
     Row("familyName", "generic.familyName", query.familyName, "change-family-name", "generic.familyName.lowercase"),
     Row("dob", "generic.dob", DateFormat.formatDatePattern(locale)(query.dateOfBirth), "change-dob", "generic.dob.lowercase")

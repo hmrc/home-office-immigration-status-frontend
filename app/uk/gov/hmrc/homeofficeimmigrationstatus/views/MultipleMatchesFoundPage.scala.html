@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoRequest
+@import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoFormModel
 @import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
 
 @this(
@@ -23,7 +23,7 @@
     searchAgainButton : components.SearchAgainButton
 )(implicit appConfig: AppConfig)
 
-@(query: StatusCheckByNinoRequest)(implicit request: Request[_], messages: Messages)
+@(query: StatusCheckByNinoFormModel)(implicit request: Request[_], messages: Messages)
 
 @govukWrapper(title = messages("status-check-failure-conflict.title")) {
 
