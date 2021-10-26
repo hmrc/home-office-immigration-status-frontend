@@ -35,9 +35,6 @@ class LandingController @Inject()(
     extends FrontendController(controllerComponents) {
 
   val onPageLoad: Action[AnyContent] = authorise.async { implicit request =>
-    implicit val hc: HeaderCarrier =
-      HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-    val deletion = sessionCacheService.delete
-    deletion.map(_ => Redirect(routes.StatusCheckByNinoController.onPageLoad))
+    sessionCacheService.delete.map(_ => Redirect(routes.StatusCheckByNinoController.onPageLoad))
   }
 }

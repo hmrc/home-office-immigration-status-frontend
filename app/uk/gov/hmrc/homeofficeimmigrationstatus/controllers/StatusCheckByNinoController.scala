@@ -22,52 +22,52 @@ import play.api.mvc._
 import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
 import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.actions.AuthAction
 import uk.gov.hmrc.homeofficeimmigrationstatus.forms.StatusCheckByNinoFormProvider
-import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoFormModel
+import uk.gov.hmrc.homeofficeimmigrationstatus.models.{FormQueryModel, StatusCheckByNinoFormModel}
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.homeofficeimmigrationstatus.services.SessionCacheService
 
 import javax.inject.{Inject, Singleton}
 import scala.util.Try
+import scala.concurrent.{ExecutionContext, Future}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import play.api.data.Form
+
 @Singleton
 class StatusCheckByNinoController @Inject()(
   authorise: AuthAction,
   override val messagesApi: MessagesApi,
   controllerComponents: MessagesControllerComponents,
   formProvider: StatusCheckByNinoFormProvider,
-  statusCheckByNinoPage: StatusCheckByNinoPage
-)(implicit val appConfig: AppConfig)
+  statusCheckByNinoPage: StatusCheckByNinoPage,
+  sessionCacheService: SessionCacheService
+)(implicit val appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(controllerComponents) with I18nSupport {
 
   val onPageLoad: Action[AnyContent] =
-    (authorise) { implicit request =>
-      val maybeQuery: Option[StatusCheckByNinoFormModel] = {
-        request.session
-          .get("query")
-          .flatMap(query => Try(Json.parse(query).as[StatusCheckByNinoFormModel]).toOption)
+    (authorise).async { implicit request =>
+      sessionCacheService.get.map { result =>
+        val form = result match {
+          case Some(FormQueryModel(_, formModel, _)) => formProvider().fill(formModel)
+          case _                                     => formProvider()
+        }
+        Ok(statusCheckByNinoPage(form, routes.StatusCheckByNinoController.onSubmit))
       }
-      Ok(
-        statusCheckByNinoPage(
-          {
-            val blankForm = formProvider()
-            maybeQuery
-              .map(query => blankForm.fill(query))
-              .getOrElse(blankForm)
-          },
-          routes.StatusCheckByNinoController.onSubmit
-        )
-      )
     }
 
   val onSubmit: Action[AnyContent] =
-    (authorise) { implicit request =>
+    (authorise).async { implicit request =>
       formProvider()
         .bindFromRequest()
         .fold(
           formWithErrors =>
-            BadRequest(statusCheckByNinoPage(formWithErrors, routes.StatusCheckByNinoController.onSubmit)),
-          query => {
-            Redirect(routes.StatusResultController.onPageLoad).addingToSession("query" -> Json.toJson(query).toString)
-          }
+            Future.successful(
+              BadRequest(statusCheckByNinoPage(formWithErrors, routes.StatusCheckByNinoController.onSubmit))),
+          query =>
+            for {
+              _ <- sessionCacheService.set(query)
+            } yield Redirect(routes.StatusResultController.onPageLoad)
         )
     }
 }

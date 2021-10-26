@@ -38,7 +38,7 @@ class SessionCacheServiceSpec extends PlaySpec with BeforeAndAfterEach with Scal
 
   val now = LocalDateTime.now
   val mockRepo = mock(classOf[SessionCacheRepository])
-  val sut = new SessionCacheServiceImpl(mockRepo, () => now)
+  val sut = new SessionCacheServiceImpl(mockRepo)
 
   override def beforeEach(): Unit = {
     reset(mockRepo)
@@ -84,6 +84,7 @@ class SessionCacheServiceSpec extends PlaySpec with BeforeAndAfterEach with Scal
     "call findAndUpdate in the repo" in {
       val selector = Json.obj("_id"  -> formQuery.id)
       val modifier = Json.obj("$set" -> (formQuery copy (lastUpdated = now)))
+      val hc = HeaderCarrier(sessionId = Some(SessionId("123")))
 
       val mockReturn = mock(
         classOf[reactivemongo.api.commands.FindAndModifyCommand.Result[
@@ -92,10 +93,17 @@ class SessionCacheServiceSpec extends PlaySpec with BeforeAndAfterEach with Scal
       when(mockRepo.findAndUpdate(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())(any()))
         .thenReturn(Future.successful(mockReturn))
 
-      Await.result(sut.set(formQuery)(implicitly), 5 seconds)
+      Await.result(sut.set(formModel, now)(hc, implicitly), 5 seconds)
       verify(mockRepo)
         .findAndUpdate(refEq(selector), refEq(modifier), any(), any(), any(), any(), any(), any(), any(), any(), any())(
           any())
+    }
+
+    "return an error where the header carrier has no session id" in {
+      val hc = HeaderCarrier(sessionId = None)
+      intercept[NoSessionIdException.type] { Await.result(sut.set(formModel, now)(hc, implicitly), 5 seconds) }
+      verify(mockRepo, never)
+        .findAndUpdate(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())(any())
     }
 
   }

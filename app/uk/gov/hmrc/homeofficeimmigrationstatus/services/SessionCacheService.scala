@@ -18,7 +18,7 @@ package uk.gov.hmrc.homeofficeimmigrationstatus.services
 
 import com.google.inject.{ImplementedBy, Inject, Singleton}
 import uk.gov.hmrc.homeofficeimmigrationstatus.repositories.SessionCacheRepository
-import uk.gov.hmrc.homeofficeimmigrationstatus.models.FormQueryModel
+import uk.gov.hmrc.homeofficeimmigrationstatus.models.{FormQueryModel, StatusCheckByNinoFormModel}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -27,18 +27,21 @@ import play.api.libs.json.Json
 
 @Singleton
 class SessionCacheServiceImpl @Inject()(
-  sessionCacheRepository: SessionCacheRepository,
-  now: () => LocalDateTime = () => LocalDateTime.now
+  sessionCacheRepository: SessionCacheRepository
 ) extends SessionCacheService {
 
   def get(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[FormQueryModel]] =
     withSessionId(sessionCacheRepository.findById(_))
 
-  def set(formQueryModel: FormQueryModel)(implicit ec: ExecutionContext): Future[Unit] = {
-    val selector = Json.obj("_id"  -> formQueryModel.id)
-    val modifier = Json.obj("$set" -> (formQueryModel copy (lastUpdated = now())))
-    sessionCacheRepository.findAndUpdate(query = selector, update = modifier, upsert = true).map(_ => ())
-  }
+  def set(formModel: StatusCheckByNinoFormModel, now: LocalDateTime = LocalDateTime.now)(
+    implicit hc: HeaderCarrier,
+    ec: ExecutionContext): Future[Unit] =
+    withSessionId { sessionId =>
+      val formQueryModel = FormQueryModel(sessionId, formModel)
+      val selector = Json.obj("_id"  -> formQueryModel.id)
+      val modifier = Json.obj("$set" -> (formQueryModel copy (lastUpdated = now)))
+      sessionCacheRepository.findAndUpdate(query = selector, update = modifier, upsert = true).map(_ => ())
+    }
 
   def delete(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] =
     withSessionId(sessionCacheRepository.removeById(_).map(_ => ()))
@@ -56,7 +59,9 @@ trait SessionCacheService {
 
   def get(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[FormQueryModel]]
 
-  def set(formQueryModel: FormQueryModel)(implicit ec: ExecutionContext): Future[Unit]
+  def set(formModel: StatusCheckByNinoFormModel, now: LocalDateTime = LocalDateTime.now)(
+    implicit hc: HeaderCarrier,
+    ec: ExecutionContext): Future[Unit]
 
   def delete(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit]
 
