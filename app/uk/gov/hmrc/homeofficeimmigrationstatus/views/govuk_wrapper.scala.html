@@ -53,13 +53,13 @@
 
 @feedbackBanner = {
     @messages("feedback.before")
-    <a class='govuk-link' href="mailto:n8n8l9g1j5c1s3i6@@hmrcdigital.slack.com">@messages("feedback.link")</a>
+    <a class='govuk-link' href="mailto:aaaadxh2vg7pg2qf4idj7rmi2e@@hmrcdigital.slack.com">@messages("feedback.link")</a>
     @messages("feedback.after")
 }
 
 @beforeContentBlock = {
     @govukPhaseBanner(PhaseBanner(
-        tag = Some(Tag(content = Text("alpha"))),
+        tag = Some(Tag(content = Text("beta"))),
         content = HtmlContent(feedbackBanner)
         )
     )
@@ -70,7 +70,6 @@
 @content = {
     <div id="content" class="content__body">
         @mainContent
-
         @hmrcReportTechnicalIssueHelper()
     </div>
 }
@@ -79,7 +78,9 @@
     pageTitle = Some(titleWithSuffix),
     headBlock = Some(hmrcHead(Some(head))),
     headerBlock = Some(hmrcHeader(InternalHeader(
-        serviceName = Some(messages("app.name"))
+        homepageUrl = "https://www.gov.uk/government/organisations/hm-revenue-customs",
+        serviceName = Some(messages("app.name")),
+        serviceUrl = ""
     ))),
     beforeContentBlock = Some(beforeContentBlock),
     footerItems = HossFooterLinks.items,

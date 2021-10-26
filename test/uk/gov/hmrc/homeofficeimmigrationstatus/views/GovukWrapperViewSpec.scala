@@ -23,51 +23,29 @@ import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.homeofficeimmigrationstatus.models.{StatusCheckByNinoFormModel, StatusCheckByNinoRequest}
+import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoFormModel
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.MultipleMatchesFoundPage
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.components.{SearchAgainButton, ShowChangeQuery}
 
-class MultipleMatchesFoundViewSpec extends ViewSpec {
+class GovukWrapperViewSpec extends ViewSpec {
 
-  val mockShowChangeQuery: ShowChangeQuery = mock(classOf[ShowChangeQuery])
-  val mockSearchAgainButton: SearchAgainButton = mock(classOf[SearchAgainButton])
-
-  override implicit lazy val app: Application = new GuiceApplicationBuilder()
-    .overrides(
-      bind[ShowChangeQuery].toInstance(mockShowChangeQuery),
-      bind[SearchAgainButton].toInstance(mockSearchAgainButton)
-    )
-    .build()
+  override implicit lazy val app: Application = new GuiceApplicationBuilder().build()
 
   lazy val sut = inject[MultipleMatchesFoundPage]
 
-  //todo nino gen
   val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "Pan", "", LocalDate.now().toString)
   lazy val doc: Document = asDocument(sut(query)(request, messages))
 
-  "MultipleMatchesFoundPage" must {
+  "govuk_wrapper" must {
 
-    "have a status conflict title" in {
-      val e: Element = doc.getElementById("status-check-failure-conflict-title")
-      e.text() mustBe messages("status-check-failure-conflict.title")
+    "banner contains title" in {
+      val docAsString: String = doc.toString()
+      docAsString.contains(messages("app.name")) mustBe true
     }
 
-    "have paragraph text" in {
-      doc.select(".govuk-body").text() mustBe messages("status-check-failure-conflict.listParagraph")
-    }
-
-    "have personal details heading" in {
-      val e: Element = doc.getElementById("personal-details")
-      e.text() mustBe messages("status-check-failure.heading2CustomerDetails")
-    }
-
-    "have the show and change query section" in {
-      verify(mockShowChangeQuery).apply(query)(messages)
-    }
-
-    "have the search again button" in {
-      verify(mockSearchAgainButton).apply()(messages)
+    "banner contains logo link" in {
+      val docAsString: String = doc.toString()
+      docAsString.contains("https://www.gov.uk/government/organisations/hm-revenue-customs") mustBe true
     }
   }
-
 }
