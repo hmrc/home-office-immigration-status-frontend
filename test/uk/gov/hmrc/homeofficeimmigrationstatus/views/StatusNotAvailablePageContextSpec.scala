@@ -49,7 +49,7 @@ class StatusNotAvailablePageContextSpec
   "notAvailablePersonalData" must {
     "populate the row objects correctly" when {
       Seq(
-        ("nino", "generic.nino", query.nino.formatted),
+        ("nino", "generic.nino", query.nino.nino),
         ("givenName", "generic.givenName", query.givenName),
         ("familyName", "generic.familyName", query.familyName),
         ("dob", "generic.dob", query.dateOfBirth)
