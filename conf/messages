@@ -1,4 +1,4 @@
-# ALPHA Banner
+# BETA Banner
 # ----------------------------------------------------------
 feedback.before='This is a new service. Your'
 feedback.link='feedback'
@@ -106,10 +106,10 @@ status-check-failure.list-item1='The details entered are incorrect'
 status-check-failure.list-item2='The customer’s information has not been updated by the Home Office'
 status-check-failure.contact-helpdesk-link='contact the IT help desk (opens in new tab)'
 status-check-failure.contact-helpdesk-text='If you need to escalate this'
-
 status-check-failure-conflict.title='A unique match has not been found'
 status-check-failure-conflict.listParagraph='This is because there are multiple matches with these details'
 
+# Button
 button.continue='Continue'
 button.submit='Submit'
 
