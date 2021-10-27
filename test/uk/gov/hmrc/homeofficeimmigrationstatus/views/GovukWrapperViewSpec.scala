@@ -43,6 +43,11 @@ class GovukWrapperViewSpec extends ViewSpec {
       docAsString.contains(messages("app.name")) mustBe true
     }
 
+    "banner contains service url" in {
+      val docAsString: String = doc.toString()
+      docAsString.contains("/check-immigration-status/check-with-nino") mustBe true
+    }
+
     "banner contains logo link" in {
       val docAsString: String = doc.toString()
       docAsString.contains("https://www.gov.uk/government/organisations/hm-revenue-customs") mustBe true
