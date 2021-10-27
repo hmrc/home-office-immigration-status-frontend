@@ -45,7 +45,7 @@ class GovukWrapperViewSpec extends ViewSpec {
 
     "banner contains service url" in {
       val docAsString: String = doc.toString()
-      docAsString.contains("/check-immigration-status/check-with-nino") mustBe true
+      docAsString.contains("/check-immigration-status") mustBe true
     }
 
     "banner contains logo link" in {
