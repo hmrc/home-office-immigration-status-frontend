@@ -18,7 +18,7 @@ package uk.gov.hmrc.homeofficeimmigrationstatus.controllers
 
 import org.joda.time.LocalDate
 import org.mockito.ArgumentMatchers.{any, refEq, eq => is}
-import org.mockito.Mockito.{mock, reset, verify, when}
+import org.mockito.Mockito.{mock, never, reset, verify, when}
 import play.api.Application
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -30,15 +30,19 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.actions.AuthAction
 import uk.gov.hmrc.homeofficeimmigrationstatus.forms.StatusCheckByNinoFormProvider
-import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoFormModel
+import uk.gov.hmrc.homeofficeimmigrationstatus.models.{FormQueryModel, StatusCheckByNinoFormModel}
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.StatusCheckByNinoPage
+import uk.gov.hmrc.homeofficeimmigrationstatus.services.SessionCacheService
+import scala.concurrent.Future
+import uk.gov.hmrc.http.HeaderCarrier
 
 class StatusCheckByNinoControllerSpec extends ControllerSpec {
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
       bind[AuthAction].to[FakeAuthAction],
-      bind[StatusCheckByNinoPage].toInstance(mockView)
+      bind[StatusCheckByNinoPage].toInstance(mockView),
+      bind[SessionCacheService].toInstance(mockSessionCacheService)
     )
     .build()
 
@@ -49,17 +53,20 @@ class StatusCheckByNinoControllerSpec extends ControllerSpec {
   override def beforeEach(): Unit = {
     reset(mockView)
     when(mockView(any(), any())(any(), any(), any())).thenReturn(fakeView)
+    reset(mockSessionCacheService)
     super.beforeEach()
   }
 
   "onPageLoad" must {
     //TODO NINO GEN
     val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "pan", "peter", LocalDate.now().toString)
+    val formQuery = FormQueryModel("123", query)
     val emptyForm = inject[StatusCheckByNinoFormProvider].apply()
     val prePopForm = emptyForm.fill(query)
 
     "display the check by nino form view" when {
       "there is no query on the session" in {
+        when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(None))
         val result = sut.onPageLoad(request)
 
         status(result) mustBe OK
@@ -67,28 +74,25 @@ class StatusCheckByNinoControllerSpec extends ControllerSpec {
         withClue("the form was prefilled with a previous query, how?") {
           verify(mockView).apply(refEq(emptyForm, "mapping"), any())(is(request), any(), any())
         }
+        verify(mockSessionCacheService).get(any(), any())
       }
 
       "there is a existing query on the session" in {
-        val requestWithQuery = request.withSession("query" -> Json.toJson(query).toString)
-        val result = sut.onPageLoad(requestWithQuery)
+        when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(formQuery)))
+        val result = sut.onPageLoad(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe fakeView.toString
         withClue("the form did not prepopulate with the defined query") {
-          verify(mockView).apply(refEq(prePopForm, "mapping"), any())(is(requestWithQuery), any(), any())
+          verify(mockView).apply(refEq(prePopForm, "mapping"), any())(is(request), any(), any())
         }
+        verify(mockSessionCacheService).get(any(), any())
       }
 
-      "the query can not be read on the session" in {
-        val requestWithQuery = request.withSession("query" -> "unreadable query")
-        val result = sut.onPageLoad(requestWithQuery)
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe fakeView.toString
-        withClue("the form was prefilled with a previous query, how?") {
-          verify(mockView).apply(refEq(emptyForm, "mapping"), any())(is(requestWithQuery), any(), any())
-        }
+      "the session cache returns a failure" in {
+        when(mockSessionCacheService.get(any(), any())).thenReturn(Future.failed(new Exception("Something happened")))
+        intercept[Exception](await(sut.onPageLoad(request)))
+        verify(mockSessionCacheService).get(any(), any())
       }
     }
   }
@@ -96,6 +100,7 @@ class StatusCheckByNinoControllerSpec extends ControllerSpec {
   "onSubmit" must {
     "redirect to result page" when {
       "form binds correct data" in {
+        when(mockSessionCacheService.set(any(), any())(any(), any())).thenReturn(Future.unit)
         val now = LocalDate.now()
         val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "pan", "peter", now.toString)
         val requestWithForm = request.withFormUrlEncodedBody(
@@ -110,11 +115,7 @@ class StatusCheckByNinoControllerSpec extends ControllerSpec {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result).get mustBe routes.StatusResultController.onPageLoad.url
-
-        withClue("The session should contain the valid form answers") {
-          val updatedSession = await(result).session(requestWithForm)
-          updatedSession.get("query").get mustBe Json.toJson(query).toString
-        }
+        verify(mockSessionCacheService).set(refEq(query), any())(any(), any())
       }
     }
     "return the errored form" when {
@@ -130,6 +131,7 @@ class StatusCheckByNinoControllerSpec extends ControllerSpec {
           val updatedSession = await(result).session(request)
           updatedSession.get("query") must not be defined
         }
+        verify(mockSessionCacheService, never).set(any(), any())(any(), any())
       }
 
       "the form has errors" in {
@@ -151,6 +153,22 @@ class StatusCheckByNinoControllerSpec extends ControllerSpec {
           val updatedSession = await(result).session(request)
           updatedSession.get("query") must not be defined
         }
+        verify(mockSessionCacheService, never).set(any(), any())(any(), any())
+      }
+
+      "the session cache returns a failure" in {
+        when(mockSessionCacheService.get(any(), any())).thenReturn(Future.failed(new Exception("Something happened")))
+        val now = LocalDate.now()
+        val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "pan", "peter", now.toString)
+        val requestWithForm = request.withFormUrlEncodedBody(
+          "dateOfBirth.year"  -> now.getYear.toString,
+          "dateOfBirth.month" -> now.getMonthOfYear.toString,
+          "dateOfBirth.day"   -> now.getDayOfMonth.toString,
+          "familyName"        -> query.familyName,
+          "givenName"         -> query.givenName,
+          "nino"              -> query.nino.nino
+        )
+        intercept[Exception](await(sut.onSubmit(requestWithForm)))
       }
     }
   }

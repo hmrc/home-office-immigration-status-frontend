@@ -29,6 +29,8 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.{FakeRequest, Injecting}
 import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
 import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.actions.AuthAction
+import org.mockito.Mockito.mock
+import uk.gov.hmrc.homeofficeimmigrationstatus.services.SessionCacheService
 
 import scala.language.postfixOps
 import scala.concurrent.{Await, Awaitable}
@@ -37,7 +39,8 @@ trait ControllerSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting wi
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
-      bind[AuthAction].to[FakeAuthAction]
+      bind[AuthAction].to[FakeAuthAction],
+      bind[SessionCacheService].toInstance(mockSessionCacheService)
     )
     .build()
 
@@ -47,4 +50,5 @@ trait ControllerSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting wi
   lazy val messages: Messages = inject[MessagesApi].preferred(Seq.empty)
   lazy val appConfig: AppConfig = inject[AppConfig]
   val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+  val mockSessionCacheService: SessionCacheService = mock(classOf[SessionCacheService])
 }

@@ -31,6 +31,7 @@ import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.actions.AuthAction
 import uk.gov.hmrc.homeofficeimmigrationstatus.models._
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.{MultipleMatchesFoundPage, StatusCheckFailurePage, StatusFoundPage, StatusNotAvailablePage}
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.{StatusFoundPageContext, StatusNotAvailablePageContext}
+import uk.gov.hmrc.homeofficeimmigrationstatus.services.SessionCacheService
 
 import scala.concurrent.Future
 
@@ -41,12 +42,14 @@ class StatusResultControllerSpec extends ControllerSpec {
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
       bind[AuthAction].to[FakeAuthAction],
-      bind[HomeOfficeImmigrationStatusProxyConnector].toInstance(mockConnector)
+      bind[HomeOfficeImmigrationStatusProxyConnector].toInstance(mockConnector),
+      bind[SessionCacheService].toInstance(mockSessionCacheService)
     )
     .build()
 
   override def beforeEach(): Unit = {
     reset(mockConnector)
+    reset(mockSessionCacheService)
     super.beforeEach()
   }
 
@@ -55,6 +58,7 @@ class StatusResultControllerSpec extends ControllerSpec {
   "onPageLoad" must {
     "redirect to the form" when {
       "there is no query to search" in {
+        when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(None))
         val result = sut.onPageLoad()(request)
 
         status(result) mustBe SEE_OTHER
@@ -62,22 +66,13 @@ class StatusResultControllerSpec extends ControllerSpec {
         withClue("Connector should not be called") {
           verify(mockConnector, times(0)).statusPublicFundsByNino(any())(any(), any())
         }
-      }
-      "the query is malformed, and cannot be used" in {
-        val requestWithMalformed = request.withSession("query" -> "blah")
-        val result = sut.onPageLoad()(requestWithMalformed)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result).get mustBe routes.StatusCheckByNinoController.onPageLoad.url
-        withClue("Connector should not be called") {
-          verify(mockConnector, times(0)).statusPublicFundsByNino(any())(any(), any())
-        }
+        verify(mockSessionCacheService).get(any(), any())
       }
     }
 
     "display the return from HO" when {
       val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "pan", "peter", LocalDate.now().toString)
-      val requestWithQuery = request.withSession("query" -> Json.toJson(query).toString)
+      val formQuery = FormQueryModel("123", query)
 
       def mockConnectorWith(hoResponse: StatusCheckResponse) =
         when(
@@ -88,6 +83,7 @@ class StatusResultControllerSpec extends ControllerSpec {
       def verifyConnector() = verify(mockConnector).statusPublicFundsByNino(any())(any(), any())
 
       "is found with statuses" in {
+        when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(formQuery)))
         val hoResult = StatusCheckResult(
           "",
           java.time.LocalDate.now(),
@@ -95,54 +91,57 @@ class StatusResultControllerSpec extends ControllerSpec {
           List(ImmigrationStatus(java.time.LocalDate.now(), None, "", "", false)))
         mockConnectorWith(StatusCheckResponse("id", result = Some(hoResult)))
 
-        val result = sut.onPageLoad()(requestWithQuery)
+        val result = sut.onPageLoad()(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe inject[StatusFoundPage]
           .apply(StatusFoundPageContext(query, hoResult, routes.LandingController.onPageLoad))(request, messages)
           .toString
         verifyConnector()
+        verify(mockSessionCacheService).get(any(), any())
       }
       "is found with no statuses" in {
+        when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(formQuery)))
         val hoResult = StatusCheckResult("", java.time.LocalDate.now(), "", Nil)
         mockConnectorWith(StatusCheckResponse("id", result = Some(hoResult)))
 
-        val result = sut.onPageLoad()(requestWithQuery)
+        val result = sut.onPageLoad()(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe inject[StatusNotAvailablePage]
-          .apply(StatusNotAvailablePageContext(query, routes.LandingController.onPageLoad))(
-            request,
-            messages,
-            appConfig)
+          .apply(StatusNotAvailablePageContext(query, routes.LandingController.onPageLoad))(request, messages)
           .toString
         verifyConnector()
+        verify(mockSessionCacheService).get(any(), any())
       }
       "has conflict error" in {
+        when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(formQuery)))
         val hoError = StatusCheckError("ERR_CONFLICT")
         mockConnectorWith(StatusCheckResponse("id", error = Some(hoError)))
 
-        val result = sut.onPageLoad()(requestWithQuery)
+        val result = sut.onPageLoad()(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe inject[MultipleMatchesFoundPage]
           .apply(query)(request, messages)
           .toString
         verifyConnector()
+        verify(mockSessionCacheService).get(any(), any())
       }
       "has some other error" in {
+        when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(formQuery)))
         val hoError = StatusCheckError("OTHER")
         mockConnectorWith(StatusCheckResponse("id", error = Some(hoError)))
 
-        val result = sut.onPageLoad()(requestWithQuery)
+        val result = sut.onPageLoad()(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe inject[StatusCheckFailurePage]
           .apply(query)(request, messages)
           .toString
         verifyConnector()
+        verify(mockSessionCacheService).get(any(), any())
       }
     }
   }
-
 }

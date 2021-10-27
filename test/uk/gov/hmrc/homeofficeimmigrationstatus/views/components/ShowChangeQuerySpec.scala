@@ -57,5 +57,4 @@ class ShowChangeQuerySpec extends ViewSpec {
       }
     }
   }
-
 }

@@ -16,15 +16,16 @@
 
 @import uk.gov.hmrc.homeofficeimmigrationstatus.views.{DateFormat, StatusNotAvailablePageContext}
 @import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.homeofficeimmigrationstatus.viewmodels.{RowViewModel => Row}
 
 @this(
     govukButton : GovukButton,
-    govukWrapper: govuk_wrapper
-)
+    govukWrapper: govuk_wrapper,
+    summaryList: components.SummaryList,
+)(implicit appConfig: AppConfig)
 
-@(context: StatusNotAvailablePageContext)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
-
-@locale = @{messages.lang.locale}
+@(context: StatusNotAvailablePageContext)(implicit request: Request[_], messages: Messages)
 
 @govukWrapper(title = messages("status-not-available.title")) {
 
@@ -33,33 +34,14 @@
         @messages("app.hasNoActiveStatus")
     </h1>
 
-    <p class="govuk-body">@messages("status-not-available.listParagraph")</p>
+    <p class="govuk-body" id="not-available-paragraph">@messages("status-not-available.listParagraph")</p>
 
-    <ul class="govuk-list govuk-list--bullet">
+    <ul class="govuk-list govuk-list--bullet" id="not-available-list">
         <li id="item1">@messages("status-not-available.list-item1")</li>
         <li id="item2">@messages("status-not-available.list-item2")</li>
     </ul>
 
-    <dl class="govuk-summary-list">
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("generic.nino")</dt>
-            <dd id="nino" class="govuk-summary-list__value govuk-!-width-one-third">@context.query.nino.nino</dd>
-        </div>
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("generic.givenName")</dt>
-            <dd id="givenName" class="govuk-summary-list__value govuk-!-width-one-third">@context.query.givenName</dd>
-        </div>
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("generic.familyName")</dt>
-            <dd id="familyName" class="govuk-summary-list__value govuk-!-width-one-third">@context.query.familyName</dd>
-        </div>
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key govuk-!-width-one-third">@messages("generic.dob")</dt>
-            <dd id="dob" class="govuk-summary-list__value govuk-!-width-one-third">@DateFormat.formatDatePattern(locale)(context.query.dateOfBirth)</dd>
-        </div>
-    </dl>
-
+    @summaryList("notAvailablePersonalData", context.notAvailablePersonalData)
 
     @govukButton(Button(content = Text(messages("generic.searchAgain")), href=Some(context.searchAgainCall.url)))
-
 }
