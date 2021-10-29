@@ -31,5 +31,4 @@ trait MetricsTestSupport {
       throw new Exception(s"Metric [$metric] not found, try one of ${timers.keySet()}")
     metrics.getCount should be >= 1L
   }
-
 }

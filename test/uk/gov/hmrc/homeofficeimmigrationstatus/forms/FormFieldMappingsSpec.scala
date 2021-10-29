@@ -18,8 +18,8 @@ package uk.gov.hmrc.homeofficeimmigrationstatus.forms
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
-import play.api.data.validation.{Constraint, Invalid, Valid}
 import org.scalatest.OptionValues
+import play.api.data.validation.{Constraint, Invalid, Valid}
 
 class FormFieldMappingsSpec extends AnyWordSpecLike with Matchers with OptionValues with FormFieldMappings {
 
@@ -47,5 +47,4 @@ class FormFieldMappingsSpec extends AnyWordSpecLike with Matchers with OptionVal
       validateName("ĄĘÓŚŻĆŁąęółśćńżźāēīūčģķļņšž") shouldBe Valid
     }
   }
-
 }

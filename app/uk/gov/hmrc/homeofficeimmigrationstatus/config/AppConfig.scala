@@ -18,9 +18,7 @@ package uk.gov.hmrc.homeofficeimmigrationstatus.config
 
 import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.duration.Duration
 
 @Singleton
 class AppConfig @Inject()(servicesConfig: ServicesConfig, val configuration: Configuration) {
@@ -36,5 +34,4 @@ class AppConfig @Inject()(servicesConfig: ServicesConfig, val configuration: Con
   val authorisedStrideGroup: String = servicesConfig.getString("authorisedStrideGroup")
   val defaultQueryTimeRangeInMonths: Int = servicesConfig.getInt("defaultQueryTimeRangeInMonths")
   val gtmId: String = servicesConfig.getString("google-tag-manager.id")
-
 }

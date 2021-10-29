@@ -17,10 +17,13 @@
 package uk.gov.hmrc.homeofficeimmigrationstatus.controllers
 
 import scala.concurrent.duration._
+import scala.language.postfixOps
+import scala.concurrent.{Await, Awaitable}
 import akka.util.Timeout
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import org.mockito.Mockito.mock
 import play.api.Application
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.bind
@@ -29,11 +32,7 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.{FakeRequest, Injecting}
 import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
 import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.actions.AuthAction
-import org.mockito.Mockito.mock
 import uk.gov.hmrc.homeofficeimmigrationstatus.services.SessionCacheService
-
-import scala.language.postfixOps
-import scala.concurrent.{Await, Awaitable}
 
 trait ControllerSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with BeforeAndAfterEach {
 

@@ -18,11 +18,10 @@ package uk.gov.hmrc.homeofficeimmigrationstatus.forms
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
-
+import org.scalatest.OptionValues
 import java.time.LocalDate
 import play.api.data.validation.{Invalid, ValidationError}
 import uk.gov.hmrc.homeofficeimmigrationstatus.forms.helpers.DateFieldHelper._
-import org.scalatest.OptionValues
 
 class DateFieldHelperSpec extends AnyWordSpecLike with Matchers with OptionValues {
 
@@ -181,5 +180,4 @@ class DateFieldHelperSpec extends AnyWordSpecLike with Matchers with OptionValue
       validDobDateFormat("1972-XX-XX") shouldBe Invalid(ValidationError("error.dateOfBirth.invalid-format"))
     }
   }
-
 }

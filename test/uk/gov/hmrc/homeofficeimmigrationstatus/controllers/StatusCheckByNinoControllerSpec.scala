@@ -24,7 +24,6 @@ import play.api.data.FormBinding.Implicits.formBinding
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.Json
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.domain.Nino
@@ -34,7 +33,6 @@ import uk.gov.hmrc.homeofficeimmigrationstatus.models.{FormQueryModel, StatusChe
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.StatusCheckByNinoPage
 import uk.gov.hmrc.homeofficeimmigrationstatus.services.SessionCacheService
 import scala.concurrent.Future
-import uk.gov.hmrc.http.HeaderCarrier
 
 class StatusCheckByNinoControllerSpec extends ControllerSpec {
 
@@ -118,6 +116,7 @@ class StatusCheckByNinoControllerSpec extends ControllerSpec {
         verify(mockSessionCacheService).set(refEq(query), any())(any(), any())
       }
     }
+
     "return the errored form" when {
       val form = inject[StatusCheckByNinoFormProvider].apply()
       "the submitted form is empty" in {
@@ -172,5 +171,4 @@ class StatusCheckByNinoControllerSpec extends ControllerSpec {
       }
     }
   }
-
 }

@@ -20,7 +20,7 @@ import play.api.i18n.Messages
 import play.api.mvc.Call
 import uk.gov.hmrc.homeofficeimmigrationstatus.models.ImmigrationStatus._
 import uk.gov.hmrc.homeofficeimmigrationstatus.viewmodels.{RowViewModel => Row}
-import uk.gov.hmrc.homeofficeimmigrationstatus.models.{ImmigrationStatus, StatusCheckByNinoFormModel, StatusCheckByNinoRequest, StatusCheckResult}
+import uk.gov.hmrc.homeofficeimmigrationstatus.models.{ImmigrationStatus, StatusCheckByNinoFormModel, StatusCheckResult}
 
 final case class StatusFoundPageContext(
   query: StatusCheckByNinoFormModel,

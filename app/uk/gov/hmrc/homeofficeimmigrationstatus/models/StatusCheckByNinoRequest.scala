@@ -18,7 +18,6 @@ package uk.gov.hmrc.homeofficeimmigrationstatus.models
 
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.domain.Nino
-import java.time.{LocalDate, ZoneId}
 
 case class StatusCheckByNinoRequest(
   // National insurance number

@@ -33,5 +33,4 @@ class AccessibilityStatementControllerSpec extends ControllerSpec {
       contentAsString(result) mustBe view()(request, messages, appConfig).toString
     }
   }
-
 }

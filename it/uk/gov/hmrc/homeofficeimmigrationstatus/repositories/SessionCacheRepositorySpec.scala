@@ -16,5 +16,4 @@ class SessionCacheRepositorySpec extends PlaySpec with GuiceOneAppPerSuite with 
       assert(ttlIndex.get.options.contains("expireAfterSeconds"))
     }
   }
-
 }

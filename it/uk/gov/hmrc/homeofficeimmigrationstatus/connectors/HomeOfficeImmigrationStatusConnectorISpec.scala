@@ -108,7 +108,6 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
         .extractResponseBody(errorMessage, "::: '") shouldBe s"""{"error":{"errCode":"$errorMessage"}}"""
     }
   }
-
 }
 
 trait HomeOfficeImmigrationStatusConnectorISpecSetup extends AppISpec with HomeOfficeImmigrationStatusStubs with ScalaFutures {

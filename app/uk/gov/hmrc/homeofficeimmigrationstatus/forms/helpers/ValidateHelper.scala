@@ -36,5 +36,4 @@ object ValidateHelper {
             Invalid(ValidationError(invalidFailure))
       }
     }
-
 }

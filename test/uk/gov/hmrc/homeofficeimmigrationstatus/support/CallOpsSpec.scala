@@ -20,9 +20,9 @@ import java.io.File
 import com.typesafe.config._
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
+import org.scalatest.OptionValues
 import play.api.{Configuration, Environment, Mode}
 import uk.gov.hmrc.homeofficeimmigrationstatus.support.CallOps.localFriendlyUrl
-import org.scalatest.OptionValues
 
 class CallOpsSpec extends AnyWordSpecLike with Matchers with OptionValues {
 
@@ -35,26 +35,19 @@ class CallOpsSpec extends AnyWordSpecLike with Matchers with OptionValues {
   "CallOps" should {
 
     "return the original url if it is in the test environment" in {
-
       localFriendlyUrl(testEnv, devConf)("A", "B") shouldBe "A"
     }
 
     "return url string with localhost and port if is in development environment" in {
-
       localFriendlyUrl(devEnv, devConf)("A", "B") shouldBe "http://BA"
     }
 
     "return the original url if it is in the production environment" in {
-
       localFriendlyUrl(prodEnv, prodConf)("A", "B") shouldBe "A"
     }
 
     "if url is not absolute then return the url regardless of environment" in {
-
       localFriendlyUrl(devEnv, devConf)("http://A", "B") shouldBe "http://A"
-
     }
-
   }
-
 }

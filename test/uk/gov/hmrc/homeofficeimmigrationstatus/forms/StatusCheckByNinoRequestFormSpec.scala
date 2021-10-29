@@ -18,12 +18,12 @@ package uk.gov.hmrc.homeofficeimmigrationstatus.forms
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
-import play.api.data.FormError
-import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.homeofficeimmigrationstatus.models.{StatusCheckByNinoFormModel, StatusCheckByNinoRequest}
 import org.scalatest.OptionValues
 import org.scalacheck.Gen
+import play.api.data.FormError
 import play.api.data.Form
+import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.homeofficeimmigrationstatus.models.StatusCheckByNinoFormModel
 
 class StatusCheckByNinoRequestFormSpec extends AnyWordSpecLike with Matchers with OptionValues {
 

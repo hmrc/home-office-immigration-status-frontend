@@ -38,5 +38,4 @@ trait StateMatchers[S] {
         case _ => MatchResult(true, "", s"")
       }
     }
-
 }

@@ -1,7 +1,6 @@
 package uk.gov.hmrc.homeofficeimmigrationstatus.stubs
 
 import java.time.{LocalDate, ZoneId}
-
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.matching.AnythingPattern
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
@@ -148,5 +147,4 @@ trait HomeOfficeImmigrationStatusStubs extends JourneyTestData {
           aResponse()
             .withStatus(httpResponseCode)
         ))
-
 }

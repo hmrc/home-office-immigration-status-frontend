@@ -20,12 +20,11 @@ import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito.{mock, never, reset, verify, when}
 import org.scalatestplus.play.PlaySpec
 import org.scalatest.BeforeAndAfterEach
+import org.scalatest.concurrent.ScalaFutures
 import uk.gov.hmrc.homeofficeimmigrationstatus.repositories.SessionCacheRepository
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import uk.gov.hmrc.homeofficeimmigrationstatus.models.{FormQueryModel, StatusCheckByNinoFormModel}
-
 import scala.concurrent.ExecutionContext.Implicits.global
-import org.scalatest.concurrent.ScalaFutures
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.language.postfixOps
@@ -76,7 +75,6 @@ class SessionCacheServiceSpec extends PlaySpec with BeforeAndAfterEach with Scal
       intercept[NoSessionIdException.type] { Await.result(sut.get(hc, implicitly), 5 seconds) }
       verify(mockRepo, never()).findById(any(), any())(any())
     }
-
   }
 
   "set" must {
@@ -105,7 +103,6 @@ class SessionCacheServiceSpec extends PlaySpec with BeforeAndAfterEach with Scal
       verify(mockRepo, never)
         .findAndUpdate(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())(any())
     }
-
   }
 
   "delete" must {
@@ -123,7 +120,5 @@ class SessionCacheServiceSpec extends PlaySpec with BeforeAndAfterEach with Scal
       intercept[NoSessionIdException.type] { Await.result(sut.delete(hc, implicitly), 5 seconds) }
       verify(mockRepo, never()).removeById(any(), any())(any())
     }
-
   }
-
 }

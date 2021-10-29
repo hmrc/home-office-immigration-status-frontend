@@ -4,7 +4,7 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.Application
 import play.api.libs.json.Json
 import play.api.libs.ws.{WSClient, WSRequest}
-import play.api.mvc.{CookieHeaderEncoding, Session, SessionCookieBaker}
+import play.api.mvc.{CookieHeaderEncoding, SessionCookieBaker}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficeimmigrationstatus.models.{FormQueryModel, StatusCheckByNinoFormModel}
 import uk.gov.hmrc.homeofficeimmigrationstatus.stubs.{HomeOfficeImmigrationStatusStubs, JourneyTestData}

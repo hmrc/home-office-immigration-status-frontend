@@ -3,8 +3,6 @@ package uk.gov.hmrc.homeofficeimmigrationstatus.stubs
 import com.github.tomakehurst.wiremock.client.WireMock._
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.{Millis, Seconds, Span}
-import play.api.libs.json.Json
-import uk.gov.hmrc.homeofficeimmigrationstatus.services.HomeOfficeImmigrationStatusFrontendEvent.HomeOfficeImmigrationStatusFrontendEvent
 import uk.gov.hmrc.homeofficeimmigrationstatus.support.WireMockSupport
 
 trait DataStreamStubs extends Eventually {

@@ -18,10 +18,9 @@ package uk.gov.hmrc.homeofficeimmigrationstatus.connectors
 
 import java.net.URL
 import java.util.UUID
-
+import javax.inject.{Inject, Singleton}
 import com.codahale.metrics.MetricRegistry
 import com.kenshoo.play.metrics.Metrics
-import javax.inject.{Inject, Singleton}
 import play.api.libs.json.{Json, Writes}
 import uk.gov.hmrc.agent.kenshoo.monitoring.HttpAPIMonitor
 import uk.gov.hmrc.homeofficeimmigrationstatus.connectors.HomeOfficeImmigrationStatusProxyConnector.extractResponseBody
@@ -67,7 +66,6 @@ class HomeOfficeImmigrationStatusProxyConnector @Inject()(appConfig: AppConfig, 
           case e: Throwable => Future.failed(HomeOfficeImmigrationStatusProxyError(e))
         }
     }
-
 }
 
 object HomeOfficeImmigrationStatusProxyConnector {
