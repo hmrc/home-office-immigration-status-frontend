@@ -17,7 +17,7 @@
 package assets.constants
 
 import java.time.LocalDate
-import uk.gov.hmrc.homeofficeimmigrationstatus.models.{ImmigrationStatus}
+import models.{ImmigrationStatus}
 
 object ImmigrationStatusConstant {
 
