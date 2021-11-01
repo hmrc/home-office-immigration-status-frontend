@@ -34,7 +34,7 @@ final case class RowWithActionViewModel(
 }
 
 object RowWithActionViewModel {
-  private val changeInputUrl = routes.StatusCheckByNinoController.onPageLoad.url
+  private def changeInputUrl(fieldId: String) = s"${routes.StatusCheckByNinoController.onPageLoad.url}#$fieldId"
   private val changeMessageKey = "generic.change"
 
   def apply(
@@ -42,14 +42,23 @@ object RowWithActionViewModel {
     messageKey: String,
     data: String,
     actionId: String,
+    fieldId: String,
     spanMessageKey: String): RowWithActionViewModel =
-    new RowWithActionViewModel(id, messageKey, data, changeInputUrl, actionId, changeMessageKey, spanMessageKey)
+    new RowWithActionViewModel(
+      id,
+      messageKey,
+      data,
+      changeInputUrl(fieldId),
+      actionId,
+      changeMessageKey,
+      spanMessageKey)
 
   def apply(
     id: String,
     messageKey: String,
     data: String,
-    actionId: String
+    actionId: String,
+    fieldId: String
   ): RowWithActionViewModel =
-    new RowWithActionViewModel(id, messageKey, data, changeInputUrl, actionId, changeMessageKey, messageKey)
+    new RowWithActionViewModel(id, messageKey, data, changeInputUrl(fieldId), actionId, changeMessageKey, messageKey)
 }
