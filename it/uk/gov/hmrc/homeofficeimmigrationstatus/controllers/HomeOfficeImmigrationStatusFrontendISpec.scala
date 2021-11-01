@@ -89,7 +89,6 @@ class HomeOfficeImmigrationStatusFrontendISpec
 
         result.status shouldBe 200 //todo really?
         result.body should include(htmlEscapedMessage("external.error.500.title"))
-        result.body should include(htmlEscapedMessage("external.error.500.heading"))
         result.body should include(htmlEscapedMessage("external.error.500.message"))
         result.body should include(htmlEscapedMessage("external.error.500.listParagraph"))
         result.body should include(htmlEscapedMessage("external.error.500.list-item1"))

@@ -46,7 +46,7 @@ class ShutteringFilter @Inject()(val messagesApi: MessagesApi, errorTemplate: er
         ServiceUnavailable(
           errorTemplate(
             Messages("shuttering.title"),
-            Messages("shuttering.heading"),
+            Messages("shuttering.title"),
             Messages("global.error.500.message")
           )
         ))

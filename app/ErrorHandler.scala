@@ -71,7 +71,7 @@ class ErrorHandler @Inject()(
   def externalErrorTemplate()(implicit request: Request[_]): HtmlFormat.Appendable =
     errorTemplate(
       Messages("external.error.500.title"),
-      Messages("external.error.500.heading"),
+      Messages("external.error.500.title"),
       Messages("external.error.500.message"),
       Some(config.get[String]("it.helpdesk.url"))
     )

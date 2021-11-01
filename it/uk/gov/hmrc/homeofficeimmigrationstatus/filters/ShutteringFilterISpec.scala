@@ -35,7 +35,7 @@ class ShutteringFilterISpec extends NonAuthPageISpec("isShuttered" -> true) {
 
       result.body shouldBe shutteringPage(
         Messages("shuttering.title"),
-        Messages("shuttering.heading"),
+        Messages("shuttering.title"),
         Messages("global.error.500.message")
       ).toString
     }
