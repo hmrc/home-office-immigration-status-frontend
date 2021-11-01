@@ -22,9 +22,9 @@ import play.api.mvc.{Request, RequestHeader, Result}
 import play.api.{Configuration, Environment, Mode}
 import play.twirl.api.{Html, HtmlFormat}
 import uk.gov.hmrc.auth.core.{InsufficientEnrolments, NoActiveSession}
-import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
-import uk.gov.hmrc.homeofficeimmigrationstatus.connectors.HomeOfficeImmigrationStatusProxyError
-import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.error_template
+import config.AppConfig
+import connectors.HomeOfficeImmigrationStatusProxyError
+import views.html.error_template
 import uk.gov.hmrc.http.{JsValidationException, NotFoundException}
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.config.{AuthRedirects, HttpAuditEvent}
