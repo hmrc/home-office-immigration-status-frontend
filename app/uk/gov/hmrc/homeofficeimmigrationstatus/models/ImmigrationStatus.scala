@@ -18,6 +18,7 @@ package uk.gov.hmrc.homeofficeimmigrationstatus.models
 
 import java.time.LocalDate
 import play.api.libs.json.{Format, Json}
+import uk.gov.hmrc.homeofficeimmigrationstatus.models.ImmigrationStatus.EUS
 
 case class ImmigrationStatus(
   // start date of this status
@@ -31,31 +32,16 @@ case class ImmigrationStatus(
   // right to public funds status for this person
   noRecourseToPublicFunds: Boolean
 ) {
+
+  def isEUS = productType == EUS
+
   private val hasExpired: Boolean = statusEndDate.exists(_.isBefore(LocalDate.now))
   val expiredMsg: String = if (hasExpired) ".expired" else ""
 }
 
 object ImmigrationStatus {
 
-  val EU = "EU"
-  val STUDY = "STUDY"
-  val DEPENDANT = "DEPENDANT"
-  val WORK = "WORK"
-  val FRONTIER_WORKER = "FRONTIER_WORKER"
-  val BNO = "BNO"
-  val BNO_LOTR = "BNO_LOTR"
-  val GRADUATE = "GRADUATE"
   val EUS = "EUS"
-  val SPORTSPERSON = "SPORTSPERSON"
-  val SETTLEMENT = "SETTLEMENT"
-  val TEMP_WORKER = "TEMP_WORKER"
-
-  val ILR = "ILR"
-  val LTR = "LTR"
-  val LTE = "LTE"
-  val PERMIT = "PERMIT"
-  val COA_IN_TIME_GRANT = "COA_IN_TIME_GRANT"
-  val POST_GRACE_PERIOD_COA = "POST_GRACE_PERIOD_COA_GRANT"
 
   implicit val formats: Format[ImmigrationStatus] = Json.format[ImmigrationStatus]
 }
