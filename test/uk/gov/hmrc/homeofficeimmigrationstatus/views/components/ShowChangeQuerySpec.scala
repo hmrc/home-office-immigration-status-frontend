@@ -35,16 +35,17 @@ class ShowChangeQuerySpec extends ViewSpec {
   "showChangeQuery" must {
     "have all of the things in the list in the correct order" in {
       List(
-        (query.nino.nino, "generic.nino", "nino", "generic.nino"),
-        (query.givenName, "generic.givenName", "givenName", "generic.givenName.lowercase"),
-        (query.familyName, "generic.familyName", "familyName", "generic.familyName.lowercase"),
+        (query.nino.nino, "generic.nino", "nino", "nino", "generic.nino"),
+        (query.givenName, "generic.givenName", "givenName", "givenName", "generic.givenName.lowercase"),
+        (query.familyName, "generic.familyName", "familyName", "familyName", "generic.familyName.lowercase"),
         (
           DateFormat.formatDatePattern(messages.lang.locale)(query.dateOfBirth),
           "generic.dob",
           "dob",
+          "dateOfBirth.day",
           "generic.dob.lowercase")
       ).zipWithIndex.foreach {
-        case ((data, msgKey, id, actionText), index) =>
+        case ((data, msgKey, id, fieldId, actionText), index) =>
           val row = doc.select(s"#inputted-data > .govuk-summary-list__row:nth-child(${index + 1})")
           assertOneThirdRowWithAction(
             row,
@@ -52,7 +53,7 @@ class ShowChangeQuerySpec extends ViewSpec {
             data,
             id,
             s"${messages("generic.change")} ${messages(actionText)}",
-            routes.StatusCheckByNinoController.onPageLoad.url
+            routes.StatusCheckByNinoController.onPageLoad.url + "#" + fieldId
           )
       }
     }
