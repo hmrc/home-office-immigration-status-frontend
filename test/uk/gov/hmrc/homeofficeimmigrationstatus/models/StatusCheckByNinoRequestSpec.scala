@@ -40,5 +40,4 @@ class StatusCheckByNinoRequestSpec extends AnyWordSpecLike with Matchers with Op
       formInputWithNoImmigration.toUpperCase shouldBe expectedResult
     }
   }
-
 }

@@ -1,6 +1,7 @@
 package uk.gov.hmrc.homeofficeimmigrationstatus.support
 
 import scala.concurrent.duration._
+import scala.language.postfixOps
 import akka.util.Timeout
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
@@ -13,8 +14,6 @@ import org.scalatest.OptionValues
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
-
-import scala.language.postfixOps
 
 abstract class NonAuthPageISpec(config: (String, Any)*) extends AnyWordSpecLike with Matchers with OptionValues with GuiceOneServerPerSuite {
 

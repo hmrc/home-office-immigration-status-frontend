@@ -17,7 +17,6 @@
 package uk.gov.hmrc.homeofficeimmigrationstatus.support
 
 import java.util.concurrent.atomic.AtomicReference
-
 import scala.concurrent.{ExecutionContext, Future}
 
 /**

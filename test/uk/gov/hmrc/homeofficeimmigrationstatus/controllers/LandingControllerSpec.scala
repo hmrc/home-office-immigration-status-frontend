@@ -18,8 +18,8 @@ package uk.gov.hmrc.homeofficeimmigrationstatus.controllers
 
 import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{redirectLocation, status}
-import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.Mockito.{mock, reset, verify, when}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, verify, when}
 
 import scala.concurrent.Future
 
@@ -46,7 +46,5 @@ class LandingControllerSpec extends ControllerSpec {
       await(sut.onPageLoad(request))
       verify(mockSessionCacheService).delete(any(), any())
     }
-
   }
-
 }

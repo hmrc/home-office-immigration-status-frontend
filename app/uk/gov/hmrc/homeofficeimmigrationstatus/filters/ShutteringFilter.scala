@@ -17,7 +17,6 @@
 package uk.gov.hmrc.homeofficeimmigrationstatus.filters
 
 import akka.stream.Materializer
-import play.api.Configuration
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.Results.ServiceUnavailable
 import play.api.mvc._

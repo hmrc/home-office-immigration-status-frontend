@@ -13,7 +13,6 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.homeofficeimmigrationstatus.stubs.{AuthStubs, DataStreamStubs}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-
 import scala.concurrent.Future
 import scala.language.postfixOps
 import scala.reflect.ClassTag

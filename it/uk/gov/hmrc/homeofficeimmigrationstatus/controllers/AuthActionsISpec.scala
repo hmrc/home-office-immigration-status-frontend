@@ -39,7 +39,6 @@ class AuthActionsISpec extends AuthActionISpecSetup {
       redirectLocation(result).get should include("/stride/sign-in")
     }
   }
-
 }
 
 trait AuthActionISpecSetup extends AppISpec with Injecting {

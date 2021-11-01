@@ -17,12 +17,10 @@
 package uk.gov.hmrc.homeofficeimmigrationstatus.forms.helpers
 
 import java.time.LocalDate
-
 import play.api.data.Forms.{mapping, of}
 import play.api.data.Mapping
 import play.api.data.format.Formats._
 import play.api.data.validation.Constraint
-
 import scala.annotation.tailrec
 import scala.util.Try
 
@@ -104,5 +102,4 @@ object DateFieldHelper {
       "month" -> of[String].transform[String](_.trim.toUpperCase, identity),
       "day"   -> of[String].transform[String](_.trim.toUpperCase, identity)
     )(formatDateFromFields)(parseDateIntoFields).verifying(constraintDate)
-
 }

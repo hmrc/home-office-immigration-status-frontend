@@ -17,9 +17,8 @@
 package uk.gov.hmrc.homeofficeimmigrationstatus.filters
 
 import akka.stream.Materializer
-import play.api.Configuration
-
 import javax.inject.{Inject, Singleton}
+import play.api.Configuration
 import play.api.mvc.RequestHeader
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector

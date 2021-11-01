@@ -17,7 +17,6 @@
 package uk.gov.hmrc.homeofficeimmigrationstatus.models
 
 import java.time.LocalDate
-
 import play.api.libs.json.{Format, Json}
 
 case class StatusCheckRange(startDate: Option[LocalDate] = None, endDate: Option[LocalDate] = None)

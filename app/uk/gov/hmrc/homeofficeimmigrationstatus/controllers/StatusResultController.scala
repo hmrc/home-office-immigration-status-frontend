@@ -17,21 +17,17 @@
 package uk.gov.hmrc.homeofficeimmigrationstatus.controllers
 
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc._
 import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
 import uk.gov.hmrc.homeofficeimmigrationstatus.connectors.HomeOfficeImmigrationStatusProxyConnector
 import uk.gov.hmrc.homeofficeimmigrationstatus.controllers.actions.AuthAction
-import uk.gov.hmrc.homeofficeimmigrationstatus.models.{FormQueryModel, StatusCheckByNinoFormModel, StatusCheckByNinoRequest, StatusCheckResponse}
+import uk.gov.hmrc.homeofficeimmigrationstatus.models.{FormQueryModel, StatusCheckByNinoFormModel, StatusCheckResponse}
 import uk.gov.hmrc.homeofficeimmigrationstatus.views._
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.homeofficeimmigrationstatus.services.SessionCacheService
-
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
-
 @Singleton
 class StatusResultController @Inject()(
   authorise: AuthAction,

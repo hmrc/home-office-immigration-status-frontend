@@ -23,7 +23,6 @@ import play.api.Application
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.Json
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.homeofficeimmigrationstatus.connectors.HomeOfficeImmigrationStatusProxyConnector
@@ -100,6 +99,7 @@ class StatusResultControllerSpec extends ControllerSpec {
         verifyConnector()
         verify(mockSessionCacheService).get(any(), any())
       }
+
       "is found with no statuses" in {
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(formQuery)))
         val hoResult = StatusCheckResult("", java.time.LocalDate.now(), "", Nil)
@@ -114,6 +114,7 @@ class StatusResultControllerSpec extends ControllerSpec {
         verifyConnector()
         verify(mockSessionCacheService).get(any(), any())
       }
+
       "has conflict error" in {
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(formQuery)))
         val hoError = StatusCheckError("ERR_CONFLICT")
@@ -128,6 +129,7 @@ class StatusResultControllerSpec extends ControllerSpec {
         verifyConnector()
         verify(mockSessionCacheService).get(any(), any())
       }
+
       "has some other error" in {
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(formQuery)))
         val hoError = StatusCheckError("OTHER")

@@ -1,7 +1,6 @@
 package uk.gov.hmrc.homeofficeimmigrationstatus.support
 
 import java.net.URL
-
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
@@ -51,6 +50,5 @@ trait WireMockSupport extends BeforeAndAfterAll with BeforeAndAfterEach {
   }
 
   protected def stopWireMockServer(): Unit = wireMockServer.stop()
-
   protected def startWireMockServer(): Unit = wireMockServer.start()
 }

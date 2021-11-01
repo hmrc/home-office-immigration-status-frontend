@@ -78,5 +78,4 @@ class StatusCheckFailureViewSpec extends ViewSpec {
       verify(mockSearchAgainButton).apply()(messages)
     }
   }
-
 }

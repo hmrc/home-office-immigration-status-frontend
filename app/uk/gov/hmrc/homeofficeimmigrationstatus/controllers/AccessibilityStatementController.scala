@@ -20,9 +20,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.homeofficeimmigrationstatus.config.AppConfig
 import uk.gov.hmrc.homeofficeimmigrationstatus.views.html.AccessibilityStatementPage
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
 
 @Singleton
 class AccessibilityStatementController @Inject()(

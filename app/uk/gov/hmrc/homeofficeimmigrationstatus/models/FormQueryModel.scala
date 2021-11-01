@@ -16,12 +16,9 @@
 
 package uk.gov.hmrc.homeofficeimmigrationstatus.models
 
-import play.api.libs.json.{Format, JsError, JsSuccess, JsValue, Json, Reads, Writes, __}
-import reactivemongo.bson.BSONObjectID
+import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.mongoEntity
-
 import java.time.LocalDateTime
-import scala.util.{Failure, Success}
 
 case class FormQueryModel(
   id: String,
