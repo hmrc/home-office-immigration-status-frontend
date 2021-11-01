@@ -45,8 +45,8 @@ class StatusFoundPageContextSpec
   }
 
   def checkMessagesFile(key: String) =
-    withClue("msg key not defined in messages file") {
-      realMessages(key) should not be key
+    withClue(s"msg key:[$key] not defined in messages file") {
+      assert(realMessages.isDefinedAt(key))
     }
 
   //todo nino generator
@@ -67,18 +67,16 @@ class StatusFoundPageContextSpec
 
   "currentStatusLabel" when {
     Seq(
-      ("EUS", "ILR", "status-found.current.EUS.ILR"),
-      ("EUS", "LTR", "status-found.current.EUS.LTR"),
-      ("non EUS", "LTR", "status-found.current.nonEUS.LTR"),
-      ("non EUS", "ILR", "status-found.current.nonEUS.ILR"),
-      ("non EUS", "LTE", "status-found.current.nonEUS.LTE"),
-      ("EUS", "COA_IN_TIME_GRANT", "status-found.current.EUS.COA"),
-      ("EUS", "POST_GRACE_PERIOD_COA_GRANT", "status-found.current.EUS.COA"),
-      ("FRONTIER_WORKER", "PERMIT", "status-found.current.FRONTIER_WORKER.PERMIT")
+      ("EUS", "ILR"),
+      ("EUS", "LTR"),
+      ("EUS", "COA_IN_TIME_GRANT"),
+      ("EUS", "POST_GRACE_PERIOD_COA_GRANT")
     ).foreach {
-      case (productType, immigrationStatus, msgKey) =>
-        s"productType is $productType and immigrationStatus is $immigrationStatus" should {
+      case (productType, immigrationStatus) =>
+        s"productType is EUS and immigrationStatus is $immigrationStatus" should {
           "give correct in-time info" in {
+            val msgKey = s"status-found.current.$productType.$immigrationStatus"
+            when(mockMessages.isDefinedAt(any())).thenReturn(true)
             val date = LocalDate.now()
             val sut = createContext(productType, immigrationStatus, Some(date))
 
@@ -90,21 +88,61 @@ class StatusFoundPageContextSpec
     }
 
     Seq(
-      ("EUS", "ILR", "status-found.current.EUS.ILR"),
-      ("EUS", "LTR", "status-found.current.EUS.LTR"),
-      ("non EUS", "LTR", "status-found.current.nonEUS.LTR"),
-      ("non EUS", "ILR", "status-found.current.nonEUS.ILR"),
-      ("non EUS", "LTE", "status-found.current.nonEUS.LTE"),
-      ("FRONTIER_WORKER", "PERMIT", "status-found.current.FRONTIER_WORKER.PERMIT")
+      ("non EUS", "LTR"),
+      ("other", "ILR"),
+      ("non EUS", "LTE"),
+      ("FRONTIER_WORKER", "PERMIT")
     ).foreach {
-      case (productType, immigrationStatus, msgKey) =>
-        s"productType is $productType and immigrationStatus is $immigrationStatus and is expired" should {
+      case (productType, immigrationStatus) =>
+        s"productType is non EUS and immigrationStatus is $immigrationStatus" should {
+          "give correct in-time info" in {
+            val msgKey = s"status-found.current.nonEUS.$immigrationStatus"
+            when(mockMessages.isDefinedAt(any())).thenReturn(true)
+            val date = LocalDate.now()
+            val sut = createContext(productType, immigrationStatus, Some(date))
+
+            sut.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
+            verify(mockMessages, times(1)).apply(msgKey)
+            checkMessagesFile(msgKey)
+          }
+        }
+    }
+    Seq(
+      ("EUS", "ILR"),
+      ("EUS", "LTR"),
+      ("EUS", "COA_IN_TIME_GRANT"),
+      ("EUS", "POST_GRACE_PERIOD_COA_GRANT")
+    ).foreach {
+      case (productType, immigrationStatus) =>
+        s"productType is EUS and immigrationStatus is $immigrationStatus and is expired" should {
           "give correct expired info" in {
+            when(mockMessages.isDefinedAt(any())).thenReturn(true)
             val date = LocalDate.now().minusDays(1)
             val sut = createContext(productType, immigrationStatus, Some(date))
 
             sut.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
-            val msgKeyExpired = s"$msgKey.expired"
+            val msgKeyExpired = s"status-found.current.EUS.$immigrationStatus.expired"
+            verify(mockMessages, times(1)).apply(msgKeyExpired)
+            checkMessagesFile(msgKeyExpired)
+          }
+        }
+    }
+
+    Seq(
+      ("non EUS", "LTR"),
+      ("some", "ILR"),
+      ("other", "LTE"),
+      ("FRONTIER_WORKER", "PERMIT")
+    ).foreach {
+      case (productType, immigrationStatus) =>
+        s"productType is $productType and immigrationStatus is $immigrationStatus and is expired" should {
+          "give correct expired info" in {
+            when(mockMessages.isDefinedAt(any())).thenReturn(true)
+            val date = LocalDate.now().minusDays(1)
+            val sut = createContext(productType, immigrationStatus, Some(date))
+
+            sut.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
+            val msgKeyExpired = s"status-found.current.nonEUS.$immigrationStatus.expired"
             verify(mockMessages, times(1)).apply(msgKeyExpired)
             checkMessagesFile(msgKeyExpired)
           }
@@ -228,7 +266,8 @@ class StatusFoundPageContextSpec
     implicit val messages: Messages =
       MessagesImpl(
         Lang("en-UK"),
-        new DefaultMessagesApi(Map("en-UK" -> Map("immigration.eu.ltr" -> "foo123", "immigration.eu.ilr" -> "bar456"))))
+        new DefaultMessagesApi(
+          Map("en-UK" -> Map("immigration.eus.ltr" -> "foo123", "immigration.eus.ilr" -> "bar456"))))
     "work for EUS-LTR" in {
       StatusFoundPageContext.immigrationStatusLabel("EUS", "LTR") shouldBe "foo123"
     }
