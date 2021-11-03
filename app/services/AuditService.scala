@@ -31,6 +31,8 @@ import scala.util.Try
 object HomeOfficeImmigrationStatusFrontendEvent extends Enumeration {
   val HomeOfficeImmigrationStatusFrontendSomethingHappened: services.HomeOfficeImmigrationStatusFrontendEvent.Value =
     Value
+  val HomeOfficeImmigrationStatusFound: services.HomeOfficeImmigrationStatusFrontendEvent.Value =
+    Value
   type HomeOfficeImmigrationStatusFrontendEvent = Value
 }
 
@@ -39,7 +41,7 @@ class AuditService @Inject()(val auditConnector: AuditConnector) {
 
   import HomeOfficeImmigrationStatusFrontendEvent._
 
-  private[services] def auditEvent(
+  def auditEvent(
     event: HomeOfficeImmigrationStatusFrontendEvent,
     transactionName: String,
     details: Seq[(String, Any)] = Seq.empty)(

@@ -28,6 +28,9 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import services.SessionCacheService
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import services.HomeOfficeImmigrationStatusFrontendEvent._
+import services.AuditService
+
 @Singleton
 class StatusResultController @Inject()(
   authorise: AuthAction,
@@ -38,7 +41,8 @@ class StatusResultController @Inject()(
   statusCheckFailurePage: StatusCheckFailurePage,
   statusNotAvailablePage: StatusNotAvailablePage,
   multipleMatchesFoundPage: MultipleMatchesFoundPage,
-  sessionCacheService: SessionCacheService
+  sessionCacheService: SessionCacheService,
+  auditService: AuditService
 )(implicit val appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(controllerComponents) with I18nSupport {
 
@@ -63,6 +67,7 @@ class StatusResultController @Inject()(
         if (error.errCode == "ERR_CONFLICT") Ok(multipleMatchesFoundPage(query))
         else Ok(statusCheckFailurePage(query))
       case StatusCheckResponse(_, _, Some(result)) if result.statuses.nonEmpty =>
+        auditService.auditEvent(HomeOfficeImmigrationStatusFound, "StatusResult")
         Ok(statusFoundPage(StatusFoundPageContext(query, result, routes.LandingController.onPageLoad)))
       case _ =>
         Ok(statusNotAvailablePage(StatusNotAvailablePageContext(query, routes.LandingController.onPageLoad)))
