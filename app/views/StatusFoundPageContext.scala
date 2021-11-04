@@ -38,12 +38,9 @@ final case class StatusFoundPageContext(
       mostRecentStatus.flatMap(s =>
         s.statusEndDate.map(date =>
           Row("expiryDate", "status-found.endDate", DateFormat.format(messages.lang.locale)(date)))),
-      Some(
-        Row(
-          "recourse-text",
-          "status-found.norecourse",
-          if (hasRecourseToPublicFunds) messages("status-found.yes")
-          else messages("status-found.no")))
+      if (!hasRecourseToPublicFunds)
+        Some(Row("recourse-text", "status-found.norecourse", messages("status-found.no")))
+      else None
     ).flatten
 
   def detailRows(implicit messages: Messages): Seq[Row] =

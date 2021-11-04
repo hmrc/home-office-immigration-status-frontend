@@ -251,8 +251,7 @@ class StatusFoundPageContextSpec
         (
           "expiryDate",
           "status-found.endDate",
-          DateFormat.format(realMessages.lang.locale)(context.mostRecentStatus.get.statusEndDate.get)),
-        ("recourse-text", "status-found.norecourse", realMessages("status-found.yes"))
+          DateFormat.format(realMessages.lang.locale)(context.mostRecentStatus.get.statusEndDate.get))
       ).foreach {
         case (id, msgKey, data) =>
           s"row is for $id" in {

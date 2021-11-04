@@ -54,7 +54,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
         val doc = asDocument(html)
 
-        assertElementHasText(doc, "#recourse-text", messages("status-found.yes"))
+        assertNotRenderedById(doc, "#recourse-text")
         assertNotRenderedById(doc, "recourse-warning")
       }
 
@@ -74,7 +74,6 @@ class StatusFoundPageViewSpec extends ViewSpec {
         "immigrationRoute",
         "startDate",
         "expiryDate",
-        "recourse-text",
         "nino",
         "dob",
         "nationality"
