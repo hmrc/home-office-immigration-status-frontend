@@ -127,6 +127,13 @@ class PreviousStatusesComponentSpec extends ViewSpec {
       }
     }
 
+    "Do not display noRecourseToPublicFunds field" when {
+      "when noRecourse is false" in {
+        val doc: Document = asDocument(sut(singleStatus.map(_.copy(noRecourseToPublicFunds = false)))(messages))
+        assertNotRenderedById(doc, "recourse-previous-0")
+      }
+    }
+
     "not display the end date where it is not passed in" in {
       val doc: Document = asDocument(sut(threeStatuses)(messages))
       assertNotRenderedById(doc, "expiryDate-previous-0")
