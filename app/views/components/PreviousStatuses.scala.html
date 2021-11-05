@@ -16,6 +16,8 @@
         Some(Row(s"status-previous-$index", "status-found.previous.status", StatusFoundPageContext.immigrationStatusLabel(status.productType, status.immigrationStatus))),
         Some(Row(s"startDate-previous-$index", "status-found.previous.startDate", DateFormat.format(locale)(status.statusStartDate))),
         status.statusEndDate.map(endDate => Row(s"expiryDate-previous-$index", "status-found.previous.endDate", DateFormat.format(locale)(endDate))),
-        Some(Row(s"recourse-previous-$index", "status-found.previous.recourse", messages("status-found.previous.noRecourseToPublicFunds." + status.noRecourseToPublicFunds)))
+        if(status.noRecourseToPublicFunds) {
+            Some(Row(s"recourse-previous-$index", "status-found.previous.recourse", messages("status-found.previous.noRecourseToPublicFunds.true")))
+        } else None
 ).flatten)
 }
