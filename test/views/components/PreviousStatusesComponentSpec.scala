@@ -111,21 +111,26 @@ class PreviousStatusesComponentSpec extends ViewSpec {
     }
 
     "display noRecourseToPublicFunds field" when {
-      Seq(true, false).foreach { bool =>
-        s"is $bool" in {
-          val doc: Document = asDocument(sut(singleStatus.map(_.copy(noRecourseToPublicFunds = bool)))(messages))
-          val e = doc.getElementById("recourse-previous-0")
-          e.text() mustBe messages(s"status-found.previous.noRecourseToPublicFunds.$bool")
-        }
+      "when noRecourse is true" in {
+        val doc: Document = asDocument(sut(singleStatus.map(_.copy(noRecourseToPublicFunds = true)))(messages))
+        val e = doc.getElementById("recourse-previous-0")
+        e.text() mustBe messages(s"status-found.previous.noRecourseToPublicFunds.true")
       }
+
       "each status is different" in {
         val doc = asDocument(sut(threeStatuses)(messages))
         doc.getElementById("recourse-previous-0").text() mustBe messages(
           "status-found.previous.noRecourseToPublicFunds.true")
-        doc.getElementById("recourse-previous-1").text() mustBe messages(
-          "status-found.previous.noRecourseToPublicFunds.false")
+        assertNotRenderedById(doc, "recourse-previous-1")
         doc.getElementById("recourse-previous-2").text() mustBe messages(
           "status-found.previous.noRecourseToPublicFunds.true")
+      }
+    }
+
+    "Do not display noRecourseToPublicFunds field" when {
+      "when noRecourse is false" in {
+        val doc: Document = asDocument(sut(singleStatus.map(_.copy(noRecourseToPublicFunds = false)))(messages))
+        assertNotRenderedById(doc, "recourse-previous-0")
       }
     }
 
