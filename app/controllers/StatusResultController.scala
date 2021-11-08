@@ -20,7 +20,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import config.AppConfig
 import connectors.HomeOfficeImmigrationStatusProxyConnector
-import controllers.actions.AuthAction
+import controllers.actions.AccessAction
 import models.{FormQueryModel, StatusCheckByNinoFormModel, StatusCheckResponse}
 import views._
 import views.html._
@@ -32,7 +32,7 @@ import play.api.Logging
 
 @Singleton
 class StatusResultController @Inject()(
-  authorise: AuthAction,
+  access: AccessAction,
   override val messagesApi: MessagesApi,
   homeOfficeConnector: HomeOfficeImmigrationStatusProxyConnector,
   controllerComponents: MessagesControllerComponents,
@@ -45,17 +45,16 @@ class StatusResultController @Inject()(
     extends FrontendController(controllerComponents) with I18nSupport with Logging {
 
   val onPageLoad: Action[AnyContent] =
-    (authorise).async { implicit request =>
-      sessionCacheService.get.flatMap(maybeQuery =>
-        maybeQuery match {
-          case Some(FormQueryModel(_, query, _)) =>
-            val req = query.toRequest(appConfig.defaultQueryTimeRangeInMonths) //todo move this to a service
-            homeOfficeConnector
-              .statusPublicFundsByNino(req)
-              .map(result => displayResults(query, result))
-          case None =>
-            Future.successful(Redirect(routes.StatusCheckByNinoController.onPageLoad))
-      })
+    access.async { implicit request =>
+      sessionCacheService.get.flatMap {
+        case Some(FormQueryModel(_, query, _)) =>
+          val req = query.toRequest(appConfig.defaultQueryTimeRangeInMonths) //todo move this to a service
+          homeOfficeConnector
+            .statusPublicFundsByNino(req)
+            .map(result => displayResults(query, result))
+        case None =>
+          Future.successful(Redirect(routes.StatusCheckByNinoController.onPageLoad))
+      }
     }
 
   private def displayResults(query: StatusCheckByNinoFormModel, statusCheckResponse: StatusCheckResponse)(

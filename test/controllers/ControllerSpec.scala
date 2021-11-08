@@ -18,7 +18,7 @@ package controllers
 
 import akka.util.Timeout
 import config.AppConfig
-import controllers.actions.AuthAction
+import controllers.actions.AccessAction
 import org.mockito.Mockito.mock
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
@@ -39,7 +39,7 @@ trait ControllerSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting wi
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
-      bind[AuthAction].to[FakeAuthAction],
+      bind[AccessAction].to[FakeAccessAction],
       bind[SessionCacheService].toInstance(mockSessionCacheService)
     )
     .build()

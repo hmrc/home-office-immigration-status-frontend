@@ -16,23 +16,18 @@
 
 package controllers
 
-import play.api.mvc._
+import akka.stream.Materializer
+import com.google.inject.Inject
 import controllers.actions.AccessAction
-import services.SessionCacheService
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import play.api.mvc._
 
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton
-class LandingController @Inject()(
-  access: AccessAction,
-  controllerComponents: MessagesControllerComponents,
-  sessionCacheService: SessionCacheService
-)(implicit ec: ExecutionContext)
-    extends FrontendController(controllerComponents) {
+class FakeAccessAction @Inject()(implicit materializer: Materializer) extends AccessAction {
+  override def parser: BodyParser[AnyContent] = new BodyParsers.Default()
 
-  val onPageLoad: Action[AnyContent] = access.async { implicit request =>
-    sessionCacheService.delete.map(_ => Redirect(routes.StatusCheckByNinoController.onPageLoad))
-  }
+  override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] =
+    block(request)
+
+  override protected def executionContext: ExecutionContext = ???
 }

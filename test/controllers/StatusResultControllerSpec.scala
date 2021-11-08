@@ -17,7 +17,7 @@
 package controllers
 
 import connectors.HomeOfficeImmigrationStatusProxyConnector
-import controllers.actions.AuthAction
+import controllers.actions.AccessAction
 import models._
 import org.joda.time.LocalDate
 import org.mockito.ArgumentMatchers.{any, refEq}
@@ -40,7 +40,7 @@ class StatusResultControllerSpec extends ControllerSpec {
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
-      bind[AuthAction].to[FakeAuthAction],
+      bind[AccessAction].to[FakeAccessAction],
       bind[HomeOfficeImmigrationStatusProxyConnector].toInstance(mockConnector),
       bind[SessionCacheService].toInstance(mockSessionCacheService)
     )

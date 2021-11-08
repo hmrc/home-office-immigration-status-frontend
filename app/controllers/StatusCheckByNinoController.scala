@@ -19,9 +19,9 @@ package controllers
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import config.AppConfig
-import controllers.actions.AuthAction
+import controllers.actions.AccessAction
 import forms.StatusCheckByNinoFormProvider
-import models.{FormQueryModel}
+import models.FormQueryModel
 import views.html._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import services.SessionCacheService
@@ -30,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class StatusCheckByNinoController @Inject()(
-  authorise: AuthAction,
+  access: AccessAction,
   override val messagesApi: MessagesApi,
   controllerComponents: MessagesControllerComponents,
   formProvider: StatusCheckByNinoFormProvider,
@@ -40,7 +40,7 @@ class StatusCheckByNinoController @Inject()(
     extends FrontendController(controllerComponents) with I18nSupport {
 
   val onPageLoad: Action[AnyContent] =
-    (authorise).async { implicit request =>
+    access.async { implicit request =>
       sessionCacheService.get.map { result =>
         val form = result match {
           case Some(FormQueryModel(_, formModel, _)) => formProvider().fill(formModel)
@@ -51,7 +51,7 @@ class StatusCheckByNinoController @Inject()(
     }
 
   val onSubmit: Action[AnyContent] =
-    (authorise).async { implicit request =>
+    access.async { implicit request =>
       formProvider()
         .bindFromRequest()
         .fold(
