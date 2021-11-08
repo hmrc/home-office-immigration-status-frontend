@@ -24,11 +24,12 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 import java.time.LocalDateTime
 import play.api.libs.json.Json
+import play.api.Logging
 
 @Singleton
 class SessionCacheServiceImpl @Inject()(
   sessionCacheRepository: SessionCacheRepository
-) extends SessionCacheService {
+) extends SessionCacheService with Logging {
 
   def get(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[FormQueryModel]] =
     withSessionId(sessionCacheRepository.findById(_))
@@ -49,7 +50,9 @@ class SessionCacheServiceImpl @Inject()(
   private def withSessionId[A](f: String => Future[A])(implicit hc: HeaderCarrier) =
     hc.sessionId match {
       case Some(sessionId) => f(sessionId.value)
-      case None            => Future.failed(NoSessionIdException)
+      case None =>
+        logger.error("User has no session ID", NoSessionIdException)
+        Future.failed(NoSessionIdException)
     }
 
 }

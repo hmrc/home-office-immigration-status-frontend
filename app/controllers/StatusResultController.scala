@@ -28,6 +28,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import services.SessionCacheService
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import play.api.Logging
+
 @Singleton
 class StatusResultController @Inject()(
   authorise: AuthAction,
@@ -40,7 +42,7 @@ class StatusResultController @Inject()(
   multipleMatchesFoundPage: MultipleMatchesFoundPage,
   sessionCacheService: SessionCacheService
 )(implicit val appConfig: AppConfig, ec: ExecutionContext)
-    extends FrontendController(controllerComponents) with I18nSupport {
+    extends FrontendController(controllerComponents) with I18nSupport with Logging {
 
   val onPageLoad: Action[AnyContent] =
     (authorise).async { implicit request =>
@@ -64,7 +66,8 @@ class StatusResultController @Inject()(
         else Ok(statusCheckFailurePage(query))
       case StatusCheckResponse(_, _, Some(result)) if result.statuses.nonEmpty =>
         Ok(statusFoundPage(StatusFoundPageContext(query, result, routes.LandingController.onPageLoad)))
-      case _ =>
+      case StatusCheckResponse(correlationId, _, _) =>
+        logger.info(s"Match found with no statuses - CorrelationId: $correlationId")
         Ok(statusNotAvailablePage(StatusNotAvailablePageContext(query, routes.LandingController.onPageLoad)))
     }
 }
