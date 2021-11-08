@@ -28,17 +28,18 @@ import models.{StatusCheckByNinoRequest, StatusCheckResponse}
 import config.AppConfig
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import play.api.Logging
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class HomeOfficeImmigrationStatusProxyConnector @Inject()(appConfig: AppConfig, http: HttpClient, metrics: Metrics)
-    extends HttpAPIMonitor {
+    extends HttpAPIMonitor with Logging {
 
-  val HEADER_X_CORRELATION_ID = "X-Correlation-Id"
+  private val HEADER_X_CORRELATION_ID = "X-Correlation-Id"
 
-  val baseUrl: String = appConfig.homeOfficeImmigrationStatusProxyBaseUrl
-  val publicFundsByNinoPath = "/v1/status/public-funds/nino"
+  private val baseUrl: String = appConfig.homeOfficeImmigrationStatusProxyBaseUrl
+  private val publicFundsByNinoPath = "/v1/status/public-funds/nino"
 
   override val kenshooRegistry: MetricRegistry = metrics.defaultRegistry
 
@@ -63,7 +64,9 @@ class HomeOfficeImmigrationStatusProxyConnector @Inject()(appConfig: AppConfig, 
             Json.parse(extractResponseBody(e.message, "Response body: '")).as[StatusCheckResponse]
         }
         .recoverWith {
-          case e: Throwable => Future.failed(HomeOfficeImmigrationStatusProxyError(e))
+          case e: UpstreamErrorResponse =>
+            logger.error(s"${e.statusCode} error returned from the home office", e)
+            Future.failed(HomeOfficeImmigrationStatusProxyError(e))
         }
     }
 }

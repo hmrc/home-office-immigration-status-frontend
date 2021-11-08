@@ -33,6 +33,7 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import play.api.Logging
 
 @Singleton
 class ErrorHandler @Inject()(
@@ -42,7 +43,7 @@ class ErrorHandler @Inject()(
   errorTemplate: error_template,
   @Named("appName") val appName: String
 )(implicit val config: Configuration, ec: ExecutionContext, appConfig: AppConfig)
-    extends FrontendErrorHandler with AuthRedirects with ErrorAuditing {
+    extends FrontendErrorHandler with AuthRedirects with ErrorAuditing with Logging {
 
   private val isDevEnv =
     if (env.mode.equals(Mode.Test)) false
@@ -59,8 +60,10 @@ class ErrorHandler @Inject()(
     exception match {
       case _: NoActiveSession                       => toGGLogin(if (isDevEnv) s"http://${request.host}${request.uri}" else s"${request.uri}")
       case _: InsufficientEnrolments                => Forbidden
-      case _: HomeOfficeImmigrationStatusProxyError => Ok(externalErrorTemplate())
-      case _                                        => Ok(internalErrorTemplate())
+      case _: HomeOfficeImmigrationStatusProxyError => InternalServerError(externalErrorTemplate())
+      case e =>
+        logger.error(e.getMessage, e)
+        InternalServerError(internalErrorTemplate())
     }
   }
 

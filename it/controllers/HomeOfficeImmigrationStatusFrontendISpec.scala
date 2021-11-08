@@ -87,7 +87,7 @@ class HomeOfficeImmigrationStatusFrontendISpec
 
         val result = request("/status-result").get().futureValue
 
-        result.status shouldBe 200 //todo really?
+        result.status shouldBe 500
         result.body should include(htmlEscapedMessage("external.error.500.title"))
         result.body should include(htmlEscapedMessage("external.error.500.message"))
         result.body should include(htmlEscapedMessage("external.error.500.listParagraph"))
