@@ -23,7 +23,7 @@ import config.AppConfig
 import play.api.Environment
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.Results._
-import views.html.error_template
+import views.html.ShutteringPage
 import akka.stream.Materializer
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -31,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ShutterActionImpl @Inject()(
   val messagesApi: MessagesApi,
   val parser: BodyParsers.Default,
-  errorTemplate: error_template
+  shutteringPage: ShutteringPage
 )(implicit val executionContext: ExecutionContext, appConfig: AppConfig)
     extends ShutterAction with I18nSupport {
 
@@ -41,10 +41,10 @@ class ShutterActionImpl @Inject()(
     if (appConfig.shuttered) {
       Some(
         ServiceUnavailable(
-          errorTemplate(
-            Messages("shuttering.title"),
-            Messages("shuttering.title"),
-            Messages("global.error.500.message")
+          shutteringPage(
+            "shuttering.title",
+            "shuttering.title",
+            "shuttering.message"
           )
         ))
     } else None

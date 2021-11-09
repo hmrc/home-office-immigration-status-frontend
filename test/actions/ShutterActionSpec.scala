@@ -31,7 +31,7 @@ import scala.concurrent.{Await, Future}
 import scala.language.postfixOps
 import play.api.i18n.Messages
 import play.api.i18n.{Lang, Messages, MessagesApi}
-import views.html.{error_template => ShutteringPage}
+import views.html.ShutteringPage
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.Application
@@ -79,7 +79,7 @@ class ShutterActionSpec extends ControllerSpec {
         shutteringPage(
           messages("shuttering.title"),
           messages("shuttering.title"),
-          messages("global.error.500.message")
+          messages("shuttering.message")
         ).toString
     }
 
