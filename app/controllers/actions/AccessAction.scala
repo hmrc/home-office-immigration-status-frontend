@@ -14,20 +14,25 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.actions
 
-import akka.stream.Materializer
-import com.google.inject.Inject
-import controllers.actions.AuthAction
-import play.api.mvc._
+import com.google.inject.{ImplementedBy, Inject}
+import play.api.mvc.{ActionBuilder, AnyContent, BodyParsers, Request, Result}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class FakeAuthAction @Inject()(implicit materializer: Materializer) extends AuthAction {
-  override def parser: BodyParser[AnyContent] = new BodyParsers.Default()
+class AccessActionImpl @Inject()(
+  shutterAction: ShutterAction,
+  authAction: AuthAction,
+  override val parser: BodyParsers.Default
+)(
+  implicit val executionContext: ExecutionContext
+) extends AccessAction {
 
   override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] =
-    block(request)
+    (shutterAction andThen authAction).invokeBlock(request, block)
 
-  override protected def executionContext: ExecutionContext = ???
 }
+
+@ImplementedBy(classOf[AccessActionImpl])
+trait AccessAction extends ActionBuilder[Request, AnyContent]

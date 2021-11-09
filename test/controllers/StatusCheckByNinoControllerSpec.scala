@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.actions.AuthAction
+import controllers.actions.AccessAction
 import forms.StatusCheckByNinoFormProvider
 import models.{FormQueryModel, StatusCheckByNinoFormModel}
 import org.joda.time.LocalDate
@@ -39,7 +39,7 @@ class StatusCheckByNinoControllerSpec extends ControllerSpec {
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
-      bind[AuthAction].to[FakeAuthAction],
+      bind[AccessAction].to[FakeAccessAction],
       bind[StatusCheckByNinoPage].toInstance(mockView),
       bind[SessionCacheService].toInstance(mockSessionCacheService)
     )

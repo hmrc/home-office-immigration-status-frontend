@@ -136,6 +136,7 @@ internal.error.500.message='Contact the Helpline.'
 
 # Shuttering
 shuttering.title='Sorry, the service is unavailable'
+shuttering.message='Try again later.'
 
 # Accessibility
 accessibility.title='Accessibility statement for check immigration status'
