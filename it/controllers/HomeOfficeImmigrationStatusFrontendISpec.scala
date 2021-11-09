@@ -17,6 +17,8 @@ class HomeOfficeImmigrationStatusFrontendISpec
     extends HomeOfficeImmigrationStatusFrontendISpecSetup with HomeOfficeImmigrationStatusStubs with JourneyTestData {
 
   //todo seperate these per end point
+  //todo behaves like shuttered endpoint
+
   "HomeOfficeImmigrationStatusFrontend" when {
 
     "GET /check-immigration-status/" should {
