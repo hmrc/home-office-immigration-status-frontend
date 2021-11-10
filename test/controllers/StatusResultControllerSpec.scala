@@ -150,7 +150,7 @@ class StatusResultControllerSpec extends ControllerSpec {
 
         val result = sut.onPageLoad()(request)
 
-        status(result) mustBe OK
+        status(result) mustBe INTERNAL_SERVER_ERROR
         contentAsString(result) mustBe inject[ExternalErrorPage]
           .apply()(request, messages)
           .toString

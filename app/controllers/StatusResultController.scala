@@ -65,7 +65,7 @@ class StatusResultController @Inject()(
     error match {
       case StatusCheckConflict => Ok(multipleMatchesFoundPage(query))
       case StatusCheckNotFound => Ok(statusCheckFailurePage(query))
-      case _                   => Ok(externalErrorPage())
+      case _                   => InternalServerError(externalErrorPage())
     }
 
   private def displaySuccessfulResult(query: StatusCheckByNinoFormModel)(response: StatusCheckResponse)(

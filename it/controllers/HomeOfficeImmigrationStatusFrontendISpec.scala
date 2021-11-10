@@ -90,7 +90,7 @@ class HomeOfficeImmigrationStatusFrontendISpec
 
         val result = request("/status-result").get().futureValue
 
-        result.status shouldBe OK
+        result.status shouldBe INTERNAL_SERVER_ERROR
         result.body should include(htmlEscapedMessage("external.error.500.title"))
         result.body should include(htmlEscapedMessage("external.error.500.message"))
         result.body should include(htmlEscapedMessage("external.error.500.listParagraph"))
