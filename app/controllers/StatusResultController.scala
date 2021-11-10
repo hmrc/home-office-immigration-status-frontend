@@ -22,6 +22,7 @@ import config.AppConfig
 import connectors.HomeOfficeImmigrationStatusProxyConnector
 import controllers.actions.AccessAction
 import models._
+import models.HomeOfficeError._
 import views._
 import views.html._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -64,7 +65,7 @@ class StatusResultController @Inject()(
     error match {
       case StatusCheckConflict => Ok(multipleMatchesFoundPage(query))
       case StatusCheckNotFound => Ok(statusCheckFailurePage(query))
-      case _                   => InternalServerError(externalErrorPage())
+      case _                   => Ok(externalErrorPage())
     }
 
   private def displaySuccessfulResult(query: StatusCheckByNinoFormModel)(response: StatusCheckResponse)(

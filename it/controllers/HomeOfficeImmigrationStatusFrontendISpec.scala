@@ -12,6 +12,7 @@ import support.ServerISpec
 import repositories.SessionCacheRepository
 import scala.concurrent.ExecutionContext.Implicits.global
 import java.time.LocalDateTime
+import play.api.http.Status._
 
 class HomeOfficeImmigrationStatusFrontendISpec
     extends HomeOfficeImmigrationStatusFrontendISpecSetup with HomeOfficeImmigrationStatusStubs with JourneyTestData {
@@ -27,7 +28,7 @@ class HomeOfficeImmigrationStatusFrontendISpec
 
         val result = request("/").get().futureValue
 
-        result.status shouldBe 200
+        result.status shouldBe OK
         result.body should include(htmlEscapedMessage("lookup.title"))
       }
     }
@@ -38,7 +39,7 @@ class HomeOfficeImmigrationStatusFrontendISpec
 
         val result = request("/check-with-nino").get().futureValue
 
-        result.status shouldBe 200
+        result.status shouldBe OK
         result.body should include(htmlEscapedMessage("lookup.title"))
       }
     }
@@ -59,7 +60,7 @@ class HomeOfficeImmigrationStatusFrontendISpec
         val sessionId = "123"
         val result = request("/check-with-nino", sessionId).post(payload).futureValue
 
-        result.status shouldBe 200
+        result.status shouldBe OK
         result.body should include(htmlEscapedMessage("status-found.title"))
       }
     }
@@ -75,7 +76,7 @@ class HomeOfficeImmigrationStatusFrontendISpec
 
         val result = request("/status-result", sessionId).get().futureValue
 
-        result.status shouldBe 200
+        result.status shouldBe OK
         result.body should include(htmlEscapedMessage("status-found.title"))
       }
 
@@ -89,8 +90,7 @@ class HomeOfficeImmigrationStatusFrontendISpec
 
         val result = request("/status-result").get().futureValue
 
-        //todo use the play val's ie import play.api.http.Status.INTERNAL_SERVER_ERROR and the other codes
-        result.status shouldBe 500
+        result.status shouldBe OK
         result.body should include(htmlEscapedMessage("external.error.500.title"))
         result.body should include(htmlEscapedMessage("external.error.500.message"))
         result.body should include(htmlEscapedMessage("external.error.500.listParagraph"))
@@ -105,7 +105,7 @@ class HomeOfficeImmigrationStatusFrontendISpec
 
         val result = request("/foo").get().futureValue
 
-        result.status shouldBe 404
+        result.status shouldBe NOT_FOUND
         result.body should include("This page can’t be found")
       }
     }

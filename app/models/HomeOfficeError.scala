@@ -20,9 +20,11 @@ import play.api.http.Status._
 
 sealed trait HomeOfficeError
 
-case object StatusCheckNotFound extends HomeOfficeError
-case object StatusCheckBadRequest extends HomeOfficeError
-case object StatusCheckConflict extends HomeOfficeError
-case object StatusCheckInternalServerError extends HomeOfficeError
-case object StatusCheckInvalidResponse extends HomeOfficeError
-case object OtherErrorResponse extends HomeOfficeError
+object HomeOfficeError {
+  case object StatusCheckNotFound extends HomeOfficeError
+  case object StatusCheckBadRequest extends HomeOfficeError
+  case object StatusCheckConflict extends HomeOfficeError
+  case object StatusCheckInternalServerError extends HomeOfficeError
+  case object StatusCheckInvalidResponse extends HomeOfficeError
+  case object OtherErrorResponse extends HomeOfficeError
+}

@@ -45,7 +45,7 @@
         <appender-ref ref="STDOUT_IGNORE_NETTY" />
     </logger>
 
-    <logger name="application" level="INFO"/>
+    <logger name="application" level="ERROR"/>
 
     <logger name="uk.gov" level="ERROR"/>
 
@@ -65,7 +65,7 @@
         <appender-ref ref="STDOUT"/>
     </logger>
 
-    <root level="INFO">
+    <root level="ERROR">
         <appender-ref ref="FILE"/>
         <appender-ref ref="STDOUT"/>
     </root>

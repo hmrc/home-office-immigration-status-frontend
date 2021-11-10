@@ -8,6 +8,7 @@ import models._
 import stubs.HomeOfficeImmigrationStatusStubs
 import support.AppISpec
 import uk.gov.hmrc.http._
+import models.HomeOfficeError._
 
 import java.time.{LocalDate, ZoneId}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -80,8 +81,6 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
       }
     }
   }
-
-  val errorGenerator: HttpErrorFunctions = new HttpErrorFunctions {}
 
 }
 

@@ -63,7 +63,7 @@ class ErrorHandler @Inject()(
       case _: InsufficientEnrolments => Forbidden
       case e =>
         logger.error(e.getMessage, e)
-        InternalServerError(internalErrorTemplate())
+        Ok(internalErrorTemplate())
     }
   }
 

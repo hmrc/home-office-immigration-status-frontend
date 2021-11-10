@@ -31,6 +31,7 @@ import services.SessionCacheService
 import uk.gov.hmrc.domain.Nino
 import views.html.{ExternalErrorPage, MultipleMatchesFoundPage, StatusCheckFailurePage, StatusFoundPage, StatusNotAvailablePage}
 import views.{StatusFoundPageContext, StatusNotAvailablePageContext}
+import models.HomeOfficeError._
 
 import scala.concurrent.Future
 
@@ -149,7 +150,7 @@ class StatusResultControllerSpec extends ControllerSpec {
 
         val result = sut.onPageLoad()(request)
 
-        status(result) mustBe INTERNAL_SERVER_ERROR
+        status(result) mustBe OK
         contentAsString(result) mustBe inject[ExternalErrorPage]
           .apply()(request, messages)
           .toString

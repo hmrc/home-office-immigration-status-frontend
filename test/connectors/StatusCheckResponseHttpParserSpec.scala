@@ -26,6 +26,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import cats.scalatest.EitherValues._
 import play.api.http.Status._
+import models.HomeOfficeError._
 
 class StatusCheckResponseHttpParserSpec extends AnyWordSpecLike with Matchers {
 
@@ -70,7 +71,7 @@ class StatusCheckResponseHttpParserSpec extends AnyWordSpecLike with Matchers {
       result.leftValue shouldBe StatusCheckInvalidResponse
     }
 
-    errors.foreach { case (k, v) => checkError(k, v) }
+    errors.foreach { (checkError _).tupled }
 
   }
 

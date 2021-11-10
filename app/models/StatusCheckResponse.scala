@@ -19,10 +19,7 @@ package models
 import play.api.libs.json.{Json, OFormat}
 
 case class StatusCheckResponse(
-  // Identifier associated with a checks,
-  // if x-correlation-id is not provided in request headers, a new id generated using token service
   correlationId: String,
-  // Represents the result
   result: StatusCheckResult
 )
 

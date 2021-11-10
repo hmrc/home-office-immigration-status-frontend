@@ -21,6 +21,7 @@ import play.api.http.Status._
 import models._
 import play.api.Logging
 import scala.util.{Failure, Success, Try}
+import models.HomeOfficeError._
 
 object StatusCheckResponseHttpParser extends Logging {
 
