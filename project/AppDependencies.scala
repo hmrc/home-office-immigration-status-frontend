@@ -26,7 +26,8 @@ object AppDependencies {
     "com.github.tomakehurst"      %  "wiremock"                 % "2.27.2",
     "com.vladsch.flexmark"        % "flexmark-all"              % "0.35.10",
     "org.mockito"                 % "mockito-all"               % "1.10.19",
-    "org.pegdown"                 %  "pegdown"                  % "1.6.0"
+    "org.pegdown"                 %  "pegdown"                  % "1.6.0",
+    "com.ironcorelabs"            %% "cats-scalatest"           % "3.1.1",
   ).map(_ % "test, it")
 
 

@@ -16,16 +16,13 @@
 
 package models
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.http.Status._
 
-case class StatusCheckResponse(
-  // Identifier associated with a checks,
-  // if x-correlation-id is not provided in request headers, a new id generated using token service
-  correlationId: String,
-  // Represents the result
-  result: StatusCheckResult
-)
+sealed trait HomeOfficeError
 
-object StatusCheckResponse {
-  implicit val formats: OFormat[StatusCheckResponse] = Json.format[StatusCheckResponse]
-}
+case object StatusCheckNotFound extends HomeOfficeError
+case object StatusCheckBadRequest extends HomeOfficeError
+case object StatusCheckConflict extends HomeOfficeError
+case object StatusCheckInternalServerError extends HomeOfficeError
+case object StatusCheckInvalidResponse extends HomeOfficeError
+case object OtherErrorResponse extends HomeOfficeError
