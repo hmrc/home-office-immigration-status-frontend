@@ -16,22 +16,23 @@
 
 package forms
 
-import play.api.data.Forms.of
+import play.api.data.Forms.{mapping, of}
 import play.api.data.Mapping
 import play.api.data.format.Formats._
 import play.api.data.validation._
 import uk.gov.hmrc.domain.Nino
 import forms.helpers.ValidateHelper
-import forms.helpers.DateFieldHelper._
+import forms.helpers.ValidateHelper.{cond, nonEmpty}
+
+import java.time.LocalDate
+import scala.util.Try
 
 trait FormFieldMappings {
 
-  def dateOfBirthMapping: Mapping[String] = dateFieldsMapping(validDobDateFormat)
-
-  def validNino(
-    nonEmptyFailure: String = "error.nino.required",
-    invalidFailure: String = "error.nino.invalid-format"): Constraint[String] =
-    ValidateHelper.validateField(nonEmptyFailure, invalidFailure)(nino => Nino.isValid(nino))
+  def validNino: Constraint[String] =
+//    cond[String]("error.nino.required")(_.nonEmpty)
+//    .ensuring(cond[String]("error.nino.invalid-format")(Nino.isValid).a, "")
+   ValidateHelper.validateField("error.nino.required", "error.nino.invalid-format")(nino => Nino.isValid(nino))
 
   val maxNameLen = 64
 
@@ -60,4 +61,36 @@ trait FormFieldMappings {
         .filter(_.trim.nonEmpty)
         .fold[ValidationResult](Invalid(ValidationError(s"error.$fieldName.required")))(_ => Valid)
     }
+
+
+  private def parseDateIntoFields(date: String): Option[(String, String, String)] = {
+    val ydm: Array[String] = date.split('-') ++ Array("", "")
+    Some((ydm(0), ydm(1), ydm(2)))
+  }
+
+  private val validateIsRealDate: Constraint[String] =
+    cond("error.dateOfBirth.invalid-format")(data => {
+      Try(LocalDate.parse(data)).isSuccess
+    })
+
+  private val validateNotToday: Constraint[LocalDate] =
+    cond[LocalDate]("error.dateOfBirth.invalid-format")(_.isBefore(LocalDate.now()))
+
+  private val formatDateFromFields: (String, String, String) => String = (y, m, d) => {
+    val year = if (y.length == 2) "19" + y else y
+    val month = if (m.length == 1) "0" + m else m
+    val day = if (d.length == 1) "0" + d else d
+    s"$year-$month-$day"
+  }
+
+  def dobFieldsMapping: Mapping[LocalDate] =
+    mapping(
+      "year"  -> of[String].transform[String](_.trim, identity),
+      "month" -> of[String].transform[String](_.trim, identity),
+      "day"   -> of[String].transform[String](_.trim, identity)
+    )(formatDateFromFields)(parseDateIntoFields)
+      .verifying(nonEmpty("error.dateOfBirth.required"))
+      .verifying(validateIsRealDate)
+      .transform(LocalDate.parse, (d: LocalDate) => d.toString)
+      .verifying(validateNotToday)
 }

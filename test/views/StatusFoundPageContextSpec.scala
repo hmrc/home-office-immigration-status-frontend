@@ -50,7 +50,7 @@ class StatusFoundPageContextSpec
     }
 
   //todo nino generator
-  val query = StatusCheckByNinoFormModel(Nino("RJ301829A"), "Surname", "Forename", "some dob")
+  val query = StatusCheckByNinoFormModel(Nino("RJ301829A"), "Surname", "Forename", LocalDate.now())
   val call = Call("GET", "/")
 
   def createContext(pt: String, is: String, endDate: Option[LocalDate], hasRecourseToPublicFunds: Boolean = false) =

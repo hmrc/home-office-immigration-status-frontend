@@ -18,7 +18,7 @@ package views
 
 import controllers.routes
 import models.StatusCheckByNinoFormModel
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import org.jsoup.nodes.{Document, Element}
 import org.mockito.Mockito.mock
 import play.api.Application
@@ -42,7 +42,7 @@ class StatusNotAvailableViewSpec extends ViewSpec {
 
   lazy val sut: StatusNotAvailablePage = inject[StatusNotAvailablePage]
 
-  val nino = StatusCheckByNinoFormModel(Nino("AB123456C"), "Applicant", "", LocalDate.now().toString)
+  val nino = StatusCheckByNinoFormModel(Nino("AB123456C"), "Applicant", "", LocalDate.now())
 
   val query =
     StatusNotAvailablePageContext(nino, routes.LandingController.onPageLoad)

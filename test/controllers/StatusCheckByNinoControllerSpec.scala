@@ -19,7 +19,7 @@ package controllers
 import controllers.actions.AccessAction
 import forms.StatusCheckByNinoFormProvider
 import models.{FormQueryModel, StatusCheckByNinoFormModel}
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import org.mockito.ArgumentMatchers.{any, refEq, eq => is}
 import org.mockito.Mockito._
 import play.api.Application
@@ -58,7 +58,7 @@ class StatusCheckByNinoControllerSpec extends ControllerSpec {
 
   "onPageLoad" must {
     //TODO NINO GEN
-    val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "pan", "peter", LocalDate.now().toString)
+    val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "pan", "peter", LocalDate.now())
     val formQuery = FormQueryModel("123", query)
     val emptyForm = inject[StatusCheckByNinoFormProvider].apply()
     val prePopForm = emptyForm.fill(query)
@@ -101,10 +101,10 @@ class StatusCheckByNinoControllerSpec extends ControllerSpec {
       "form binds correct data" in {
         when(mockSessionCacheService.set(any(), any())(any(), any())).thenReturn(Future.unit)
         val now = LocalDate.now()
-        val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "pan", "peter", now.toString)
+        val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "pan", "peter", now)
         val requestWithForm = request.withFormUrlEncodedBody(
           "dateOfBirth.year"  -> now.getYear.toString,
-          "dateOfBirth.month" -> now.getMonthOfYear.toString,
+          "dateOfBirth.month" -> now.getMonthValue.toString,
           "dateOfBirth.day"   -> now.getDayOfMonth.toString,
           "familyName"        -> query.familyName,
           "givenName"         -> query.givenName,
@@ -159,10 +159,10 @@ class StatusCheckByNinoControllerSpec extends ControllerSpec {
       "the session cache returns a failure" in {
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.failed(new Exception("Something happened")))
         val now = LocalDate.now()
-        val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "pan", "peter", now.toString)
+        val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "pan", "peter", now)
         val requestWithForm = request.withFormUrlEncodedBody(
           "dateOfBirth.year"  -> now.getYear.toString,
-          "dateOfBirth.month" -> now.getMonthOfYear.toString,
+          "dateOfBirth.month" -> now.getMonthValue.toString,
           "dateOfBirth.day"   -> now.getDayOfMonth.toString,
           "familyName"        -> query.familyName,
           "givenName"         -> query.givenName,

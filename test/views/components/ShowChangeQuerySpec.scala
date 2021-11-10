@@ -18,17 +18,18 @@ package views.components
 
 import controllers.routes
 import models.StatusCheckByNinoFormModel
-import org.joda.time.LocalDate
 import uk.gov.hmrc.domain.Nino
 import views.html.components.ShowChangeQuery
 import views.{DateFormat, ViewSpec}
+
+import java.time.LocalDate
 
 class ShowChangeQuerySpec extends ViewSpec {
 
   val sut = inject[ShowChangeQuery]
 
   //todo nino gen
-  val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "Pan", "", LocalDate.now().toString)
+  val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "Pan", "", LocalDate.now())
 
   val doc = asDocument(sut(query)(messages))
 
@@ -39,7 +40,7 @@ class ShowChangeQuerySpec extends ViewSpec {
         (query.givenName, "generic.givenName", "givenName", "givenName", "generic.givenName.lowercase"),
         (query.familyName, "generic.familyName", "familyName", "familyName", "generic.familyName.lowercase"),
         (
-          DateFormat.formatDatePattern(messages.lang.locale)(query.dateOfBirth),
+          DateFormat.format(messages.lang.locale)(query.dateOfBirth),
           "generic.dob",
           "dob",
           "dateOfBirth.day",

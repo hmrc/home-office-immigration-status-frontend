@@ -19,7 +19,7 @@ package controllers
 import connectors.HomeOfficeImmigrationStatusProxyConnector
 import controllers.actions.AccessAction
 import models._
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
 import play.api.Application
@@ -70,7 +70,7 @@ class StatusResultControllerSpec extends ControllerSpec {
     }
 
     "display the return from HO" when {
-      val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "pan", "peter", LocalDate.now().toString)
+      val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "pan", "peter", LocalDate.now())
       val formQuery = FormQueryModel("123", query)
 
       def mockConnectorWith(hoResponse: StatusCheckResponse) =

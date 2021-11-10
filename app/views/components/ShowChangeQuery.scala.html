@@ -13,6 +13,6 @@
     Row("nino", "generic.nino", query.nino.nino, "change-nino", "nino"),
     Row("givenName", "generic.givenName", query.givenName, "change-given-name", "givenName", "generic.givenName.lowercase"),
     Row("familyName", "generic.familyName", query.familyName, "change-family-name", "familyName", "generic.familyName.lowercase"),
-    Row("dob", "generic.dob", DateFormat.formatDatePattern(locale)(query.dateOfBirth), "change-dob", "dateOfBirth.day", "generic.dob.lowercase")
+    Row("dob", "generic.dob", DateFormat.format(locale)(query.dateOfBirth), "change-dob", "dateOfBirth.day", "generic.dob.lowercase")
     )
 )

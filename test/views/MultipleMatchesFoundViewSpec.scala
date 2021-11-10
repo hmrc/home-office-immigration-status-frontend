@@ -17,7 +17,7 @@
 package views
 
 import models.StatusCheckByNinoFormModel
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import org.jsoup.nodes.{Document, Element}
 import org.mockito.Mockito.{mock, verify}
 import play.api.Application
@@ -42,7 +42,7 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
   lazy val sut = inject[MultipleMatchesFoundPage]
 
   //todo nino gen
-  val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "Pan", "", LocalDate.now().toString)
+  val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "Pan", "", LocalDate.now())
   lazy val doc: Document = asDocument(sut(query)(request, messages))
 
   "MultipleMatchesFoundPage" must {
