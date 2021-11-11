@@ -23,14 +23,15 @@ import org.joda.time.LocalDate
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
 import play.api.Application
-import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import services.SessionCacheService
 import uk.gov.hmrc.domain.Nino
-import views.html.{MultipleMatchesFoundPage, StatusCheckFailurePage, StatusFoundPage, StatusNotAvailablePage}
+import views.html.{ExternalErrorPage, MultipleMatchesFoundPage, StatusCheckFailurePage, StatusFoundPage, StatusNotAvailablePage}
 import views.{StatusFoundPageContext, StatusNotAvailablePageContext}
+import models.HomeOfficeError._
 
 import scala.concurrent.Future
 
@@ -73,7 +74,7 @@ class StatusResultControllerSpec extends ControllerSpec {
       val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "pan", "peter", LocalDate.now().toString)
       val formQuery = FormQueryModel("123", query)
 
-      def mockConnectorWith(hoResponse: StatusCheckResponse) =
+      def mockConnectorWith(hoResponse: Either[HomeOfficeError, StatusCheckResponse]) =
         when(
           mockConnector
             .statusPublicFundsByNino(refEq(query.toRequest(appConfig.defaultQueryTimeRangeInMonths)))(any(), any()))
@@ -88,7 +89,7 @@ class StatusResultControllerSpec extends ControllerSpec {
           java.time.LocalDate.now(),
           "",
           List(ImmigrationStatus(java.time.LocalDate.now(), None, "", "", false)))
-        mockConnectorWith(StatusCheckResponse("id", result = Some(hoResult)))
+        mockConnectorWith(Right(StatusCheckResponse("id", result = hoResult)))
 
         val result = sut.onPageLoad()(request)
 
@@ -103,7 +104,7 @@ class StatusResultControllerSpec extends ControllerSpec {
       "is found with no statuses" in {
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(formQuery)))
         val hoResult = StatusCheckResult("", java.time.LocalDate.now(), "", Nil)
-        mockConnectorWith(StatusCheckResponse("id", result = Some(hoResult)))
+        mockConnectorWith(Right(StatusCheckResponse("id", result = hoResult)))
 
         val result = sut.onPageLoad()(request)
 
@@ -117,8 +118,7 @@ class StatusResultControllerSpec extends ControllerSpec {
 
       "has conflict error" in {
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(formQuery)))
-        val hoError = StatusCheckError("ERR_CONFLICT")
-        mockConnectorWith(StatusCheckResponse("id", error = Some(hoError)))
+        mockConnectorWith(Left(StatusCheckConflict))
 
         val result = sut.onPageLoad()(request)
 
@@ -130,16 +130,29 @@ class StatusResultControllerSpec extends ControllerSpec {
         verify(mockSessionCacheService).get(any(), any())
       }
 
-      "has some other error" in {
+      "has not found error" in {
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(formQuery)))
-        val hoError = StatusCheckError("OTHER")
-        mockConnectorWith(StatusCheckResponse("id", error = Some(hoError)))
+        mockConnectorWith(Left(StatusCheckNotFound))
 
         val result = sut.onPageLoad()(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe inject[StatusCheckFailurePage]
           .apply(query)(request, messages)
+          .toString
+        verifyConnector()
+        verify(mockSessionCacheService).get(any(), any())
+      }
+
+      "has some other error" in {
+        when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(formQuery)))
+        mockConnectorWith(Left(OtherErrorResponse))
+
+        val result = sut.onPageLoad()(request)
+
+        status(result) mustBe INTERNAL_SERVER_ERROR
+        contentAsString(result) mustBe inject[ExternalErrorPage]
+          .apply()(request, messages)
           .toString
         verifyConnector()
         verify(mockSessionCacheService).get(any(), any())

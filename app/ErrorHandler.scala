@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+package errors
+
 import com.google.inject.name.Named
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND}
 import play.api.i18n.{Messages, MessagesApi}
@@ -23,7 +25,6 @@ import play.api.{Configuration, Environment, Mode}
 import play.twirl.api.{Html, HtmlFormat}
 import uk.gov.hmrc.auth.core.{InsufficientEnrolments, NoActiveSession}
 import config.AppConfig
-import connectors.HomeOfficeImmigrationStatusProxyError
 import views.html.error_template
 import uk.gov.hmrc.http.{JsValidationException, NotFoundException}
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
@@ -58,9 +59,8 @@ class ErrorHandler @Inject()(
     auditServerError(request, exception)
     implicit val r: Request[String] = Request(request, "")
     exception match {
-      case _: NoActiveSession                       => toGGLogin(if (isDevEnv) s"http://${request.host}${request.uri}" else s"${request.uri}")
-      case _: InsufficientEnrolments                => Forbidden
-      case _: HomeOfficeImmigrationStatusProxyError => InternalServerError(externalErrorTemplate())
+      case _: NoActiveSession        => toGGLogin(if (isDevEnv) s"http://${request.host}${request.uri}" else s"${request.uri}")
+      case _: InsufficientEnrolments => Forbidden
       case e =>
         logger.error(e.getMessage, e)
         InternalServerError(internalErrorTemplate())
@@ -70,14 +70,6 @@ class ErrorHandler @Inject()(
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(
     implicit request: Request[_]): Html =
     errorTemplate(pageTitle, heading, message, None)
-
-  def externalErrorTemplate()(implicit request: Request[_]): HtmlFormat.Appendable =
-    errorTemplate(
-      Messages("external.error.500.title"),
-      Messages("external.error.500.title"),
-      Messages("external.error.500.message"),
-      Some(config.get[String]("it.helpdesk.url"))
-    )
 
   def internalErrorTemplate()(implicit request: Request[_]): HtmlFormat.Appendable =
     errorTemplate(
