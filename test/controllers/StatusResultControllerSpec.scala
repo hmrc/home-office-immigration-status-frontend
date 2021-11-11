@@ -64,7 +64,7 @@ class StatusResultControllerSpec extends ControllerSpec {
         status(result) mustBe SEE_OTHER
         redirectLocation(result).get mustBe routes.StatusCheckByNinoController.onPageLoad.url
         withClue("Connector should not be called") {
-          verify(mockProxyService, times(0)).statusPublicFundsByNino(any())(any(), any(), any())
+          verify(mockProxyService, times(0)).statusPublicFundsByNino(any())(any(), any(), any(), any())
         }
         verify(mockSessionCacheService).get(any(), any())
       }
@@ -77,13 +77,10 @@ class StatusResultControllerSpec extends ControllerSpec {
       def mockProxyServiceWith(hoResponse: Either[HomeOfficeError, StatusCheckResponse]) =
         when(
           mockProxyService
-            .statusPublicFundsByNino(refEq(query.toRequest(appConfig.defaultQueryTimeRangeInMonths)))(
-              any(),
-              any(),
-              any()))
+            .statusPublicFundsByNino(refEq(query))(any(), any(), any(), any()))
           .thenReturn(Future.successful(hoResponse))
 
-      def verifyConnector() = verify(mockProxyService).statusPublicFundsByNino(any())(any(), any(), any())
+      def verifyConnector() = verify(mockProxyService).statusPublicFundsByNino(any())(any(), any(), any(), any())
 
       "is found with statuses" in {
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(formQuery)))

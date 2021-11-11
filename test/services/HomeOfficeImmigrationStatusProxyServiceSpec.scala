@@ -66,9 +66,9 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
     app.injector.instanceOf[HomeOfficeImmigrationStatusProxyService]
 
   val testDate = LocalDate.now
-
-  val statusRequest =
-    StatusCheckByNinoRequest(Nino("RJ301829A"), "Doe", "Jane", "2001-01-31", StatusCheckRange(None, None))
+  val formModel = StatusCheckByNinoFormModel(Nino("RJ301829A"), "Doe", "Jane", "2001-01-31")
+  val statusRequest = formModel.toRequest(6)
+  implicit val conf = appConfig
 
   "statusPublicFundsByNino" should {
     "only access the audit service when the call downstream was successful" in {
@@ -77,22 +77,17 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
       val result = Right(StatusCheckResponse("CorrelationId", statusCheckResult))
       when(mockConnector.statusPublicFundsByNino(any())(any(), any())).thenReturn(Future.successful(result))
 
-      sut.statusPublicFundsByNino(statusRequest).map { _ =>
-        verify(mockAuditService)
-          .auditEvent(any(), any(), any())(any(), any(), any())
-      }
+      await(sut.statusPublicFundsByNino(formModel))
+      verify(mockAuditService).auditEvent(any(), any(), any())(any(), any(), any())
     }
 
     "don't access the audit service when the call downstream was not successful" in {
       when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any())).thenReturn(Future.unit)
       when(mockConnector.statusPublicFundsByNino(any())(any(), any()))
         .thenReturn(Future.failed(new Exception("It went wrong")))
-        
-      sut.statusPublicFundsByNino(statusRequest).recover {
-        case _ =>
-          verify(mockAuditService, never)
-            .auditEvent(any(), any(), any())(any(), any(), any())
-      }
+
+      intercept[Exception](await(sut.statusPublicFundsByNino(formModel)))
+      verify(mockAuditService, never).auditEvent(any(), any(), any())(any(), any(), any())
     }
 
     "not fail if the audit call fails" in {
@@ -101,7 +96,7 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
       val statusCheckResult = StatusCheckResult("Damon Albarn", testDate, "GBR", Nil)
       val result = Right(StatusCheckResponse("CorrelationId", statusCheckResult))
       when(mockConnector.statusPublicFundsByNino(any())(any(), any())).thenReturn(Future.successful(result))
-      await(sut.statusPublicFundsByNino(statusRequest)) mustEqual result
+      await(sut.statusPublicFundsByNino(formModel)) mustEqual result
     }
   }
 

@@ -51,9 +51,8 @@ class StatusResultController @Inject()(
     access.async { implicit request =>
       sessionCacheService.get.flatMap {
         case Some(FormQueryModel(_, query, _)) =>
-          val req = query.toRequest(appConfig.defaultQueryTimeRangeInMonths) //todo move this to a service
           homeOfficeService
-            .statusPublicFundsByNino(req)
+            .statusPublicFundsByNino(query)
             .map(result => result.fold(handleError(query), displaySuccessfulResult(query)))
         case None =>
           Future.successful(Redirect(routes.StatusCheckByNinoController.onPageLoad))

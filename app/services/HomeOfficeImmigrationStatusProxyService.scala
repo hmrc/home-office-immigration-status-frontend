@@ -19,12 +19,13 @@ package services
 import java.net.URL
 import java.util.UUID
 import javax.inject.{Inject, Singleton}
-import models.{HomeOfficeError, StatusCheckByNinoRequest, StatusCheckResponse}
+import models.{HomeOfficeError, StatusCheckByNinoFormModel, StatusCheckByNinoRequest, StatusCheckResponse}
 import play.api.mvc.Request
 import services.HomeOfficeImmigrationStatusFrontendEvent._
 import uk.gov.hmrc.http.HeaderCarrier
 import models.HomeOfficeError._
 import connectors.HomeOfficeImmigrationStatusProxyConnector
+import config.AppConfig
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -36,14 +37,16 @@ class HomeOfficeImmigrationStatusProxyService @Inject()(
   private val auditTransaction = "StatusCheckRequest"
   private val HEADER_X_CORRELATION_ID = "X-Correlation-Id"
 
-  def statusPublicFundsByNino(statusCheckByNinoRequest: StatusCheckByNinoRequest)(
+  def statusPublicFundsByNino(query: StatusCheckByNinoFormModel)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext,
-    request: Request[Any]): Future[Either[HomeOfficeError, StatusCheckResponse]] = {
+    request: Request[Any],
+    appConfig: AppConfig): Future[Either[HomeOfficeError, StatusCheckResponse]] = {
 
     val headerCarrier = hc.withExtraHeaders(HEADER_X_CORRELATION_ID -> UUID.randomUUID().toString)
+    val checkRequest = query.toRequest(appConfig.defaultQueryTimeRangeInMonths)
 
-    val response = connector.statusPublicFundsByNino(statusCheckByNinoRequest)(headerCarrier, ec)
+    val response = connector.statusPublicFundsByNino(checkRequest)(headerCarrier, ec)
     response.map { result =>
       auditResult(result)
       result
