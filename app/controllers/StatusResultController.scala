@@ -21,7 +21,8 @@ import play.api.mvc._
 import config.AppConfig
 import connectors.HomeOfficeImmigrationStatusProxyConnector
 import controllers.actions.AccessAction
-import models.{FormQueryModel, StatusCheckByNinoFormModel, StatusCheckResponse}
+import models._
+import models.HomeOfficeError._
 import views._
 import views.html._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -29,6 +30,7 @@ import services.SessionCacheService
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import play.api.Logging
+import errors.ErrorHandler
 
 @Singleton
 class StatusResultController @Inject()(
@@ -40,7 +42,8 @@ class StatusResultController @Inject()(
   statusCheckFailurePage: StatusCheckFailurePage,
   statusNotAvailablePage: StatusNotAvailablePage,
   multipleMatchesFoundPage: MultipleMatchesFoundPage,
-  sessionCacheService: SessionCacheService
+  sessionCacheService: SessionCacheService,
+  externalErrorPage: ExternalErrorPage,
 )(implicit val appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(controllerComponents) with I18nSupport with Logging {
 
@@ -51,22 +54,28 @@ class StatusResultController @Inject()(
           val req = query.toRequest(appConfig.defaultQueryTimeRangeInMonths) //todo move this to a service
           homeOfficeConnector
             .statusPublicFundsByNino(req)
-            .map(result => displayResults(query, result))
+            .map(result => result.fold(handleError(query), displaySuccessfulResult(query)))
         case None =>
           Future.successful(Redirect(routes.StatusCheckByNinoController.onPageLoad))
       }
     }
 
-  private def displayResults(query: StatusCheckByNinoFormModel, statusCheckResponse: StatusCheckResponse)(
+  private def handleError(query: StatusCheckByNinoFormModel)(error: HomeOfficeError)(
     implicit request: Request[AnyContent]): Result =
-    statusCheckResponse match {
-      case StatusCheckResponse(_, Some(error), _) =>
-        if (error.errCode == "ERR_CONFLICT") Ok(multipleMatchesFoundPage(query))
-        else Ok(statusCheckFailurePage(query))
-      case StatusCheckResponse(_, _, Some(result)) if result.statuses.nonEmpty =>
-        Ok(statusFoundPage(StatusFoundPageContext(query, result, routes.LandingController.onPageLoad)))
-      case StatusCheckResponse(correlationId, _, _) =>
-        logger.info(s"Match found with no statuses - CorrelationId: $correlationId")
-        Ok(statusNotAvailablePage(StatusNotAvailablePageContext(query, routes.LandingController.onPageLoad)))
+    error match {
+      case StatusCheckConflict => Ok(multipleMatchesFoundPage(query))
+      case StatusCheckNotFound => Ok(statusCheckFailurePage(query))
+      case _                   => InternalServerError(externalErrorPage())
     }
+
+  private def displaySuccessfulResult(query: StatusCheckByNinoFormModel)(response: StatusCheckResponse)(
+    implicit request: Request[AnyContent]): Result =
+    response.result.statuses match {
+      case Nil =>
+        logger.info(s"Match found with no statuses - CorrelationId: ${response.correlationId}")
+        Ok(statusNotAvailablePage(StatusNotAvailablePageContext(query, routes.LandingController.onPageLoad)))
+      case _ =>
+        Ok(statusFoundPage(StatusFoundPageContext(query, response.result, routes.LandingController.onPageLoad)))
+    }
+
 }

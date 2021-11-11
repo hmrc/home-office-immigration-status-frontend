@@ -16,13 +16,15 @@
 
 package models
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.http.Status._
 
-case class StatusCheckResponse(
-  correlationId: String,
-  result: StatusCheckResult
-)
+sealed trait HomeOfficeError
 
-object StatusCheckResponse {
-  implicit val formats: OFormat[StatusCheckResponse] = Json.format[StatusCheckResponse]
+object HomeOfficeError {
+  case object StatusCheckNotFound extends HomeOfficeError
+  case object StatusCheckBadRequest extends HomeOfficeError
+  case object StatusCheckConflict extends HomeOfficeError
+  case object StatusCheckInternalServerError extends HomeOfficeError
+  case object StatusCheckInvalidResponse extends HomeOfficeError
+  case object OtherErrorResponse extends HomeOfficeError
 }
