@@ -60,34 +60,31 @@ trait FormFieldMappings {
         .fold[ValidationResult](Invalid(ValidationError(s"error.$fieldName.required")))(_ => Valid)
     }
 
-  private def parseDateIntoFields(date: String): Option[(String, String, String)] = {
-    val ydm: Array[String] = date.split('-') ++ Array("", "")
-    Some((ydm(0), ydm(1), ydm(2)))
-  }
-
-  private val validateIsRealDate: Constraint[String] =
-    cond("error.dateOfBirth.invalid-format")(data => {
-      Try(LocalDate.parse(data)).isSuccess
-    })
+  private val validateIsRealDate: Constraint[(String, String, String)] =
+    cond("error.dateOfBirth.invalid-format") {
+      case (year, month, day) =>
+        Try(LocalDate.of(year.toInt, month.toInt, day.toInt)).isSuccess
+    }
 
   private val validateNotToday: Constraint[LocalDate] =
     cond[LocalDate]("error.dateOfBirth.invalid-format")(_.isBefore(LocalDate.now()))
 
-  private val formatDateFromFields: (String, String, String) => String = (y, m, d) => {
+  private val formatDateFromFields: (String, String, String) => (String, String, String) = (y, month, day) => {
     val year = if (y.length == 2) "19" + y else y
-    val month = if (m.length == 1) "0" + m else m
-    val day = if (d.length == 1) "0" + d else d
-    s"$year-$month-$day"
+    (year, month, day)
   }
+
+  private val asDate: (String, String, String) => LocalDate = (y, m, d) => LocalDate.of(y.toInt, m.toInt, d.toInt)
+  private val asTuple: LocalDate => (String, String, String) = d =>
+    (d.getYear.toString, d.getMonthValue.toString, d.getDayOfMonth.toString)
 
   def dobFieldsMapping: Mapping[LocalDate] =
     mapping(
       "year"  -> of[String].transform[String](_.trim, identity),
       "month" -> of[String].transform[String](_.trim, identity),
       "day"   -> of[String].transform[String](_.trim, identity)
-    )(formatDateFromFields)(parseDateIntoFields)
-      .verifying(nonEmpty("error.dateOfBirth.required"))
+    )(formatDateFromFields)(Some.apply)
       .verifying(validateIsRealDate)
-      .transform(LocalDate.parse, (d: LocalDate) => d.toString)
+      .transform(asDate.tupled, asTuple)
       .verifying(validateNotToday)
 }
