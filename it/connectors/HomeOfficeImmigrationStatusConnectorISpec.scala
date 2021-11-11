@@ -68,7 +68,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
         val result: Either[HomeOfficeError, StatusCheckResponse] = connector.statusPublicFundsByNino(request).futureValue
 
         result should be ('left)
-        result.left.get shouldBe OtherErrorResponse
+        result.left.get shouldBe OtherErrorResponse(429)
       }
 
       "throw exception if 5xx response" in {

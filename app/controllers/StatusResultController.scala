@@ -19,7 +19,7 @@ package controllers
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import config.AppConfig
-import connectors.HomeOfficeImmigrationStatusProxyConnector
+import services.HomeOfficeImmigrationStatusProxyService
 import controllers.actions.AccessAction
 import models._
 import models.HomeOfficeError._
@@ -36,7 +36,7 @@ import errors.ErrorHandler
 class StatusResultController @Inject()(
   access: AccessAction,
   override val messagesApi: MessagesApi,
-  homeOfficeConnector: HomeOfficeImmigrationStatusProxyConnector,
+  homeOfficeService: HomeOfficeImmigrationStatusProxyService,
   controllerComponents: MessagesControllerComponents,
   statusFoundPage: StatusFoundPage,
   statusCheckFailurePage: StatusCheckFailurePage,
@@ -52,7 +52,7 @@ class StatusResultController @Inject()(
       sessionCacheService.get.flatMap {
         case Some(FormQueryModel(_, query, _)) =>
           val req = query.toRequest(appConfig.defaultQueryTimeRangeInMonths) //todo move this to a service
-          homeOfficeConnector
+          homeOfficeService
             .statusPublicFundsByNino(req)
             .map(result => result.fold(handleError(query), displaySuccessfulResult(query)))
         case None =>

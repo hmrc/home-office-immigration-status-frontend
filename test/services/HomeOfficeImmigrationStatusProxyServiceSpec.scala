@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package connectors
+package services
 
 import org.scalatestplus.play.PlaySpec
 import uk.gov.hmrc.http.HttpResponse
@@ -28,7 +28,6 @@ import cats.scalatest.EitherValues._
 import play.api.http.Status._
 import models.HomeOfficeError._
 import controllers.ControllerSpec
-import services.AuditService
 import org.mockito.Mockito.{mock, reset, verify, when}
 import org.mockito.ArgumentMatchers.{any, refEq, eq => is}
 import play.api.Application
@@ -172,20 +171,66 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
       "the connector returns a StatusCheckNotFound" in {
         when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any())).thenReturn(Future.unit)
         val result = Left(StatusCheckNotFound)
+        val expectedDetails = Seq("statusCode" -> StatusCheckNotFound.statusCode, "requestBody" -> request.body)
+
         sut.auditResult(result)
         verify(mockAuditService)
-          .auditEvent(refEq(NotFoundResponse), refEq("StatusCheckRequest"), any())(any(), any(), any())
+          .auditEvent(refEq(MatchNotFound), refEq("StatusCheckRequest"), refEq(expectedDetails))(any(), any(), any())
       }
     }
 
-
-    "audit a HomeOfficeError" when {
-      "the connector returns a StatusCheckNotFound" in {
+    "audit a DownstreamError" when {
+      "the connector returns a StatusCheckBadRequest" in {
         when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any())).thenReturn(Future.unit)
         val result = Left(StatusCheckBadRequest)
+        val expectedDetails = Seq("statusCode" -> StatusCheckBadRequest.statusCode, "requestBody" -> request.body)
+
         sut.auditResult(result)
         verify(mockAuditService)
-          .auditEvent(refEq(HomeOfficeError), refEq("StatusCheckRequest"), any())(any(), any(), any())
+          .auditEvent(refEq(DownstreamError), refEq("StatusCheckRequest"), refEq(expectedDetails))(any(), any(), any())
+      }
+
+      "the connector returns a StatusCheckConflict" in {
+        when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any()))
+          .thenReturn(Future.unit)
+        val result = Left(StatusCheckConflict)
+        val expectedDetails = Seq("statusCode" -> StatusCheckConflict.statusCode, "requestBody" -> request.body)
+
+        sut.auditResult(result)
+        verify(mockAuditService)
+          .auditEvent(refEq(DownstreamError), refEq("StatusCheckRequest"), refEq(expectedDetails))(any(), any(), any())
+      }
+
+      "the connector returns a StatusCheckInternalServerError" in {
+        when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any())).thenReturn(Future.unit)
+        val result = Left(StatusCheckInternalServerError)
+        val expectedDetails =
+          Seq("statusCode" -> StatusCheckInternalServerError.statusCode, "requestBody" -> request.body)
+
+        sut.auditResult(result)
+        verify(mockAuditService)
+          .auditEvent(refEq(DownstreamError), refEq("StatusCheckRequest"), refEq(expectedDetails))(any(), any(), any())
+      }
+
+      "the connector returns a StatusCheckInvalidResponse" in {
+        when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any())).thenReturn(Future.unit)
+        val result = Left(StatusCheckInvalidResponse)
+        val expectedDetails = Seq("statusCode" -> StatusCheckInvalidResponse.statusCode, "requestBody" -> request.body)
+
+        sut.auditResult(result)
+        verify(mockAuditService)
+          .auditEvent(refEq(DownstreamError), refEq("StatusCheckRequest"), refEq(expectedDetails))(any(), any(), any())
+      }
+
+      "the connector returns a OtherErrorResponse" in {
+        when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any())).thenReturn(Future.unit)
+        val TEAPOT = 418
+        val result = Left(OtherErrorResponse(TEAPOT))
+        val expectedDetails = Seq("statusCode" -> TEAPOT, "requestBody" -> request.body)
+
+        sut.auditResult(result)
+        verify(mockAuditService)
+          .auditEvent(refEq(DownstreamError), refEq("StatusCheckRequest"), refEq(expectedDetails))(any(), any(), any())
       }
     }
 

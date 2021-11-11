@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package connectors
+package services
 
 import java.net.URL
 import java.util.UUID
 import javax.inject.{Inject, Singleton}
 import models.{HomeOfficeError, StatusCheckByNinoRequest, StatusCheckResponse}
-import services.AuditService
 import play.api.mvc.Request
 import services.HomeOfficeImmigrationStatusFrontendEvent._
 import uk.gov.hmrc.http.HeaderCarrier
 import models.HomeOfficeError._
+import connectors.HomeOfficeImmigrationStatusProxyConnector
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -53,8 +53,9 @@ class HomeOfficeImmigrationStatusProxyService @Inject()(
         val details = detailsFromStatusCheckResponse(response)
         auditService.auditEvent(SuccessfulRequest, auditTransaction, details)
       case Left(StatusCheckNotFound) =>
-        auditService.auditEvent(NotFoundResponse, auditTransaction, Nil)
-      case Left(error) => Future.unit
+        auditService.auditEvent(MatchNotFound, auditTransaction, detailsFromError(StatusCheckNotFound))
+      case Left(error) =>
+        auditService.auditEvent(DownstreamError, auditTransaction, detailsFromError(error))
     }
 
   def detailsFromStatusCheckResponse(response: StatusCheckResponse): Seq[(String, Any)] = {
@@ -79,5 +80,8 @@ class HomeOfficeImmigrationStatusProxyService @Inject()(
 
     (baseDetails +: statusDetails).flatten
   }
+
+  def detailsFromError(error: HomeOfficeError)(implicit request: Request[Any]): Seq[(String, Any)] =
+    Seq("statusCode" -> error.statusCode, "requestBody" -> request.body)
 
 }

@@ -20,6 +20,6 @@ sealed trait HomeOfficeImmigrationStatusFrontendEvent
 
 object HomeOfficeImmigrationStatusFrontendEvent {
   case object SuccessfulRequest extends HomeOfficeImmigrationStatusFrontendEvent
-  case object NotFoundResponse extends HomeOfficeImmigrationStatusFrontendEvent
-  case object HomeOfficeError extends HomeOfficeImmigrationStatusFrontendEvent
+  case object MatchNotFound extends HomeOfficeImmigrationStatusFrontendEvent
+  case object DownstreamError extends HomeOfficeImmigrationStatusFrontendEvent
 }

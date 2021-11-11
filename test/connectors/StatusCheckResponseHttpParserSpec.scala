@@ -38,7 +38,7 @@ class StatusCheckResponseHttpParserSpec extends AnyWordSpecLike with Matchers {
       BAD_REQUEST           -> StatusCheckBadRequest,
       CONFLICT              -> StatusCheckConflict,
       INTERNAL_SERVER_ERROR -> StatusCheckInternalServerError,
-      TEAPOT                -> OtherErrorResponse
+      TEAPOT                -> OtherErrorResponse(TEAPOT)
     )
 
     "return a right where a 200 is returned with a valid response" in {

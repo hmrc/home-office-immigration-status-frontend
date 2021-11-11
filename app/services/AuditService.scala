@@ -18,7 +18,7 @@ package services
 
 import com.google.inject.Singleton
 
-import javax.inject.Inject
+import com.google.inject.{ImplementedBy, Inject}
 import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.AuditExtensions._
@@ -29,7 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 @Singleton
-class AuditService @Inject()(val auditConnector: AuditConnector) {
+class AuditServiceImpl @Inject()(val auditConnector: AuditConnector) extends AuditService {
 
   def auditEvent(
     event: HomeOfficeImmigrationStatusFrontendEvent,
@@ -61,4 +61,15 @@ class AuditService @Inject()(val auditConnector: AuditConnector) {
       }
     }
 
+}
+
+@ImplementedBy(classOf[AuditServiceImpl])
+trait AuditService {
+  def auditEvent(
+    event: HomeOfficeImmigrationStatusFrontendEvent,
+    transactionName: String,
+    details: Seq[(String, Any)] = Seq.empty)(
+    implicit hc: HeaderCarrier,
+    request: Request[Any],
+    ec: ExecutionContext): Future[Unit]
 }
