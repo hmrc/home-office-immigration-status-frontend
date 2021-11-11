@@ -28,7 +28,7 @@ import cats.scalatest.EitherValues._
 import play.api.http.Status._
 import models.HomeOfficeError._
 import controllers.ControllerSpec
-import org.mockito.Mockito.{mock, reset, verify, when}
+import org.mockito.Mockito.{mock, never, reset, verify, when}
 import org.mockito.ArgumentMatchers.{any, refEq, eq => is}
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -37,6 +37,8 @@ import play.api.mvc.Request
 import services.HomeOfficeImmigrationStatusFrontendEvent._
 import scala.concurrent.ExecutionContext.Implicits.global
 import java.time.format.DateTimeFormatter
+import connectors.HomeOfficeImmigrationStatusProxyConnector
+import uk.gov.hmrc.domain.Nino
 
 import scala.concurrent.Future
 
@@ -45,15 +47,18 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
   val formatter = DateTimeFormatter.ofPattern("d/MM/yyyy")
 
   val mockAuditService = mock(classOf[AuditService])
+  val mockConnector = mock(classOf[HomeOfficeImmigrationStatusProxyConnector])
 
   override protected def beforeEach(): Unit = {
     reset(mockAuditService)
+    reset(mockConnector)
     super.beforeEach()
   }
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
-      bind[AuditService].toInstance(mockAuditService)
+      bind[AuditService].toInstance(mockAuditService),
+      bind[HomeOfficeImmigrationStatusProxyConnector].toInstance(mockConnector)
     )
     .build()
 
@@ -61,6 +66,40 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
     app.injector.instanceOf[HomeOfficeImmigrationStatusProxyService]
 
   val testDate = LocalDate.now
+
+  val statusRequest =
+    StatusCheckByNinoRequest(Nino("RJ301829A"), "Doe", "Jane", "2001-01-31", StatusCheckRange(None, None))
+
+  "statusPublicFundsByNino" should {
+    "only access the audit service when the call downstream was successful" in {
+      when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any())).thenReturn(Future.unit)
+      val statusCheckResult = StatusCheckResult("Damon Albarn", testDate, "GBR", Nil)
+      val result = Right(StatusCheckResponse("CorrelationId", statusCheckResult))
+      when(mockConnector.statusPublicFundsByNino(any())(any(), any())).thenReturn(Future.successful(result))
+
+      sut.statusPublicFundsByNino(statusRequest)
+      verify(mockAuditService)
+        .auditEvent(any(), any(), any())(any(), any(), any())
+    }
+
+    "don't access the audit service when the call downstream was not successful" in {
+      when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any())).thenReturn(Future.unit)
+      when(mockConnector.statusPublicFundsByNino(any())(any(), any()))
+        .thenReturn(Future.failed(new Exception("It went wrong")))
+      sut.statusPublicFundsByNino(statusRequest)
+      verify(mockAuditService, never)
+        .auditEvent(any(), any(), any())(any(), any(), any())
+    }
+
+    "not fail if the audit call fails" in {
+      when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any()))
+        .thenReturn(Future.failed(new Exception("It went wrong")))
+      val statusCheckResult = StatusCheckResult("Damon Albarn", testDate, "GBR", Nil)
+      val result = Right(StatusCheckResponse("CorrelationId", statusCheckResult))
+      when(mockConnector.statusPublicFundsByNino(any())(any(), any())).thenReturn(Future.successful(result))
+      await(sut.statusPublicFundsByNino(statusRequest)) mustEqual result
+    }
+  }
 
   "auditResult" should {
     "audit a SuccessfulRequest" when {

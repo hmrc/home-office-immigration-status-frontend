@@ -34,15 +34,21 @@ class HomeOfficeImmigrationStatusProxyService @Inject()(
   auditService: AuditService) {
 
   private val auditTransaction = "StatusCheckRequest"
+  private val HEADER_X_CORRELATION_ID = "X-Correlation-Id"
 
   def statusPublicFundsByNino(statusCheckByNinoRequest: StatusCheckByNinoRequest)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext,
-    request: Request[Any]): Future[Either[HomeOfficeError, StatusCheckResponse]] =
-    for {
-      result <- connector.statusPublicFundsByNino(statusCheckByNinoRequest)
-      _      <- auditResult(result)
-    } yield result
+    request: Request[Any]): Future[Either[HomeOfficeError, StatusCheckResponse]] = {
+
+    val headerCarrier = hc.withExtraHeaders(HEADER_X_CORRELATION_ID -> UUID.randomUUID().toString)
+
+    val response = connector.statusPublicFundsByNino(statusCheckByNinoRequest)(headerCarrier, ec)
+    response.map { result =>
+      auditResult(result)
+      result
+    }
+  }
 
   def auditResult(result: Either[HomeOfficeError, StatusCheckResponse])(
     implicit hc: HeaderCarrier,

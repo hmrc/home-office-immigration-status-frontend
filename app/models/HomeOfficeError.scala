@@ -26,5 +26,5 @@ object HomeOfficeError {
   case object StatusCheckConflict extends HomeOfficeError(CONFLICT)
   case object StatusCheckInternalServerError extends HomeOfficeError(INTERNAL_SERVER_ERROR)
   case object StatusCheckInvalidResponse extends HomeOfficeError(INTERNAL_SERVER_ERROR)
-  case class OtherErrorResponse(override val statusCode: Int) extends HomeOfficeError(statusCode)
+  final case class OtherErrorResponse(override val statusCode: Int) extends HomeOfficeError(statusCode)
 }
