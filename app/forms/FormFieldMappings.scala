@@ -22,7 +22,7 @@ import play.api.data.format.Formats._
 import play.api.data.validation._
 import uk.gov.hmrc.domain.Nino
 import forms.helpers.ValidateHelper
-import forms.helpers.ValidateHelper.{cond, nonEmpty}
+import forms.helpers.ValidateHelper.cond
 
 import java.time.LocalDate
 import scala.util.Try

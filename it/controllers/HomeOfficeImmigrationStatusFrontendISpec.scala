@@ -10,8 +10,9 @@ import models.{FormQueryModel, StatusCheckByNinoFormModel}
 import stubs.{HomeOfficeImmigrationStatusStubs, JourneyTestData}
 import support.ServerISpec
 import repositories.SessionCacheRepository
+
 import scala.concurrent.ExecutionContext.Implicits.global
-import java.time.LocalDateTime
+import java.time.{LocalDate, LocalDateTime}
 
 class HomeOfficeImmigrationStatusFrontendISpec
     extends HomeOfficeImmigrationStatusFrontendISpecSetup with HomeOfficeImmigrationStatusStubs with JourneyTestData {
@@ -70,7 +71,7 @@ class HomeOfficeImmigrationStatusFrontendISpec
         givenAuthorisedForStride("TBC", "StrideUserId")
 
         val sessionId = "123"
-        val query = StatusCheckByNinoFormModel(Nino("RJ301829A"), "Doe", "Jane", "2001-01-31")
+        val query = StatusCheckByNinoFormModel(Nino("RJ301829A"), "Doe", "Jane", LocalDate.of(2001, 1, 31))
         setFormQuery(query, sessionId)
 
         val result = request("/status-result", sessionId).get().futureValue
@@ -84,7 +85,7 @@ class HomeOfficeImmigrationStatusFrontendISpec
         givenAuthorisedForStride("TBC", "StrideUserId")
         
         val sessionId = "456"
-        val query = StatusCheckByNinoFormModel(Nino("RJ301829A"), "Doe", "Jane", "2001-01-31")
+        val query = StatusCheckByNinoFormModel(Nino("RJ301829A"), "Doe", "Jane", LocalDate.of(2001, 1, 31))
         setFormQuery(query, sessionId)
 
         val result = request("/status-result").get().futureValue
