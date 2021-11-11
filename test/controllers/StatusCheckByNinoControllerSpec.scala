@@ -100,12 +100,12 @@ class StatusCheckByNinoControllerSpec extends ControllerSpec {
     "redirect to result page" when {
       "form binds correct data" in {
         when(mockSessionCacheService.set(any(), any())(any(), any())).thenReturn(Future.unit)
-        val now = LocalDate.now()
-        val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "pan", "peter", now)
+        val validDob = LocalDate.now().minusDays(1)
+        val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "pan", "peter", validDob)
         val requestWithForm = request.withFormUrlEncodedBody(
-          "dateOfBirth.year"  -> now.getYear.toString,
-          "dateOfBirth.month" -> now.getMonthValue.toString,
-          "dateOfBirth.day"   -> now.getDayOfMonth.toString,
+          "dateOfBirth.year"  -> validDob.getYear.toString,
+          "dateOfBirth.month" -> validDob.getMonthValue.toString,
+          "dateOfBirth.day"   -> validDob.getDayOfMonth.toString,
           "familyName"        -> query.familyName,
           "givenName"         -> query.givenName,
           "nino"              -> query.nino.nino
@@ -158,12 +158,12 @@ class StatusCheckByNinoControllerSpec extends ControllerSpec {
 
       "the session cache returns a failure" in {
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.failed(new Exception("Something happened")))
-        val now = LocalDate.now()
-        val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "pan", "peter", now)
+        val validDob = LocalDate.now().minusDays(1)
+        val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "pan", "peter", validDob)
         val requestWithForm = request.withFormUrlEncodedBody(
-          "dateOfBirth.year"  -> now.getYear.toString,
-          "dateOfBirth.month" -> now.getMonthValue.toString,
-          "dateOfBirth.day"   -> now.getDayOfMonth.toString,
+          "dateOfBirth.year"  -> validDob.getYear.toString,
+          "dateOfBirth.month" -> validDob.getMonthValue.toString,
+          "dateOfBirth.day"   -> validDob.getDayOfMonth.toString,
           "familyName"        -> query.familyName,
           "givenName"         -> query.givenName,
           "nino"              -> query.nino.nino

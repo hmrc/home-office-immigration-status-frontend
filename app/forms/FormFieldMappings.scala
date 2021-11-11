@@ -30,9 +30,7 @@ import scala.util.Try
 trait FormFieldMappings {
 
   def validNino: Constraint[String] =
-//    cond[String]("error.nino.required")(_.nonEmpty)
-//    .ensuring(cond[String]("error.nino.invalid-format")(Nino.isValid).a, "")
-   ValidateHelper.validateField("error.nino.required", "error.nino.invalid-format")(nino => Nino.isValid(nino))
+    ValidateHelper.validateField("error.nino.required", "error.nino.invalid-format")(nino => Nino.isValid(nino))
 
   val maxNameLen = 64
 
@@ -61,7 +59,6 @@ trait FormFieldMappings {
         .filter(_.trim.nonEmpty)
         .fold[ValidationResult](Invalid(ValidationError(s"error.$fieldName.required")))(_ => Valid)
     }
-
 
   private def parseDateIntoFields(date: String): Option[(String, String, String)] = {
     val ydm: Array[String] = date.split('-') ++ Array("", "")

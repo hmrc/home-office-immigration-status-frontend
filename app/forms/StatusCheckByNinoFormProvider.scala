@@ -23,8 +23,6 @@ import play.api.data.Forms._
 
 import javax.inject.Singleton
 
-import forms.helpers.DateFieldHelper.dobFieldsMapping
-
 @Singleton
 class StatusCheckByNinoFormProvider extends FormFieldMappings {
 
