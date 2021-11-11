@@ -57,4 +57,5 @@ class HomeOfficeImmigrationStatusProxyConnector @Inject()(appConfig: AppConfig, 
           implicitly[ExecutionContext]
         )
     }
+
 }

@@ -28,18 +28,10 @@ import uk.gov.hmrc.play.audit.model.DataEvent
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-object HomeOfficeImmigrationStatusFrontendEvent extends Enumeration {
-  val HomeOfficeImmigrationStatusFrontendSomethingHappened: services.HomeOfficeImmigrationStatusFrontendEvent.Value =
-    Value
-  type HomeOfficeImmigrationStatusFrontendEvent = Value
-}
-
 @Singleton
 class AuditService @Inject()(val auditConnector: AuditConnector) {
 
-  import HomeOfficeImmigrationStatusFrontendEvent._
-
-  private[services] def auditEvent(
+  def auditEvent(
     event: HomeOfficeImmigrationStatusFrontendEvent,
     transactionName: String,
     details: Seq[(String, Any)] = Seq.empty)(
@@ -48,7 +40,7 @@ class AuditService @Inject()(val auditConnector: AuditConnector) {
     ec: ExecutionContext): Future[Unit] =
     send(createEvent(event, transactionName, details: _*))
 
-  private[services] def createEvent(
+  private def createEvent(
     event: HomeOfficeImmigrationStatusFrontendEvent,
     transactionName: String,
     details: (String, Any)*)(implicit hc: HeaderCarrier, request: Request[Any]): DataEvent = {
@@ -62,7 +54,7 @@ class AuditService @Inject()(val auditConnector: AuditConnector) {
       detail = detail)
   }
 
-  private[services] def send(events: DataEvent*)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] =
+  private def send(events: DataEvent*)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] =
     Future {
       events.foreach { event =>
         Try(auditConnector.sendEvent(event))

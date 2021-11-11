@@ -30,6 +30,8 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.{FakeRequest, Injecting}
 import services.SessionCacheService
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Awaitable}
@@ -49,6 +51,7 @@ trait ControllerSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting wi
   def await[T](future: Awaitable[T]): T = Await.result(future, timeoutDuration)
   lazy val messages: Messages = inject[MessagesApi].preferred(Seq.empty)
   lazy val appConfig: AppConfig = inject[AppConfig]
-  val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+  implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
   val mockSessionCacheService: SessionCacheService = mock(classOf[SessionCacheService])
+  implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
 }
