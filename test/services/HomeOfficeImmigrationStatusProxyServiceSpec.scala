@@ -77,18 +77,22 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
       val result = Right(StatusCheckResponse("CorrelationId", statusCheckResult))
       when(mockConnector.statusPublicFundsByNino(any())(any(), any())).thenReturn(Future.successful(result))
 
-      sut.statusPublicFundsByNino(statusRequest)
-      verify(mockAuditService)
-        .auditEvent(any(), any(), any())(any(), any(), any())
+      sut.statusPublicFundsByNino(statusRequest).map { _ =>
+        verify(mockAuditService)
+          .auditEvent(any(), any(), any())(any(), any(), any())
+      }
     }
 
     "don't access the audit service when the call downstream was not successful" in {
       when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any())).thenReturn(Future.unit)
       when(mockConnector.statusPublicFundsByNino(any())(any(), any()))
         .thenReturn(Future.failed(new Exception("It went wrong")))
-      sut.statusPublicFundsByNino(statusRequest)
-      verify(mockAuditService, never)
-        .auditEvent(any(), any(), any())(any(), any(), any())
+        
+      sut.statusPublicFundsByNino(statusRequest).recover {
+        case _ =>
+          verify(mockAuditService, never)
+            .auditEvent(any(), any(), any())(any(), any(), any())
+      }
     }
 
     "not fail if the audit call fails" in {
