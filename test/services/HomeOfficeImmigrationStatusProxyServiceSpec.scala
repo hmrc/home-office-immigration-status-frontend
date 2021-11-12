@@ -16,30 +16,21 @@
 
 package services
 
-import org.scalatestplus.play.PlaySpec
-import uk.gov.hmrc.http.HttpResponse
-import models._
-import java.time.LocalDate
-import play.api.libs.json.Json
-import connectors.StatusCheckResponseHttpParser._
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpecLike
-import cats.scalatest.EitherValues._
-import play.api.http.Status._
-import models.HomeOfficeError._
-import controllers.ControllerSpec
-import org.mockito.Mockito.{mock, never, reset, verify, when}
-import org.mockito.ArgumentMatchers.{any, refEq, eq => is}
-import play.api.Application
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.inject.bind
-import play.api.mvc.Request
-import services.HomeOfficeImmigrationStatusFrontendEvent._
-import scala.concurrent.ExecutionContext.Implicits.global
-import java.time.format.DateTimeFormatter
 import connectors.HomeOfficeImmigrationStatusProxyConnector
+import controllers.ControllerSpec
+import models.HomeOfficeError._
+import models._
+import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.Mockito._
+import play.api.Application
+import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
+import services.HomeOfficeImmigrationStatusFrontendEvent._
 import uk.gov.hmrc.domain.Nino
 
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
@@ -66,7 +57,7 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
     app.injector.instanceOf[HomeOfficeImmigrationStatusProxyService]
 
   val testDate = LocalDate.now
-  val formModel = StatusCheckByNinoFormModel(Nino("RJ301829A"), "Doe", "Jane", "2001-01-31")
+  val formModel = StatusCheckByNinoFormModel(Nino("RJ301829A"), "Doe", "Jane", LocalDate.of(2001, 1, 31))
   val statusRequest = formModel.toRequest(6)
   implicit val conf = appConfig
 
