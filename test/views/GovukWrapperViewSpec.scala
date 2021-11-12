@@ -17,7 +17,7 @@
 package views
 
 import models.StatusCheckByNinoFormModel
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import org.jsoup.nodes.Document
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -30,7 +30,7 @@ class GovukWrapperViewSpec extends ViewSpec {
 
   lazy val sut = inject[MultipleMatchesFoundPage]
 
-  val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "Pan", "", LocalDate.now().toString)
+  val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "Pan", "", LocalDate.now())
   lazy val doc: Document = asDocument(sut(query)(request, messages))
 
   "govuk_wrapper" must {

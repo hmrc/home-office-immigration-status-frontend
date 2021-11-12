@@ -16,22 +16,21 @@
 
 package forms
 
-import play.api.data.Forms.of
+import play.api.data.Forms.{mapping, of}
 import play.api.data.Mapping
 import play.api.data.format.Formats._
 import play.api.data.validation._
 import uk.gov.hmrc.domain.Nino
 import forms.helpers.ValidateHelper
-import forms.helpers.DateFieldHelper._
+import forms.helpers.ValidateHelper.cond
+
+import java.time.LocalDate
+import scala.util.Try
 
 trait FormFieldMappings {
 
-  def dateOfBirthMapping: Mapping[String] = dateFieldsMapping(validDobDateFormat)
-
-  def validNino(
-    nonEmptyFailure: String = "error.nino.required",
-    invalidFailure: String = "error.nino.invalid-format"): Constraint[String] =
-    ValidateHelper.validateField(nonEmptyFailure, invalidFailure)(nino => Nino.isValid(nino))
+  def validNino: Constraint[String] =
+    ValidateHelper.validateField("error.nino.required", "error.nino.invalid-format")(nino => Nino.isValid(nino))
 
   val maxNameLen = 64
 
@@ -60,4 +59,32 @@ trait FormFieldMappings {
         .filter(_.trim.nonEmpty)
         .fold[ValidationResult](Invalid(ValidationError(s"error.$fieldName.required")))(_ => Valid)
     }
+
+  private val validateIsRealDate: Constraint[(String, String, String)] =
+    cond("error.dateOfBirth.invalid-format") {
+      case (year, month, day) =>
+        Try(LocalDate.of(year.toInt, month.toInt, day.toInt)).isSuccess
+    }
+
+  private val validateNotToday: Constraint[LocalDate] =
+    cond[LocalDate]("error.dateOfBirth.invalid-format")(_.isBefore(LocalDate.now()))
+
+  private val formatDateFromFields: (String, String, String) => (String, String, String) = (y, month, day) => {
+    val year = if (y.length == 2) "19" + y else y
+    (year, month, day)
+  }
+
+  private val asDate: (String, String, String) => LocalDate = (y, m, d) => LocalDate.of(y.toInt, m.toInt, d.toInt)
+  private val asTuple: LocalDate => (String, String, String) = d =>
+    (d.getYear.toString, d.getMonthValue.toString, d.getDayOfMonth.toString)
+
+  def dobFieldsMapping: Mapping[LocalDate] =
+    mapping(
+      "year"  -> of[String].transform[String](_.trim, identity),
+      "month" -> of[String].transform[String](_.trim, identity),
+      "day"   -> of[String].transform[String](_.trim, identity)
+    )(formatDateFromFields)(Some.apply)
+      .verifying(validateIsRealDate)
+      .transform(asDate.tupled, asTuple)
+      .verifying(validateNotToday)
 }

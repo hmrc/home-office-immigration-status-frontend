@@ -33,7 +33,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
   def buildContext(statuses: List[ImmigrationStatus] = List(ValidStatus)): StatusFoundPageContext =
     StatusFoundPageContext(
       //todo nino gen
-      StatusCheckByNinoFormModel(Nino("AB123456C"), "Pan", "", ""),
+      StatusCheckByNinoFormModel(Nino("AB123456C"), "Pan", "", LocalDate.now()),
       StatusCheckResult("Pan", LocalDate.now(), "D", statuses),
       Call("", "/expected")
     )

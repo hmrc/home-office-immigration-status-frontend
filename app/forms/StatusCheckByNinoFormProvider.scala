@@ -20,8 +20,8 @@ import models.StatusCheckByNinoFormModel
 import uk.gov.hmrc.domain.Nino
 import play.api.data.Form
 import play.api.data.Forms._
-import javax.inject.{Inject, Singleton}
-import config.AppConfig
+
+import javax.inject.Singleton
 
 @Singleton
 class StatusCheckByNinoFormProvider extends FormFieldMappings {
@@ -29,11 +29,11 @@ class StatusCheckByNinoFormProvider extends FormFieldMappings {
   def apply(): Form[StatusCheckByNinoFormModel] = Form[StatusCheckByNinoFormModel] {
     mapping(
       "nino" -> uppercaseNormalizedText
-        .verifying(validNino())
-        .transform(Nino.apply, (n: Nino) => n.toString),
+        .verifying(validNino)
+        .transform(Nino.apply, (n: Nino) => n.nino),
       "givenName"   -> trimmedName.verifying(validName("givenName", 1)),
       "familyName"  -> trimmedName.verifying(validName("familyName", 2)),
-      "dateOfBirth" -> dateOfBirthMapping
+      "dateOfBirth" -> dobFieldsMapping
     )(StatusCheckByNinoFormModel.apply)(StatusCheckByNinoFormModel.unapply)
   }
 }

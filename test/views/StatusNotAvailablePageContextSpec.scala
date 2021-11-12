@@ -28,6 +28,9 @@ import play.api.mvc.Call
 import uk.gov.hmrc.domain.Nino
 import viewmodels.RowViewModel
 
+import java.time.LocalDate
+import java.util.Locale
+
 class StatusNotAvailablePageContextSpec
     extends AnyWordSpecLike with Matchers with OptionValues with BeforeAndAfterEach with GuiceOneAppPerSuite {
 
@@ -41,7 +44,7 @@ class StatusNotAvailablePageContextSpec
     when(mockMessages(matches("status-not-available\\.current.*"), any())).thenReturn(currentStatusLabelMsg)
   }
 
-  val query = StatusCheckByNinoFormModel(Nino("RJ301829A"), "Surname", "Forename", "2001")
+  val query = StatusCheckByNinoFormModel(Nino("RJ301829A"), "Surname", "Forename", LocalDate.now())
   val call = Call("GET", "/")
 
   def createContext = StatusNotAvailablePageContext(query, call)
@@ -52,7 +55,7 @@ class StatusNotAvailablePageContextSpec
         ("nino", "generic.nino", query.nino.nino),
         ("givenName", "generic.givenName", query.givenName),
         ("familyName", "generic.familyName", query.familyName),
-        ("dob", "generic.dob", query.dateOfBirth)
+        ("dob", "generic.dob", DateFormat.format(Locale.UK)(query.dateOfBirth))
       ).foreach {
         case (id, msgKey, data) =>
           s"row is for $id" in {

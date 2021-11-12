@@ -30,6 +30,6 @@ case class StatusNotAvailablePageContext(query: StatusCheckByNinoFormModel, sear
       Row("nino", "generic.nino", query.nino.nino),
       Row("givenName", "generic.givenName", query.givenName),
       Row("familyName", "generic.familyName", query.familyName),
-      Row("dob", "generic.dob", DateFormat.formatDatePattern(messages.lang.locale)(query.dateOfBirth))
+      Row("dob", "generic.dob", DateFormat.format(messages.lang.locale)(query.dateOfBirth))
     )
 }

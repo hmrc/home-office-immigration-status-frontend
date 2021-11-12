@@ -19,24 +19,27 @@ package models
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.domain.Nino
 
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+
 case class StatusCheckByNinoRequest(
-  // National insurance number
   nino: Nino,
-  // Given name required for search
   givenName: String,
-  // Family name required for search
   familyName: String,
-  // Date of birth of the person being checked in ISO 8601 format (can contain wildcards for day or month)
   dateOfBirth: String,
-  // Status check range, default to 6 months back
   statusCheckRange: StatusCheckRange
-) {
-
-  def toUpperCase: StatusCheckByNinoRequest =
-    copy(givenName = this.givenName.toUpperCase, familyName = this.familyName.toUpperCase)
-
-}
+)
 
 object StatusCheckByNinoRequest {
+  private val ISO8601 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
+  def apply(
+    nino: Nino,
+    givenName: String,
+    familyName: String,
+    dateOfBirth: LocalDate,
+    statusCheckRange: StatusCheckRange) =
+    new StatusCheckByNinoRequest(nino, givenName, familyName, dateOfBirth.format(ISO8601), statusCheckRange)
+
   implicit val formats: OFormat[StatusCheckByNinoRequest] = Json.format[StatusCheckByNinoRequest]
 }

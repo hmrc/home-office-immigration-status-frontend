@@ -19,329 +19,159 @@ package forms
 import models.StatusCheckByNinoFormModel
 import org.scalacheck.Gen
 import org.scalatest.OptionValues
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpecLike
+import org.scalatestplus.play.PlaySpec
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.data.{Form, FormError}
 import uk.gov.hmrc.domain.Nino
+import org.scalacheck.Shrink
 
-class StatusCheckByNinoRequestFormSpec extends AnyWordSpecLike with Matchers with OptionValues {
+import java.time.LocalDate
 
-  val form: Form[StatusCheckByNinoFormModel] = {
-    val provider = new StatusCheckByNinoFormProvider()
-    provider()
-  }
+class StatusCheckByNinoRequestFormSpec extends PlaySpec with OptionValues with ScalaCheckDrivenPropertyChecks {
 
-  val formOutput: StatusCheckByNinoFormModel = StatusCheckByNinoFormModel(
-    nino = Nino("RJ301829A"),
-    givenName = "Jan",
-    familyName = "Kowalski",
-    dateOfBirth = "1970-01-31")
+  implicit def noShrink[T]: Shrink[T] = Shrink.shrinkAny
 
-  val formInput = Map(
-    "dateOfBirth.year"  -> "1970",
-    "dateOfBirth.month" -> "01",
-    "dateOfBirth.day"   -> "31",
-    "familyName"        -> "Kowalski",
-    "givenName"         -> "Jan",
-    "nino"              -> "RJ301829A")
+  val formProvider: StatusCheckByNinoFormProvider = new StatusCheckByNinoFormProvider()
+  val form: Form[StatusCheckByNinoFormModel] = formProvider()
 
-  "StatusCheckByNinoRequestForm" should {
+  val now: LocalDate = LocalDate.now()
+  val tomorrow: LocalDate = now.plusDays(1)
+  val yesterday: LocalDate = now.minusDays(1)
+  val testNino = Nino("RJ301829A")
+  //TODO NINO GEN
 
-    //todo NINO GEN
+  def input(
+    year: String = yesterday.getYear.toString,
+    month: String = yesterday.getMonthValue.toString,
+    day: String = yesterday.getDayOfMonth.toString,
+    familyName: String = "last",
+    givenName: String = "first",
+    nino: String = testNino.nino
+  ) = Map(
+    "dateOfBirth.year"  -> year,
+    "dateOfBirth.month" -> month,
+    "dateOfBirth.day"   -> day,
+    "familyName"        -> familyName,
+    "givenName"         -> givenName,
+    "nino"              -> nino
+  )
 
-    "bind some input fields and return StatusCheckByNinoRequest and fill it back" in {
-      form.bind(formInput).value shouldBe Some(formOutput)
-      form.fill(formOutput).data shouldBe formInput
-    }
+  val allowedSpecialChars = Gen.oneOf(formProvider.allowedNameCharacters)
+  val validChar: Gen[String] =
+    Gen.oneOf(Gen.alphaLowerChar, Gen.alphaUpperChar, allowedSpecialChars).map(_.toString).suchThat(_.trim.nonEmpty)
 
-    "NINO tests" should {
+  val invalidCharString: Gen[String] = Gen.asciiPrintableStr
+    .suchThat(_.trim.nonEmpty)
+    .suchThat(_.exists(c => !c.isLetter && !formProvider.allowedNameCharacters.contains(c)))
+    .suchThat(_.trim.nonEmpty)
 
-      "report an error when NINO is missing" in {
-        val input = formInput.updated("nino", "")
-        form.bind(input).errors shouldBe List(FormError("nino", "error.nino.required"))
+  "form" must {
+    "bind" when {
+      "inputs are valid" in {
+        val validInput = input()
+
+        val out = StatusCheckByNinoFormModel(testNino, "first", "last", yesterday)
+
+        val bound = form.bind(validInput)
+        bound.errors mustBe Nil
+        bound.value mustBe Some(out)
       }
 
-      "report an error when NINO is invalid" in {
-        val input = formInput.updated("nino", "invalid")
-        form.bind(input).errors shouldBe List(FormError("nino", "error.nino.invalid-format"))
+      "givenName is one char" in {
+        forAll(validChar) { name =>
+          val validInput = input(givenName = name)
+
+          val out = StatusCheckByNinoFormModel(testNino, name, "last", yesterday)
+          val bound = form.bind(validInput)
+          bound.value mustBe Some(out)
+          bound.errors mustBe Nil
+        }
       }
 
-      "report an error when NINO is an string invalid by generated range" in {
+      "year is 2 digit, default add 19XX" in {
+        val yearStr = for {
+          y1 <- Gen.numChar
+          y2 <- Gen.numChar
+        } yield s"$y1$y2"
+        forAll(yearStr.suchThat(_.length == 2)) { year =>
+          val validInput = input(year = year)
 
-        val generatedOption = Gen
-          .oneOf(
-            "AB888330E",
-            "AB888330F",
-            "AB888330G",
-            "AB888330H",
-            "AB888330I",
-            "NT888330A",
-            "DB888330A",
-            "ZZ888330A",
-            "BV888330A",
-            "99888330A")
-          .sample
-          .value
-
-        val input = formInput.updated("nino", generatedOption)
-        form.bind(input).errors shouldBe List(FormError("nino", "error.nino.invalid-format"))
-      }
-
-      "report an error when NINO is to short" in {
-        val input = formInput.updated("nino", "AA123456")
-        form.bind(input).errors shouldBe List(FormError("nino", "error.nino.invalid-format"))
-      }
-
-      "report an error when NINO is to long" in {
-        val input = formInput.updated("nino", "AA123456AA")
-        form.bind(input).errors shouldBe List(FormError("nino", "error.nino.invalid-format"))
-      }
-
-      "error when characters D, F, I, Q, U and V are not used as either first or second letter" in {
-        val generatedOptionFirstPlace = Gen.oneOf("D", "F", "I", "Q", "U", "V").sample.value
-        val generatedOptionSecondPlace = Gen.oneOf("D", "F", "I", "Q", "U", "V").sample.value
-        val baseNINO = "123456A"
-
-        val input = formInput.updated("nino", generatedOptionFirstPlace + generatedOptionSecondPlace + baseNINO)
-        form.bind(input).errors shouldBe List(FormError("nino", "error.nino.invalid-format"))
-      }
-
-      "error when Characters D, F, I, Q, U and V are not used as the first letter" in {
-        val generatedOption = Gen.oneOf("D", "F", "I", "Q", "U", "V").sample.value
-        val baseNINO = "A123456A"
-
-        val input = formInput.updated("nino", generatedOption + baseNINO)
-        form.bind(input).errors shouldBe List(FormError("nino", "error.nino.invalid-format"))
-      }
-
-      "error when characters D, F, I, Q, U, V and O are not used as the second letter" in {
-        val generatedOption = Gen.oneOf("D", "F", "I", "Q", "U", "V", "O").sample.value
-        val baseNINO = "123456A"
-
-        val input = formInput.updated("nino", "A" + generatedOption + baseNINO)
-        form.bind(input).errors shouldBe List(FormError("nino", "error.nino.invalid-format"))
-      }
-
-      "error when the prefixes BG, GB, KN, NK, NT, TN or ZN are used" in {
-        val generatedOption = Gen.oneOf("BG", "GB", "NK", "KN", "TN", "TN", "ZZ").sample.value
-        val baseNINO = "123456A"
-
-        val input = formInput.updated("nino", "BG" + generatedOption + baseNINO)
-        form.bind(input).errors shouldBe List(FormError("nino", "error.nino.invalid-format"))
-      }
-
-      "error when their are not six numbers" in {
-
-        val prefix = "AA"
-        val suffix = "A"
-
-        val input = formInput.updated("nino", prefix + "12345" + suffix)
-        form.bind(input).errors shouldBe List(FormError("nino", "error.nino.invalid-format"))
-      }
-
-      "error when there is a letter in the centre" in {
-
-        val prefix = "AA"
-        val suffix = "A"
-
-        val input = formInput.updated("nino", prefix + "12A456" + suffix)
-        form.bind(input).errors shouldBe List(FormError("nino", "error.nino.invalid-format"))
-      }
-
-      "not error when valid prefix passed" in {
-        val input = formInput.updated("nino", "AA123456A")
-        form.bind(input).errors shouldBe List()
-      }
-
-      "not error when Last character should be A, B, C or D" in {
-        val generatedOption = Gen.oneOf("A", "B", "C", "D").sample.value
-        val baseNINO = "AA123456"
-
-        val input = formInput.updated("nino", baseNINO + generatedOption)
-        form.bind(input).errors shouldBe List()
-      }
-
-      "error when last character is not be A, B, C or D" in {
-        val generatedOption = Gen.oneOf("E", "F", "G", "H").sample.value
-        val baseNINO = "AA123456"
-
-        val input = formInput.updated("nino", baseNINO + generatedOption)
-        form.bind(input).errors shouldBe List(FormError("nino", "error.nino.invalid-format"))
-      }
-
-      "error when special characters are used" in {
-        val generatedOption = Gen.oneOf("!", "£", "#", "%").sample.value
-        val baseNINO = "AA123456"
-
-        val input = formInput.updated("nino", baseNINO + generatedOption)
-        form.bind(input).errors shouldBe List(FormError("nino", "error.nino.invalid-format"))
+          val out = StatusCheckByNinoFormModel(testNino, "first", "last", yesterday.withYear(("19" + year).toInt))
+          val bound = form.bind(validInput)
+          bound.errors mustBe Nil
+          bound.value mustBe Some(out)
+        }
       }
     }
 
-    "First Name tests" should {
+    "fail to bind" when {
+      "dob is today" in {
+        val invalidInput = input(day = now.getDayOfMonth.toString)
 
-      "report an error when givenName is missing" in {
-        val input = formInput.updated("givenName", "")
-        form.bind(input).errors shouldBe List(FormError("givenName", "error.givenName.required"))
+        form.bind(invalidInput).value must not be defined
+        form.bind(invalidInput).errors mustBe List(FormError("dateOfBirth", List("error.dateOfBirth.invalid-format")))
+      }
+      "dob is future" in {
+        val invalidInput = input(day = tomorrow.getDayOfMonth.toString)
+
+        form.bind(invalidInput).value must not be defined
+        form.bind(invalidInput).errors mustBe List(FormError("dateOfBirth", List("error.dateOfBirth.invalid-format")))
       }
 
-      "report an error when givenName only numbers invalid" in {
-        val input = formInput.updated("givenName", "11267162")
-        form.bind(input).errors shouldBe List(FormError("givenName", "error.givenName.invalid-format"))
+      "givenName is empty" in {
+        val invalidInput = input(givenName = "")
+
+        form.bind(invalidInput).value must not be defined
+        form.bind(invalidInput).errors mustBe List(FormError("givenName", List("error.givenName.required")))
       }
 
-      "report an error when special characters are used" in {
-        val generatedOption = Gen.oneOf("!", "£", "#", "%").sample.value
-        val input = formInput.updated("givenName", generatedOption)
-        form.bind(input).errors shouldBe List(FormError("givenName", "error.givenName.invalid-format"))
+      "givenName contains invalid chars" in {
+        forAll(invalidCharString) { name =>
+          val invalidInput = input(givenName = name)
+
+          form.bind(invalidInput).value must not be defined
+          form.bind(invalidInput).errors mustBe List(FormError("givenName", List("error.givenName.invalid-format")))
+        }
       }
 
-      "not error reported when givenName is atleast one character long" in {
-        val input = formInput.updated("givenName", "a")
-        form.bind(input).errors shouldBe List()
+      "familyName is empty" in {
+        val invalidInput = input(familyName = "")
+
+        form.bind(invalidInput).value must not be defined
+        form.bind(invalidInput).errors mustBe List(FormError("familyName", List("error.familyName.required")))
       }
 
-      "not report an error when givenName contains a -" in {
-        val input = formInput.updated("givenName", "-")
-        form.bind(input).errors shouldBe List()
+      "familyName is too short" in {
+        forAll(validChar) { name =>
+          val invalidInput = input(familyName = name)
+
+          form.bind(invalidInput).value must not be defined
+          form.bind(invalidInput).errors mustBe List(FormError("familyName", List("error.familyName.invalid-format")))
+        }
       }
 
-      "not report an error when givenName contains is a -" in {
-        val input = formInput.updated("givenName", "a-b")
-        form.bind(input).errors shouldBe List()
-      }
-    }
+      "familyName contains invalid chars" in {
+        forAll(invalidCharString) { name =>
+          val invalidInput = input(familyName = name)
 
-    "Family Name Tests" should {
-
-      "report an error when familyName is missing" in {
-        val input = formInput.updated("familyName", "")
-        form.bind(input).errors shouldBe List(FormError("familyName", "error.familyName.required"))
+          form.bind(invalidInput).value must not be defined
+          form.bind(invalidInput).errors mustBe List(FormError("familyName", List("error.familyName.invalid-format")))
+        }
       }
 
-      "report an error when familyName is too short" in {
-        val input = formInput.updated("familyName", "A")
-        form.bind(input).errors shouldBe List(FormError("familyName", "error.familyName.invalid-format"))
+      "nino is empty" in {
+        val invalidInput = input(nino = "")
+
+        form.bind(invalidInput).value must not be defined
+        form.bind(invalidInput).errors mustBe List(FormError("nino", List("error.nino.required")))
       }
+      "nino is invalid" in {
+        forAll(invalidCharString) { nino =>
+          val invalidInput = input(nino = nino)
 
-      "no error reported when familyName is two or more characters" in {
-        val input = formInput.updated("familyName", "Aa")
-        form.bind(input).errors shouldBe List()
-      }
-
-      "report an error when familyName only numbers are used" in {
-        val input = formInput.updated("familyName", "11267162")
-        form.bind(input).errors shouldBe List(FormError("familyName", "error.familyName.invalid-format"))
-      }
-
-      "report an error when special characters are used" in {
-        val generatedOption = Gen.oneOf("!", "£", "#", "%").sample.value
-        val input = formInput.updated("familyName", generatedOption)
-        form.bind(input).errors shouldBe List(FormError("familyName", "error.familyName.invalid-format"))
-      }
-
-      "not report an error when givenName contains is a -" in {
-        val input = formInput.updated("familyName", "a-b")
-        form.bind(input).errors shouldBe List()
-      }
-    }
-
-    "Date of Birth (DOB)" should {
-
-      "report an errpr when dateOfBirth.day is missing" in {
-        val input = formInput.updated("dateOfBirth.day", "")
-        form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
-      }
-
-      "report an error when dateOfBirth.month is missing" in {
-        val input = formInput.updated("dateOfBirth.month", "")
-        form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
-      }
-
-      "report an error when dateOfBirth.year is missing" in {
-        val input = formInput.updated("dateOfBirth.year", "")
-        form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
-      }
-
-      "report an error when dateOfBirth.day is invalid" in {
-
-        val generatedOption = Gen
-          .oneOf("32", "XH", "-5", "0H")
-          .sample
-          .value
-
-        val input = formInput.updated("dateOfBirth.day", generatedOption)
-        form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
-      }
-
-      "report an error when dateOfBirth.day is invalid - contains digit and wildcard" in {
-        val input = formInput.updated("dateOfBirth.day", "0X")
-        form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
-      }
-
-      "report an error when dateOfBirth.day is invalid - contains value out-of-scope" in {
-        val input = formInput.updated("dateOfBirth.day", "32")
-        form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
-      }
-
-      "report an error when dateOfBirth.day is invalid - contains negative value" in {
-        val input = formInput.updated("dateOfBirth.day", "-5")
-        form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
-      }
-
-      "report an error when dateOfBirth.month is invalid" in {
-        val generatedOption = Gen
-          .oneOf("13", "X8", "XX", "-5")
-          .sample
-          .value
-
-        val input = formInput.updated("dateOfBirth.month", generatedOption)
-        form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
-      }
-
-      "report an error when dateOfBirth.month is invalid - contains digit and wildcard" in {
-        val input = formInput.updated("dateOfBirth.month", "1X")
-        form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
-      }
-
-      "report an error when dateOfBirth.month is invalid - contains value out-of-scope" in {
-        val input = formInput.updated("dateOfBirth.month", "13")
-        form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
-      }
-
-      "report an error when dateOfBirth.month is invalid - contains negative value" in {
-        val input = formInput.updated("dateOfBirth.month", "-5")
-        form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
-      }
-
-      "report an error when dateOfBirth.year is invalid" in {
-        val generatedOption = Gen
-          .oneOf("193", "197B", "196X", "-5", "11111", "999123")
-          .sample
-          .value
-
-        val input = formInput.updated("dateOfBirth.year", generatedOption)
-        form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
-      }
-
-      "report an error when dateOfBirth.year is invalid - too short" in {
-        val input = formInput.updated("dateOfBirth.year", "193")
-        form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
-      }
-
-      "report an error when dateOfBirth.year is invalid - contains letter" in {
-        val input = formInput.updated("dateOfBirth.year", "197B")
-        form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
-      }
-
-      "report an error when dateOfBirth.year is invalid - contains value out-of-scope" in {
-        val input = formInput.updated("dateOfBirth.year", "999123")
-        form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
-      }
-
-      "report an error when dateOfBirth.year is invalid - contains negative value" in {
-        val input = formInput.updated("dateOfBirth.month", "-5")
-        form.bind(input).errors shouldBe List(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
+          form.bind(invalidInput).value must not be defined
+          form.bind(invalidInput).errors mustBe List(FormError("nino", List("error.nino.invalid-format")))
+        }
       }
     }
   }

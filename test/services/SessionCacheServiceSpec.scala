@@ -27,7 +27,7 @@ import repositories.SessionCacheRepository
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
-import java.time.LocalDateTime
+import java.time.{LocalDate, LocalDateTime}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
@@ -48,7 +48,7 @@ class SessionCacheServiceSpec extends PlaySpec with BeforeAndAfterEach with Scal
     nino = Nino("RJ301829A"),
     givenName = "Pan",
     familyName = "Oldfield",
-    dateOfBirth = "123")
+    dateOfBirth = LocalDate.now)
   val formQuery = FormQueryModel(id = "123", data = formModel)
 
   "get" must {

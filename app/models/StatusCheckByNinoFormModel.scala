@@ -21,14 +21,10 @@ import uk.gov.hmrc.domain.Nino
 import java.time.{LocalDate, ZoneId}
 
 case class StatusCheckByNinoFormModel(
-  // National insurance number
   nino: Nino,
-  // Given name required for search
   givenName: String,
-  // Family name required for search
   familyName: String,
-  // Date of birth of the person being checked in ISO 8601 format (can contain wildcards for day or month)
-  dateOfBirth: String
+  dateOfBirth: LocalDate
 ) {
   def toRequest(timeRangeInMonths: Int): StatusCheckByNinoRequest = {
     val range = StatusCheckByNinoFormModel.statusCheckRange(timeRangeInMonths)

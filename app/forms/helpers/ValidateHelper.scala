@@ -18,11 +18,19 @@ package forms.helpers
 
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 
+import java.time.LocalDate
+
 object ValidateHelper {
 
   def nonEmpty(failure: String): Constraint[String] = Constraint[String] { fieldValue: String =>
     if (fieldValue.trim.isEmpty) Invalid(ValidationError(failure)) else Valid
   }
+
+  def cond[A](failure: String)(condition: A => Boolean) =
+    Constraint[A] { data: A =>
+      if (condition(data)) Valid
+      else Invalid(ValidationError(failure))
+    }
 
   def validateField(emptyFailure: String, invalidFailure: String)(condition: String => Boolean): Constraint[String] =
     Constraint[String] { fieldValue: String =>
