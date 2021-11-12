@@ -118,7 +118,7 @@ class StatusResultControllerSpec extends ControllerSpec {
 
       "has conflict error" in {
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(formQuery)))
-        mockProxyServiceWith(Left(StatusCheckConflict))
+        mockProxyServiceWith(Left(StatusCheckConflict("Some response")))
 
         val result = sut.onPageLoad()(request)
 
@@ -132,7 +132,7 @@ class StatusResultControllerSpec extends ControllerSpec {
 
       "has not found error" in {
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(formQuery)))
-        mockProxyServiceWith(Left(StatusCheckNotFound))
+        mockProxyServiceWith(Left(StatusCheckNotFound("Some response")))
 
         val result = sut.onPageLoad()(request)
 
@@ -147,7 +147,7 @@ class StatusResultControllerSpec extends ControllerSpec {
       "has some other error" in {
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(formQuery)))
         val TEAPOT = 418
-        mockProxyServiceWith(Left(OtherErrorResponse(TEAPOT)))
+        mockProxyServiceWith(Left(OtherErrorResponse(TEAPOT, "Some response")))
 
         val result = sut.onPageLoad()(request)
 

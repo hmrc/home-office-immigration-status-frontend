@@ -61,8 +61,8 @@ class HomeOfficeImmigrationStatusProxyService @Inject()(
       case Right(response) =>
         val details = detailsFromStatusCheckResponse(response)
         auditService.auditEvent(SuccessfulRequest, auditTransaction, details)
-      case Left(StatusCheckNotFound) =>
-        auditService.auditEvent(MatchNotFound, auditTransaction, detailsFromError(StatusCheckNotFound))
+      case Left(error: StatusCheckNotFound) =>
+        auditService.auditEvent(MatchNotFound, auditTransaction, detailsFromError(error))
       case Left(error) =>
         auditService.auditEvent(DownstreamError, auditTransaction, detailsFromError(error))
     }
@@ -82,8 +82,6 @@ class HomeOfficeImmigrationStatusProxyService @Inject()(
     }
 
     val baseDetails = Seq(
-      "fullName"    -> response.result.fullName,
-      "dateOfBirth" -> response.result.dateOfBirth,
       "nationality" -> response.result.nationality
     )
 
@@ -91,6 +89,6 @@ class HomeOfficeImmigrationStatusProxyService @Inject()(
   }
 
   def detailsFromError(error: HomeOfficeError)(implicit request: Request[Any]): Seq[(String, Any)] =
-    Seq("statusCode" -> error.statusCode, "requestBody" -> request.body)
+    Seq("statusCode" -> error.statusCode, "requestBody" -> request.body, "error" -> error.responseBody)
 
 }
