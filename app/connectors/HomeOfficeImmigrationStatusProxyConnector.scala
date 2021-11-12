@@ -36,8 +36,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class HomeOfficeImmigrationStatusProxyConnector @Inject()(appConfig: AppConfig, http: HttpClient, metrics: Metrics)
     extends HttpAPIMonitor with Logging {
 
-  private val HEADER_X_CORRELATION_ID = "X-Correlation-Id"
-
   private val baseUrl: String = appConfig.homeOfficeImmigrationStatusProxyBaseUrl
   private val publicFundsByNinoPath = "/v1/status/public-funds/nino"
 
@@ -46,15 +44,11 @@ class HomeOfficeImmigrationStatusProxyConnector @Inject()(appConfig: AppConfig, 
   def statusPublicFundsByNino(request: StatusCheckByNinoRequest)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext): Future[Either[HomeOfficeError, StatusCheckResponse]] =
-    monitor(s"ConsumedAPI-home-office-immigration-status-proxy-status-by-nino-POST") {
+    monitor("ConsumedAPI-home-office-immigration-status-proxy-status-by-nino-POST") {
       http
         .POST[StatusCheckByNinoRequest, Either[HomeOfficeError, StatusCheckResponse]](
           new URL(baseUrl + publicFundsByNinoPath).toExternalForm,
-          request)(
-          implicitly[Writes[StatusCheckByNinoRequest]],
-          implicitly[HttpReads[Either[HomeOfficeError, StatusCheckResponse]]],
-          hc.withExtraHeaders(HEADER_X_CORRELATION_ID -> UUID.randomUUID().toString),
-          implicitly[ExecutionContext]
-        )
+          request)
     }
+
 }

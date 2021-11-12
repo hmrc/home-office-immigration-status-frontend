@@ -31,7 +31,7 @@ case class StatusCheckResult(
   //todo seperate these to view model?
   val countryName: String = ISO31661Alpha3.getCountryNameFor(nationality)
   def dobFormatted(locale: Locale): String = DateFormat.format(locale)(dateOfBirth)
-  private val statusesSortedByDate = statuses.sortBy(f = _.statusStartDate.toEpochDay * -1)
+  val statusesSortedByDate = statuses.sortBy(f = _.statusStartDate.toEpochDay * -1)
   val mostRecentStatus: Option[ImmigrationStatus] = statusesSortedByDate.headOption
   val previousStatuses: Seq[ImmigrationStatus] = statusesSortedByDate.drop(1)
 }

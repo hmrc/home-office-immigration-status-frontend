@@ -54,8 +54,8 @@ object StatusCheckResponseHttpParser extends Logging {
           logger.error(s"Internal server error returned with response ${response.body}")
           Left(StatusCheckInternalServerError)
         case status =>
-          logger.error(s"An unhandled status was returned with response ${response.body}")
-          Left(OtherErrorResponse)
+          logger.error(s"A $status response was returned with body ${response.body}")
+          Left(OtherErrorResponse(status))
       }
   }
 }

@@ -12,6 +12,7 @@ import models.HomeOfficeError._
 
 import java.time.{LocalDate, ZoneId}
 import scala.concurrent.ExecutionContext.Implicits.global
+import java.util.UUID
 
 class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationStatusConnectorISpecSetup {
 
@@ -68,7 +69,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
         val result: Either[HomeOfficeError, StatusCheckResponse] = connector.statusPublicFundsByNino(request).futureValue
 
         result should be ('left)
-        result.left.get shouldBe OtherErrorResponse
+        result.left.get shouldBe OtherErrorResponse(429)
       }
 
       "throw exception if 5xx response" in {
@@ -86,7 +87,8 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
 
 trait HomeOfficeImmigrationStatusConnectorISpecSetup extends AppISpec with HomeOfficeImmigrationStatusStubs with ScalaFutures {
 
-  implicit val hc: HeaderCarrier = HeaderCarrier()
+  private val HEADER_X_CORRELATION_ID = "X-Correlation-Id"
+  implicit val hc: HeaderCarrier = HeaderCarrier().withExtraHeaders(HEADER_X_CORRELATION_ID -> UUID.randomUUID().toString)
 
   override def fakeApplication: Application = appBuilder.build()
 

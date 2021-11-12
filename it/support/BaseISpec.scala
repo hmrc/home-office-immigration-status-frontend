@@ -6,6 +6,7 @@ import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatest.OptionValues
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.inject.bind
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{charset, contentAsString, contentType, defaultAwaitTimeout, status}
@@ -13,9 +14,12 @@ import play.twirl.api.HtmlFormat
 import stubs.{AuthStubs, DataStreamStubs}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 import scala.reflect.ClassTag
+import services.AuditService
+import play.api.mvc.Request
+import services.HomeOfficeImmigrationStatusFrontendEvent
 
 abstract class BaseISpec
     extends AnyWordSpecLike with Matchers with OptionValues with WireMockSupport with AuthStubs with DataStreamStubs
@@ -23,6 +27,16 @@ abstract class BaseISpec
 
   import scala.concurrent.duration._
   implicit val defaultTimeout: FiniteDuration = 5 seconds
+
+  object FakeAuditService extends AuditService {
+    def auditEvent(
+      event: HomeOfficeImmigrationStatusFrontendEvent,
+      transactionName: String,
+      details: Seq[(String, Any)] = Seq.empty)(
+      implicit hc: HeaderCarrier,
+      request: Request[Any],
+      ec: ExecutionContext): Future[Unit] = Future.unit
+  }
 
   protected def appBuilder: GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
@@ -37,6 +51,8 @@ abstract class BaseISpec
         "microservice.services.auth.port" -> wireMockPort,
         "microservice.services.home-office-immigration-status-proxy.host" -> wireMockHost,
         "microservice.services.home-office-immigration-status-proxy.port" -> wireMockPort
+      ).overrides(
+        bind[AuditService].toInstance(FakeAuditService)
       )
 
   override def commonStubs(): Unit = {
