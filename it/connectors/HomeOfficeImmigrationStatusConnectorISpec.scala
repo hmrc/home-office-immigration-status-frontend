@@ -42,7 +42,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
         val result: Either[HomeOfficeError, StatusCheckResponse] = connector.statusPublicFundsByNino(request).futureValue
 
         result should be ('left)
-        result.left.get shouldBe StatusCheckBadRequest
+        result.left.get shouldBe a[StatusCheckBadRequest]
       }
 
       "return check error when 404 response ERR_NOT_FOUND" in {
@@ -51,7 +51,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
         val result: Either[HomeOfficeError, StatusCheckResponse] = connector.statusPublicFundsByNino(request).futureValue
 
         result should be ('left)
-        result.left.get shouldBe StatusCheckNotFound
+        result.left.get shouldBe a[StatusCheckNotFound]
       }
 
       "return check error when 400 response ERR_VALIDATION" in {
@@ -60,7 +60,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
         val result: Either[HomeOfficeError, StatusCheckResponse] = connector.statusPublicFundsByNino(request).futureValue
 
         result should be ('left)
-        result.left.get shouldBe StatusCheckBadRequest
+        result.left.get shouldBe a[StatusCheckBadRequest]
       }
 
       "throw exception if other 4xx response" in {
@@ -69,7 +69,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
         val result: Either[HomeOfficeError, StatusCheckResponse] = connector.statusPublicFundsByNino(request).futureValue
 
         result should be ('left)
-        result.left.get shouldBe OtherErrorResponse(429)
+        result.left.get shouldBe a[OtherErrorResponse]
       }
 
       "throw exception if 5xx response" in {
@@ -78,7 +78,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
         val result: Either[HomeOfficeError, StatusCheckResponse] = connector.statusPublicFundsByNino(request).futureValue
 
         result should be ('left)
-        result.left.get shouldBe StatusCheckInternalServerError
+        result.left.get shouldBe a[StatusCheckInternalServerError]
       }
     }
   }

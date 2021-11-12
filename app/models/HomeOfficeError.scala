@@ -18,13 +18,16 @@ package models
 
 import play.api.http.Status._
 
-sealed abstract class HomeOfficeError(val statusCode: Int)
+sealed abstract class HomeOfficeError(val statusCode: Int) {
+  def responseBody: String
+}
 
 object HomeOfficeError {
-  case object StatusCheckNotFound extends HomeOfficeError(NOT_FOUND)
-  case object StatusCheckBadRequest extends HomeOfficeError(BAD_REQUEST)
-  case object StatusCheckConflict extends HomeOfficeError(CONFLICT)
-  case object StatusCheckInternalServerError extends HomeOfficeError(INTERNAL_SERVER_ERROR)
-  case object StatusCheckInvalidResponse extends HomeOfficeError(INTERNAL_SERVER_ERROR)
-  final case class OtherErrorResponse(override val statusCode: Int) extends HomeOfficeError(statusCode)
+  final case class StatusCheckNotFound(responseBody: String) extends HomeOfficeError(NOT_FOUND)
+  final case class StatusCheckBadRequest(responseBody: String) extends HomeOfficeError(BAD_REQUEST)
+  final case class StatusCheckConflict(responseBody: String) extends HomeOfficeError(CONFLICT)
+  final case class StatusCheckInternalServerError(responseBody: String) extends HomeOfficeError(INTERNAL_SERVER_ERROR)
+  final case class StatusCheckInvalidResponse(responseBody: String) extends HomeOfficeError(INTERNAL_SERVER_ERROR)
+  final case class OtherErrorResponse(override val statusCode: Int, responseBody: String)
+      extends HomeOfficeError(statusCode)
 }

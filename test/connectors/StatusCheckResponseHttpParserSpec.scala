@@ -30,16 +30,11 @@ import models.HomeOfficeError._
 
 class StatusCheckResponseHttpParserSpec extends AnyWordSpecLike with Matchers {
 
+  val fakeResponseBody = "responseBody"
+
   "StatusCheckResponseReads.read" should {
 
     val TEAPOT = 418
-    val errors = Seq[(Int, HomeOfficeError)](
-      NOT_FOUND             -> StatusCheckNotFound,
-      BAD_REQUEST           -> StatusCheckBadRequest,
-      CONFLICT              -> StatusCheckConflict,
-      INTERNAL_SERVER_ERROR -> StatusCheckInternalServerError,
-      TEAPOT                -> OtherErrorResponse(TEAPOT)
-    )
 
     "return a right where a 200 is returned with a valid response" in {
       val statusCheckResult = StatusCheckResult("Damon Albarn", LocalDate.now, "GBR", Nil)
@@ -59,7 +54,7 @@ class StatusCheckResponseHttpParserSpec extends AnyWordSpecLike with Matchers {
 
       val result: Either[HomeOfficeError, StatusCheckResponse] =
         StatusCheckResponseReads.read("POST", "some url", response)
-      result.leftValue shouldBe StatusCheckInvalidResponse
+      result.leftValue shouldBe a[StatusCheckInvalidResponse]
     }
 
     "return a left where a 200 is returned with an invalid json response" in {
@@ -68,16 +63,22 @@ class StatusCheckResponseHttpParserSpec extends AnyWordSpecLike with Matchers {
 
       val result: Either[HomeOfficeError, StatusCheckResponse] =
         StatusCheckResponseReads.read("POST", "some url", response)
-      result.leftValue shouldBe StatusCheckInvalidResponse
+      result.leftValue shouldBe a[StatusCheckInvalidResponse]
     }
 
-    errors.foreach { (checkError _).tupled }
+    Seq(
+      NOT_FOUND             -> StatusCheckNotFound(fakeResponseBody),
+      BAD_REQUEST           -> StatusCheckBadRequest(fakeResponseBody),
+      CONFLICT              -> StatusCheckConflict(fakeResponseBody),
+      INTERNAL_SERVER_ERROR -> StatusCheckInternalServerError(fakeResponseBody),
+      TEAPOT                -> OtherErrorResponse(TEAPOT, fakeResponseBody)
+    ).foreach { (checkError _).tupled }
 
   }
 
   def checkError(statusCode: Int, returnError: HomeOfficeError) =
     s"return a $returnError for status code $statusCode" in {
-      val response = HttpResponse(statusCode, "responseBody")
+      val response = HttpResponse(statusCode, fakeResponseBody)
 
       val result: Either[HomeOfficeError, StatusCheckResponse] =
         StatusCheckResponseReads.read("POST", "some url", response)

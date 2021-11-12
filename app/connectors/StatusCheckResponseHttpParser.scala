@@ -39,23 +39,23 @@ object StatusCheckResponseHttpParser extends Logging {
               Right(res)
             case Failure(e) =>
               logger.error(s"Invalid json returned in ${response.body}", e)
-              Left(StatusCheckInvalidResponse)
+              Left(StatusCheckInvalidResponse(e.getMessage))
           }
         case NOT_FOUND =>
           logger.info(s"Match not found with response ${response.body}")
-          Left(StatusCheckNotFound)
+          Left(StatusCheckNotFound(response.body))
         case BAD_REQUEST =>
           logger.error(s"Bad request returned with response ${response.body}")
-          Left(StatusCheckBadRequest)
+          Left(StatusCheckBadRequest(response.body))
         case CONFLICT =>
           logger.warn(s"Multiple matches found for customer with response ${response.body}")
-          Left(StatusCheckConflict)
+          Left(StatusCheckConflict(response.body))
         case INTERNAL_SERVER_ERROR =>
           logger.error(s"Internal server error returned with response ${response.body}")
-          Left(StatusCheckInternalServerError)
+          Left(StatusCheckInternalServerError(response.body))
         case status =>
           logger.error(s"A $status response was returned with body ${response.body}")
-          Left(OtherErrorResponse(status))
+          Left(OtherErrorResponse(status, response.body))
       }
   }
 }

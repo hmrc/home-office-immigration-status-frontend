@@ -110,8 +110,6 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
         val result = Right(StatusCheckResponse("CorrelationId", statusCheckResult))
 
         val expectedDetails = Seq(
-          "fullName"    -> "Damon Albarn",
-          "dateOfBirth" -> testDate,
           "nationality" -> "GBR"
         )
 
@@ -139,8 +137,6 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
         val result = Right(StatusCheckResponse("CorrelationId", statusCheckResult))
 
         val expectedDetails = Seq(
-          "fullName"                 -> "Liam Fray",
-          "dateOfBirth"              -> testDate,
           "nationality"              -> "FRA",
           "productType1"             -> "EUS",
           "immigrationStatus1"       -> "ILR",
@@ -180,8 +176,6 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
         val result = Right(StatusCheckResponse("CorrelationId", statusCheckResult))
 
         val expectedDetails = Seq(
-          "fullName"                 -> "Jarvis Cocker",
-          "dateOfBirth"              -> testDate,
           "nationality"              -> "ITA",
           "productType1"             -> "STUDY",
           "immigrationStatus1"       -> "LTR",
@@ -208,8 +202,10 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
     "audit a NotFoundResponse" when {
       "the connector returns a StatusCheckNotFound" in {
         when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any())).thenReturn(Future.unit)
-        val result = Left(StatusCheckNotFound)
-        val expectedDetails = Seq("statusCode" -> StatusCheckNotFound.statusCode, "requestBody" -> request.body)
+        val error = StatusCheckNotFound("Some response")
+        val result = Left(error)
+        val expectedDetails =
+          Seq("statusCode" -> error.statusCode, "requestBody" -> request.body, "error" -> error.responseBody)
 
         sut.auditResult(result)
         verify(mockAuditService)
@@ -220,8 +216,10 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
     "audit a DownstreamError" when {
       "the connector returns a StatusCheckBadRequest" in {
         when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any())).thenReturn(Future.unit)
-        val result = Left(StatusCheckBadRequest)
-        val expectedDetails = Seq("statusCode" -> StatusCheckBadRequest.statusCode, "requestBody" -> request.body)
+        val error = StatusCheckBadRequest("Some response")
+        val result = Left(error)
+        val expectedDetails =
+          Seq("statusCode" -> error.statusCode, "requestBody" -> request.body, "error" -> error.responseBody)
 
         sut.auditResult(result)
         verify(mockAuditService)
@@ -231,8 +229,10 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
       "the connector returns a StatusCheckConflict" in {
         when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any()))
           .thenReturn(Future.unit)
-        val result = Left(StatusCheckConflict)
-        val expectedDetails = Seq("statusCode" -> StatusCheckConflict.statusCode, "requestBody" -> request.body)
+        val error = StatusCheckConflict("Some response")
+        val result = Left(error)
+        val expectedDetails =
+          Seq("statusCode" -> error.statusCode, "requestBody" -> request.body, "error" -> error.responseBody)
 
         sut.auditResult(result)
         verify(mockAuditService)
@@ -241,9 +241,10 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
 
       "the connector returns a StatusCheckInternalServerError" in {
         when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any())).thenReturn(Future.unit)
-        val result = Left(StatusCheckInternalServerError)
+        val error = StatusCheckInternalServerError("Some response")
+        val result = Left(error)
         val expectedDetails =
-          Seq("statusCode" -> StatusCheckInternalServerError.statusCode, "requestBody" -> request.body)
+          Seq("statusCode" -> error.statusCode, "requestBody" -> request.body, "error" -> error.responseBody)
 
         sut.auditResult(result)
         verify(mockAuditService)
@@ -252,8 +253,10 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
 
       "the connector returns a StatusCheckInvalidResponse" in {
         when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any())).thenReturn(Future.unit)
-        val result = Left(StatusCheckInvalidResponse)
-        val expectedDetails = Seq("statusCode" -> StatusCheckInvalidResponse.statusCode, "requestBody" -> request.body)
+        val error = StatusCheckInvalidResponse("Some response")
+        val result = Left(error)
+        val expectedDetails =
+          Seq("statusCode" -> error.statusCode, "requestBody" -> request.body, "error" -> error.responseBody)
 
         sut.auditResult(result)
         verify(mockAuditService)
@@ -263,8 +266,10 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
       "the connector returns a OtherErrorResponse" in {
         when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any())).thenReturn(Future.unit)
         val TEAPOT = 418
-        val result = Left(OtherErrorResponse(TEAPOT))
-        val expectedDetails = Seq("statusCode" -> TEAPOT, "requestBody" -> request.body)
+        val error = OtherErrorResponse(TEAPOT, "Some response")
+        val result = Left(error)
+        val expectedDetails =
+          Seq("statusCode" -> error.statusCode, "requestBody" -> request.body, "error" -> error.responseBody)
 
         sut.auditResult(result)
         verify(mockAuditService)

@@ -62,9 +62,9 @@ class StatusResultController @Inject()(
   private def handleError(query: StatusCheckByNinoFormModel)(error: HomeOfficeError)(
     implicit request: Request[AnyContent]): Result =
     error match {
-      case StatusCheckConflict => Ok(multipleMatchesFoundPage(query))
-      case StatusCheckNotFound => Ok(statusCheckFailurePage(query))
-      case _                   => InternalServerError(externalErrorPage())
+      case StatusCheckConflict(_) => Ok(multipleMatchesFoundPage(query))
+      case StatusCheckNotFound(_) => Ok(statusCheckFailurePage(query))
+      case _                      => InternalServerError(externalErrorPage())
     }
 
   private def displaySuccessfulResult(query: StatusCheckByNinoFormModel)(response: StatusCheckResponse)(
