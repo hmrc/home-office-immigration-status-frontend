@@ -88,7 +88,7 @@ class HomeOfficeImmigrationStatusProxyService @Inject()(
     (baseDetails +: statusDetails).flatten
   }
 
-  def detailsFromError(error: HomeOfficeError)(implicit request: Request[Any]): Seq[(String, Any)] =
-    Seq("statusCode" -> error.statusCode, "requestBody" -> request.body, "error" -> error.responseBody)
+  def detailsFromError(error: HomeOfficeError): Seq[(String, Any)] =
+    Seq("statusCode" -> error.statusCode, "error" -> error.responseBody)
 
 }

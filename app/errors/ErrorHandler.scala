@@ -25,7 +25,7 @@ import play.api.{Configuration, Environment, Mode}
 import play.twirl.api.{Html, HtmlFormat}
 import uk.gov.hmrc.auth.core.{InsufficientEnrolments, NoActiveSession}
 import config.AppConfig
-import views.html.error_template
+import views.html.{InternalErrorPage, error_template}
 import uk.gov.hmrc.http.{JsValidationException, NotFoundException}
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.config.{AuthRedirects, HttpAuditEvent}
@@ -41,6 +41,7 @@ class ErrorHandler @Inject()(
   val env: Environment,
   val messagesApi: MessagesApi,
   val auditConnector: AuditConnector,
+  internalErrorPage: InternalErrorPage,
   errorTemplate: error_template,
   @Named("appName") val appName: String
 )(implicit val config: Configuration, ec: ExecutionContext, appConfig: AppConfig)
@@ -63,7 +64,7 @@ class ErrorHandler @Inject()(
       case _: InsufficientEnrolments => Forbidden
       case e =>
         logger.error(e.getMessage, e)
-        InternalServerError(internalErrorTemplate())
+        InternalServerError(internalErrorPage())
     }
   }
 
@@ -71,12 +72,6 @@ class ErrorHandler @Inject()(
     implicit request: Request[_]): Html =
     errorTemplate(pageTitle, heading, message, None)
 
-  def internalErrorTemplate()(implicit request: Request[_]): HtmlFormat.Appendable =
-    errorTemplate(
-      Messages("internal.error.500.title"),
-      Messages("internal.error.500.heading"),
-      Messages("internal.error.500.message")
-    )
 }
 
 object EventTypes {

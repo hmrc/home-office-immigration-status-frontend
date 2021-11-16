@@ -196,7 +196,7 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
         val error = StatusCheckNotFound("Some response")
         val result = Left(error)
         val expectedDetails =
-          Seq("statusCode" -> error.statusCode, "requestBody" -> request.body, "error" -> error.responseBody)
+          Seq("statusCode" -> error.statusCode, "error" -> error.responseBody)
 
         sut.auditResult(result)
         verify(mockAuditService)
@@ -210,7 +210,7 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
         val error = StatusCheckBadRequest("Some response")
         val result = Left(error)
         val expectedDetails =
-          Seq("statusCode" -> error.statusCode, "requestBody" -> request.body, "error" -> error.responseBody)
+          Seq("statusCode" -> error.statusCode, "error" -> error.responseBody)
 
         sut.auditResult(result)
         verify(mockAuditService)
@@ -223,7 +223,7 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
         val error = StatusCheckConflict("Some response")
         val result = Left(error)
         val expectedDetails =
-          Seq("statusCode" -> error.statusCode, "requestBody" -> request.body, "error" -> error.responseBody)
+          Seq("statusCode" -> error.statusCode, "error" -> error.responseBody)
 
         sut.auditResult(result)
         verify(mockAuditService)
@@ -235,7 +235,7 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
         val error = StatusCheckInternalServerError("Some response")
         val result = Left(error)
         val expectedDetails =
-          Seq("statusCode" -> error.statusCode, "requestBody" -> request.body, "error" -> error.responseBody)
+          Seq("statusCode" -> error.statusCode, "error" -> error.responseBody)
 
         sut.auditResult(result)
         verify(mockAuditService)
@@ -247,7 +247,7 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
         val error = StatusCheckInvalidResponse("Some response")
         val result = Left(error)
         val expectedDetails =
-          Seq("statusCode" -> error.statusCode, "requestBody" -> request.body, "error" -> error.responseBody)
+          Seq("statusCode" -> error.statusCode, "error" -> error.responseBody)
 
         sut.auditResult(result)
         verify(mockAuditService)
@@ -260,7 +260,7 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
         val error = OtherErrorResponse(TEAPOT, "Some response")
         val result = Left(error)
         val expectedDetails =
-          Seq("statusCode" -> error.statusCode, "requestBody" -> request.body, "error" -> error.responseBody)
+          Seq("statusCode" -> error.statusCode, "error" -> error.responseBody)
 
         sut.auditResult(result)
         verify(mockAuditService)
