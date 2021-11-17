@@ -31,6 +31,7 @@ class HomeOfficeImmigrationStatusFrontendISpec
 
         result.status shouldBe OK
         result.body should include(htmlEscapedMessage("lookup.title"))
+        result.headers.get("Cache-Control").map(_.mkString) shouldBe Some("no-cache, no-store, must-revalidate")
       }
     }
 
@@ -42,6 +43,7 @@ class HomeOfficeImmigrationStatusFrontendISpec
 
         result.status shouldBe OK
         result.body should include(htmlEscapedMessage("lookup.title"))
+        result.headers.get("Cache-Control").map(_.mkString) shouldBe Some("no-cache, no-store, must-revalidate")
       }
     }
 
@@ -63,6 +65,7 @@ class HomeOfficeImmigrationStatusFrontendISpec
 
         result.status shouldBe OK
         result.body should include(htmlEscapedMessage("status-found.title"))
+        result.headers.get("Cache-Control").map(_.mkString) shouldBe Some("no-cache, no-store, must-revalidate")
       }
     }
 
@@ -79,6 +82,7 @@ class HomeOfficeImmigrationStatusFrontendISpec
 
         result.status shouldBe OK
         result.body should include(htmlEscapedMessage("status-found.title"))
+        result.headers.get("Cache-Control").map(_.mkString) shouldBe Some("no-cache, no-store, must-revalidate")
       }
 
       "POST to the HO and show error page" in {
@@ -97,6 +101,7 @@ class HomeOfficeImmigrationStatusFrontendISpec
         result.body should include(htmlEscapedMessage("external.error.500.listParagraph"))
         result.body should include(htmlEscapedMessage("external.error.500.list-item1"))
         result.body should include(htmlEscapedMessage("external.error.500.list-item2"))
+        result.headers.get("Cache-Control").map(_.mkString) shouldBe Some("no-cache, no-store, must-revalidate")
       }
     }
 
@@ -108,6 +113,7 @@ class HomeOfficeImmigrationStatusFrontendISpec
 
         result.status shouldBe NOT_FOUND
         result.body should include("This page can’t be found")
+        result.headers.get("Cache-Control").map(_.mkString) shouldBe Some("no-cache, no-store, must-revalidate")
       }
     }
    }

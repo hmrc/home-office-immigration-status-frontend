@@ -35,4 +35,5 @@ class AppConfig @Inject()(servicesConfig: ServicesConfig, val configuration: Con
   val defaultQueryTimeRangeInMonths: Int = servicesConfig.getInt("defaultQueryTimeRangeInMonths")
   val gtmId: String = servicesConfig.getString("google-tag-manager.id")
   val helpdeskUrl = configuration.get[String]("it.helpdesk.url")
+  val httpHeaderCacheControl = configuration.get[String]("httpHeaders.cacheControl")
 }
