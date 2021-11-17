@@ -6,9 +6,9 @@ object AppDependencies {
 
   private val compile = Seq(
     play.sbt.PlayImport.ws,
-    "uk.gov.hmrc"       %% "bootstrap-frontend-play-28"       % "5.12.0",
-    "uk.gov.hmrc"       %% "play-frontend-hmrc"               % "0.88.0-play-28",
-    "uk.gov.hmrc"       %% "play-partials"                    % "8.0.0-play-28",
+    "uk.gov.hmrc"       %% "bootstrap-frontend-play-28"       % "5.16.0",
+    "uk.gov.hmrc"       %% "play-frontend-hmrc"               % "1.26.0-play-28",
+    "uk.gov.hmrc"       %% "play-partials"                    % "8.2.0-play-28",
     "uk.gov.hmrc"       %% "agent-kenshoo-monitoring"         % "4.8.0-play-28",
     "uk.gov.hmrc"       %% "domain"                           % "6.2.0-play-28",
     "uk.gov.hmrc"       %% "simple-reactivemongo"             % "8.0.0-play-28",
