@@ -6,6 +6,7 @@ import com.github.tomakehurst.wiremock.matching.AnythingPattern
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.mvc.Http.HeaderNames
 import support.WireMockSupport
+import utils.NinoGenerator
 
 trait HomeOfficeImmigrationStatusStubs extends JourneyTestData {
   me: WireMockSupport =>
@@ -17,12 +18,14 @@ trait HomeOfficeImmigrationStatusStubs extends JourneyTestData {
     requestBodyWithRange(date.minusMonths(queryMonths).toString, date.toString)
   }
 
+  val nino = NinoGenerator.generateNino
+
   def requestBodyWithRange(startDate: String, endDate: String): String =
     s"""{
        |  "dateOfBirth": "2001-01-31",
        |  "familyName": "Jane",
        |  "givenName": "Doe",
-       |  "nino": "RJ301829A",
+       |  "nino": "${nino.nino}",
        |  "statusCheckRange": {
        |    "startDate": "$startDate",
        |    "endDate": "$endDate"

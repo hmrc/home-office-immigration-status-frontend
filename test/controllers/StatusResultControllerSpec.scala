@@ -19,6 +19,7 @@ package controllers
 import services.HomeOfficeImmigrationStatusProxyService
 import controllers.actions.AccessAction
 import models._
+
 import java.time.LocalDate
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
@@ -32,6 +33,7 @@ import uk.gov.hmrc.domain.Nino
 import views.html.{ExternalErrorPage, MultipleMatchesFoundPage, StatusCheckFailurePage, StatusFoundPage, StatusNotAvailablePage}
 import views.{StatusFoundPageContext, StatusNotAvailablePageContext}
 import models.HomeOfficeError._
+import utils.NinoGenerator.generateNino
 
 import scala.concurrent.Future
 
@@ -71,7 +73,7 @@ class StatusResultControllerSpec extends ControllerSpec {
     }
 
     "display the return from HO" when {
-      val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "pan", "peter", LocalDate.now())
+      val query = StatusCheckByNinoFormModel(generateNino, "pan", "peter", LocalDate.now())
       val formQuery = FormQueryModel("123", query)
 
       def mockProxyServiceWith(hoResponse: Either[HomeOfficeError, StatusCheckResponse]) =

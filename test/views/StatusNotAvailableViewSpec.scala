@@ -18,13 +18,14 @@ package views
 
 import controllers.routes
 import models.StatusCheckByNinoFormModel
+
 import java.time.LocalDate
 import org.jsoup.nodes.{Document, Element}
 import org.mockito.Mockito.mock
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import uk.gov.hmrc.domain.Nino
+import utils.NinoGenerator.generateNino
 import views.html.StatusNotAvailablePage
 import views.html.components.{SearchAgainButton, ShowChangeQuery}
 
@@ -42,7 +43,7 @@ class StatusNotAvailableViewSpec extends ViewSpec {
 
   lazy val sut: StatusNotAvailablePage = inject[StatusNotAvailablePage]
 
-  val nino = StatusCheckByNinoFormModel(Nino("AB123456C"), "Applicant", "", LocalDate.now())
+  val nino = StatusCheckByNinoFormModel(generateNino, "Applicant", "", LocalDate.now())
 
   val query =
     StatusNotAvailablePageContext(nino, routes.LandingController.onPageLoad)

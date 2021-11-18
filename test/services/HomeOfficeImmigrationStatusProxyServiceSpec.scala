@@ -27,6 +27,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import services.HomeOfficeImmigrationStatusFrontendEvent._
 import uk.gov.hmrc.domain.Nino
+import utils.NinoGenerator
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -57,7 +58,7 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
     app.injector.instanceOf[HomeOfficeImmigrationStatusProxyService]
 
   val testDate = LocalDate.now
-  val formModel = StatusCheckByNinoFormModel(Nino("RJ301829A"), "Doe", "Jane", LocalDate.of(2001, 1, 31))
+  val formModel = StatusCheckByNinoFormModel(NinoGenerator.generateNino, "Doe", "Jane", LocalDate.of(2001, 1, 31))
   val statusRequest = formModel.toRequest(6)
   implicit val conf = appConfig
 

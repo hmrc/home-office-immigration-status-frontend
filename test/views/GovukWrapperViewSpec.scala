@@ -17,11 +17,13 @@
 package views
 
 import models.StatusCheckByNinoFormModel
+
 import java.time.LocalDate
 import org.jsoup.nodes.Document
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import uk.gov.hmrc.domain.Nino
+import utils.NinoGenerator
 import views.html.MultipleMatchesFoundPage
 
 class GovukWrapperViewSpec extends ViewSpec {
@@ -30,7 +32,7 @@ class GovukWrapperViewSpec extends ViewSpec {
 
   lazy val sut = inject[MultipleMatchesFoundPage]
 
-  val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "Pan", "", LocalDate.now())
+  val query = StatusCheckByNinoFormModel(NinoGenerator.generateNino, "Pan", "", LocalDate.now())
   lazy val doc: Document = asDocument(sut(query)(request, messages))
 
   "govuk_wrapper" must {

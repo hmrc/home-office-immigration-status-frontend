@@ -8,9 +8,6 @@ trait JourneyTestData {
 
   val correlationId: String = scala.util.Random.alphanumeric.take(64).mkString
 
-  val validQuery: StatusCheckByNinoRequest =
-    StatusCheckByNinoRequest(Nino("RJ301829A"), "Doe", "Jane", "2001-01-31", StatusCheckRange(None, None))
-
   val expectedResultWithSingleStatus: StatusCheckResult = StatusCheckResult(
     fullName = "Jane Doe",
     dateOfBirth = LocalDate.parse("2001-01-31"),
