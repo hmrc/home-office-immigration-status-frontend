@@ -40,8 +40,8 @@ app.name='Check immigration status'
 app.hasNoActiveStatus='does not have an active status'
 
 # Lookup page
-lookup.title='Enter the customer’s details'
-lookup.title.Error='Error: Enter the customer’s details'
+lookup.title='Enter all information to search for the customer'
+lookup.title.Error='Error: Enter all information to search for the customer'
 lookup.nino.label='National Insurance number'
 lookup.nino.hint='For example, ‘QQ123456C’.'
 lookup.nino.ariaDescribedBy='nino-hint'
