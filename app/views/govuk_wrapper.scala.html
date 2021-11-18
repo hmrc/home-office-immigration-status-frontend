@@ -25,10 +25,11 @@
     hmrcHead: HmrcHead,
     hmrcHeader: HmrcInternalHeader,
     hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
-    hmrcScripts: HmrcScripts
+    hmrcScripts: HmrcScripts,
+    appConfig: AppConfig
 )
 
-@(title: String, beforeContentHtml: Option[Html] = None, gaCode: Seq[String] = Seq.empty)(mainContent: Html)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(title: String, beforeContentHtml: Option[Html] = None, gaCode: Seq[String] = Seq.empty)(mainContent: Html)(implicit request: Request[_], messages: Messages)
 
 @head = {
     <script @{CSPNonce.attr} src='@routes.Assets.versioned("javascripts/ga-events.js")'></script>

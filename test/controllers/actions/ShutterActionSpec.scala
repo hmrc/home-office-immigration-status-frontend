@@ -75,12 +75,7 @@ class ShutterActionSpec extends ControllerSpec {
     "filter to the shutter page where shuttered is true" in {
       when(mockAppConfig.shuttered).thenReturn(true)
       val fut = shutterAction.invokeBlock(request, block)
-      contentAsString(fut) mustEqual
-        shutteringPage(
-          messages("shuttering.title"),
-          messages("shuttering.title"),
-          messages("shuttering.message")
-        ).toString
+      contentAsString(fut) mustEqual shutteringPage().toString
     }
 
   }

@@ -1,12 +1,12 @@
 package controllers
 
+import controllers.actions.AuthAction
 import play.api.Application
 import play.api.mvc.AnyContentAsEmpty
 import play.api.mvc.Results._
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import play.api.test.{FakeRequest, Injecting}
-import controllers.actions.AuthAction
-import support.AppISpec
+import support.BaseISpec
 import uk.gov.hmrc.http.SessionKeys
 
 class AuthActionsISpec extends AuthActionISpecSetup {
@@ -21,6 +21,7 @@ class AuthActionsISpec extends AuthActionISpecSetup {
 
       status(result) shouldBe 200
       contentAsString(result) shouldBe "Passed Auth"
+      verifyAuthoriseAttempt()
     }
 
     "redirect to log in page when user not authenticated" in {
@@ -29,6 +30,7 @@ class AuthActionsISpec extends AuthActionISpecSetup {
       val result = TestController.test()(request)
       status(result) shouldBe 303
       redirectLocation(result).get should include("/stride/sign-in")
+      verifyAuthoriseAttempt()
     }
 
     "redirect to log in page when user authenticated with different provider" in {
@@ -37,11 +39,12 @@ class AuthActionsISpec extends AuthActionISpecSetup {
       val result = TestController.test()(request)
       status(result) shouldBe 303
       redirectLocation(result).get should include("/stride/sign-in")
+      verifyAuthoriseAttempt()
     }
   }
 }
 
-trait AuthActionISpecSetup extends AppISpec with Injecting {
+trait AuthActionISpecSetup extends BaseISpec with Injecting {
 
   override def fakeApplication: Application = appBuilder.build()
 

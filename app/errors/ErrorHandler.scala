@@ -25,7 +25,7 @@ import play.api.{Configuration, Environment, Mode}
 import play.twirl.api.{Html, HtmlFormat}
 import uk.gov.hmrc.auth.core.{InsufficientEnrolments, NoActiveSession}
 import config.AppConfig
-import views.html.{InternalErrorPage, error_template}
+import views.html.{InternalErrorPage, ShutteringPage, error_template}
 import uk.gov.hmrc.http.{JsValidationException, NotFoundException}
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.config.{AuthRedirects, HttpAuditEvent}
@@ -43,6 +43,7 @@ class ErrorHandler @Inject()(
   val auditConnector: AuditConnector,
   internalErrorPage: InternalErrorPage,
   errorTemplate: error_template,
+  shutteringPage: ShutteringPage,
   @Named("appName") val appName: String
 )(implicit val config: Configuration, ec: ExecutionContext, appConfig: AppConfig)
     extends FrontendErrorHandler with AuthRedirects with ErrorAuditing with Logging {
@@ -53,7 +54,10 @@ class ErrorHandler @Inject()(
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
     auditClientError(request, statusCode, message)
-    super.onClientError(request, statusCode, message)
+    if (appConfig.shuttered) {
+      implicit val r: Request[String] = Request(request, "")
+      Future.successful(ServiceUnavailable(shutteringPage()))
+    } else super.onClientError(request, statusCode, message)
   }
 
   override def resolveError(request: RequestHeader, exception: Throwable): Result = {

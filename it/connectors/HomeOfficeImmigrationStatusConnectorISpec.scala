@@ -1,19 +1,16 @@
 package connectors
 
+import models.HomeOfficeError._
+import models._
 import org.scalatest.concurrent.ScalaFutures
 import play.api.Application
-import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import uk.gov.hmrc.domain.Nino
-import models._
 import stubs.HomeOfficeImmigrationStatusStubs
-import support.AppISpec
+import support.BaseISpec
 import uk.gov.hmrc.http._
-import models.HomeOfficeError._
-import utils.NinoGenerator
 
 import java.time.{LocalDate, ZoneId}
-import scala.concurrent.ExecutionContext.Implicits.global
 import java.util.UUID
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationStatusConnectorISpecSetup {
 
@@ -86,7 +83,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
 
 }
 
-trait HomeOfficeImmigrationStatusConnectorISpecSetup extends AppISpec with HomeOfficeImmigrationStatusStubs with ScalaFutures {
+trait HomeOfficeImmigrationStatusConnectorISpecSetup extends BaseISpec with HomeOfficeImmigrationStatusStubs with ScalaFutures {
 
   private val HEADER_X_CORRELATION_ID = "X-Correlation-Id"
   implicit val hc: HeaderCarrier = HeaderCarrier().withExtraHeaders(HEADER_X_CORRELATION_ID -> UUID.randomUUID().toString)
