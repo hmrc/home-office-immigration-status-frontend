@@ -17,6 +17,7 @@
 package views
 
 import models.StatusCheckByNinoFormModel
+
 import java.time.LocalDate
 import org.jsoup.nodes.{Document, Element}
 import org.mockito.Mockito.{mock, verify}
@@ -24,6 +25,7 @@ import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import uk.gov.hmrc.domain.Nino
+import utils.NinoGenerator
 import views.html.StatusCheckFailurePage
 import views.html.components.{SearchAgainButton, ShowChangeQuery}
 
@@ -41,8 +43,8 @@ class StatusCheckFailureViewSpec extends ViewSpec {
 
   lazy val sut: StatusCheckFailurePage = inject[StatusCheckFailurePage]
 
-  //todo nino gen
-  val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "Pan", "", LocalDate.now())
+  val nino = NinoGenerator.generateNino
+  val query = StatusCheckByNinoFormModel(nino, "Pan", "", LocalDate.now())
   lazy val doc: Document = asDocument(sut(query)(request, messages))
 
   "StatusCheckFailurePage" must {

@@ -24,6 +24,7 @@ import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.data.{Form, FormError}
 import uk.gov.hmrc.domain.Nino
 import org.scalacheck.Shrink
+import utils.NinoGenerator
 
 import java.time.LocalDate
 
@@ -37,8 +38,7 @@ class StatusCheckByNinoRequestFormSpec extends PlaySpec with OptionValues with S
   val now: LocalDate = LocalDate.now()
   val tomorrow: LocalDate = now.plusDays(1)
   val yesterday: LocalDate = now.minusDays(1)
-  val testNino = Nino("RJ301829A")
-  //TODO NINO GEN
+  val testNino = NinoGenerator.generateNino
 
   def input(
     year: String = yesterday.getYear.toString,

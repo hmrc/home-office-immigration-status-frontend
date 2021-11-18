@@ -5,7 +5,6 @@ import play.api.Application
 import play.api.libs.json.Json
 import play.api.libs.ws.{WSClient, WSRequest}
 import play.api.mvc.{CookieHeaderEncoding, SessionCookieBaker}
-import uk.gov.hmrc.domain.Nino
 import models.{FormQueryModel, StatusCheckByNinoFormModel}
 import stubs.{HomeOfficeImmigrationStatusStubs, JourneyTestData}
 import support.ServerISpec
@@ -58,7 +57,7 @@ class HomeOfficeImmigrationStatusFrontendISpec
           "dateOfBirth.day"   -> "31",
           "familyName"        -> "Jane",
           "givenName"         -> "Doe",
-          "nino"              -> "RJ301829A")
+          "nino"              -> nino.nino)
 
         val sessionId = "123"
         val result = request("/check-with-nino", sessionId).post(payload).futureValue
@@ -75,7 +74,7 @@ class HomeOfficeImmigrationStatusFrontendISpec
         givenAuthorisedForStride("TBC", "StrideUserId")
 
         val sessionId = "123"
-        val query = StatusCheckByNinoFormModel(Nino("RJ301829A"), "Doe", "Jane", LocalDate.of(2001, 1, 31))
+        val query = StatusCheckByNinoFormModel(nino, "Doe", "Jane", LocalDate.of(2001, 1, 31))
         setFormQuery(query, sessionId)
 
         val result = request("/status-result", sessionId).get().futureValue
@@ -90,7 +89,7 @@ class HomeOfficeImmigrationStatusFrontendISpec
         givenAuthorisedForStride("TBC", "StrideUserId")
         
         val sessionId = "456"
-        val query = StatusCheckByNinoFormModel(Nino("RJ301829A"), "Doe", "Jane", LocalDate.of(2001, 1, 31))
+        val query = StatusCheckByNinoFormModel(nino, "Doe", "Jane", LocalDate.of(2001, 1, 31))
         setFormQuery(query, sessionId)
 
         val result = request("/status-result").get().futureValue

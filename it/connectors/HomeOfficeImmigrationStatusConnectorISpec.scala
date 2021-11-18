@@ -9,6 +9,7 @@ import stubs.HomeOfficeImmigrationStatusStubs
 import support.AppISpec
 import uk.gov.hmrc.http._
 import models.HomeOfficeError._
+import utils.NinoGenerator
 
 import java.time.{LocalDate, ZoneId}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -96,7 +97,7 @@ trait HomeOfficeImmigrationStatusConnectorISpecSetup extends AppISpec with HomeO
     app.injector.instanceOf[HomeOfficeImmigrationStatusProxyConnector]
 
   val request: StatusCheckByNinoRequest = StatusCheckByNinoRequest(
-    Nino("RJ301829A"),
+    nino,
     "Doe",
     "Jane",
     "2001-01-31",

@@ -19,6 +19,7 @@ package views.components
 import controllers.routes
 import models.StatusCheckByNinoFormModel
 import uk.gov.hmrc.domain.Nino
+import utils.NinoGenerator
 import views.html.components.ShowChangeQuery
 import views.{DateFormat, ViewSpec}
 
@@ -28,8 +29,8 @@ class ShowChangeQuerySpec extends ViewSpec {
 
   val sut = inject[ShowChangeQuery]
 
-  //todo nino gen
-  val query = StatusCheckByNinoFormModel(Nino("AB123456C"), "Pan", "", LocalDate.now())
+  val nino = NinoGenerator.generateNino
+  val query = StatusCheckByNinoFormModel(nino, "Pan", "", LocalDate.now())
 
   val doc = asDocument(sut(query)(messages))
 

@@ -22,6 +22,7 @@ import org.jsoup.nodes.{Document, Element}
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.domain.Nino
+import utils.NinoGenerator
 import views.html.StatusFoundPage
 
 import java.time.LocalDate
@@ -32,8 +33,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
   def buildContext(statuses: List[ImmigrationStatus] = List(ValidStatus)): StatusFoundPageContext =
     StatusFoundPageContext(
-      //todo nino gen
-      StatusCheckByNinoFormModel(Nino("AB123456C"), "Pan", "", LocalDate.now()),
+      StatusCheckByNinoFormModel(NinoGenerator.generateNino, "Pan", "", LocalDate.now()),
       StatusCheckResult("Pan", LocalDate.now(), "D", statuses),
       Call("", "/expected")
     )

@@ -26,6 +26,7 @@ import play.api.libs.json.Json
 import repositories.SessionCacheRepository
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
+import utils.NinoGenerator
 
 import java.time.{LocalDate, LocalDateTime}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -45,7 +46,7 @@ class SessionCacheServiceSpec extends PlaySpec with BeforeAndAfterEach with Scal
   }
 
   val formModel = StatusCheckByNinoFormModel(
-    nino = Nino("RJ301829A"),
+    nino = NinoGenerator.generateNino,
     givenName = "Pan",
     familyName = "Oldfield",
     dateOfBirth = LocalDate.now)
@@ -62,7 +63,6 @@ class SessionCacheServiceSpec extends PlaySpec with BeforeAndAfterEach with Scal
     }
 
     "check the repository and return some where the header carrier has a session id" in {
-      //TODO - nino gen
       when(mockRepo.findById(any(), any())(any())).thenReturn(Future.successful(Some(formQuery)))
       val hc = HeaderCarrier(sessionId = Some(SessionId("123")))
       val result = Await.result(sut.get(hc, implicitly), 5 seconds)

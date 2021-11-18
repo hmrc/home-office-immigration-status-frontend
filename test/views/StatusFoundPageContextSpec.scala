@@ -26,6 +26,7 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n._
 import play.api.mvc.Call
 import uk.gov.hmrc.domain.Nino
+import utils.NinoGenerator
 import viewmodels.RowViewModel
 
 import java.time.LocalDate
@@ -49,8 +50,7 @@ class StatusFoundPageContextSpec
       assert(realMessages.isDefinedAt(key))
     }
 
-  //todo nino generator
-  val query = StatusCheckByNinoFormModel(Nino("RJ301829A"), "Surname", "Forename", LocalDate.now())
+  val query = StatusCheckByNinoFormModel(NinoGenerator.generateNino, "Surname", "Forename", LocalDate.now())
   val call = Call("GET", "/")
 
   def createContext(pt: String, is: String, endDate: Option[LocalDate], hasRecourseToPublicFunds: Boolean = false) =
