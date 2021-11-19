@@ -52,6 +52,7 @@ trait BaseISpec
   protected def appBuilder: GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .configure(
+        "isShuttered" -> false,
         "metrics.enabled"                -> true,
         "auditing.enabled"                     -> true,
         "auditing.consumer.baseUri.host"       -> wireMockHost,
