@@ -24,7 +24,7 @@ It should then be listening on port 10210
 
 As this is an internal service shuttering is handled within the application.\
 Configured by `isShuttered`.\
-To shutter the service in a given environment, add `isShuttered = true` to 
+To shutter the service in a given environment, add `isShuttered: 'true'` to 
 `app-config-ENV/home-office-immigration-status-frontend.yaml` and redeploy.
 
 
