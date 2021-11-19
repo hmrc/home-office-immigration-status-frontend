@@ -15,7 +15,6 @@
  *@
 
 @import models.StatusCheckByNinoFormModel
-@import config.AppConfig
 
 @this(
     govukWrapper: govuk_wrapper,
@@ -27,7 +26,7 @@
     fieldset: components.fieldset
 )
 
-@(statusCheckForm: Form[StatusCheckByNinoFormModel],submitFormCall: Call)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(statusCheckForm: Form[StatusCheckByNinoFormModel],submitFormCall: Call)(implicit request: Request[_], messages: Messages)
 
 @govukWrapper(title = if(statusCheckForm.hasErrors) messages("lookup.title.Error") else messages("lookup.title")) {
 
