@@ -1,31 +1,42 @@
 package support
 
 import akka.stream.Materializer
+import org.scalatest.OptionValues
+import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
-import org.scalatest.OptionValues
+import org.scalatestplus.play.guice.GuiceOneServerPerSuite
+import play.api.Application
 import play.api.i18n.{Lang, Messages, MessagesApi}
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.inject.bind
-import play.api.mvc.Result
-import play.api.test.FakeRequest
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.mvc.{Request, Result}
 import play.api.test.Helpers.{charset, contentAsString, contentType, defaultAwaitTimeout, status}
+import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.HtmlFormat
+import services.{AuditService, HomeOfficeImmigrationStatusFrontendEvent}
 import stubs.{AuthStubs, DataStreamStubs}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
+
+import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
-import scala.reflect.ClassTag
-import services.AuditService
-import play.api.mvc.Request
-import services.HomeOfficeImmigrationStatusFrontendEvent
 
-abstract class BaseISpec
-    extends AnyWordSpecLike with Matchers with OptionValues with WireMockSupport with AuthStubs with DataStreamStubs
-    with MetricsTestSupport {
+trait BaseISpec
+    extends AnyWordSpecLike
+      with Matchers
+      with GuiceOneServerPerSuite
+      with OptionValues
+      with ScalaFutures
+      with WireMockSupport
+      with AuthStubs
+      with DataStreamStubs
+      with MetricsTestSupport
+      with Injecting {
 
-  import scala.concurrent.duration._
+  override def fakeApplication: Application = appBuilder.build()
+
   implicit val defaultTimeout: FiniteDuration = 5 seconds
 
   object FakeAuditService extends AuditService {
@@ -69,11 +80,9 @@ abstract class BaseISpec
     contentAsString(result) should include(expectedSubstring)
   }
 
-  def injected[T](implicit evidence: ClassTag[T]): T = app.injector.instanceOf[T]
-  lazy val messagesApi: MessagesApi = injected[MessagesApi]
-  private implicit val messages: Messages = messagesApi.preferred(Seq.empty[Lang])
+  implicit lazy val messages: Messages = inject[MessagesApi].preferred(Seq.empty[Lang])
 
-  protected def htmlEscapedMessage(key: String): String = HtmlFormat.escape(Messages(key)).toString
+  protected def htmlEscapedMessage(key: String): String = HtmlFormat.escape(messages(key)).toString
 
   implicit def hc(implicit request: FakeRequest[_]): HeaderCarrier =
     HeaderCarrierConverter.fromRequest(request)

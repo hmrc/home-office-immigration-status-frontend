@@ -41,12 +41,9 @@ class ShutterActionImpl @Inject()(
     if (appConfig.shuttered) {
       Some(
         ServiceUnavailable(
-          shutteringPage(
-            "shuttering.title",
-            "shuttering.title",
-            "shuttering.message"
-          )
-        ))
+          shutteringPage()
+        )
+      )
     } else None
 
 }

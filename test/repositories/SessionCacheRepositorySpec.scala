@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,22 +12,24 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import config.AppConfig
+package repositories
 
-@this(
-    govukWrapper: govuk_wrapper
-)
+import org.scalatestplus.play.PlaySpec
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.test.Injecting
 
-@()(implicit request: Request[_], messages: Messages)
+class SessionCacheRepositorySpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
 
-@govukWrapper(title = messages("shuttering.title")) {
+  lazy val sut: SessionCacheRepository = inject[SessionCacheRepository]
 
-    <h1 class="govuk-heading-xl" id="title">@messages("shuttering.title")</h1>
+  "db" must {
+    "have a defined TTL" in {
+      val ttlIndex = sut.indexes.find(_.name.contains("lastUpdatedTTL"))
 
-    <p class="govuk-body">@messages("shuttering.message")</p>
-
+      ttlIndex mustBe defined
+      assert(ttlIndex.get.options.contains("expireAfterSeconds"))
+    }
+  }
 }
-
-
