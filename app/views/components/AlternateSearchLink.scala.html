@@ -16,8 +16,8 @@
 
 @this()
 
-@(message: String, url: String)(implicit messages: Messages)
+@(message: String, url: String, id: String)(implicit messages: Messages)
 
-<a href="@url" class="govuk-link" >@messages(message)</a>
+<a href="@url" id="@id" class="govuk-link" >@messages(message)</a>
 
 <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">

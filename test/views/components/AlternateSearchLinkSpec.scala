@@ -22,7 +22,7 @@ import views.html.components.AlternateSearchLink
 class AlternateSearchLinkSpec extends ViewSpec {
 
   val sut = inject[AlternateSearchLink]
-  val doc = asDocument(sut("some.message.key", "/some/url")(messages))
+  val doc = asDocument(sut("some.message.key", "/some/url", "link-id")(messages))
 
   "alternate link" must {
     "have the link" in {
@@ -31,6 +31,7 @@ class AlternateSearchLinkSpec extends ViewSpec {
       link.text() mustBe "some.message.key"
       link.attr("href") mustBe "/some/url"
       assert(link.hasClass("govuk-link"))
+      link.id() mustBe "link-id"
     }
     "have the section break" in {
       val break = doc.getElementsByTag("hr").first()

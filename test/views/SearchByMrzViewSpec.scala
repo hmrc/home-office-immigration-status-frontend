@@ -19,7 +19,6 @@ package views
 import org.jsoup.nodes.{Document, Element}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, verify, when}
-import play.api
 import play.api.inject.bind
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -40,7 +39,7 @@ class SearchByMrzViewSpec extends ViewSpec {
     .build()
 
   val fakeAlternativeSearch: String = UUID.randomUUID().toString
-  when(mockAlternateSearch.apply(any(), any())(any())).thenReturn(Html(fakeAlternativeSearch))
+  when(mockAlternateSearch.apply(any(), any(), any())(any())).thenReturn(Html(fakeAlternativeSearch))
 
   lazy val sut: SearchByMrzView = inject[SearchByMrzView]
 
@@ -54,7 +53,10 @@ class SearchByMrzViewSpec extends ViewSpec {
     "have the alternate search link" in {
       doc.text() must include(fakeAlternativeSearch)
       verify(mockAlternateSearch)
-        .apply("alternate-search.nino-link", controllers.routes.StatusCheckByNinoController.onPageLoad.url)(messages)
+        .apply(
+          "alternate-search.nino-link",
+          controllers.routes.StatusCheckByNinoController.onPageLoad.url,
+          "alt-search-by-nino")(messages)
     }
   }
 }
