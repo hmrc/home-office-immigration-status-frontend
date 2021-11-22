@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import models.StatusCheckByNinoFormModel
+@import models.NinoSearchFormModel
 
 @this(
     govukWrapper: govuk_wrapper,
@@ -27,7 +27,7 @@
     alternateSearch: components.AlternateSearchLink
 )
 
-@(statusCheckForm: Form[StatusCheckByNinoFormModel],submitFormCall: Call)(implicit request: Request[_], messages: Messages)
+@(statusCheckForm: Form[NinoSearchFormModel],submitFormCall: Call)(implicit request: Request[_], messages: Messages)
 
 @govukWrapper(title = if(statusCheckForm.hasErrors) messages("lookup.title.Error") else messages("lookup.title")) {
 

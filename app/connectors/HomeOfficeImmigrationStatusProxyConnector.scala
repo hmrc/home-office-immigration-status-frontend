@@ -23,7 +23,7 @@ import com.codahale.metrics.MetricRegistry
 import com.kenshoo.play.metrics.Metrics
 import play.api.libs.json.{Json, Writes}
 import uk.gov.hmrc.agent.kenshoo.monitoring.HttpAPIMonitor
-import models.{HomeOfficeError, StatusCheckByNinoRequest, StatusCheckResponse}
+import models.{HomeOfficeError, MrzSearch, NinoSearch, StatusCheckResponse}
 import config.AppConfig
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -38,16 +38,27 @@ class HomeOfficeImmigrationStatusProxyConnector @Inject()(appConfig: AppConfig, 
 
   private val baseUrl: String = appConfig.homeOfficeImmigrationStatusProxyBaseUrl
   private val publicFundsByNinoPath = "/v1/status/public-funds/nino"
+  private val publicFundsByMrzPath = "/v1/status/public-funds/mrz"
 
   override val kenshooRegistry: MetricRegistry = metrics.defaultRegistry
 
-  def statusPublicFundsByNino(request: StatusCheckByNinoRequest)(
+  def statusPublicFundsByNino(request: NinoSearch)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext): Future[Either[HomeOfficeError, StatusCheckResponse]] =
     monitor("ConsumedAPI-home-office-immigration-status-proxy-status-by-nino-POST") {
       http
-        .POST[StatusCheckByNinoRequest, Either[HomeOfficeError, StatusCheckResponse]](
+        .POST[NinoSearch, Either[HomeOfficeError, StatusCheckResponse]](
           new URL(baseUrl + publicFundsByNinoPath).toExternalForm,
+          request)
+    }
+
+  def statusPublicFundsByMrz(request: MrzSearch)(
+    implicit hc: HeaderCarrier,
+    ec: ExecutionContext): Future[Either[HomeOfficeError, StatusCheckResponse]] =
+    monitor("ConsumedAPI-home-office-immigration-status-proxy-status-by-mrz-POST") {
+      http
+        .POST[MrzSearch, Either[HomeOfficeError, StatusCheckResponse]](
+          new URL(baseUrl + publicFundsByMrzPath).toExternalForm,
           request)
     }
 

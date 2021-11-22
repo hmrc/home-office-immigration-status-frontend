@@ -18,7 +18,7 @@ package config
 
 import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import javax.inject.{Inject, Singleton}
+import com.google.inject.{ImplementedBy, Inject, Singleton}
 
 @Singleton
 class AppConfig @Inject()(servicesConfig: ServicesConfig, val configuration: Configuration) {
@@ -28,12 +28,12 @@ class AppConfig @Inject()(servicesConfig: ServicesConfig, val configuration: Con
   val authBaseUrl: String = servicesConfig.baseUrl("auth")
   val homeOfficeImmigrationStatusProxyBaseUrl: String = servicesConfig.baseUrl("home-office-immigration-status-proxy")
 
-  val mongoCollectionName = servicesConfig.getString("mongodb.collectionName")
+  val mongoCollectionName: String = servicesConfig.getString("mongodb.collectionName")
   val mongoSessionExpiration: Int = servicesConfig.getInt("mongodb.ttl.seconds")
 
   val authorisedStrideGroup: String = servicesConfig.getString("authorisedStrideGroup")
   val defaultQueryTimeRangeInMonths: Int = servicesConfig.getInt("defaultQueryTimeRangeInMonths")
   val gtmId: String = servicesConfig.getString("google-tag-manager.id")
-  val helpdeskUrl = configuration.get[String]("it.helpdesk.url")
-  val httpHeaderCacheControl = configuration.get[String]("httpHeaders.cacheControl")
+  val helpdeskUrl: String = configuration.get[String]("it.helpdesk.url")
+  val httpHeaderCacheControl: String = configuration.get[String]("httpHeaders.cacheControl")
 }

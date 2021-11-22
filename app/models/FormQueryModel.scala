@@ -20,10 +20,7 @@ import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.mongoEntity
 import java.time.LocalDateTime
 
-case class FormQueryModel(
-  id: String,
-  data: StatusCheckByNinoFormModel,
-  lastUpdated: LocalDateTime = LocalDateTime.now())
+final case class FormQueryModel(id: String, data: SearchFormModel, lastUpdated: LocalDateTime = LocalDateTime.now())
 
 object FormQueryModel {
   implicit val formats: Format[FormQueryModel] = mongoEntity { Json.format[FormQueryModel] }

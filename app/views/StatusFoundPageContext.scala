@@ -20,12 +20,9 @@ import play.api.i18n.Messages
 import play.api.mvc.Call
 import viewmodels.{RowViewModel => Row}
 import views.StatusFoundPageContext.RichMessages
-import models.{ImmigrationStatus, StatusCheckByNinoFormModel, StatusCheckResult}
+import models.{ImmigrationStatus, MrzSearchFormModel, NinoSearchFormModel, SearchFormModel, StatusCheckResult}
 
-final case class StatusFoundPageContext(
-  query: StatusCheckByNinoFormModel,
-  result: StatusCheckResult,
-  searchAgainCall: Call) {
+final case class StatusFoundPageContext(query: SearchFormModel, result: StatusCheckResult, searchAgainCall: Call) {
 
   val mostRecentStatus: Option[ImmigrationStatus] = result.mostRecentStatus
   val previousStatuses: Seq[ImmigrationStatus] = result.previousStatuses
@@ -43,12 +40,15 @@ final case class StatusFoundPageContext(
       else None
     ).flatten
 
-  def detailRows(implicit messages: Messages): Seq[Row] =
-    Seq(
-      Row("nino", "generic.nino", query.nino.nino),
-      Row("dob", "generic.dob", result.dobFormatted(messages.lang.locale)),
-      Row("nationality", "generic.nationality", result.countryName)
-    )
+  def detailRows(implicit messages: Messages): Seq[Row] = query match {
+    case q: NinoSearchFormModel =>
+      Seq(
+        Row("nino", "generic.nino", q.nino.nino),
+        Row("dob", "generic.dob", result.dobFormatted(messages.lang.locale)),
+        Row("nationality", "generic.nationality", result.countryName)
+      )
+    case q: MrzSearchFormModel => Nil
+  }
 
   def hasRecourseToPublicFunds: Boolean = !mostRecentStatus.exists(_.noRecourseToPublicFunds)
 

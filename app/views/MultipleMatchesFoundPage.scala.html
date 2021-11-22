@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import models.StatusCheckByNinoFormModel
+@import models.SearchFormModel
 @import config.AppConfig
 
 @this(
@@ -23,7 +23,7 @@
     searchAgainButton : components.SearchAgainButton
 )(implicit appConfig: AppConfig)
 
-@(query: StatusCheckByNinoFormModel)(implicit request: Request[_], messages: Messages)
+@(query: SearchFormModel)(implicit request: Request[_], messages: Messages)
 
 @govukWrapper(title = messages("status-check-failure-conflict.title")) {
 

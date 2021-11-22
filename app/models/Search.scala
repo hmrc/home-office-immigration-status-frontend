@@ -16,21 +16,23 @@
 
 package models
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.domain.Nino
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-case class StatusCheckByNinoRequest(
+sealed trait Search
+
+final case class NinoSearch(
   nino: Nino,
   givenName: String,
   familyName: String,
   dateOfBirth: String,
   statusCheckRange: StatusCheckRange
-)
+) extends Search
 
-object StatusCheckByNinoRequest {
+object NinoSearch {
   private val ISO8601 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
   def apply(
@@ -39,7 +41,19 @@ object StatusCheckByNinoRequest {
     familyName: String,
     dateOfBirth: LocalDate,
     statusCheckRange: StatusCheckRange) =
-    new StatusCheckByNinoRequest(nino, givenName, familyName, dateOfBirth.format(ISO8601), statusCheckRange)
+    new NinoSearch(nino, givenName, familyName, dateOfBirth.format(ISO8601), statusCheckRange)
 
-  implicit val formats: OFormat[StatusCheckByNinoRequest] = Json.format[StatusCheckByNinoRequest]
+  implicit val formats: Format[NinoSearch] = Json.format[NinoSearch]
+}
+
+final case class MrzSearch(
+  documentType: String,
+  documentNumber: String,
+  dateOfBirth: LocalDate,
+  nationality: String,
+  statusCheckRange: StatusCheckRange
+) extends Search
+
+object MrzSearch {
+  implicit val formats: Format[MrzSearch] = Json.format[MrzSearch]
 }

@@ -66,23 +66,23 @@ class StatusResultControllerSpec extends ControllerSpec {
         status(result) mustBe SEE_OTHER
         redirectLocation(result).get mustBe routes.StatusCheckByNinoController.onPageLoad.url
         withClue("Connector should not be called") {
-          verify(mockProxyService, times(0)).statusPublicFundsByNino(any())(any(), any(), any(), any())
+          verify(mockProxyService, times(0)).search(any())(any(), any(), any(), any())
         }
         verify(mockSessionCacheService).get(any(), any())
       }
     }
 
     "display the return from HO" when {
-      val query = StatusCheckByNinoFormModel(generateNino, "pan", "peter", LocalDate.now())
+      val query = NinoSearchFormModel(generateNino, "pan", "peter", LocalDate.now())
       val formQuery = FormQueryModel("123", query)
 
       def mockProxyServiceWith(hoResponse: Either[HomeOfficeError, StatusCheckResponse]) =
         when(
           mockProxyService
-            .statusPublicFundsByNino(refEq(query))(any(), any(), any(), any()))
+            .search(refEq(query))(any(), any(), any(), any()))
           .thenReturn(Future.successful(hoResponse))
 
-      def verifyConnector() = verify(mockProxyService).statusPublicFundsByNino(any())(any(), any(), any(), any())
+      def verifyConnector() = verify(mockProxyService).search(any())(any(), any(), any(), any())
 
       "is found with statuses" in {
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(formQuery)))

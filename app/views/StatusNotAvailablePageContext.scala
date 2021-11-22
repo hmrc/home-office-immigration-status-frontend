@@ -19,17 +19,26 @@ package views
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import viewmodels.{RowViewModel => Row}
-import models.StatusCheckByNinoFormModel
+import models.{MrzSearchFormModel, NinoSearchFormModel, SearchFormModel}
 
-case class StatusNotAvailablePageContext(query: StatusCheckByNinoFormModel, searchAgainCall: Call) {
+case class StatusNotAvailablePageContext(query: SearchFormModel, searchAgainCall: Call) {
 
-  def fullName: String = s"${query.givenName} ${query.familyName}"
+  def fullName: Option[String] =
+    query match {
+      case q: NinoSearchFormModel => Some(s"${q.givenName} ${q.familyName}")
+      case q: MrzSearchFormModel  => None
+    }
 
   def notAvailablePersonalData(implicit messages: Messages) =
-    Seq(
-      Row("nino", "generic.nino", query.nino.nino),
-      Row("givenName", "generic.givenName", query.givenName),
-      Row("familyName", "generic.familyName", query.familyName),
-      Row("dob", "generic.dob", DateFormat.format(messages.lang.locale)(query.dateOfBirth))
-    )
+    query match {
+      case q: NinoSearchFormModel =>
+        Seq(
+          Row("nino", "generic.nino", q.nino.nino),
+          Row("givenName", "generic.givenName", q.givenName),
+          Row("familyName", "generic.familyName", q.familyName),
+          Row("dob", "generic.dob", DateFormat.format(messages.lang.locale)(q.dateOfBirth))
+        )
+      case q: MrzSearchFormModel =>
+        Nil
+    }
 }

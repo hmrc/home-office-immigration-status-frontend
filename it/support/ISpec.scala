@@ -1,6 +1,6 @@
 package support
 
-import models.{FormQueryModel, StatusCheckByNinoFormModel}
+import models.{FormQueryModel, NinoSearchFormModel}
 import play.api.libs.json.Json
 import play.api.libs.ws.{WSClient, WSRequest}
 import play.api.mvc.{CookieHeaderEncoding, SessionCookieBaker}
@@ -20,7 +20,7 @@ trait ISpec extends BaseISpec {
 
   lazy val cacheRepo = inject[SessionCacheRepository]
 
-  def setFormQuery(formModel: StatusCheckByNinoFormModel, sessionId: String) = {
+  def setFormQuery(formModel: NinoSearchFormModel, sessionId: String) = {
     val formQueryModel = FormQueryModel(sessionId, formModel)
     val selector = Json.obj("_id" -> formQueryModel.id)
     val modifier = Json.obj("$set" -> (formQueryModel copy (lastUpdated = LocalDateTime.now)))
