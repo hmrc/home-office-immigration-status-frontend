@@ -15,7 +15,6 @@
  *@
 
 @import models.NinoSearchFormModel
-@import config.AppConfig
 
 @this(
     govukWrapper: govuk_wrapper,
@@ -24,10 +23,11 @@
     govukButton : GovukButton,
     inputText: components.inputText,
     inputDate: components.inputDate,
-    fieldset: components.fieldset
+    fieldset: components.fieldset,
+    alternateSearch: components.AlternateSearchLink
 )
 
-@(statusCheckForm: Form[NinoSearchFormModel],submitFormCall: Call)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(statusCheckForm: Form[NinoSearchFormModel],submitFormCall: Call)(implicit request: Request[_], messages: Messages)
 
 @govukWrapper(title = if(statusCheckForm.hasErrors) messages("lookup.title.Error") else messages("lookup.title")) {
 
@@ -36,6 +36,8 @@
         @errorSummary(statusCheckForm.errors)
 
         @fieldset("lookup.title") {
+
+            @alternateSearch("alternate-search.mrz-link", controllers.routes.SearchByMrzController.onPageLoad.url, "alt-search-by-mrz")
 
             @inputText(
                 statusCheckForm,
