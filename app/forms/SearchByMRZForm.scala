@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,25 +12,25 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this(
-    govukWrapper: govuk_wrapper,
-    formHelper: FormWithCSRF,
-    fieldset: components.fieldset,
-    alternateSearch: components.AlternateSearchLink
-)
+package forms
 
-@(form: Form[MrzSearchFormModel])(implicit request: Request[_], messages: Messages)
+import models.MrzSearchFormModel
+import play.api.data.Form
+import play.api.data.Forms.mapping
 
-@govukWrapper(title = messages("lookup.title")){
+import javax.inject.Singleton
 
-    @formHelper(Call("DELETE", "/place-holder")) {
+@Singleton
+class SearchByMRZForm extends FormFieldMappings {
 
-        @fieldset("lookup.title") {
-
-        @alternateSearch("alternate-search.nino-link", controllers.routes.StatusCheckByNinoController.onPageLoad.url, "alt-search-by-nino")
-
-        }
-    }
+  def apply(): Form[MrzSearchFormModel] = Form[MrzSearchFormModel] {
+    mapping(
+      "documentType"   -> normalizedText,
+      "documentNumber" -> normalizedText,
+      "dateOfBirth"    -> dobFieldsMapping,
+      "nationality"    -> normalizedText
+    )(MrzSearchFormModel.apply)(MrzSearchFormModel.unapply)
+  }
 }
