@@ -59,6 +59,8 @@ date.day='Day'
 date.month='Month'
 date.year='Year'
 
+alternate-search.nino-link='Search by National Insurance number'
+
 # Status page
 status-found.title='Applicant'
 status-found.status='Status'
