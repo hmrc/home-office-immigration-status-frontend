@@ -17,7 +17,7 @@
 package views
 
 import controllers.routes
-import models.StatusCheckByNinoFormModel
+import models.NinoSearchFormModel
 
 import java.time.LocalDate
 import org.jsoup.nodes.{Document, Element}
@@ -43,7 +43,7 @@ class StatusNotAvailableViewSpec extends ViewSpec {
 
   lazy val sut: StatusNotAvailablePage = inject[StatusNotAvailablePage]
 
-  val nino = StatusCheckByNinoFormModel(generateNino, "Applicant", "", LocalDate.now())
+  val nino = NinoSearchFormModel(generateNino, "Applicant", "", LocalDate.now())
 
   val query =
     StatusNotAvailablePageContext(nino, routes.LandingController.onPageLoad)

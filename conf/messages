@@ -103,6 +103,7 @@ status-found.route='Immigration route'
 status-found.detailsLabel='View past information about the customer (from the last six months)'
 
 # Status not available page
+status-not-available.applicant='Applicant'
 status-not-available.title='Applicant does not have an active status'
 status-not-available.listParagraph='This may be for a number of reasons, including:'
 status-not-available.list-item1='The status ended over six months ago'

@@ -93,7 +93,7 @@ trait HomeOfficeImmigrationStatusConnectorISpecSetup extends BaseISpec with Home
   lazy val connector: HomeOfficeImmigrationStatusProxyConnector =
     app.injector.instanceOf[HomeOfficeImmigrationStatusProxyConnector]
 
-  val request: StatusCheckByNinoRequest = StatusCheckByNinoRequest(
+  val request: NinoSearch = NinoSearch(
     nino,
     "Doe",
     "Jane",

@@ -16,7 +16,7 @@
 
 package forms
 
-import models.StatusCheckByNinoFormModel
+import models.NinoSearchFormModel
 import org.scalacheck.Gen
 import org.scalatest.OptionValues
 import org.scalatestplus.play.PlaySpec
@@ -28,12 +28,12 @@ import utils.NinoGenerator
 
 import java.time.LocalDate
 
-class StatusCheckByNinoRequestFormSpec extends PlaySpec with OptionValues with ScalaCheckDrivenPropertyChecks {
+class NinoSearchFormSpec extends PlaySpec with OptionValues with ScalaCheckDrivenPropertyChecks {
 
   implicit def noShrink[T]: Shrink[T] = Shrink.shrinkAny
 
   val formProvider: StatusCheckByNinoFormProvider = new StatusCheckByNinoFormProvider()
-  val form: Form[StatusCheckByNinoFormModel] = formProvider()
+  val form: Form[NinoSearchFormModel] = formProvider()
 
   val now: LocalDate = LocalDate.now()
   val tomorrow: LocalDate = now.plusDays(1)
@@ -70,7 +70,7 @@ class StatusCheckByNinoRequestFormSpec extends PlaySpec with OptionValues with S
       "inputs are valid" in {
         val validInput = input()
 
-        val out = StatusCheckByNinoFormModel(testNino, "first", "last", yesterday)
+        val out = NinoSearchFormModel(testNino, "first", "last", yesterday)
 
         val bound = form.bind(validInput)
         bound.errors mustBe Nil
@@ -81,7 +81,7 @@ class StatusCheckByNinoRequestFormSpec extends PlaySpec with OptionValues with S
         forAll(validChar) { name =>
           val validInput = input(givenName = name)
 
-          val out = StatusCheckByNinoFormModel(testNino, name, "last", yesterday)
+          val out = NinoSearchFormModel(testNino, name, "last", yesterday)
           val bound = form.bind(validInput)
           bound.value mustBe Some(out)
           bound.errors mustBe Nil
@@ -96,7 +96,7 @@ class StatusCheckByNinoRequestFormSpec extends PlaySpec with OptionValues with S
         forAll(yearStr.suchThat(_.length == 2)) { year =>
           val validInput = input(year = year)
 
-          val out = StatusCheckByNinoFormModel(testNino, "first", "last", yesterday.withYear(("19" + year).toInt))
+          val out = NinoSearchFormModel(testNino, "first", "last", yesterday.withYear(("19" + year).toInt))
           val bound = form.bind(validInput)
           bound.errors mustBe Nil
           bound.value mustBe Some(out)

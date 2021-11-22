@@ -19,7 +19,7 @@ package services
 import java.net.URL
 import java.util.UUID
 import javax.inject.{Inject, Singleton}
-import models.{HomeOfficeError, StatusCheckByNinoFormModel, StatusCheckByNinoRequest, StatusCheckResponse}
+import models.{HomeOfficeError, MrzSearch, MrzSearchFormModel, NinoSearch, NinoSearchFormModel, SearchFormModel, StatusCheckResponse}
 import play.api.mvc.Request
 import services.HomeOfficeImmigrationStatusFrontendEvent._
 import uk.gov.hmrc.http.HeaderCarrier
@@ -37,21 +37,30 @@ class HomeOfficeImmigrationStatusProxyService @Inject()(
   private val auditTransaction = "StatusCheckRequest"
   private val HEADER_X_CORRELATION_ID = "X-Correlation-Id"
 
-  def statusPublicFundsByNino(query: StatusCheckByNinoFormModel)(
+  def search(query: SearchFormModel)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext,
     request: Request[Any],
     appConfig: AppConfig): Future[Either[HomeOfficeError, StatusCheckResponse]] = {
 
     val headerCarrier = hc.withExtraHeaders(HEADER_X_CORRELATION_ID -> UUID.randomUUID().toString)
-    val checkRequest = query.toRequest(appConfig.defaultQueryTimeRangeInMonths)
+    val searchFromRequest = query.toSearch(appConfig.defaultQueryTimeRangeInMonths)
+    sendRequestAuditingResults {
+      searchFromRequest match {
+        case search: NinoSearch => connector.statusPublicFundsByNino(search)(headerCarrier, ec)
+        case search: MrzSearch  => connector.statusPublicFundsByMrz(search)(headerCarrier, ec)
+      }
+    }
+  }
 
-    val response = connector.statusPublicFundsByNino(checkRequest)(headerCarrier, ec)
-    response.map { result =>
+  private def sendRequestAuditingResults[A](future: Future[Either[HomeOfficeError, StatusCheckResponse]])(
+    implicit hc: HeaderCarrier,
+    ec: ExecutionContext,
+    request: Request[Any]): Future[Either[HomeOfficeError, StatusCheckResponse]] =
+    future.map { result =>
       auditResult(result)
       result
     }
-  }
 
   def auditResult(result: Either[HomeOfficeError, StatusCheckResponse])(
     implicit hc: HeaderCarrier,
@@ -67,7 +76,7 @@ class HomeOfficeImmigrationStatusProxyService @Inject()(
         auditService.auditEvent(DownstreamError, auditTransaction, detailsFromError(error))
     }
 
-  def detailsFromStatusCheckResponse(response: StatusCheckResponse): Seq[(String, Any)] = {
+  private def detailsFromStatusCheckResponse(response: StatusCheckResponse): Seq[(String, Any)] = {
 
     val statusDetails = response.result.statusesSortedByDate.zipWithIndex.map {
       case (status, idx) =>
@@ -88,7 +97,7 @@ class HomeOfficeImmigrationStatusProxyService @Inject()(
     (baseDetails +: statusDetails).flatten
   }
 
-  def detailsFromError(error: HomeOfficeError): Seq[(String, Any)] =
+  private def detailsFromError(error: HomeOfficeError): Seq[(String, Any)] =
     Seq("statusCode" -> error.statusCode, "error" -> error.responseBody)
 
 }

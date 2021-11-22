@@ -17,7 +17,7 @@
 package views.components
 
 import controllers.routes
-import models.StatusCheckByNinoFormModel
+import models.NinoSearchFormModel
 import uk.gov.hmrc.domain.Nino
 import utils.NinoGenerator
 import views.html.components.ShowChangeQuery
@@ -30,7 +30,7 @@ class ShowChangeQuerySpec extends ViewSpec {
   val sut = inject[ShowChangeQuery]
 
   val nino = NinoGenerator.generateNino
-  val query = StatusCheckByNinoFormModel(nino, "Pan", "", LocalDate.now())
+  val query = NinoSearchFormModel(nino, "Pan", "", LocalDate.now())
 
   val doc = asDocument(sut(query)(messages))
 

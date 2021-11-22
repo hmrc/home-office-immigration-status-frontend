@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions.AccessAction
 import forms.StatusCheckByNinoFormProvider
-import models.{FormQueryModel, StatusCheckByNinoFormModel}
+import models.{FormQueryModel, NinoSearchFormModel}
 
 import java.time.LocalDate
 import org.mockito.ArgumentMatchers.{any, refEq, eq => is}
@@ -59,7 +59,7 @@ class StatusCheckByNinoControllerSpec extends ControllerSpec {
   }
 
   "onPageLoad" must {
-    val query = StatusCheckByNinoFormModel(generateNino, "pan", "peter", LocalDate.now())
+    val query = NinoSearchFormModel(generateNino, "pan", "peter", LocalDate.now())
     val formQuery = FormQueryModel("123", query)
     val emptyForm = inject[StatusCheckByNinoFormProvider].apply()
     val prePopForm = emptyForm.fill(query)
@@ -102,7 +102,7 @@ class StatusCheckByNinoControllerSpec extends ControllerSpec {
       "form binds correct data" in {
         when(mockSessionCacheService.set(any(), any())(any(), any())).thenReturn(Future.unit)
         val validDob = LocalDate.now().minusDays(1)
-        val query = StatusCheckByNinoFormModel(generateNino, "pan", "peter", validDob)
+        val query = NinoSearchFormModel(generateNino, "pan", "peter", validDob)
         val requestWithForm = request.withFormUrlEncodedBody(
           "dateOfBirth.year"  -> validDob.getYear.toString,
           "dateOfBirth.month" -> validDob.getMonthValue.toString,
@@ -160,7 +160,7 @@ class StatusCheckByNinoControllerSpec extends ControllerSpec {
       "the session cache returns a failure" in {
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.failed(new Exception("Something happened")))
         val validDob = LocalDate.now().minusDays(1)
-        val query = StatusCheckByNinoFormModel(generateNino, "pan", "peter", validDob)
+        val query = NinoSearchFormModel(generateNino, "pan", "peter", validDob)
         val requestWithForm = request.withFormUrlEncodedBody(
           "dateOfBirth.year"  -> validDob.getYear.toString,
           "dateOfBirth.month" -> validDob.getMonthValue.toString,

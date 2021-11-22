@@ -16,7 +16,7 @@
 
 package services
 
-import models.{FormQueryModel, StatusCheckByNinoFormModel}
+import models.{FormQueryModel, NinoSearchFormModel}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -45,7 +45,7 @@ class SessionCacheServiceSpec extends PlaySpec with BeforeAndAfterEach with Scal
     super.beforeEach
   }
 
-  val formModel = StatusCheckByNinoFormModel(
+  val formModel = NinoSearchFormModel(
     nino = NinoGenerator.generateNino,
     givenName = "Pan",
     familyName = "Oldfield",

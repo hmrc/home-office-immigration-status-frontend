@@ -21,7 +21,7 @@ import play.api.mvc._
 import config.AppConfig
 import controllers.actions.AccessAction
 import forms.StatusCheckByNinoFormProvider
-import models.FormQueryModel
+import models.{FormQueryModel, NinoSearchFormModel}
 import views.html._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import services.SessionCacheService
@@ -43,8 +43,8 @@ class StatusCheckByNinoController @Inject()(
     access.async { implicit request =>
       sessionCacheService.get.map { result =>
         val form = result match {
-          case Some(FormQueryModel(_, formModel, _)) => formProvider().fill(formModel)
-          case _                                     => formProvider()
+          case Some(FormQueryModel(_, formModel: NinoSearchFormModel, _)) => formProvider().fill(formModel)
+          case _                                                          => formProvider()
         }
         Ok(statusCheckByNinoPage(form, routes.StatusCheckByNinoController.onSubmit))
       }
