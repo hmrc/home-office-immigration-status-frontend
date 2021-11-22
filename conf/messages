@@ -60,6 +60,7 @@ date.month='Month'
 date.year='Year'
 
 alternate-search.nino-link='Search by National Insurance number'
+alternate-search.mrz-link='Search by passport or ID card'
 
 # Status page
 status-found.title='Applicant'

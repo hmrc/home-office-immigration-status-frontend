@@ -14,23 +14,10 @@
  * limitations under the License.
  *@
 
-@this(
-    govukWrapper: govuk_wrapper,
-    formHelper: FormWithCSRF,
-    fieldset: components.fieldset,
-    alternateSearch: components.AlternateSearchLink
-)
+@this()
 
-@()(implicit request: Request[_], messages: Messages)
+@(message: String, url: String, id: String)(implicit messages: Messages)
 
-@govukWrapper(title = messages("lookup.title")){
+<a href="@url" id="@id" class="govuk-link" >@messages(message)</a>
 
-    @formHelper(Call("DELETE", "/place-holder")) {
-
-        @fieldset("lookup.title") {
-
-        @alternateSearch("alternate-search.nino-link", controllers.routes.StatusCheckByNinoController.onPageLoad.url, "alt-search-by-nino")
-
-        }
-    }
-}
+<hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
