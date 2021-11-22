@@ -23,7 +23,8 @@
     govukButton : GovukButton,
     inputText: components.inputText,
     inputDate: components.inputDate,
-    fieldset: components.fieldset
+    fieldset: components.fieldset,
+    alternateSearch: components.AlternateSearchLink
 )
 
 @(statusCheckForm: Form[StatusCheckByNinoFormModel],submitFormCall: Call)(implicit request: Request[_], messages: Messages)
@@ -35,6 +36,8 @@
         @errorSummary(statusCheckForm.errors)
 
         @fieldset("lookup.title") {
+
+            @alternateSearch("alternate-search.mrz-link", controllers.routes.SearchByMrzController.onPageLoad.url)
 
             @inputText(
                 statusCheckForm,
