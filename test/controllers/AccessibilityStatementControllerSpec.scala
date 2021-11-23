@@ -30,7 +30,7 @@ class AccessibilityStatementControllerSpec extends ControllerSpec {
       val result = sut.showPage(request)
 
       status(result) mustBe OK
-      contentAsString(result) mustBe view()(request, messages, appConfig).toString
+      contentAsString(result) mustBe view()(request, messages).toString
     }
   }
 }

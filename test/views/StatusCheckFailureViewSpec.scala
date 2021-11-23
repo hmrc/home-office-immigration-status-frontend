@@ -16,7 +16,7 @@
 
 package views
 
-import models.StatusCheckByNinoFormModel
+import models.NinoSearchFormModel
 
 import java.time.LocalDate
 import org.jsoup.nodes.{Document, Element}
@@ -44,7 +44,7 @@ class StatusCheckFailureViewSpec extends ViewSpec {
   lazy val sut: StatusCheckFailurePage = inject[StatusCheckFailurePage]
 
   val nino = NinoGenerator.generateNino
-  val query = StatusCheckByNinoFormModel(nino, "Pan", "", LocalDate.now())
+  val query = NinoSearchFormModel(nino, "Pan", "", LocalDate.now())
   lazy val doc: Document = asDocument(sut(query)(request, messages))
 
   "StatusCheckFailurePage" must {

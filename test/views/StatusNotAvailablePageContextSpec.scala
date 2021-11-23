@@ -16,7 +16,7 @@
 
 package views
 
-import models.StatusCheckByNinoFormModel
+import models.NinoSearchFormModel
 import org.mockito.ArgumentMatchers.{any, matches}
 import org.mockito.Mockito.{RETURNS_DEEP_STUBS, mock, reset, when}
 import org.scalatest.matchers.should.Matchers
@@ -45,7 +45,7 @@ class StatusNotAvailablePageContextSpec
     when(mockMessages(matches("status-not-available\\.current.*"), any())).thenReturn(currentStatusLabelMsg)
   }
 
-  val query = StatusCheckByNinoFormModel(NinoGenerator.generateNino, "Surname", "Forename", LocalDate.now())
+  val query = NinoSearchFormModel(NinoGenerator.generateNino, "Surname", "Forename", LocalDate.now())
   val call = Call("GET", "/")
 
   def createContext = StatusNotAvailablePageContext(query, call)

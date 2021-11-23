@@ -4,13 +4,13 @@ import play.api.http.Status.OK
 import stubs.HomeOfficeImmigrationStatusStubs
 import support.ISpec
 
-class CheckWithNinoISpec extends ISpec with HomeOfficeImmigrationStatusStubs {
+class SearchByNinoISpec extends ISpec with HomeOfficeImmigrationStatusStubs {
 
-  "GET /check-immigration-status/check-with-nino" should {
+  "GET /check-immigration-status/search-by-nino" should {
     "show the lookup page" in {
       givenAuthorisedForStride("TBC", "StrideUserId")
 
-      val result = request("/check-with-nino").get().futureValue
+      val result = request("/search-by-nino").get().futureValue
 
       result.status shouldBe OK
       result.body should include(htmlEscapedMessage("lookup.title"))
@@ -18,9 +18,9 @@ class CheckWithNinoISpec extends ISpec with HomeOfficeImmigrationStatusStubs {
     }
   }
 
-  "POST /check-immigration-status/check-with-nino" should {
+  "POST /check-immigration-status/search-by-nino" should {
     "redirect to the result page" in {
-      givenStatusCheckSucceeds()
+      givenCheckByNinoSucceeds()
       givenAuthorisedForStride("TBC", "StrideUserId")
 
       val payload = Map(
@@ -32,7 +32,7 @@ class CheckWithNinoISpec extends ISpec with HomeOfficeImmigrationStatusStubs {
         "nino"              -> nino.nino)
 
       val sessionId = "123"
-      val result = request("/check-with-nino", sessionId).post(payload).futureValue
+      val result = request("/search-by-nino", sessionId).post(payload).futureValue
 
       result.status shouldBe OK
       result.body should include(htmlEscapedMessage("status-found.title"))

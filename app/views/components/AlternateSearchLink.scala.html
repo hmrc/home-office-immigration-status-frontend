@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,16 +12,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package models
+@this()
 
-import play.api.libs.json.{Format, Json}
-import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.mongoEntity
-import java.time.LocalDateTime
+@(message: String, url: String, id: String)(implicit messages: Messages)
 
-final case class FormQueryModel(id: String, data: SearchFormModel, lastUpdated: LocalDateTime = LocalDateTime.now())
+<a href="@url" id="@id" class="govuk-link" >@messages(message)</a>
 
-object FormQueryModel {
-  implicit val formats: Format[FormQueryModel] = mongoEntity { Json.format[FormQueryModel] }
-}
+<hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">

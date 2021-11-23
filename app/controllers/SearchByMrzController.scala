@@ -16,37 +16,37 @@
 
 package controllers
 
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc._
 import config.AppConfig
 import controllers.actions.AccessAction
-import forms.StatusCheckByNinoFormProvider
-import models.{FormQueryModel, NinoSearchFormModel}
-import views.html._
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import forms.SearchByMRZForm
+import models.{FormQueryModel, MrzSearchFormModel}
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionCacheService
-import javax.inject.{Inject, Singleton}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.SearchByMrzView
+
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton
-class StatusCheckByNinoController @Inject()(
+class SearchByMrzController @Inject()(
   access: AccessAction,
   override val messagesApi: MessagesApi,
-  controllerComponents: MessagesControllerComponents,
-  formProvider: StatusCheckByNinoFormProvider,
-  statusCheckByNinoPage: StatusCheckByNinoPage,
-  sessionCacheService: SessionCacheService
+  view: SearchByMrzView,
+  sessionCacheService: SessionCacheService,
+  formProvider: SearchByMRZForm,
+  cc: MessagesControllerComponents
 )(implicit val appConfig: AppConfig, ec: ExecutionContext)
-    extends FrontendController(controllerComponents) with I18nSupport {
+    extends FrontendController(cc) with I18nSupport {
 
   val onPageLoad: Action[AnyContent] =
     access.async { implicit request =>
       sessionCacheService.get.map { result =>
         val form = result match {
-          case Some(FormQueryModel(_, formModel: NinoSearchFormModel, _)) => formProvider().fill(formModel)
-          case _                                                          => formProvider()
+          case Some(FormQueryModel(_, formModel: MrzSearchFormModel, _)) => formProvider().fill(formModel)
+          case _                                                         => formProvider()
         }
-        Ok(statusCheckByNinoPage(form, routes.StatusCheckByNinoController.onSubmit))
+        Ok(view(form))
       }
     }
 
@@ -55,13 +55,12 @@ class StatusCheckByNinoController @Inject()(
       formProvider()
         .bindFromRequest()
         .fold(
-          formWithErrors =>
-            Future.successful(
-              BadRequest(statusCheckByNinoPage(formWithErrors, routes.StatusCheckByNinoController.onSubmit))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
           query =>
             for {
               _ <- sessionCacheService.set(query)
             } yield Redirect(routes.StatusResultController.onPageLoad)
         )
     }
+
 }

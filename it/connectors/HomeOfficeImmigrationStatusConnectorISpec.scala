@@ -19,7 +19,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
     "statusPublicFundsByNino" should {
 
       "return status when range provided" in {
-        givenStatusCheckResultWithRangeExample()
+        givenCheckByNinoSucceeds()
 
         val result: Either[HomeOfficeError, StatusCheckResponse] = connector.statusPublicFundsByNino(request).futureValue
 
@@ -27,7 +27,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
       }
 
       "return status when no range provided" in {
-        givenStatusCheckSucceeds()
+        givenCheckByNinoSucceeds()
 
         val result: Either[HomeOfficeError, StatusCheckResponse] = connector.statusPublicFundsByNino(request).futureValue
 
@@ -35,7 +35,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
       }
 
       "return check error when 400 response ERR_REQUEST_INVALID" in {
-        givenStatusCheckErrorWhenMissingInputField()
+        givenCheckByNinoErrorWhenMissingInputField()
 
         val result: Either[HomeOfficeError, StatusCheckResponse] = connector.statusPublicFundsByNino(request).futureValue
 
@@ -62,7 +62,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
       }
 
       "throw exception if other 4xx response" in {
-        givenStatusPublicFundsByNinoStub(429, validRequestBodyWithDateRange(), "")
+        givenStatusPublicFundsCheckStub("nino", 429, validByNinoRequestBody(), "")
 
         val result: Either[HomeOfficeError, StatusCheckResponse] = connector.statusPublicFundsByNino(request).futureValue
 
@@ -71,7 +71,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
       }
 
       "throw exception if 5xx response" in {
-        givenStatusPublicFundsByNinoStub(500, validRequestBodyWithDateRange(), "")
+        givenAnExternalServiceErrorCheckByNino
 
         val result: Either[HomeOfficeError, StatusCheckResponse] = connector.statusPublicFundsByNino(request).futureValue
 
@@ -93,7 +93,7 @@ trait HomeOfficeImmigrationStatusConnectorISpecSetup extends BaseISpec with Home
   lazy val connector: HomeOfficeImmigrationStatusProxyConnector =
     app.injector.instanceOf[HomeOfficeImmigrationStatusProxyConnector]
 
-  val request: StatusCheckByNinoRequest = StatusCheckByNinoRequest(
+  val request: NinoSearch = NinoSearch(
     nino,
     "Doe",
     "Jane",

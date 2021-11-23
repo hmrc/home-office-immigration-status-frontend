@@ -17,8 +17,10 @@ class ShutteredISpec extends ISpec {
   "an endpoint" when {
     Seq[(String, String => Future[WSResponse])](
       "/" -> get,
-      "/check-with-nino" -> get,
-      "/check-with-nino" -> post,
+      "/search-by-nino" -> get,
+      "/search-by-nino" -> post,
+      "/search-by-passport" -> get,
+      "/search-by-passport" -> post,
       "/status-result" -> get,
       "/foo" -> get
     ).foreach { case (path, request) =>

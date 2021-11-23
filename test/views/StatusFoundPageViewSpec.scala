@@ -17,7 +17,7 @@
 package views
 
 import assets.constants.ImmigrationStatusConstant._
-import models.{ImmigrationStatus, StatusCheckByNinoFormModel, StatusCheckResult}
+import models.{ImmigrationStatus, NinoSearchFormModel, StatusCheckResult}
 import org.jsoup.nodes.{Document, Element}
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
@@ -33,7 +33,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
   def buildContext(statuses: List[ImmigrationStatus] = List(ValidStatus)): StatusFoundPageContext =
     StatusFoundPageContext(
-      StatusCheckByNinoFormModel(NinoGenerator.generateNino, "Pan", "", LocalDate.now()),
+      NinoSearchFormModel(NinoGenerator.generateNino, "Pan", "", LocalDate.now()),
       StatusCheckResult("Pan", LocalDate.now(), "D", statuses),
       Call("", "/expected")
     )

@@ -17,8 +17,9 @@
 @import config.AppConfig
 
 @this(
-    govukWrapper: govuk_wrapper
-)(implicit appConfig: AppConfig)
+    govukWrapper: govuk_wrapper,
+    appConfig: AppConfig
+)
 
 @()(implicit request: Request[_], messages: Messages)
 

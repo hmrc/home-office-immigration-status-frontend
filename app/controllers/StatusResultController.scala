@@ -52,14 +52,14 @@ class StatusResultController @Inject()(
       sessionCacheService.get.flatMap {
         case Some(FormQueryModel(_, query, _)) =>
           homeOfficeService
-            .statusPublicFundsByNino(query)
+            .search(query)
             .map(result => result.fold(handleError(query), displaySuccessfulResult(query)))
         case None =>
           Future.successful(Redirect(routes.StatusCheckByNinoController.onPageLoad))
       }
     }
 
-  private def handleError(query: StatusCheckByNinoFormModel)(error: HomeOfficeError)(
+  private def handleError(query: SearchFormModel)(error: HomeOfficeError)(
     implicit request: Request[AnyContent]): Result =
     error match {
       case StatusCheckConflict(_) => Ok(multipleMatchesFoundPage(query))
@@ -67,7 +67,7 @@ class StatusResultController @Inject()(
       case _                      => InternalServerError(externalErrorPage())
     }
 
-  private def displaySuccessfulResult(query: StatusCheckByNinoFormModel)(response: StatusCheckResponse)(
+  private def displaySuccessfulResult(query: SearchFormModel)(response: StatusCheckResponse)(
     implicit request: Request[AnyContent]): Result =
     response.result.statuses match {
       case Nil =>

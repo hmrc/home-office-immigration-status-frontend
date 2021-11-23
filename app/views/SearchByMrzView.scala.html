@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,16 +12,25 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package models
+@this(
+    govukWrapper: govuk_wrapper,
+    formHelper: FormWithCSRF,
+    fieldset: components.fieldset,
+    alternateSearch: components.AlternateSearchLink
+)
 
-import play.api.libs.json.{Format, Json}
-import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.mongoEntity
-import java.time.LocalDateTime
+@(form: Form[MrzSearchFormModel])(implicit request: Request[_], messages: Messages)
 
-final case class FormQueryModel(id: String, data: SearchFormModel, lastUpdated: LocalDateTime = LocalDateTime.now())
+@govukWrapper(title = messages("lookup.title")){
 
-object FormQueryModel {
-  implicit val formats: Format[FormQueryModel] = mongoEntity { Json.format[FormQueryModel] }
+    @formHelper(Call("DELETE", "/place-holder")) {
+
+        @fieldset("lookup.title") {
+
+        @alternateSearch("alternate-search.nino-link", controllers.routes.StatusCheckByNinoController.onPageLoad.url, "alt-search-by-nino")
+
+        }
+    }
 }

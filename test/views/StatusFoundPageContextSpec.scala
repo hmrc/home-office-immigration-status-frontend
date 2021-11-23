@@ -16,7 +16,7 @@
 
 package views
 
-import models.{ImmigrationStatus, StatusCheckByNinoFormModel, StatusCheckResult}
+import models.{ImmigrationStatus, NinoSearchFormModel, StatusCheckResult}
 import org.mockito.ArgumentMatchers.{any, matches}
 import org.mockito.Mockito._
 import org.scalatest.matchers.should.Matchers
@@ -50,7 +50,7 @@ class StatusFoundPageContextSpec
       assert(realMessages.isDefinedAt(key))
     }
 
-  val query = StatusCheckByNinoFormModel(NinoGenerator.generateNino, "Surname", "Forename", LocalDate.now())
+  val query = NinoSearchFormModel(NinoGenerator.generateNino, "Surname", "Forename", LocalDate.now())
   val call = Call("GET", "/")
 
   def createContext(pt: String, is: String, endDate: Option[LocalDate], hasRecourseToPublicFunds: Boolean = false) =

@@ -23,14 +23,14 @@
     govukButton : GovukButton,
     govukWrapper: govuk_wrapper,
     summaryList: components.SummaryList,
-)(implicit appConfig: AppConfig)
+)
 
 @(context: StatusNotAvailablePageContext)(implicit request: Request[_], messages: Messages)
 
 @govukWrapper(title = messages("status-not-available.title")) {
 
     <h1 class="govuk-heading-xl" id="status-not-available-title">
-        <span id="full-name">@context.fullName</span>
+        <span id="full-name">@context.fullName.getOrElse(messages("status-not-available.applicant"))</span>
         @messages("app.hasNoActiveStatus")
     </h1>
 

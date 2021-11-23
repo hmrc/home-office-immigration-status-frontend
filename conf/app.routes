@@ -4,8 +4,13 @@
 GET   /assets/*file                 controllers.Assets.versioned(path="/public", file: Asset)
 
 GET   /                             controllers.LandingController.onPageLoad
-GET   /check-with-nino              controllers.StatusCheckByNinoController.onPageLoad
-POST  /check-with-nino              controllers.StatusCheckByNinoController.onSubmit
+
+GET   /search-by-nino               controllers.StatusCheckByNinoController.onPageLoad
+POST  /search-by-nino               controllers.StatusCheckByNinoController.onSubmit
+
+GET   /search-by-passport           controllers.SearchByMrzController.onPageLoad
+POST  /search-by-passport           controllers.SearchByMrzController.onSubmit
+
 GET   /status-result                controllers.StatusResultController.onPageLoad
 
 GET   /accessibility-statement      controllers.AccessibilityStatementController.showPage

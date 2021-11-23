@@ -58,8 +58,9 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
     app.injector.instanceOf[HomeOfficeImmigrationStatusProxyService]
 
   val testDate = LocalDate.now
-  val formModel = StatusCheckByNinoFormModel(NinoGenerator.generateNino, "Doe", "Jane", LocalDate.of(2001, 1, 31))
-  val statusRequest = formModel.toRequest(6)
+  val formModel = NinoSearchFormModel(NinoGenerator.generateNino, "Doe", "Jane", LocalDate.of(2001, 1, 31))
+  val mrzSearchFormModel = MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
+  val statusRequest = formModel.toSearch(6)
   implicit val conf = appConfig
 
   "statusPublicFundsByNino" should {
@@ -69,7 +70,7 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
       val result = Right(StatusCheckResponse("CorrelationId", statusCheckResult))
       when(mockConnector.statusPublicFundsByNino(any())(any(), any())).thenReturn(Future.successful(result))
 
-      await(sut.statusPublicFundsByNino(formModel))
+      await(sut.search(formModel))
       verify(mockAuditService).auditEvent(any(), any(), any())(any(), any(), any())
     }
 
@@ -78,7 +79,7 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
       when(mockConnector.statusPublicFundsByNino(any())(any(), any()))
         .thenReturn(Future.failed(new Exception("It went wrong")))
 
-      intercept[Exception](await(sut.statusPublicFundsByNino(formModel)))
+      intercept[Exception](await(sut.search(formModel)))
       verify(mockAuditService, never).auditEvent(any(), any(), any())(any(), any(), any())
     }
 
@@ -88,7 +89,37 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
       val statusCheckResult = StatusCheckResult("Damon Albarn", testDate, "GBR", Nil)
       val result = Right(StatusCheckResponse("CorrelationId", statusCheckResult))
       when(mockConnector.statusPublicFundsByNino(any())(any(), any())).thenReturn(Future.successful(result))
-      await(sut.statusPublicFundsByNino(formModel)) mustEqual result
+      await(sut.search(formModel)) mustEqual result
+    }
+  }
+
+  "statusPublicFundsByMrz" should {
+    "only access the audit service when the call downstream was successful" in {
+      when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any())).thenReturn(Future.unit)
+      val statusCheckResult = StatusCheckResult("Damon Albarn", testDate, "GBR", Nil)
+      val result = Right(StatusCheckResponse("CorrelationId", statusCheckResult))
+      when(mockConnector.statusPublicFundsByMrz(any())(any(), any())).thenReturn(Future.successful(result))
+
+      await(sut.search(mrzSearchFormModel))
+      verify(mockAuditService).auditEvent(any(), any(), any())(any(), any(), any())
+    }
+
+    "don't access the audit service when the call downstream was not successful" in {
+      when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any())).thenReturn(Future.unit)
+      when(mockConnector.statusPublicFundsByMrz(any())(any(), any()))
+        .thenReturn(Future.failed(new Exception("It went wrong")))
+
+      intercept[Exception](await(sut.search(mrzSearchFormModel)))
+      verify(mockAuditService, never).auditEvent(any(), any(), any())(any(), any(), any())
+    }
+
+    "not fail if the audit call fails" in {
+      when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any()))
+        .thenReturn(Future.failed(new Exception("It went wrong")))
+      val statusCheckResult = StatusCheckResult("Damon Albarn", testDate, "GBR", Nil)
+      val result = Right(StatusCheckResponse("CorrelationId", statusCheckResult))
+      when(mockConnector.statusPublicFundsByMrz(any())(any(), any())).thenReturn(Future.successful(result))
+      await(sut.search(mrzSearchFormModel)) mustEqual result
     }
   }
 
