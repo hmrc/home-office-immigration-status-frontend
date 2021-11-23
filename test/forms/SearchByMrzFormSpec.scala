@@ -186,10 +186,9 @@ class SearchByMrzFormSpec extends PlaySpec with OptionValues with ScalaCheckDriv
       }
     }
 
-    "documentNumber is invalid chars" in {
+    "documentNumber is invalid chars" in { //todo hmm this is flaky....
       val invalidDocNumber = Gen.asciiPrintableStr
-        .suchThat(_.trim.nonEmpty)
-        .suchThat(_.length <= SearchByMRZForm.DocumentNumberMaxLength)
+        .suchThat(s => s.trim.length <= SearchByMRZForm.DocumentNumberMaxLength && s.trim.nonEmpty)
         .suchThat(_.exists(c => !c.isLetter && !c.isDigit))
 
       forAll(invalidDocNumber) { documentNumber =>

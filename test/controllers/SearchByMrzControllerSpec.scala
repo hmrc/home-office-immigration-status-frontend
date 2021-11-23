@@ -99,7 +99,7 @@ class SearchByMrzControllerSpec extends ControllerSpec {
       "form binds correct data" in {
         when(mockSessionCacheService.set(any(), any())(any(), any())).thenReturn(Future.unit)
         val validDob = LocalDate.now().minusDays(1)
-        val query = MrzSearchFormModel("docType", "docNum", validDob, "nationality")
+        val query = MrzSearchFormModel("PASSPORT", "1234567890", validDob, "AFG")
         val requestWithForm = request.withFormUrlEncodedBody(
           "dateOfBirth.year"  -> validDob.getYear.toString,
           "dateOfBirth.month" -> validDob.getMonthValue.toString,
@@ -157,7 +157,7 @@ class SearchByMrzControllerSpec extends ControllerSpec {
       "the session cache returns a failure" in {
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.failed(new Exception("Something happened")))
         val validDob = LocalDate.now().minusDays(1)
-        val query = MrzSearchFormModel("docType", "docNum", validDob, "nationality")
+        val query = MrzSearchFormModel("PASSPORT", "1234567890", validDob, "AFG")
         val requestWithForm = request.withFormUrlEncodedBody(
           "dateOfBirth.year"  -> validDob.getYear.toString,
           "dateOfBirth.month" -> validDob.getMonthValue.toString,
