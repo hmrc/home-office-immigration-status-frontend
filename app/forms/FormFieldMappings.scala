@@ -16,7 +16,7 @@
 
 package forms
 
-import play.api.data.Forms.{mapping, of}
+import play.api.data.Forms.{mapping, of, optional, text}
 import play.api.data.Mapping
 import play.api.data.format.Formats._
 import play.api.data.validation._
@@ -59,6 +59,14 @@ trait FormFieldMappings {
         .filter(_.trim.nonEmpty)
         .fold[ValidationResult](Invalid(ValidationError(s"error.$fieldName.required")))(_ => Valid)
     }
+
+  def nonEmptyText(fieldName: String): Mapping[String] =
+    optional(text)
+      .verifying(
+        s"error.$fieldName.required",
+        _.exists(_.trim.nonEmpty)
+      )
+      .transform(_.get, Some.apply)
 
   private val validateIsRealDate: Constraint[(String, String, String)] =
     cond("error.dateOfBirth.invalid-format") {

@@ -16,6 +16,7 @@
 
 package forms
 
+import forms.SearchByMRZForm._
 import models.MrzSearchFormModel
 import play.api.data.Form
 import play.api.data.Forms.mapping
@@ -27,10 +28,25 @@ class SearchByMRZForm extends FormFieldMappings {
 
   def apply(): Form[MrzSearchFormModel] = Form[MrzSearchFormModel] {
     mapping(
-      "documentType"   -> normalizedText,
-      "documentNumber" -> normalizedText,
-      "dateOfBirth"    -> dobFieldsMapping,
-      "nationality"    -> normalizedText
+      "documentType" -> nonEmptyText("documentType")
+        .transform[String](_.toUpperCase, identity)
+        .verifying("error.documentType.invalid", AllowedDocumentTypes.contains(_)),
+      "documentNumber" -> nonEmptyText("documentNumber")
+        .verifying(
+          "error.documentNumber.invalid",
+          dn => dn.length <= DocumentNumberMaxLength && dn.forall(c => c.isDigit || c.isLetter)),
+      "dateOfBirth" -> dobFieldsMapping,
+      "nationality" -> nonEmptyText("nationality")
+        .transform[String](_.toUpperCase, identity)
+        .verifying("error.nationality.invalid", CountryList.contains(_))
     )(MrzSearchFormModel.apply)(MrzSearchFormModel.unapply)
   }
+}
+
+object SearchByMRZForm {
+  final val AllowedDocumentTypes = Seq("PASSPORT", "NAT", "BRC", "BRP")
+
+  final val DocumentNumberMaxLength = 30
+
+  val CountryList = Seq("TODO WHERE ARE WE GETTING THIS FROM", "AFG") //todo iso-3166 list
 }

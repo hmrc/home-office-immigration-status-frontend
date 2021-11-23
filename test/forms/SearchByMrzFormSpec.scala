@@ -42,9 +42,9 @@ class SearchByMrzFormSpec extends PlaySpec with OptionValues with ScalaCheckDriv
     year: String = yesterday.getYear.toString,
     month: String = yesterday.getMonthValue.toString,
     day: String = yesterday.getDayOfMonth.toString,
-    nationality: String = "nationality",
-    documentNumber: String = "documentNumber",
-    documentType: String = "documentType"
+    nationality: String = "AFG",
+    documentNumber: String = "docNumber",
+    documentType: String = "PASSPORT"
   ) = Map(
     "dateOfBirth.year"  -> year,
     "dateOfBirth.month" -> month,
@@ -66,26 +66,43 @@ class SearchByMrzFormSpec extends PlaySpec with OptionValues with ScalaCheckDriv
   "form" must {
     "bind" when {
       "inputs are valid" in {
-        val validInput = input()
+        val validGen = for {
+          docType <- Gen.oneOf(SearchByMRZForm.AllowedDocumentTypes)
+          docNum  <- Gen.listOfN(SearchByMRZForm.DocumentNumberMaxLength, Gen.alphaNumChar).map(_.mkString)
+          nat     <- Gen.oneOf(SearchByMRZForm.CountryList)
+        } yield MrzSearchFormModel(docType, docNum, yesterday, nat)
 
-        val out = MrzSearchFormModel("documentType", "documentNumber", yesterday, "nationality")
+        forAll(validGen) { out =>
+          val validInput =
+            input(nationality = out.nationality, documentType = out.documentType, documentNumber = out.documentNumber)
 
-        val bound = form.bind(validInput)
-        bound.errors mustBe Nil
-        bound.value mustBe Some(out)
+          val bound = form.bind(validInput)
+          bound.errors mustBe Nil
+          bound.value mustBe Some(out)
+        }
       }
-    }
 
-    "year is 2 digit, default add 19XX" in {
-      val yearStr = for {
-        y1 <- Gen.numChar
-        y2 <- Gen.numChar
-      } yield s"$y1$y2"
-      forAll(yearStr.suchThat(_.length == 2)) { year =>
-        val validInput = input(year = year)
+      "year is 2 digit, default add 19XX" in {
+        val yearStr = for {
+          y1 <- Gen.numChar
+          y2 <- Gen.numChar
+        } yield s"$y1$y2"
+        forAll(yearStr.suchThat(_.length == 2)) { year =>
+          val validInput = input(year = year)
 
-        val out =
-          MrzSearchFormModel("documentType", "documentNumber", yesterday.withYear(("19" + year).toInt), "nationality")
+          val out =
+            MrzSearchFormModel("PASSPORT", "docNumber", yesterday.withYear(("19" + year).toInt), "AFG")
+          val bound = form.bind(validInput)
+          bound.errors mustBe Nil
+          bound.value mustBe Some(out)
+        }
+      }
+
+      "nationality and doc type are lower case" in {
+        val validInput = input(nationality = "afg", documentType = "passport")
+
+        val out = MrzSearchFormModel("PASSPORT", "docNumber", yesterday, "AFG")
+
         val bound = form.bind(validInput)
         bound.errors mustBe Nil
         bound.value mustBe Some(out)
@@ -111,15 +128,20 @@ class SearchByMrzFormSpec extends PlaySpec with OptionValues with ScalaCheckDriv
       val invalidInput = input(nationality = "")
 
       form.bind(invalidInput).value must not be defined
-      form.bind(invalidInput).errors mustBe List(FormError("givenName", List("error.givenName.required")))
+      form.bind(invalidInput).errors mustBe List(FormError("nationality", List("error.nationality.required")))
     }
 
-    "nationality contains invalid chars" in {
-      forAll(invalidCharString) { nationality =>
+    "nationality contains invalid country code" in {
+      val invalidNationality: Gen[String] = Gen.asciiPrintableStr
+        .suchThat(_.trim.nonEmpty)
+        .suchThat(!SearchByMRZForm.CountryList.contains(_))
+        .suchThat(_.trim.nonEmpty)
+
+      forAll(invalidNationality) { nationality =>
         val invalidInput = input(nationality = nationality)
 
         form.bind(invalidInput).value must not be defined
-        form.bind(invalidInput).errors mustBe List(FormError("givenName", List("error.givenName.invalid-format")))
+        form.bind(invalidInput).errors mustBe List(FormError("nationality", List("error.nationality.invalid")))
       }
     }
 
@@ -127,15 +149,20 @@ class SearchByMrzFormSpec extends PlaySpec with OptionValues with ScalaCheckDriv
       val invalidInput = input(documentType = "")
 
       form.bind(invalidInput).value must not be defined
-      form.bind(invalidInput).errors mustBe List(FormError("familyName", List("error.familyName.required")))
+      form.bind(invalidInput).errors mustBe List(FormError("documentType", List("error.documentType.required")))
     }
 
     "documentType contains invalid chars" in {
-      forAll(invalidCharString) { documentType =>
+      val invalidDocType: Gen[String] = Gen.asciiPrintableStr
+        .suchThat(_.trim.nonEmpty)
+        .suchThat(!SearchByMRZForm.AllowedDocumentTypes.contains(_))
+        .suchThat(_.trim.nonEmpty)
+
+      forAll(invalidDocType) { documentType =>
         val invalidInput = input(documentType = documentType)
 
         form.bind(invalidInput).value must not be defined
-        form.bind(invalidInput).errors mustBe List(FormError("familyName", List("error.familyName.invalid-format")))
+        form.bind(invalidInput).errors mustBe List(FormError("documentType", List("error.documentType.invalid")))
       }
     }
 
@@ -143,14 +170,33 @@ class SearchByMrzFormSpec extends PlaySpec with OptionValues with ScalaCheckDriv
       val invalidInput = input(documentNumber = "")
 
       form.bind(invalidInput).value must not be defined
-      form.bind(invalidInput).errors mustBe List(FormError("nino", List("error.nino.required")))
+      form.bind(invalidInput).errors mustBe List(FormError("documentNumber", List("error.documentNumber.required")))
     }
-    "documentNumber is invalid" in {
-      forAll(invalidCharString) { documentNumber =>
+
+    "documentNumber is too long" in {
+      val invalidDocNumber = Gen.asciiPrintableStr
+        .suchThat(_.trim.nonEmpty)
+        .suchThat(_.length > SearchByMRZForm.DocumentNumberMaxLength)
+
+      forAll(invalidDocNumber) { documentNumber =>
         val invalidInput = input(documentNumber = documentNumber)
 
         form.bind(invalidInput).value must not be defined
-        form.bind(invalidInput).errors mustBe List(FormError("nino", List("error.nino.invalid-format")))
+        form.bind(invalidInput).errors mustBe List(FormError("documentNumber", List("error.documentNumber.invalid")))
+      }
+    }
+
+    "documentNumber is invalid chars" in {
+      val invalidDocNumber = Gen.asciiPrintableStr
+        .suchThat(_.trim.nonEmpty)
+        .suchThat(_.length <= SearchByMRZForm.DocumentNumberMaxLength)
+        .suchThat(_.exists(c => !c.isLetter && !c.isDigit))
+
+      forAll(invalidDocNumber) { documentNumber =>
+        val invalidInput = input(documentNumber = documentNumber)
+
+        form.bind(invalidInput).value must not be defined
+        form.bind(invalidInput).errors mustBe List(FormError("documentNumber", List("error.documentNumber.invalid")))
       }
     }
   }
