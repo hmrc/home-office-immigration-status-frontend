@@ -15,17 +15,20 @@
  *@
 
 @import viewmodels.RowViewModel
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.select.{Select, SelectItem}
 
-@this()
+@this(govukSelect: GovukSelect)
 
 @()(implicit messages: Messages)
 
-<div class="govuk-form-group">
-  <label class="govuk-label" for="sort">@messages("lookup.identity.label")</label>
-  <select class="govuk-select" id="sort" name="sort">
-   <option value="PASSPORT" selected>@messages("lookup.passport")</option>
-   <option value="NAT">@messages("lookup.euni")</option>
-   <option value="BRC">@messages("lookup.res.card")</option>
-   <option value="BRP">@messages("lookup.res.permit")</option>
- </select>
-</div>
+@items = @{Seq(
+ SelectItem(Some("PASSPORT"), messages("lookup.passport"), true),
+ SelectItem(Some("NAT"), messages("lookup.euni"), false),
+ SelectItem(Some("BRC"), messages("lookup.res.card"), false),
+ SelectItem(Some("BRP"), messages("lookup.res.permit"), false))}
+
+@govukSelect(Select(
+ id = "documenttype",
+ name = "documentType",
+ items = items,
+ label = Label(content = Text(messages("lookup.identity.label")))))
