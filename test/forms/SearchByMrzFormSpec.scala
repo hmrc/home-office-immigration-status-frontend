@@ -68,7 +68,7 @@ class SearchByMrzFormSpec extends PlaySpec with OptionValues with ScalaCheckDriv
       "inputs are valid" in {
         val validGen = for {
           docType <- Gen.oneOf(SearchByMRZForm.AllowedDocumentTypes)
-          docNum  <- Gen.listOfN(SearchByMRZForm.DocumentNumberMaxLength, Gen.alphaNumChar).map(_.mkString)
+          docNum  <- Gen.listOfN(SearchByMRZForm.DocumentNumberMaxLength, Gen.frequency((9, Gen.alphaNumChar), (1, Gen.const('-')))).map(_.mkString)
           nat     <- Gen.oneOf(SearchByMRZForm.CountryList)
         } yield MrzSearchFormModel(docType, docNum, yesterday, nat)
 
@@ -187,10 +187,9 @@ class SearchByMrzFormSpec extends PlaySpec with OptionValues with ScalaCheckDriv
     }
 
     "documentNumber is invalid chars" in {
-
       val invalidDocNumber: Gen[String] =
         Gen
-          .atLeastOne(Range(32, 47).map(_.toChar))
+          .atLeastOne(Range(32, 44).map(_.toChar))
           .map(_.mkString)
           .suchThat(_.length <= SearchByMRZForm.DocumentNumberMaxLength)
 

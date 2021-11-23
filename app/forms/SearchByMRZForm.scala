@@ -34,7 +34,7 @@ class SearchByMRZForm extends FormFieldMappings {
       "documentNumber" -> nonEmptyText("documentNumber")
         .verifying(
           "error.documentNumber.invalid",
-          dn => dn.length <= DocumentNumberMaxLength && dn.forall(c => c.isDigit || c.isLetter)),
+          dn => dn.length <= DocumentNumberMaxLength && dn.forall(c => c.isDigit || c.isLetter || c == '-')),
       "dateOfBirth" -> dobFieldsMapping,
       "nationality" -> nonEmptyText("nationality")
         .transform[String](_.toUpperCase, identity)
