@@ -20,6 +20,7 @@ class ShutteredISpec extends ISpec {
       "/search-by-nino" -> get,
       "/search-by-nino" -> post,
       "/search-by-passport" -> get,
+      "/search-by-passport" -> post,
       "/status-result" -> get,
       "/foo" -> get
     ).foreach { case (path, request) =>

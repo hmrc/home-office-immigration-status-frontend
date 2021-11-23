@@ -20,7 +20,7 @@ class SearchByNinoISpec extends ISpec with HomeOfficeImmigrationStatusStubs {
 
   "POST /check-immigration-status/search-by-nino" should {
     "redirect to the result page" in {
-      givenStatusCheckSucceeds()
+      givenCheckByNinoSucceeds()
       givenAuthorisedForStride("TBC", "StrideUserId")
 
       val payload = Map(

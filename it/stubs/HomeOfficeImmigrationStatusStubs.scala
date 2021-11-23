@@ -13,14 +13,31 @@ trait HomeOfficeImmigrationStatusStubs extends JourneyTestData {
 
   val queryMonths: Int = 6
 
-  def validRequestBodyWithDateRange(): String = {
+  def validByNinoRequestBody(): String = {
     val date = LocalDate.now(ZoneId.of("UTC"))
-    requestBodyWithRange(date.minusMonths(queryMonths).toString, date.toString)
+    byNinoBodyWithRange(date.minusMonths(queryMonths).toString, date.toString)
+  }
+
+  def validByMrzRequestBody: String = {
+    val date = LocalDate.now(ZoneId.of("UTC"))
+    byMrzBodyWithRange(date.minusMonths(queryMonths).toString, date.toString)
   }
 
   val nino = NinoGenerator.generateNino
 
-  def requestBodyWithRange(startDate: String, endDate: String): String =
+  def byMrzBodyWithRange(startDate: String, endDate: String): String =
+    s"""{
+       |  "dateOfBirth": "2001-01-31",
+       |  "nationality": "AFG",
+       |  "documentNumber": "123456789",
+       |  "documentType": "PASSPORT",
+       |  "statusCheckRange": {
+       |    "startDate": "$startDate",
+       |    "endDate": "$endDate"
+       |  }
+       |}""".stripMargin
+
+  def byNinoBodyWithRange(startDate: String, endDate: String): String =
     s"""{
        |  "dateOfBirth": "2001-01-31",
        |  "familyName": "Jane",
@@ -59,13 +76,13 @@ trait HomeOfficeImmigrationStatusStubs extends JourneyTestData {
        |  }
        |}""".stripMargin
 
-  def givenStatusCheckSucceeds(): StubMapping =
-    givenStatusPublicFundsByNinoStub(200, validRequestBodyWithDateRange(), responseBodyWithStatus)
+  def givenCheckByNinoSucceeds(): StubMapping =
+    givenStatusPublicFundsCheckStub("nino", 200, validByNinoRequestBody(), responseBodyWithStatus)
 
-  def givenStatusCheckResultWithRangeExample(): StubMapping =
-    givenStatusPublicFundsByNinoStub(200, validRequestBodyWithDateRange(), responseBodyWithStatus)
+  def givenCheckByMrzSucceeds(): StubMapping =
+    givenStatusPublicFundsCheckStub("mrz", 200, validByMrzRequestBody, responseBodyWithStatus)
 
-  def givenStatusCheckErrorWhenMissingInputField(): StubMapping = {
+  def givenCheckByNinoErrorWhenMissingInputField(): StubMapping = {
 
     val errorResponseBody: String =
       s"""{
@@ -75,7 +92,7 @@ trait HomeOfficeImmigrationStatusStubs extends JourneyTestData {
          |  }
          |}""".stripMargin
 
-    givenStatusPublicFundsByNinoStub(400, validRequestBodyWithDateRange(), errorResponseBody)
+    givenStatusPublicFundsCheckStub("nino", 400, validByNinoRequestBody(), errorResponseBody)
   }
 
   def givenStatusCheckErrorWhenStatusNotFound(): StubMapping = {
@@ -88,24 +105,11 @@ trait HomeOfficeImmigrationStatusStubs extends JourneyTestData {
          |  }
          |}""".stripMargin
 
-    givenStatusPublicFundsByNinoStub(404, validRequestBodyWithDateRange(), errorResponseBody)
+    givenStatusPublicFundsCheckStub("nino", 404, validByNinoRequestBody(), errorResponseBody)
   }
 
-  def givenStatusCheckErrorWhenConflict(): StubMapping = {
-
-    val errorResponseBody: String =
-      s"""{
-         |  "correlationId": "$correlationId",
-         |  "error": {
-         |    "errCode": "ERR_CONFLICT"
-         |  }
-         |}""".stripMargin
-
-    givenStatusPublicFundsByNinoStub(409, validRequestBodyWithDateRange(), errorResponseBody)
-  }
-
-  def givenAnExternalServiceError(): StubMapping =
-    givenStatusPublicFundsByNinoErrorStub(500, validRequestBodyWithDateRange())
+  def givenAnExternalServiceErrorCheckByNino(): StubMapping =
+    givenStatusPublicFundsCheckStub("nino", 500, validByNinoRequestBody(), "")
 
   def givenStatusCheckErrorWhenDOBInvalid(): StubMapping = {
 
@@ -123,13 +127,13 @@ trait HomeOfficeImmigrationStatusStubs extends JourneyTestData {
          |  }
          |}""".stripMargin
 
-    givenStatusPublicFundsByNinoStub(400, validRequestBodyWithDateRange(), errorResponseBody)
+    givenStatusPublicFundsCheckStub("nino", 400, validByNinoRequestBody(), errorResponseBody)
 
   }
 
-  def givenStatusPublicFundsByNinoStub(httpResponseCode: Int, requestBody: String, responseBody: String): StubMapping =
+  def givenStatusPublicFundsCheckStub(endpoint: String, httpResponseCode: Int, requestBody: String, responseBody: String): StubMapping =
     stubFor(
-      post(urlEqualTo(s"/v1/status/public-funds/nino"))
+      post(urlEqualTo(s"/v1/status/public-funds/$endpoint"))
         .withHeader("X-Correlation-Id", new AnythingPattern())
         .withHeader(HeaderNames.CONTENT_TYPE, containing("application/json"))
         .withRequestBody(equalToJson(requestBody, true, true))
@@ -138,16 +142,5 @@ trait HomeOfficeImmigrationStatusStubs extends JourneyTestData {
             .withStatus(httpResponseCode)
             .withHeader("Content-Type", "application/json")
             .withBody(responseBody)
-        ))
-
-  def givenStatusPublicFundsByNinoErrorStub(httpResponseCode: Int, requestBody: String): StubMapping =
-    stubFor(
-      post(urlEqualTo(s"/v1/status/public-funds/nino"))
-        .withHeader("X-Correlation-Id", new AnythingPattern())
-        .withHeader(HeaderNames.CONTENT_TYPE, containing("application/json"))
-        .withRequestBody(equalToJson(requestBody, true, true))
-        .willReturn(
-          aResponse()
-            .withStatus(httpResponseCode)
         ))
 }
