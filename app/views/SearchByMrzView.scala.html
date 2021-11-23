@@ -18,7 +18,8 @@
     govukWrapper: govuk_wrapper,
     formHelper: FormWithCSRF,
     identityDocumentType: components.identityDocumentType,
-    fieldset: components.fieldset
+    fieldset: components.fieldset,
+    alternateSearch: components.AlternateSearchLink
 )
 
 @()(implicit request: Request[_], messages: Messages)
@@ -32,6 +33,9 @@
         @fieldset("lookup.title") {
             <a href="@controllers.routes.StatusCheckByNinoController.onPageLoad.url" class="govuk-link" >@messages("alternate-search.nino-link")</a>
             <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+
+           @alternateSearch("alternate-search.nino-link", controllers.routes.StatusCheckByNinoController.onPageLoad.url, "alt-search-by-nino")
+
         }
     }
 }

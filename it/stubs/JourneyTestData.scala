@@ -2,7 +2,7 @@ package stubs
 
 import java.time.LocalDate
 import uk.gov.hmrc.domain.Nino
-import models.{ImmigrationStatus, StatusCheckByNinoRequest, StatusCheckRange, StatusCheckResult}
+import models.{ImmigrationStatus, NinoSearch, StatusCheckRange, StatusCheckResult}
 
 trait JourneyTestData {
 

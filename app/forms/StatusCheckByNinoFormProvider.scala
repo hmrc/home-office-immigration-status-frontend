@@ -16,7 +16,7 @@
 
 package forms
 
-import models.StatusCheckByNinoFormModel
+import models.NinoSearchFormModel
 import uk.gov.hmrc.domain.Nino
 import play.api.data.Form
 import play.api.data.Forms._
@@ -26,7 +26,7 @@ import javax.inject.Singleton
 @Singleton
 class StatusCheckByNinoFormProvider extends FormFieldMappings {
 
-  def apply(): Form[StatusCheckByNinoFormModel] = Form[StatusCheckByNinoFormModel] {
+  def apply(): Form[NinoSearchFormModel] = Form[NinoSearchFormModel] {
     mapping(
       "nino" -> uppercaseNormalizedText
         .verifying(validNino)
@@ -34,6 +34,6 @@ class StatusCheckByNinoFormProvider extends FormFieldMappings {
       "givenName"   -> trimmedName.verifying(validName("givenName", 1)),
       "familyName"  -> trimmedName.verifying(validName("familyName", 2)),
       "dateOfBirth" -> dobFieldsMapping
-    )(StatusCheckByNinoFormModel.apply)(StatusCheckByNinoFormModel.unapply)
+    )(NinoSearchFormModel.apply)(NinoSearchFormModel.unapply)
   }
 }

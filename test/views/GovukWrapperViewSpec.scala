@@ -16,7 +16,7 @@
 
 package views
 
-import models.StatusCheckByNinoFormModel
+import models.NinoSearchFormModel
 
 import java.time.LocalDate
 import org.jsoup.nodes.Document
@@ -32,7 +32,7 @@ class GovukWrapperViewSpec extends ViewSpec {
 
   lazy val sut = inject[MultipleMatchesFoundPage]
 
-  val query = StatusCheckByNinoFormModel(NinoGenerator.generateNino, "Pan", "", LocalDate.now())
+  val query = NinoSearchFormModel(NinoGenerator.generateNino, "Pan", "", LocalDate.now())
   lazy val doc: Document = asDocument(sut(query)(request, messages))
 
   "govuk_wrapper" must {
