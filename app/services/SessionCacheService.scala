@@ -18,7 +18,7 @@ package services
 
 import com.google.inject.{ImplementedBy, Inject, Singleton}
 import repositories.SessionCacheRepository
-import models.{FormQueryModel, NinoSearchFormModel}
+import models.{FormQueryModel, SearchFormModel}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -34,7 +34,7 @@ class SessionCacheServiceImpl @Inject()(
   def get(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[FormQueryModel]] =
     withSessionId(sessionCacheRepository.findById(_))
 
-  def set(formModel: NinoSearchFormModel, now: LocalDateTime = LocalDateTime.now)(
+  def set(formModel: SearchFormModel, now: LocalDateTime = LocalDateTime.now)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext): Future[Unit] =
     withSessionId { sessionId =>
@@ -62,7 +62,7 @@ trait SessionCacheService {
 
   def get(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[FormQueryModel]]
 
-  def set(formModel: NinoSearchFormModel, now: LocalDateTime = LocalDateTime.now)(
+  def set(formModel: SearchFormModel, now: LocalDateTime = LocalDateTime.now)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext): Future[Unit]
 

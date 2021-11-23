@@ -18,7 +18,8 @@ package controllers
 
 import config.AppConfig
 import controllers.actions.AccessAction
-import forms.StatusCheckByNinoFormProvider
+import forms.SearchByMRZForm
+import models.{FormQueryModel, MrzSearchFormModel}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionCacheService
@@ -26,19 +27,40 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.SearchByMrzView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class SearchByMrzController @Inject()(
   access: AccessAction,
   override val messagesApi: MessagesApi,
   view: SearchByMrzView,
   sessionCacheService: SessionCacheService,
+  formProvider: SearchByMRZForm,
   cc: MessagesControllerComponents
 )(implicit val appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(cc) with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = access { implicit request =>
-    Ok(view())
-  }
+  val onPageLoad: Action[AnyContent] =
+    access.async { implicit request =>
+      sessionCacheService.get.map { result =>
+        val form = result match {
+          case Some(FormQueryModel(_, formModel: MrzSearchFormModel, _)) => formProvider().fill(formModel)
+          case _                                                         => formProvider()
+        }
+        Ok(view(form))
+      }
+    }
+
+  val onSubmit: Action[AnyContent] =
+    access.async { implicit request =>
+      formProvider()
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
+          query =>
+            for {
+              _ <- sessionCacheService.set(query)
+            } yield Redirect(routes.StatusResultController.onPageLoad)
+        )
+    }
 
 }

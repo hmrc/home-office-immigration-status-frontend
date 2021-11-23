@@ -16,11 +16,14 @@
 
 package views
 
+import forms.SearchByMRZForm
+import models.{MrzSearch, MrzSearchFormModel}
 import org.jsoup.nodes.{Document, Element}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, verify, when}
 import play.api.inject.bind
 import play.api.Application
+import play.api.data.Form
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.Html
 import views.html.SearchByMrzView
@@ -43,7 +46,9 @@ class SearchByMrzViewSpec extends ViewSpec {
 
   lazy val sut: SearchByMrzView = inject[SearchByMrzView]
 
-  lazy val doc: Document = asDocument(sut()(request, messages))
+  val form: Form[MrzSearchFormModel] = inject[SearchByMRZForm].apply()
+
+  lazy val doc: Document = asDocument(sut(form)(request, messages))
 
   "SearchByMrzView" must {
     "have the look up title" in {

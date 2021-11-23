@@ -11,7 +11,7 @@ class StatusResultISpec extends ISpec with HomeOfficeImmigrationStatusStubs {
 
   "GET /check-immigration-status/status-result" should {
     "POST to the HO and show match found" in {
-      givenStatusCheckSucceeds()
+      givenCheckByNinoSucceeds()
       givenAuthorisedForStride("TBC", "StrideUserId")
 
       val sessionId = "123"
@@ -26,7 +26,7 @@ class StatusResultISpec extends ISpec with HomeOfficeImmigrationStatusStubs {
     }
 
     "POST to the HO and show error page" in {
-      givenAnExternalServiceError()
+      givenAnExternalServiceErrorCheckByNino()
       givenAuthorisedForStride("TBC", "StrideUserId")
 
       val sessionId = "456"

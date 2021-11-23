@@ -24,7 +24,6 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.play.PlaySpec
 import play.api.libs.json.Json
 import repositories.SessionCacheRepository
-import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import utils.NinoGenerator
 
@@ -47,8 +46,8 @@ class SessionCacheServiceSpec extends PlaySpec with BeforeAndAfterEach with Scal
 
   val formModel = NinoSearchFormModel(
     nino = NinoGenerator.generateNino,
-    givenName = "Pan",
-    familyName = "Oldfield",
+    givenName = "Peter",
+    familyName = "Pan",
     dateOfBirth = LocalDate.now)
   val formQuery = FormQueryModel(id = "123", data = formModel)
 

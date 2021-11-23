@@ -9,6 +9,7 @@ GET   /search-by-nino               controllers.StatusCheckByNinoController.onPa
 POST  /search-by-nino               controllers.StatusCheckByNinoController.onSubmit
 
 GET   /search-by-passport           controllers.SearchByMrzController.onPageLoad
+POST  /search-by-passport           controllers.SearchByMrzController.onSubmit
 
 GET   /status-result                controllers.StatusResultController.onPageLoad
 
