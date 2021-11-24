@@ -28,7 +28,6 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.Html
 import views.html.SearchByMrzView
 import views.html.components.AlternateSearchLink
-
 import java.util.UUID
 
 class SearchByMrzViewSpec extends ViewSpec {
@@ -55,6 +54,7 @@ class SearchByMrzViewSpec extends ViewSpec {
       val e: Element = doc.getElementsByTag("h1").first()
       e.text() mustBe messages("lookup.title")
     }
+
     "have the alternate search link" in {
       doc.text() must include(fakeAlternativeSearch)
       verify(mockAlternateSearch)
@@ -62,6 +62,16 @@ class SearchByMrzViewSpec extends ViewSpec {
           "alternate-search.nino-link",
           controllers.routes.StatusCheckByNinoController.onPageLoad.url,
           "alt-search-by-nino")(messages)
+    }
+
+    "have identity doc" in {
+      assertRenderedById(doc, "documenttype")
+    }
+
+    "have the identity component contains options" in {
+      val e: Element = doc.getElementById("documenttype")
+      e.text() mustBe messages(
+        "Passport European National Insurance Card Biometric Residence Card Biometric Residence Permit")
     }
   }
 }
