@@ -20,6 +20,7 @@
     identityDocumentType: components.identityDocumentType,
     fieldset: components.fieldset,
     alternateSearch: components.AlternateSearchLink,
+    inputDate: components.inputDate,
     govukButton : GovukButton,
 )
 
@@ -35,7 +36,14 @@
 
            @identityDocumentType()
 
-        }
+           @inputDate(
+               form,
+               id = "dateOfBirth",
+               legendClasses = "govuk-label",
+               legendContent = messages("lookup.dateOfBirth.label"),
+               hintMessage = Some(messages("lookup.dateOfBirth.hint"))
+               )
+           }
 
         @govukButton(Button(content = Text(messages("button.continue")), attributes = Map("id" -> "search-button")))
     }
