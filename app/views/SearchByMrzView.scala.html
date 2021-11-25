@@ -20,10 +20,12 @@
 @this(
     govukWrapper: govuk_wrapper,
     formHelper: FormWithCSRF,
+    identityDocumentType: components.identityDocumentType,
     fieldset: components.fieldset,
     alternateSearch: components.AlternateSearchLink,
     countrySelect: components.CountrySelect,
     countries: config.Countries
+    inputDate: components.inputDate
 )
 
 @(form: Form[MrzSearchFormModel])(implicit request: Request[_], messages: Messages)
@@ -34,10 +36,19 @@
 
         @fieldset("lookup.title") {
 
-            @alternateSearch("alternate-search.nino-link", controllers.routes.StatusCheckByNinoController.onPageLoad.url, "alt-search-by-nino")
+           @alternateSearch("alternate-search.nino-link", controllers.routes.StatusCheckByNinoController.onPageLoad.url, "alt-search-by-nino")
 
-            @countrySelect(countries.countries, Some("United Kingdom"))
+           @identityDocumentType()
 
+           @countrySelect(countries.countries, Some("United Kingdom"))
+
+        @inputDate(
+            form,
+            id = "dateOfBirth",
+            legendClasses = "govuk-label",
+            legendContent = messages("lookup.dateOfBirth.label"),
+            hintMessage = Some(messages("lookup.dateOfBirth.hint"))
+            )
         }
     }
 }
