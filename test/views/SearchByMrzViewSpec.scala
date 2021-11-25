@@ -27,21 +27,25 @@ import play.api.data.Form
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.Html
 import views.html.SearchByMrzView
-import views.html.components.AlternateSearchLink
+import views.html.components.{AlternateSearchLink, inputDate}
 import java.util.UUID
 
 class SearchByMrzViewSpec extends ViewSpec {
 
   val mockAlternateSearch = mock(classOf[AlternateSearchLink])
+  val mockDobInput = mock(classOf[inputDate])
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
-      bind[AlternateSearchLink].toInstance(mockAlternateSearch)
+      bind[AlternateSearchLink].toInstance(mockAlternateSearch),
+      bind[inputDate].toInstance(mockDobInput),
     )
     .build()
 
   val fakeAlternativeSearch: String = UUID.randomUUID().toString
   when(mockAlternateSearch.apply(any(), any(), any())(any())).thenReturn(Html(fakeAlternativeSearch))
+  val fakeDobInput: String = UUID.randomUUID().toString
+  when(mockDobInput.apply(any(), any(), any(), any(), any(), any(), any())(any())).thenReturn(Html(fakeDobInput))
 
   lazy val sut: SearchByMrzView = inject[SearchByMrzView]
 
@@ -72,6 +76,18 @@ class SearchByMrzViewSpec extends ViewSpec {
       val e: Element = doc.getElementById("documenttype")
       e.text() mustBe messages(
         "Passport European National Insurance Card Biometric Residence Card Biometric Residence Permit")
+    }
+
+    "have the dob input" in {
+      doc.text() must include(fakeDobInput)
+      verify(mockDobInput)
+        .apply(
+          form,
+          id = "dateOfBirth",
+          legendClasses = "govuk-label",
+          legendContent = messages("lookup.dateOfBirth.label"),
+          hintMessage = Some(messages("lookup.dateOfBirth.hint"))
+        )(messages)
     }
   }
 }

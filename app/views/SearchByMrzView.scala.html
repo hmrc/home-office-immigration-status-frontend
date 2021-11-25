@@ -19,7 +19,8 @@
     formHelper: FormWithCSRF,
     identityDocumentType: components.identityDocumentType,
     fieldset: components.fieldset,
-    alternateSearch: components.AlternateSearchLink
+    alternateSearch: components.AlternateSearchLink,
+    inputDate: components.inputDate,
 )
 
 @(form: Form[MrzSearchFormModel])(implicit request: Request[_], messages: Messages)
@@ -34,6 +35,13 @@
 
            @identityDocumentType()
 
+        @inputDate(
+            form,
+            id = "dateOfBirth",
+            legendClasses = "govuk-label",
+            legendContent = messages("lookup.dateOfBirth.label"),
+            hintMessage = Some(messages("lookup.dateOfBirth.hint"))
+            )
         }
     }
 }
