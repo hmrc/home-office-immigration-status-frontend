@@ -73,5 +73,9 @@ class SearchByMrzViewSpec extends ViewSpec {
       e.text() mustBe messages(
         "Passport European National Insurance Card Biometric Residence Card Biometric Residence Permit")
     }
+
+    "have the search button" in {
+      assertRenderedById(doc, "search-button")
+    }
   }
 }

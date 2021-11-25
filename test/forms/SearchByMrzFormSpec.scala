@@ -68,8 +68,12 @@ class SearchByMrzFormSpec extends PlaySpec with OptionValues with ScalaCheckDriv
       "inputs are valid" in {
         val validGen = for {
           docType <- Gen.oneOf(SearchByMRZForm.AllowedDocumentTypes)
-          docNum  <- Gen.listOfN(SearchByMRZForm.DocumentNumberMaxLength, Gen.frequency((9, Gen.alphaNumChar), (1, Gen.const('-')))).map(_.mkString)
-          nat     <- Gen.oneOf(SearchByMRZForm.CountryList)
+          docNum <- Gen
+                     .listOfN(
+                       SearchByMRZForm.DocumentNumberMaxLength,
+                       Gen.frequency((9, Gen.alphaNumChar), (1, Gen.const('-'))))
+                     .map(_.mkString)
+          nat <- Gen.oneOf(SearchByMRZForm.CountryList)
         } yield MrzSearchFormModel(docType, docNum, yesterday, nat)
 
         forAll(validGen) { out =>

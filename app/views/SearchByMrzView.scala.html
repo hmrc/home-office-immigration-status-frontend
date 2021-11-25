@@ -19,14 +19,15 @@
     formHelper: FormWithCSRF,
     identityDocumentType: components.identityDocumentType,
     fieldset: components.fieldset,
-    alternateSearch: components.AlternateSearchLink
+    alternateSearch: components.AlternateSearchLink,
+    govukButton : GovukButton,
 )
 
 @(form: Form[MrzSearchFormModel])(implicit request: Request[_], messages: Messages)
 
 @govukWrapper(title = messages("lookup.title")){
 
-    @formHelper(Call("DELETE", "/place-holder")) {
+    @formHelper(controllers.routes.SearchByMrzController.onSubmit) {
 
         @fieldset("lookup.title") {
 
@@ -35,5 +36,7 @@
            @identityDocumentType()
 
         }
+
+        @govukButton(Button(content = Text(messages("button.continue")), attributes = Map("id" -> "search-button")))
     }
 }
