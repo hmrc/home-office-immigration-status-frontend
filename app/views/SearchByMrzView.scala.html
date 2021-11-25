@@ -22,6 +22,7 @@
     alternateSearch: components.AlternateSearchLink,
     inputDate: components.inputDate,
     govukButton : GovukButton,
+    errorSummary: components.errorSummary
 )
 
 @(form: Form[MrzSearchFormModel])(implicit request: Request[_], messages: Messages)
@@ -30,11 +31,13 @@
 
     @formHelper(controllers.routes.SearchByMrzController.onSubmit) {
 
+        @errorSummary(form.errors)
+
         @fieldset("lookup.title") {
 
            @alternateSearch("alternate-search.nino-link", controllers.routes.StatusCheckByNinoController.onPageLoad.url, "alt-search-by-nino")
 
-           @identityDocumentType()
+           @identityDocumentType(form)
 
            @inputDate(
                form,
