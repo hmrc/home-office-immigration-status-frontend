@@ -25,7 +25,6 @@ import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n._
 import play.api.mvc.Call
-import uk.gov.hmrc.domain.Nino
 import utils.NinoGenerator
 import viewmodels.RowViewModel
 
