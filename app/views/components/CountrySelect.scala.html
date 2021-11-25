@@ -18,17 +18,19 @@
 @import views.html.helper.CSPNonce
 
 @this(
-    govukSelect: GovukSelect
+    govukSelect: GovukSelect,
+    countries: config.Countries
 )
 
-@(countries: Seq[CountryInput], selectedCountry: Option[String])(implicit messages: Messages)
+@(selectedCountry: Option[String])(implicit messages: Messages)
 
 @govukSelect(Select(
     id = "nationality",
     name = "nationality",
-    label = Label(content = Text(messages("Something"))),
+    label = Label(content = Text(messages("lookup.nationality.label"))),
+    hint = Some(Hint(content = Text(messages("lookup.nationality.hint")))),
     items = Seq(SelectItem(value = Some(""), text = "")) ++ 
-        countries.map(country =>
+        countries.countries.map(country =>
             SelectItem(
                 value = Some(country.value),
                 text = country.label,

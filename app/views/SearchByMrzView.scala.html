@@ -24,7 +24,6 @@
     fieldset: components.fieldset,
     alternateSearch: components.AlternateSearchLink,
     countrySelect: components.CountrySelect,
-    countries: config.Countries
     inputDate: components.inputDate
 )
 
@@ -40,14 +39,14 @@
 
            @identityDocumentType()
 
-           @countrySelect(countries.countries, Some("United Kingdom"))
+           @countrySelect(form.value.map(_.nationality))
 
-        @inputDate(
-            form,
-            id = "dateOfBirth",
-            legendClasses = "govuk-label",
-            legendContent = messages("lookup.dateOfBirth.label"),
-            hintMessage = Some(messages("lookup.dateOfBirth.hint"))
+            @inputDate(
+                form,
+                id = "dateOfBirth",
+                legendClasses = "govuk-label",
+                legendContent = messages("lookup.dateOfBirth.label"),
+                hintMessage = Some(messages("lookup.dateOfBirth.hint"))
             )
         }
     }
