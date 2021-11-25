@@ -20,19 +20,31 @@ generic.warning='Warning'
 # Validation errors
 error.summary.heading='There is a problem'
 error.prefix='Error:'
-error.email='Enter a valid email address'
+error.browser.title.prefix='Error:'
+
+#shared
 error.dateOfBirth.required='Enter date of birth in the correct format'
 error.dateOfBirth.invalid-format='Invalid date of birth'
 error.year.invalid-format='Enter a year of birth'
 error.day.invalid-format='Enter a day of birth'
 error.month.invalid-format='Enter a month of birth'
+
+#Nino form
 error.nino.required='Enter National Insurance number in the correct format'
 error.nino.invalid-format='Invalid National Insurance number'
 error.familyName.required='Enter surname'
 error.familyName.invalid-format='Invalid surname'
 error.givenName.required='Enter first name'
 error.givenName.invalid-format='Invalid first name'
-error.browser.title.prefix='Error:'
+
+#MRZ form
+error.nationality.required='CONTENT HERE'
+error.nationality.invalid='CONTENT HERE'
+error.documentNumber.required='CONTENT HERE'
+error.documentNumber.invalid='CONTENT HERE'
+error.documentType.required='CONTENT HERE'
+error.documentType.invalid='CONTENT HERE'
+
 
 # Service specific messages
 app.titleSuffix='Check immigration status - GOV.UK'
