@@ -31,7 +31,7 @@
 
 @(context: StatusFoundPageContext)(implicit request: Request[_], messages: Messages)
 
-@govukWrapper(title = messages("status-found.title") + context.currentStatusLabel, js = Some(pageviewJs)) {
+@govukWrapper(title = messages("status-found.title") + context.currentStatusLabel) {
 
     <h1 class="govuk-heading-xl" id="status-found-title"><span id="full-name">@context.result.fullName</span>@context.currentStatusLabel</h1>
 
@@ -52,11 +52,5 @@
     }
 
     @govukButton(Button(content = Text(messages("generic.searchAgain")), href=Some(context.searchAgainCall.url)))
-}
-
-@pageviewJs = {
-    <script @{CSPNonce.attr} type="text/javascript">
-        sendPageview("/status-found")
-    </script>
 }
 
