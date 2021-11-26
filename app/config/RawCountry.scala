@@ -24,7 +24,7 @@ object RawCountries {
   implicit val format: Format[RawCountries] = Json.format[RawCountries]
 }
 
-case class RawCountry(name: String, alpha2: String, alpha3: String)
+final case class RawCountry(name: String, alpha2: String, alpha3: String)
 
 object RawCountry {
   implicit val format: Format[RawCountry] = Json.format[RawCountry]
