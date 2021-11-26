@@ -16,9 +16,37 @@
 
 package views.components
 
+import forms.SearchByMRZForm
+import play.api.data.Form
 import views.ViewSpec
+import views.html.components.identityDocumentType
 
 class IdentityDocumentTypeComponentSpec extends ViewSpec {
+
+  val sut: identityDocumentType = inject[identityDocumentType]
+
+  "apply" must {
+    "have all 4 options" in {
+      val form = Form.
+      sut()
+    }
+
+    "default select passport" when {
+      "No option previously selected" in {
+
+      }
+    }
+
+    "preselect the selected" when {
+      SearchByMRZForm
+        .AllowedDocumentTypes
+        .foreach{ selected =>
+          s"selected is $selected" in {
+
+          }
+      }
+    }
+  }
 
   //todo.
 
