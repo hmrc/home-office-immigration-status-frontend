@@ -18,7 +18,7 @@ package config
 
 import play.api.libs.json.{Format, Json}
 
-case class RawCountries(countries: Seq[RawCountry])
+final case class RawCountries(countries: Seq[RawCountry])
 
 object RawCountries {
   implicit val format: Format[RawCountries] = Json.format[RawCountries]
