@@ -24,7 +24,7 @@ import com.typesafe.config.ConfigException
 @Singleton
 class Countries @Inject()(environment: Environment) {
 
-  val fileName = "location-autocomplete-alpha3.json"
+  private val fileName = "location-autocomplete-alpha3.json"
 
   val countries: Seq[CountryInput] =
     environment
