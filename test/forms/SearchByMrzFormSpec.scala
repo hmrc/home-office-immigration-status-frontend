@@ -121,6 +121,7 @@ class SearchByMrzFormSpec extends PlaySpec with OptionValues with ScalaCheckDriv
       form.bind(invalidInput).value must not be defined
       form.bind(invalidInput).errors mustBe List(FormError("dateOfBirth", List("error.dateOfBirth.invalid-format")))
     }
+
     "dob is future" in {
       val invalidInput = input(day = tomorrow.getDayOfMonth.toString)
 

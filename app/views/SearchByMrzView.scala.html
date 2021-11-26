@@ -21,6 +21,7 @@
     fieldset: components.fieldset,
     alternateSearch: components.AlternateSearchLink,
     inputDate: components.inputDate,
+    inputText: components.inputText
 )
 
 @(form: Form[MrzSearchFormModel])(implicit request: Request[_], messages: Messages)
@@ -35,12 +36,21 @@
 
            @identityDocumentType()
 
-        @inputDate(
-            form,
-            id = "dateOfBirth",
-            legendClasses = "govuk-label",
-            legendContent = messages("lookup.dateOfBirth.label"),
-            hintMessage = Some(messages("lookup.dateOfBirth.hint"))
+           @inputText(
+             form,
+             id = "identityDocumentType",
+             name = "identityDocumentType",
+             label = "lookup.mrz.label",
+             hint = Some(Html(messages("lookup.mrz.hint"))),
+             classes = Some("govuk-!-width-one-half")
+           )
+
+          @inputDate(
+              form,
+              id = "dateOfBirth",
+              legendClasses = "govuk-label",
+              legendContent = messages("lookup.dateOfBirth.label"),
+              hintMessage = Some(messages("lookup.dateOfBirth.hint"))
             )
         }
     }
