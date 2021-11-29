@@ -18,6 +18,7 @@
 @import config.AppConfig
 @import viewmodels.{RowViewModel => Row}
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.helper.CSPNonce
 
 @this(
     govukButton : GovukButton,
@@ -52,3 +53,4 @@
 
     @govukButton(Button(content = Text(messages("generic.searchAgain")), href=Some(context.searchAgainCall.url)))
 }
+

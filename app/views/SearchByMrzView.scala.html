@@ -14,13 +14,17 @@
  * limitations under the License.
  *@
 
+@import config.Countries
+@import views.html.helper.CSPNonce
+
 @this(
     govukWrapper: govuk_wrapper,
     formHelper: FormWithCSRF,
     identityDocumentType: components.identityDocumentType,
     fieldset: components.fieldset,
     alternateSearch: components.AlternateSearchLink,
-    inputDate: components.inputDate,
+    countrySelect: components.CountrySelect,
+    inputDate: components.inputDate
 )
 
 @(form: Form[MrzSearchFormModel])(implicit request: Request[_], messages: Messages)
@@ -35,12 +39,14 @@
 
            @identityDocumentType()
 
-        @inputDate(
-            form,
-            id = "dateOfBirth",
-            legendClasses = "govuk-label",
-            legendContent = messages("lookup.dateOfBirth.label"),
-            hintMessage = Some(messages("lookup.dateOfBirth.hint"))
+           @countrySelect(form.value.map(_.nationality))
+
+            @inputDate(
+                form,
+                id = "dateOfBirth",
+                legendClasses = "govuk-label",
+                legendContent = messages("lookup.dateOfBirth.label"),
+                hintMessage = Some(messages("lookup.dateOfBirth.hint"))
             )
         }
     }
