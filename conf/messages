@@ -38,12 +38,12 @@ error.givenName.required='Enter first name'
 error.givenName.invalid-format='Invalid first name'
 
 #MRZ form
-error.nationality.required='CONTENT HERE'
-error.nationality.invalid='CONTENT HERE'
-error.documentNumber.required='CONTENT HERE'
-error.documentNumber.invalid='CONTENT HERE'
-error.documentType.required='CONTENT HERE'
-error.documentType.invalid='CONTENT HERE'
+error.nationality.required='CONTENT HERE nationality.required'
+error.nationality.invalid='CONTENT HERE nationality.invalid'
+error.documentNumber.required='CONTENT HERE documentNumber.required'
+error.documentNumber.invalid='CONTENT HERE documentNumber.invalid'
+error.documentType.required='CONTENT HERE documentType.required'
+error.documentType.invalid='CONTENT HERE documentType.invalid'
 
 
 # Service specific messages
@@ -56,7 +56,9 @@ lookup.title='Enter all information to search for the customer'
 lookup.title.Error='Error: Enter all information to search for the customer'
 lookup.nino.label='National Insurance number'
 lookup.identity.label='Identity document type'
+lookup.mrz.label='Identity document number'
 lookup.nino.hint='For example, ‘QQ123456C’.'
+lookup.mrz.hint='For example, '1234567890''
 lookup.nino.ariaDescribedBy='nino-hint'
 lookup.nino.ariaDescribedByError='nino-error'
 lookup.givenName.label='First name'

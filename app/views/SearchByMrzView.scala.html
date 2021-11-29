@@ -23,6 +23,7 @@
     identityDocumentType: components.identityDocumentType,
     fieldset: components.fieldset,
     alternateSearch: components.AlternateSearchLink,
+    inputText: components.inputText,
     countrySelect: components.CountrySelect,
     inputDate: components.inputDate,
     govukButton : GovukButton,
@@ -42,6 +43,15 @@
             @alternateSearch("alternate-search.nino-link", controllers.routes.StatusCheckByNinoController.onPageLoad.url, "alt-search-by-nino")
 
             @identityDocumentType(form)
+
+            @inputText(
+                form,
+                id = "identityDocumentNumber",
+                name = "documentNumber",
+                label = "lookup.mrz.label",
+                hint = Some(Html(messages("lookup.mrz.hint"))),
+                classes = Some("govuk-!-width-one-half")
+            )
 
             @countrySelect(form.value.map(_.nationality))
 

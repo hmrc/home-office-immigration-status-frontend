@@ -68,7 +68,7 @@ class SearchByMrzViewSpec extends ViewSpec {
           "alt-search-by-nino")(messages)
     }
 
-    "have identity doc" in {
+    "have documentType" in {
       assertRenderedById(doc, "documenttype")
     }
 
@@ -76,6 +76,10 @@ class SearchByMrzViewSpec extends ViewSpec {
       val e: Element = doc.getElementById("documenttype")
       e.text() mustBe messages(
         "Passport European National Insurance Card Biometric Residence Card Biometric Residence Permit")
+    }
+
+    "have identityDocumentNumber" in {
+      assertRenderedById(doc, "identityDocumentNumber")
     }
 
     "have the nationality select" in {
