@@ -17,37 +17,62 @@
 package views.components
 
 import forms.SearchByMRZForm
-import play.api.data.Form
+import play.api.data.{Form, Forms}
+import play.api.data.Forms.mapping
 import views.ViewSpec
 import views.html.components.identityDocumentType
+import play.api.data.format.Formats._
+
+import scala.collection.JavaConverters.asScalaBufferConverter
 
 class IdentityDocumentTypeComponentSpec extends ViewSpec {
 
   val sut: identityDocumentType = inject[identityDocumentType]
 
+  val testForm: Form[String] = Form[String] {
+    mapping("documentType" -> Forms.of[String])(identity)(Some.apply)
+  }
+
   "apply" must {
-    "have all 4 options" in {
-      val form = Form.
-      sut()
+    val emptyForm = testForm.bind(Map.empty[String, String])
+    "have all 4 options, in the correct order" in {
+      val doc = asDocument(sut(emptyForm)(messages))
+      val options = doc.select("option").asScala.toList.map(option => (option.attr("value")))
+
+      options mustBe SearchByMRZForm.AllowedDocumentTypes
     }
 
     "default select passport" when {
       "No option previously selected" in {
+        val doc = asDocument(sut(emptyForm)(messages))
 
+        val optionsWithSelected =
+          doc.select("option").asScala.toList.map(option => (option.attr("value"), option.hasAttr("selected")))
+
+        optionsWithSelected.head mustBe ("PASSPORT", true)
+        optionsWithSelected.tail.foreach {
+          case (option, selected) =>
+            withClue(s"$option was selected when it shouldnt be.") {
+              selected mustBe false
+            }
+        }
       }
     }
 
     "preselect the selected" when {
-      SearchByMRZForm
-        .AllowedDocumentTypes
-        .foreach{ selected =>
+      SearchByMRZForm.AllowedDocumentTypes
+        .foreach { selected =>
           s"selected is $selected" in {
+            val doc = asDocument(sut(testForm.bind(Map("documentType" -> selected)))(messages))
 
+            val optionsWithSelected =
+              doc.select("option").asScala.toList.map(option => (option.attr("value"), option.hasAttr("selected")))
+
+            optionsWithSelected.find(_._2) mustBe Some((selected, true))
+            optionsWithSelected.filterNot(_._2).length mustBe SearchByMRZForm.AllowedDocumentTypes.length - 1
           }
-      }
+        }
     }
   }
-
-  //todo.
 
 }
