@@ -189,6 +189,7 @@ class SearchByMrzFormSpec extends PlaySpec with OptionValues with ScalaCheckDriv
         form.bind(invalidInput).errors mustBe List(FormError("documentNumber", List("error.documentNumber.invalid")))
       }
     }
+    //asd
 
     "documentNumber is invalid chars" in {
       val invalidDocNumber: Gen[String] =
