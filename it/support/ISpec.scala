@@ -24,7 +24,7 @@ trait ISpec extends BaseISpec {
   lazy val formModelEncrypter = inject[FormModelEncrypter]
 
   def setFormQuery(formModel: NinoSearchFormModel, sessionId: String) = {
-    val encryptedFormModel = formModelEncrypter.encryptFormModel(formModel, sessionId, "VqmXp7yigDFxbCUdDdNZVIvbW6RgPNJsliv6swQNCL8=")
+    val encryptedFormModel = formModelEncrypter.encryptSearchFormModel(formModel, sessionId, "VqmXp7yigDFxbCUdDdNZVIvbW6RgPNJsliv6swQNCL8=")
     val formQueryModel = FormQueryModel(sessionId, encryptedFormModel)
     val selector = Json.obj("_id" -> formQueryModel.id)
     val modifier = Json.obj("$set" -> (formQueryModel copy (lastUpdated = LocalDateTime.now)))
