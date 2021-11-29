@@ -20,7 +20,7 @@
     govukWrapper: govuk_wrapper
 )
 
-@(pageTitle: String, heading: String, message: String, helpdesk: Option[String] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(pageTitle: String, heading: String, message: String, helpdesk: Option[String] = None)(implicit request: Request[_], messages: Messages)
 
 @govukWrapper(title = messages(pageTitle)) {
 

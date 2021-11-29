@@ -14,12 +14,16 @@
  * limitations under the License.
  *@
 
+@import config.Countries
+@import views.html.helper.CSPNonce
+
 @this(
     govukWrapper: govuk_wrapper,
     formHelper: FormWithCSRF,
     identityDocumentType: components.identityDocumentType,
     fieldset: components.fieldset,
     alternateSearch: components.AlternateSearchLink,
+    countrySelect: components.CountrySelect,
     inputDate: components.inputDate,
     govukButton : GovukButton,
     errorSummary: components.errorSummary
@@ -35,18 +39,20 @@
 
         @fieldset("lookup.title") {
 
-           @alternateSearch("alternate-search.nino-link", controllers.routes.StatusCheckByNinoController.onPageLoad.url, "alt-search-by-nino")
+            @alternateSearch("alternate-search.nino-link", controllers.routes.StatusCheckByNinoController.onPageLoad.url, "alt-search-by-nino")
 
-           @identityDocumentType(form)
+            @identityDocumentType(form)
 
-           @inputDate(
-               form,
-               id = "dateOfBirth",
-               legendClasses = "govuk-label",
-               legendContent = messages("lookup.dateOfBirth.label"),
-               hintMessage = Some(messages("lookup.dateOfBirth.hint"))
-               )
-           }
+            @countrySelect(form.value.map(_.nationality))
+
+            @inputDate(
+                form,
+                id = "dateOfBirth",
+                legendClasses = "govuk-label",
+                legendContent = messages("lookup.dateOfBirth.label"),
+                hintMessage = Some(messages("lookup.dateOfBirth.hint"))
+            )
+        }
 
         @govukButton(Button(content = Text(messages("button.continue")), attributes = Map("id" -> "search-button")))
     }
