@@ -77,7 +77,7 @@ class SearchByNinoControllerSpec extends ControllerSpec {
       }
 
       "there is a existing query on the session" in {
-        when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(formQuery)))
+        when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(query)))
         val result = sut.onPageLoad(request)
 
         status(result) mustBe OK

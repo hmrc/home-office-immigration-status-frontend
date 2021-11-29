@@ -26,6 +26,11 @@ import play.api.libs.json.Json
 import repositories.SessionCacheRepository
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import utils.NinoGenerator
+import crypto.{FormModelEncrypter, SecureGCMCipher, TestGCMCipher}
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.Application
+import play.api.test.Injecting
+import config.AppConfig
 
 import java.time.{LocalDate, LocalDateTime}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -33,23 +38,29 @@ import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.language.postfixOps
 
-class SessionCacheServiceSpec extends PlaySpec with BeforeAndAfterEach with ScalaFutures {
+class SessionCacheServiceSpec
+    extends PlaySpec with GuiceOneAppPerSuite with Injecting with BeforeAndAfterEach with ScalaFutures {
 
   val now = LocalDateTime.now
   val mockRepo = mock(classOf[SessionCacheRepository])
-  val sut = new SessionCacheServiceImpl(mockRepo)
+  private val cipher = new TestGCMCipher
+  private val encrypter = new FormModelEncrypter(cipher)
+  lazy val appConfig: AppConfig = inject[AppConfig]
+  val sut = new SessionCacheServiceImpl(mockRepo, encrypter, appConfig)
 
   override def beforeEach(): Unit = {
     reset(mockRepo)
     super.beforeEach
   }
 
+  private val secretKey = "VqmXp7yigDFxbCUdDdNZVIvbW6RgPNJsliv6swQNCL8="
   val formModel = NinoSearchFormModel(
     nino = NinoGenerator.generateNino,
-    givenName = "Peter",
-    familyName = "Pan",
+    givenName = "Jimmy",
+    familyName = "Jazz",
     dateOfBirth = LocalDate.now)
-  val formQuery = FormQueryModel(id = "123", data = formModel)
+  val encryptedFormModel = encrypter.encryptSearchFormModel(formModel, "123", secretKey)
+  val formQuery = FormQueryModel(id = "123", data = encryptedFormModel)
 
   "get" must {
 
@@ -65,7 +76,7 @@ class SessionCacheServiceSpec extends PlaySpec with BeforeAndAfterEach with Scal
       when(mockRepo.findById(any(), any())(any())).thenReturn(Future.successful(Some(formQuery)))
       val hc = HeaderCarrier(sessionId = Some(SessionId("123")))
       val result = Await.result(sut.get(hc, implicitly), 5 seconds)
-      result mustBe Some(formQuery)
+      result mustBe Some(formModel)
       verify(mockRepo).findById(refEq("123"), any())(any())
     }
 

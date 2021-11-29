@@ -43,8 +43,8 @@ class SearchByNinoController @Inject()(
     access.async { implicit request =>
       sessionCacheService.get.map { result =>
         val form = result match {
-          case Some(FormQueryModel(_, formModel: NinoSearchFormModel, _)) => formProvider().fill(formModel)
-          case _                                                          => formProvider()
+          case Some(formModel: NinoSearchFormModel) => formProvider().fill(formModel)
+          case _                                    => formProvider()
         }
         Ok(searchByNinoView(form))
       }

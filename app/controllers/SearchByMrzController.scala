@@ -48,7 +48,7 @@ class SearchByMrzController @Inject()(
       if (appConfig.documentSearchFeatureEnabled) {
         sessionCacheService.get.map { result =>
           val form = result match {
-            case Some(FormQueryModel(_, formModel: MrzSearchFormModel, _)) => formProvider().fill(formModel)
+            case Some(formModel: MrzSearchFormModel) => formProvider().fill(formModel)
             case _                                                         => formProvider()
           }
           Ok(view(form))
