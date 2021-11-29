@@ -196,7 +196,7 @@ class SearchByMrzFormSpec extends PlaySpec with OptionValues with ScalaCheckDriv
           .atLeastOne(Range(32, 44).map(_.toChar))
           .map(_.mkString)
           .suchThat(_.length <= SearchByMRZForm.DocumentNumberMaxLength)
-
+//asdasdasd
       forAll(invalidDocNumber) { documentNumber =>
         val invalidInput = input(documentNumber = documentNumber)
 
