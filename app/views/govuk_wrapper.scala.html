@@ -29,10 +29,10 @@
     appConfig: AppConfig
 )
 
-@(title: String, beforeContentHtml: Option[Html] = None, gaCode: Seq[String] = Seq.empty)(mainContent: Html)(implicit request: Request[_], messages: Messages)
+@(title: String, beforeContentHtml: Option[Html] = None, gaCode: Seq[String] = Seq.empty, js: Option[Html] = None)(mainContent: Html)(implicit request: Request[_], messages: Messages)
 
 @head = {
-    <script @{CSPNonce.attr} src='@routes.Assets.versioned("javascripts/ga-events.js")'></script>
+    <link href='@controllers.routes.Assets.versioned("stylesheets/application.css")' media="all" rel="stylesheet" type="text/css" />
 
     @if(appConfig.gtmId != "N/A") {
         <script @{CSPNonce.attr}>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -51,6 +51,8 @@
             <iframe src="https://www.googletagmanager.com/ns.html?id=@{appConfig.gtmId}" height="0" width="0" style="display:none;visibility:hidden"></iframe>
         </noscript>
     }
+    <script @{CSPNonce.attr} src='@routes.Assets.versioned("javascripts/immigrationstatus-app.js")'> </script>
+    @js
 }
 
 @feedbackBanner = {
@@ -86,5 +88,5 @@
     ))),
     beforeContentBlock = Some(beforeContentBlock),
     footerItems = HossFooterLinks.items,
-    bodyEndBlock = Some(scripts)
+    scriptsBlock = Some(scripts)
 )(content)

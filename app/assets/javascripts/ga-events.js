@@ -9,6 +9,11 @@ $(function() {
             return element.clone().children('.visuallyhidden').remove().end().text();
         }
 
+        function sendPageview(path) {
+            ga('set', 'page', path);
+            ga('send', 'pageview');
+        }
+
         // is it a button, error, or link?
         function cat(_this){
             if($(_this).hasClass('button')){

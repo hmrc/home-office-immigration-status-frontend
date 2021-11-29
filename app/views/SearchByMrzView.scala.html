@@ -14,6 +14,9 @@
  * limitations under the License.
  *@
 
+@import config.Countries
+@import views.html.helper.CSPNonce
+
 @this(
     govukWrapper: govuk_wrapper,
     formHelper: FormWithCSRF,
@@ -22,6 +25,7 @@
     alternateSearch: components.AlternateSearchLink,
     inputDate: components.inputDate,
     inputText: components.inputText
+    countrySelect: components.CountrySelect
 )
 
 @(form: Form[MrzSearchFormModel])(implicit request: Request[_], messages: Messages)
@@ -45,6 +49,8 @@
             classes = Some("govuk-!-width-one-half")
         )
 
+        @countrySelect(form.value.map(_.nationality))
+
         @inputDate(
             form,
             id = "dateOfBirth",
@@ -52,7 +58,6 @@
             legendContent = messages("lookup.dateOfBirth.label"),
             hintMessage = Some(messages("lookup.dateOfBirth.hint"))
         )
-
         }
     }
 }

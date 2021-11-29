@@ -82,6 +82,10 @@ class SearchByMrzViewSpec extends ViewSpec {
       assertRenderedById(doc, "identityDocumentNumber")
     }
 
+    "have the nationality select" in {
+      assertRenderedById(doc, "nationality")
+    }
+
     "have the dob input" in {
       doc.text() must include(fakeDobInput)
       verify(mockDobInput)

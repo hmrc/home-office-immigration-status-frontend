@@ -17,7 +17,7 @@
 package views
 
 /**
-  * ISO 3166-1 alpha-3 codes are three-letter country codes defined in ISO 3166-1,
+  * ISO 3166-1 alpha3 codes are three-letter country codes defined in ISO 3166-1,
   * part of the ISO 3166 standard published by the International Organization for Standardization (ISO),
   * to represent countries, dependent territories, and special areas of geographical interest.
   */
