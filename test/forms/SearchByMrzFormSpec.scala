@@ -199,6 +199,7 @@ class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecti
         Gen
           .atLeastOne(Range(32, 44).map(_.toChar))
           .map(_.mkString)
+          .suchThat(_.trim.nonEmpty)
           .suchThat(_.length <= SearchByMRZForm.DocumentNumberMaxLength)
 
       forAll(invalidDocNumber) { documentNumber =>
