@@ -68,7 +68,7 @@ class SearchByMrzViewSpec extends ViewSpec {
           "alt-search-by-nino")(messages)
     }
 
-    "have identity doc" in {
+    "have documentType" in {
       assertRenderedById(doc, "documenttype")
     }
 
@@ -78,6 +78,10 @@ class SearchByMrzViewSpec extends ViewSpec {
         "Passport European National Insurance Card Biometric Residence Card Biometric Residence Permit")
     }
 
+    "have identityDocumentType" in {
+      assertRenderedById(doc, "identityDocumentType")
+    }
+    
     "have the dob input" in {
       doc.text() must include(fakeDobInput)
       verify(mockDobInput)

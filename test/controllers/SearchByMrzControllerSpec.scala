@@ -170,5 +170,4 @@ class SearchByMrzControllerSpec extends ControllerSpec {
       }
     }
   }
-
 }
