@@ -38,12 +38,12 @@ error.givenName.required='Enter first name'
 error.givenName.invalid-format='Invalid first name'
 
 #MRZ form
-error.nationality.required='CONTENT HERE nationality.required'
-error.nationality.invalid='CONTENT HERE nationality.invalid'
-error.documentNumber.required='CONTENT HERE documentNumber.required'
-error.documentNumber.invalid='CONTENT HERE documentNumber.invalid'
-error.documentType.required='CONTENT HERE documentType.required'
-error.documentType.invalid='CONTENT HERE documentType.invalid'
+error.nationality.required='Invalid Nationality'
+error.nationality.invalid='Invalid Nationality'
+error.documentNumber.required='Enter Identity document number in the correct format'
+error.documentNumber.invalid='Invalid Identity document number'
+error.documentType.required='Select an Identity document type'
+error.documentType.invalid='Select an Identity document type'
 
 
 # Service specific messages
