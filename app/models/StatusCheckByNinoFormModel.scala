@@ -19,8 +19,9 @@ package models
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.domain.Nino
 import java.time.{LocalDate, ZoneId}
+import crypto.EncryptedValue
 
-case class StatusCheckByNinoFormModel(
+final case class StatusCheckByNinoFormModel(
   nino: Nino,
   givenName: String,
   familyName: String,
@@ -40,4 +41,15 @@ object StatusCheckByNinoFormModel {
     val endDate = LocalDate.now(ZoneId.of("UTC"))
     StatusCheckRange(Some(startDate), Some(endDate))
   }
+}
+
+final case class EncryptedFormModel(
+  nino: EncryptedValue,
+  givenName: EncryptedValue,
+  familyName: EncryptedValue,
+  dateOfBirth: EncryptedValue
+)
+
+object EncryptedFormModel {
+  implicit val formats: OFormat[EncryptedFormModel] = Json.format[EncryptedFormModel]
 }

@@ -74,7 +74,6 @@ class StatusResultControllerSpec extends ControllerSpec {
 
     "display the return from HO" when {
       val query = StatusCheckByNinoFormModel(generateNino, "pan", "peter", LocalDate.now())
-      val formQuery = FormQueryModel("123", query)
 
       def mockProxyServiceWith(hoResponse: Either[HomeOfficeError, StatusCheckResponse]) =
         when(
@@ -85,7 +84,7 @@ class StatusResultControllerSpec extends ControllerSpec {
       def verifyConnector() = verify(mockProxyService).statusPublicFundsByNino(any())(any(), any(), any(), any())
 
       "is found with statuses" in {
-        when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(formQuery)))
+        when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(query)))
         val hoResult = StatusCheckResult(
           "",
           java.time.LocalDate.now(),
@@ -104,7 +103,7 @@ class StatusResultControllerSpec extends ControllerSpec {
       }
 
       "is found with no statuses" in {
-        when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(formQuery)))
+        when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(query)))
         val hoResult = StatusCheckResult("", java.time.LocalDate.now(), "", Nil)
         mockProxyServiceWith(Right(StatusCheckResponse("id", result = hoResult)))
 
@@ -119,7 +118,7 @@ class StatusResultControllerSpec extends ControllerSpec {
       }
 
       "has conflict error" in {
-        when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(formQuery)))
+        when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(query)))
         mockProxyServiceWith(Left(StatusCheckConflict("Some response")))
 
         val result = sut.onPageLoad()(request)
@@ -133,7 +132,7 @@ class StatusResultControllerSpec extends ControllerSpec {
       }
 
       "has not found error" in {
-        when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(formQuery)))
+        when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(query)))
         mockProxyServiceWith(Left(StatusCheckNotFound("Some response")))
 
         val result = sut.onPageLoad()(request)
@@ -147,7 +146,7 @@ class StatusResultControllerSpec extends ControllerSpec {
       }
 
       "has some other error" in {
-        when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(formQuery)))
+        when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(query)))
         val TEAPOT = 418
         mockProxyServiceWith(Left(OtherErrorResponse(TEAPOT, "Some response")))
 

@@ -43,8 +43,8 @@ class StatusCheckByNinoController @Inject()(
     access.async { implicit request =>
       sessionCacheService.get.map { result =>
         val form = result match {
-          case Some(FormQueryModel(_, formModel, _)) => formProvider().fill(formModel)
-          case _                                     => formProvider()
+          case Some(formModel) => formProvider().fill(formModel)
+          case _               => formProvider()
         }
         Ok(statusCheckByNinoPage(form, routes.StatusCheckByNinoController.onSubmit))
       }

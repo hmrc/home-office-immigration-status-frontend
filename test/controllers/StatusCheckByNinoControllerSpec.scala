@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions.AccessAction
 import forms.StatusCheckByNinoFormProvider
-import models.{FormQueryModel, StatusCheckByNinoFormModel}
+import models.StatusCheckByNinoFormModel
 
 import java.time.LocalDate
 import org.mockito.ArgumentMatchers.{any, refEq, eq => is}
@@ -60,7 +60,6 @@ class StatusCheckByNinoControllerSpec extends ControllerSpec {
 
   "onPageLoad" must {
     val query = StatusCheckByNinoFormModel(generateNino, "pan", "peter", LocalDate.now())
-    val formQuery = FormQueryModel("123", query)
     val emptyForm = inject[StatusCheckByNinoFormProvider].apply()
     val prePopForm = emptyForm.fill(query)
 
@@ -78,7 +77,7 @@ class StatusCheckByNinoControllerSpec extends ControllerSpec {
       }
 
       "there is a existing query on the session" in {
-        when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(formQuery)))
+        when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(query)))
         val result = sut.onPageLoad(request)
 
         status(result) mustBe OK

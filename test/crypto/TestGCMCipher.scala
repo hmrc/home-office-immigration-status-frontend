@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-package models
+package crypto
 
-import play.api.libs.json.{Format, Json}
-import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.mongoEntity
-import java.time.LocalDateTime
-
-case class FormQueryModel(id: String, data: EncryptedFormModel, lastUpdated: LocalDateTime = LocalDateTime.now())
-
-object FormQueryModel {
-  implicit val formats: Format[FormQueryModel] = mongoEntity { Json.format[FormQueryModel] }
+class TestGCMCipher extends SecureGCMCipher {
+  def encrypt(valueToEncrypt: String, associatedText: String, aesKey: String): EncryptedValue =
+    EncryptedValue(valueToEncrypt, "")
+  def decrypt(valueToDecrypt: EncryptedValue, associatedText: String, aesKey: String): String =
+    valueToDecrypt.value
 }
