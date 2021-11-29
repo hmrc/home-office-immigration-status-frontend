@@ -23,8 +23,9 @@
     identityDocumentType: components.identityDocumentType,
     fieldset: components.fieldset,
     alternateSearch: components.AlternateSearchLink,
-    countrySelect: components.CountrySelect,
-    inputDate: components.inputDate
+    inputDate: components.inputDate,
+    inputText: components.inputText,
+    countrySelect: components.CountrySelect
 )
 
 @(form: Form[MrzSearchFormModel])(implicit request: Request[_], messages: Messages)
@@ -33,21 +34,30 @@
 
     @formHelper(Call("DELETE", "/place-holder")) {
 
-        @fieldset("lookup.title") {
+    @fieldset("lookup.title") {
 
-           @alternateSearch("alternate-search.nino-link", controllers.routes.StatusCheckByNinoController.onPageLoad.url, "alt-search-by-nino")
+        @alternateSearch("alternate-search.nino-link", controllers.routes.StatusCheckByNinoController.onPageLoad.url, "alt-search-by-nino")
 
-           @identityDocumentType()
+        @identityDocumentType()
 
-           @countrySelect(form.value.map(_.nationality))
+        @inputText(
+            form,
+            id = "identityDocumentNumber",
+            name = "identityDocumentNumber",
+            label = "lookup.mrz.label",
+            hint = Some(Html(messages("lookup.mrz.hint"))),
+            classes = Some("govuk-!-width-one-half")
+        )
 
-            @inputDate(
-                form,
-                id = "dateOfBirth",
-                legendClasses = "govuk-label",
-                legendContent = messages("lookup.dateOfBirth.label"),
-                hintMessage = Some(messages("lookup.dateOfBirth.hint"))
-            )
+        @countrySelect(form.value.map(_.nationality))
+
+        @inputDate(
+            form,
+            id = "dateOfBirth",
+            legendClasses = "govuk-label",
+            legendContent = messages("lookup.dateOfBirth.label"),
+            hintMessage = Some(messages("lookup.dateOfBirth.hint"))
+        )
         }
     }
 }
