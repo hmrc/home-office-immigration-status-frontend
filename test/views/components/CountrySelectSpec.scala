@@ -18,10 +18,13 @@ package views.components
 
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
-import viewmodels.RowViewModel
+import play.api.data.format.Formats._
 import views.ViewSpec
 import views.html.components.CountrySelect
 import config.Countries
+import play.api.data.{Form, Forms}
+import play.api.data.Forms.mapping
+
 import collection.JavaConverters._
 
 class CountrySelectSpec extends ViewSpec {
@@ -29,7 +32,14 @@ class CountrySelectSpec extends ViewSpec {
   val sut: CountrySelect = inject[CountrySelect]
   val countries: Countries = inject[Countries]
 
-  val doc: Document = asDocument(sut(None)(messages))
+  val testForm: Form[String] = Form[String] {
+    mapping("documentType" -> Forms.of[String])(identity)(Some.apply)
+  }
+
+  val emptyForm = testForm.bind(Map.empty[String, String])
+  val filledForm = testForm.bind(Map("nationality" -> "GBR"))
+
+  val doc: Document = asDocument(sut(emptyForm)(messages))
   val countrySelect: Element = doc.getElementById("nationality")
 
   "form group" must {
@@ -66,13 +76,13 @@ class CountrySelectSpec extends ViewSpec {
     }
 
     "have the selected item set when it's passed in" in {
-      val doc: Document = asDocument(sut(Some("GBR"))(messages))
+      val doc: Document = asDocument(sut(filledForm)(messages))
       val options = doc.select("option[selected]").asScala.toList
       options.map(_.text()) must contain theSameElementsAs List("United Kingdom")
     }
 
     "have no selected item set when it's not passed in" in {
-      val doc: Document = asDocument(sut(None)(messages))
+      val doc: Document = asDocument(sut(emptyForm)(messages))
       val options = doc.select("option[selected]").asScala.toList
       options.map(_.text()) must contain theSameElementsAs Nil
     }

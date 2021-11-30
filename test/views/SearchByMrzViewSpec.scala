@@ -97,5 +97,9 @@ class SearchByMrzViewSpec extends ViewSpec {
           hintMessage = Some(messages("lookup.dateOfBirth.hint"))
         )(messages)
     }
+
+    "have the search button" in {
+      assertRenderedById(doc, "search-button")
+    }
   }
 }

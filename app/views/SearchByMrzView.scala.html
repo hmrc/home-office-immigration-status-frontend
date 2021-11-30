@@ -23,41 +23,47 @@
     identityDocumentType: components.identityDocumentType,
     fieldset: components.fieldset,
     alternateSearch: components.AlternateSearchLink,
-    inputDate: components.inputDate,
     inputText: components.inputText,
-    countrySelect: components.CountrySelect
+    countrySelect: components.CountrySelect,
+    inputDate: components.inputDate,
+    govukButton : GovukButton,
+    errorSummary: components.errorSummary
 )
 
 @(form: Form[MrzSearchFormModel])(implicit request: Request[_], messages: Messages)
 
 @govukWrapper(title = messages("lookup.title")){
 
-    @formHelper(Call("DELETE", "/place-holder")) {
+    @formHelper(controllers.routes.SearchByMrzController.onSubmit) {
 
-    @fieldset("lookup.title") {
+        @errorSummary(form.errors)
 
-        @alternateSearch("alternate-search.nino-link", controllers.routes.StatusCheckByNinoController.onPageLoad.url, "alt-search-by-nino")
+        @fieldset("lookup.title") {
 
-        @identityDocumentType()
+            @alternateSearch("alternate-search.nino-link", controllers.routes.StatusCheckByNinoController.onPageLoad.url, "alt-search-by-nino")
 
-        @inputText(
-            form,
-            id = "identityDocumentNumber",
-            name = "identityDocumentNumber",
-            label = "lookup.mrz.label",
-            hint = Some(Html(messages("lookup.mrz.hint"))),
-            classes = Some("govuk-!-width-one-half")
-        )
+            @identityDocumentType(form)
 
-        @countrySelect(form.value.map(_.nationality))
+            @inputText(
+                form,
+                id = "identityDocumentNumber",
+                name = "documentNumber",
+                label = "lookup.mrz.label",
+                hint = Some(Html(messages("lookup.mrz.hint"))),
+                classes = Some("govuk-!-width-one-half")
+            )
 
-        @inputDate(
-            form,
-            id = "dateOfBirth",
-            legendClasses = "govuk-label",
-            legendContent = messages("lookup.dateOfBirth.label"),
-            hintMessage = Some(messages("lookup.dateOfBirth.hint"))
-        )
+            @countrySelect(form)
+
+            @inputDate(
+                form,
+                id = "dateOfBirth",
+                legendClasses = "govuk-label",
+                legendContent = messages("lookup.dateOfBirth.label"),
+                hintMessage = Some(messages("lookup.dateOfBirth.hint"))
+            )
         }
+
+        @govukButton(Button(content = Text(messages("button.continue")), attributes = Map("id" -> "search-button")))
     }
 }

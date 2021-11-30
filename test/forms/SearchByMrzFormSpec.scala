@@ -16,22 +16,26 @@
 
 package forms
 
+import config.Countries
 import models.MrzSearchFormModel
 import org.scalacheck.{Gen, Shrink}
 import org.scalatest.OptionValues
 import org.scalatestplus.play.PlaySpec
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.data.{Form, FormError}
+import play.api.test.Injecting
 import utils.NinoGenerator
 
 import java.time.LocalDate
 
-class SearchByMrzFormSpec extends PlaySpec with OptionValues with ScalaCheckDrivenPropertyChecks {
+class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with ScalaCheckDrivenPropertyChecks {
 
   implicit def noShrink[T]: Shrink[T] = Shrink.shrinkAny
 
-  val formProvider: SearchByMRZForm = new SearchByMRZForm()
-  val form: Form[MrzSearchFormModel] = formProvider()
+  lazy val formProvider: SearchByMRZForm = inject[SearchByMRZForm]
+  lazy val countriesValues = inject[Countries].countries.map(_.value)
+  lazy val form: Form[MrzSearchFormModel] = formProvider()
 
   val now: LocalDate = LocalDate.now()
   val tomorrow: LocalDate = now.plusDays(1)
@@ -80,7 +84,7 @@ class SearchByMrzFormSpec extends PlaySpec with OptionValues with ScalaCheckDriv
                        SearchByMRZForm.DocumentNumberMaxLength,
                        Gen.frequency((9, Gen.alphaNumChar), (1, Gen.const('-'))))
                      .map(_.mkString)
-          nat <- Gen.oneOf(SearchByMRZForm.CountryList)
+          nat <- Gen.oneOf(countriesValues)
         } yield MrzSearchFormModel(docType, docNum, yesterday, nat)
 
         forAll(validGen) { out =>
@@ -155,7 +159,7 @@ class SearchByMrzFormSpec extends PlaySpec with OptionValues with ScalaCheckDriv
     "nationality contains invalid country code" in {
       val invalidNationality: Gen[String] = Gen.asciiPrintableStr
         .suchThat(_.trim.nonEmpty)
-        .suchThat(!SearchByMRZForm.CountryList.contains(_))
+        .suchThat(!countriesValues.contains(_))
         .suchThat(_.trim.nonEmpty)
 
       forAll(invalidNationality) { nationality =>
@@ -204,7 +208,7 @@ class SearchByMrzFormSpec extends PlaySpec with OptionValues with ScalaCheckDriv
 
         form.bind(invalidInput).value must not be defined
         form.bind(invalidInput).errors mustBe List(
-          FormError("documentNumber", List("error.documentNumber.invalid-format")))
+          FormError("documentNumber", List("error.documentNumber.invalid")))
       }
     }
 
@@ -213,6 +217,7 @@ class SearchByMrzFormSpec extends PlaySpec with OptionValues with ScalaCheckDriv
         Gen
           .atLeastOne(Range(32, 44).map(_.toChar))
           .map(_.mkString)
+          .suchThat(_.trim.nonEmpty)
           .suchThat(_.length <= SearchByMRZForm.DocumentNumberMaxLength)
 
       forAll(invalidDocNumber) { documentNumber =>
@@ -220,7 +225,7 @@ class SearchByMrzFormSpec extends PlaySpec with OptionValues with ScalaCheckDriv
 
         form.bind(invalidInput).value must not be defined
         form.bind(invalidInput).errors mustBe List(
-          FormError("documentNumber", List("error.documentNumber.invalid-format")))
+          FormError("documentNumber", List("error.documentNumber.invalid")))
       }
     }
   }
