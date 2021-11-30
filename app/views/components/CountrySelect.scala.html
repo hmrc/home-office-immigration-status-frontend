@@ -22,11 +22,14 @@
     countries: config.Countries
 )
 
-@(selectedCountry: Option[String])(implicit messages: Messages)
+@(form: Form[_])(implicit messages: Messages)
+
+@errors = @{form("nationality").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))}
 
 @govukSelect(Select(
     id = "nationality",
     name = "nationality",
+    errorMessage = errors,
     label = Label(content = Text(messages("lookup.nationality.label"))),
     hint = Some(Hint(content = Text(messages("lookup.nationality.hint")))),
     items = Seq(SelectItem(value = Some(""), text = "")) ++ 
@@ -34,7 +37,7 @@
             SelectItem(
                 value = Some(country.value),
                 text = country.label,
-                selected = selectedCountry.contains(country.value)
+                selected = form("nationality").value.contains(country.value)
             )
         ),
     formGroupClasses = "autocomplete-wrapper",

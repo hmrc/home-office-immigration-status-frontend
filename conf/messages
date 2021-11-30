@@ -20,19 +20,31 @@ generic.warning='Warning'
 # Validation errors
 error.summary.heading='There is a problem'
 error.prefix='Error:'
-error.email='Enter a valid email address'
+error.browser.title.prefix='Error:'
+
+#shared
 error.dateOfBirth.required='Enter date of birth in the correct format'
 error.dateOfBirth.invalid-format='Invalid date of birth'
 error.year.invalid-format='Enter a year of birth'
 error.day.invalid-format='Enter a day of birth'
 error.month.invalid-format='Enter a month of birth'
+
+#Nino form
 error.nino.required='Enter National Insurance number in the correct format'
 error.nino.invalid-format='Invalid National Insurance number'
 error.familyName.required='Enter surname'
 error.familyName.invalid-format='Invalid surname'
 error.givenName.required='Enter first name'
 error.givenName.invalid-format='Invalid first name'
-error.browser.title.prefix='Error:'
+
+#MRZ form
+error.nationality.required='Invalid Nationality'
+error.nationality.invalid='Invalid Nationality'
+error.documentNumber.required='Enter Identity document number in the correct format'
+error.documentNumber.invalid='Invalid Identity document number'
+error.documentType.required='Select an Identity document type'
+error.documentType.invalid='Select an Identity document type'
+
 
 # Service specific messages
 app.titleSuffix='Check immigration status - GOV.UK'
@@ -46,7 +58,7 @@ lookup.nino.label='National Insurance number'
 lookup.identity.label='Identity document type'
 lookup.mrz.label='Identity document number'
 lookup.nino.hint='For example, ‘QQ123456C’.'
-lookup.mrz.hint='For example, '1234567890''
+lookup.mrz.hint='For example, ‘1234567890’'
 lookup.nino.ariaDescribedBy='nino-hint'
 lookup.nino.ariaDescribedByError='nino-error'
 lookup.givenName.label='First name'

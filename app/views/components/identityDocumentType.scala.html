@@ -19,16 +19,23 @@
 
 @this(govukSelect: GovukSelect)
 
-@()(implicit messages: Messages)
+@(form: Form[_])(implicit messages: Messages)
+
+@docType = @{form("documentType").value}
+
+@errors = @{form("nationality").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))}
 
 @items = @{Seq(
- SelectItem(Some("PASSPORT"), messages("lookup.passport"), true),
- SelectItem(Some("NAT"), messages("lookup.euni"), false),
- SelectItem(Some("BRC"), messages("lookup.res.card"), false),
- SelectItem(Some("BRP"), messages("lookup.res.permit"), false))}
+  SelectItem(Some("PASSPORT"), messages("lookup.passport"), docType.forall(_ == "PASSPORT")),
+  SelectItem(Some("NAT"), messages("lookup.euni"), docType.contains("NAT")),
+  SelectItem(Some("BRC"), messages("lookup.res.card"), docType.contains("BRC")),
+  SelectItem(Some("BRP"), messages("lookup.res.permit"), docType.contains("BRP")))
+}
 
 @govukSelect(Select(
- id = "documenttype",
- name = "documentType",
- items = items,
- label = Label(content = Text(messages("lookup.identity.label")))))
+  id = "documenttype",
+  name = "documentType",
+  items = items,
+  errorMessage = errors,
+  label = Label(content = Text(messages("lookup.identity.label")))
+))

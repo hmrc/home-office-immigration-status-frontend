@@ -16,6 +16,8 @@
 
 package forms
 
+import com.google.inject.Inject
+import config.Countries
 import forms.SearchByMRZForm._
 import models.MrzSearchFormModel
 import play.api.data.Form
@@ -24,7 +26,9 @@ import play.api.data.Forms.mapping
 import javax.inject.Singleton
 
 @Singleton
-class SearchByMRZForm extends FormFieldMappings {
+class SearchByMRZForm @Inject()(countries: Countries) extends FormFieldMappings {
+
+  private val allowedCountries = countries.countries.map(_.value)
 
   def apply(): Form[MrzSearchFormModel] = Form[MrzSearchFormModel] {
     mapping(
@@ -38,7 +42,7 @@ class SearchByMRZForm extends FormFieldMappings {
       "dateOfBirth" -> dobFieldsMapping,
       "nationality" -> nonEmptyText("nationality")
         .transform[String](_.toUpperCase, identity)
-        .verifying("error.nationality.invalid", CountryList.contains(_))
+        .verifying("error.nationality.invalid", allowedCountries.contains(_))
     )(MrzSearchFormModel.apply)(MrzSearchFormModel.unapply)
   }
 }
@@ -47,6 +51,4 @@ object SearchByMRZForm {
   final val AllowedDocumentTypes = Seq("PASSPORT", "NAT", "BRC", "BRP")
 
   final val DocumentNumberMaxLength = 30
-
-  val CountryList = Seq("TODO WHERE ARE WE GETTING THIS FROM", "AFG") //todo iso-3166 list
 }
