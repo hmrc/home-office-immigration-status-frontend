@@ -41,19 +41,26 @@ class NinoSearchFormSpec extends PlaySpec with OptionValues with ScalaCheckDrive
   val testNino = NinoGenerator.generateNino
 
   def input(
-    year: String = yesterday.getYear.toString,
-    month: String = yesterday.getMonthValue.toString,
-    day: String = yesterday.getDayOfMonth.toString,
+    dateOfBirth: LocalDate = yesterday,
     familyName: String = "last",
     givenName: String = "first",
     nino: String = testNino.nino
   ) = Map(
-    "dateOfBirth.year"  -> year,
-    "dateOfBirth.month" -> month,
-    "dateOfBirth.day"   -> day,
+    "dateOfBirth.year"  -> dateOfBirth.getYear.toString,
+    "dateOfBirth.month" -> dateOfBirth.getMonthValue.toString,
+    "dateOfBirth.day"   -> dateOfBirth.getDayOfMonth.toString,
     "familyName"        -> familyName,
     "givenName"         -> givenName,
     "nino"              -> nino
+  )
+
+  def inputYear(year: String = yesterday.getYear.toString) = Map(
+    "dateOfBirth.year"  -> year,
+    "dateOfBirth.month" -> yesterday.getMonthValue.toString,
+    "dateOfBirth.day"   -> yesterday.getDayOfMonth.toString,
+    "familyName"        -> "last",
+    "givenName"         -> "first",
+    "nino"              -> testNino.nino
   )
 
   val allowedSpecialChars = Gen.oneOf(formProvider.allowedNameCharacters)
@@ -94,7 +101,7 @@ class NinoSearchFormSpec extends PlaySpec with OptionValues with ScalaCheckDrive
           y2 <- Gen.numChar
         } yield s"$y1$y2"
         forAll(yearStr.suchThat(_.length == 2)) { year =>
-          val validInput = input(year = year)
+          val validInput = inputYear(year = year)
 
           val out = NinoSearchFormModel(testNino, "first", "last", yesterday.withYear(("19" + year).toInt))
           val bound = form.bind(validInput)
@@ -106,13 +113,13 @@ class NinoSearchFormSpec extends PlaySpec with OptionValues with ScalaCheckDrive
 
     "fail to bind" when {
       "dob is today" in {
-        val invalidInput = input(day = now.getDayOfMonth.toString)
+        val invalidInput = input(dateOfBirth = now)
 
         form.bind(invalidInput).value must not be defined
         form.bind(invalidInput).errors mustBe List(FormError("dateOfBirth", List("error.dateOfBirth.invalid-format")))
       }
       "dob is future" in {
-        val invalidInput = input(day = tomorrow.getDayOfMonth.toString)
+        val invalidInput = input(dateOfBirth = tomorrow)
 
         form.bind(invalidInput).value must not be defined
         form.bind(invalidInput).errors mustBe List(FormError("dateOfBirth", List("error.dateOfBirth.invalid-format")))
