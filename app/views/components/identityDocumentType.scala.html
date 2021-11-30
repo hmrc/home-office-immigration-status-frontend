@@ -23,7 +23,7 @@
 
 @docType = @{form("documentType").value}
 
-@errors = @{form("nationality").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))}
+@errors = @{form("documentType").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))}
 
 @items = @{Seq(
   SelectItem(Some("PASSPORT"), messages("lookup.passport"), docType.forall(_ == "PASSPORT")),
