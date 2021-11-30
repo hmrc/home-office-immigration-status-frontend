@@ -145,7 +145,7 @@ status-check-failure-conflict.title='A unique match has not been found'
 status-check-failure-conflict.listParagraph='This is because there are multiple matches with these details'
 
 # Button
-button.continue='Continue'
+button.search='Search'
 button.submit='Submit'
 
 # Global errors
