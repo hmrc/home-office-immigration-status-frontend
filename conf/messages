@@ -45,7 +45,6 @@ error.documentNumber.invalid='Invalid Identity document number'
 error.documentType.required='Select an Identity document type'
 error.documentType.invalid='Select an Identity document type'
 
-
 # Service specific messages
 app.titleSuffix='Check immigration status - GOV.UK'
 app.name='Check immigration status'
