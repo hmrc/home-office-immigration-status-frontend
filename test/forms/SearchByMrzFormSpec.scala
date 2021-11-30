@@ -110,11 +110,20 @@ class SearchByMrzFormSpec extends PlaySpec with OptionValues with ScalaCheckDriv
       }
 
       "nationality and doc type are lower case" in {
+
         val validInput = input(nationality = "afg", documentType = "passport")
-
         val out = MrzSearchFormModel("PASSPORT", "docNumber", yesterday, "AFG")
-
         val bound = form.bind(validInput)
+
+        bound.errors mustBe Nil
+        bound.value mustBe Some(out)
+      }
+
+      "DocumentNumber contains spaces and spaces are removed" in {
+        val validInput = input(documentNumber = "111 222 333")
+        val out = MrzSearchFormModel("PASSPORT", "111222333", yesterday, "AFG")
+        val bound = form.bind(validInput)
+
         bound.errors mustBe Nil
         bound.value mustBe Some(out)
       }
@@ -194,7 +203,8 @@ class SearchByMrzFormSpec extends PlaySpec with OptionValues with ScalaCheckDriv
         val invalidInput = input(documentNumber = documentNumber)
 
         form.bind(invalidInput).value must not be defined
-        form.bind(invalidInput).errors mustBe List(FormError("documentNumber", List("error.documentNumber.invalid")))
+        form.bind(invalidInput).errors mustBe List(
+          FormError("documentNumber", List("error.documentNumber.invalid-format")))
       }
     }
 
@@ -209,7 +219,8 @@ class SearchByMrzFormSpec extends PlaySpec with OptionValues with ScalaCheckDriv
         val invalidInput = input(documentNumber = documentNumber)
 
         form.bind(invalidInput).value must not be defined
-        form.bind(invalidInput).errors mustBe List(FormError("documentNumber", List("error.documentNumber.invalid")))
+        form.bind(invalidInput).errors mustBe List(
+          FormError("documentNumber", List("error.documentNumber.invalid-format")))
       }
     }
   }

@@ -33,6 +33,7 @@ error.familyName.invalid-format='Invalid surname'
 error.givenName.required='Enter first name'
 error.givenName.invalid-format='Invalid first name'
 error.browser.title.prefix='Error:'
+error.documentNumber.invalid-format='Invalid Identity document number'
 
 # Service specific messages
 app.titleSuffix='Check immigration status - GOV.UK'
