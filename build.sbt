@@ -38,7 +38,17 @@ lazy val root = (project in file("."))
     unmanagedResourceDirectories in Compile += baseDirectory.value / "resources",
     scalafmtOnCompile in Compile := true,
     scalafmtOnCompile in Test := true,
-    majorVersion := 0
+    majorVersion := 0,
+    Concat.groups := Seq(
+      "javascripts/immigrationstatus-app.js" ->
+        group(Seq(
+          "javascripts/jquery.min.js",
+          "javascripts/libraries/location-autocomplete.min.js",
+          "javascripts/autocomplete.js",
+          "javascripts/ga-events.js"
+        ))
+    ),
+    pipelineStages in Assets := Seq(concat)
   )
   .configs(IntegrationTest)
   .settings(

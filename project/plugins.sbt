@@ -14,3 +14,5 @@ addSbtPlugin("com.lucidchart" % "sbt-scalafmt" % "1.16")
 addSbtPlugin("org.irundaia.sbt" % "sbt-sassify" % "1.4.13")
 
 addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.5.0")
+
+addSbtPlugin("net.ground5hark.sbt" % "sbt-concat" % "0.2.0")

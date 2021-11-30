@@ -78,10 +78,14 @@ class SearchByMrzViewSpec extends ViewSpec {
         "Passport European National Insurance Card Biometric Residence Card Biometric Residence Permit")
     }
 
-    "have identityDocumentType" in {
-      assertRenderedById(doc, "identityDocumentType")
+    "have identityDocumentNumber" in {
+      assertRenderedById(doc, "identityDocumentNumber")
     }
-    
+
+    "have the nationality select" in {
+      assertRenderedById(doc, "nationality")
+    }
+
     "have the dob input" in {
       doc.text() must include(fakeDobInput)
       verify(mockDobInput)
