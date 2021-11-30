@@ -78,8 +78,8 @@ class SearchByMrzViewSpec extends ViewSpec {
         "Passport European National Insurance Card Biometric Residence Card Biometric Residence Permit")
     }
 
-    "have identityDocumentNumber" in {
-      assertRenderedById(doc, "identityDocumentNumber")
+    "have documentNumber" in {
+      assertRenderedById(doc, "documentNumber")
     }
 
     "have the nationality select" in {
