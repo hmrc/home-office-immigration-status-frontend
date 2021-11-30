@@ -46,7 +46,7 @@
 
             @inputText(
                 form,
-                id = "identityDocumentNumber",
+                id = "documentNumber",
                 name = "documentNumber",
                 label = "lookup.mrz.label",
                 hint = Some(Html(messages("lookup.mrz.hint"))),
@@ -64,6 +64,6 @@
             )
         }
 
-        @govukButton(Button(content = Text(messages("button.continue")), attributes = Map("id" -> "search-button")))
+        @govukButton(Button(content = Text(messages("button.search")), attributes = Map("id" -> "search-button")))
     }
 }
