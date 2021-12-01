@@ -25,6 +25,9 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionCacheService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.SearchByMrzView
+import uk.gov.hmrc.http.NotFoundException
+import play.api.mvc.Request
+import errors.ErrorHandler
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -35,7 +38,8 @@ class SearchByMrzController @Inject()(
   view: SearchByMrzView,
   sessionCacheService: SessionCacheService,
   formProvider: SearchByMRZForm,
-  cc: MessagesControllerComponents
+  cc: MessagesControllerComponents,
+  errorHandler: ErrorHandler
 )(implicit val appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(cc) with I18nSupport {
 
@@ -50,7 +54,7 @@ class SearchByMrzController @Inject()(
           Ok(view(form))
         }
       } else {
-        Future.successful(NotFound)
+        Future.successful(NotFound(errorHandler.notFoundTemplate))
       }
     }
 
@@ -67,7 +71,7 @@ class SearchByMrzController @Inject()(
               } yield Redirect(routes.StatusResultController.onPageLoad)
           )
       } else {
-        Future.successful(NotFound)
+        Future.successful(NotFound(errorHandler.notFoundTemplate))
       }
     }
 
