@@ -55,7 +55,7 @@ class StatusResultController @Inject()(
             .search(query)
             .map(result => result.fold(handleError(query), displaySuccessfulResult(query)))
         case None =>
-          Future.successful(Redirect(routes.StatusCheckByNinoController.onPageLoad))
+          Future.successful(Redirect(routes.SearchByNinoController.onPageLoad))
       }
     }
 

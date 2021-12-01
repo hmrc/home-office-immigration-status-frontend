@@ -33,6 +33,6 @@ class LandingController @Inject()(
     extends FrontendController(controllerComponents) {
 
   val onPageLoad: Action[AnyContent] = access.async { implicit request =>
-    sessionCacheService.delete.map(_ => Redirect(routes.StatusCheckByNinoController.onPageLoad))
+    sessionCacheService.delete.map(_ => Redirect(routes.SearchByNinoController.onPageLoad))
   }
 }

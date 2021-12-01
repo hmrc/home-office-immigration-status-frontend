@@ -5,8 +5,8 @@ GET   /assets/*file                 controllers.Assets.versioned(path="/public",
 
 GET   /                             controllers.LandingController.onPageLoad
 
-GET   /search-by-nino               controllers.StatusCheckByNinoController.onPageLoad
-POST  /search-by-nino               controllers.StatusCheckByNinoController.onSubmit
+GET   /search-by-nino               controllers.SearchByNinoController.onPageLoad
+POST  /search-by-nino               controllers.SearchByNinoController.onSubmit
 
 GET   /search-by-passport           controllers.SearchByMrzController.onPageLoad
 POST  /search-by-passport           controllers.SearchByMrzController.onSubmit

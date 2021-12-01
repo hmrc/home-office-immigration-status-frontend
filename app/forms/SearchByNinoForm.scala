@@ -24,7 +24,7 @@ import play.api.data.Forms._
 import javax.inject.Singleton
 
 @Singleton
-class StatusCheckByNinoFormProvider extends FormFieldMappings {
+class SearchByNinoForm extends FormFieldMappings {
 
   def apply(): Form[NinoSearchFormModel] = Form[NinoSearchFormModel] {
     mapping(

@@ -64,7 +64,7 @@ class StatusResultControllerSpec extends ControllerSpec {
         val result = sut.onPageLoad()(request)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).get mustBe routes.StatusCheckByNinoController.onPageLoad.url
+        redirectLocation(result).get mustBe routes.SearchByNinoController.onPageLoad.url
         withClue("Connector should not be called") {
           verify(mockProxyService, times(0)).search(any())(any(), any(), any(), any())
         }
