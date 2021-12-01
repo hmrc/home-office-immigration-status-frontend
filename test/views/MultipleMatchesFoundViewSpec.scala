@@ -24,7 +24,6 @@ import org.mockito.Mockito.{mock, verify}
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import uk.gov.hmrc.domain.Nino
 import utils.NinoGenerator
 import views.html.MultipleMatchesFoundPage
 import views.html.components.{SearchAgainButton, ShowChangeQuery}
@@ -45,7 +44,7 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
 
   val nino = NinoGenerator.generateNino
   val query = NinoSearchFormModel(nino, "Pan", "", LocalDate.now())
-  lazy val doc: Document = asDocument(sut(query)(request, messages))
+  lazy val doc: Document = asDocument(sut(query, true)(request, messages))
 
   "MultipleMatchesFoundPage" must {
 
@@ -54,13 +53,22 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
       e.text() mustBe messages("status-check-failure-conflict.title")
     }
 
-    "have paragraph text" in {
-      doc.select(".govuk-body").text() mustBe messages("status-check-failure-conflict.listParagraph")
-    }
-
     "have personal details heading" in {
       val e: Element = doc.getElementById("personal-details")
       e.text() mustBe messages("status-check-failure.heading2CustomerDetails")
+    }
+
+    "have mrzlink" in {
+      val e: Element = doc.getElementById("mrzlink")
+      e.text() mustBe messages("status-check-failure-conflict") + "Search by " + messages(
+        "status-check-failure-conflict.passport")
+    }
+
+    "have ninolink" in {
+      lazy val ninoLinkDoc: Document = asDocument(sut(query, false)(request, messages))
+      val e: Element = ninoLinkDoc.getElementById("ninolink")
+      e.text() mustBe messages("status-check-failure-conflict") + "Search by " + messages(
+        "status-check-failure-conflict.nino")
     }
 
     "have the show and change query section" in {

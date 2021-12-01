@@ -62,7 +62,7 @@ class StatusResultController @Inject()(
   private def handleError(query: SearchFormModel)(error: HomeOfficeError)(
     implicit request: Request[AnyContent]): Result =
     error match {
-      case StatusCheckConflict(_) => Ok(multipleMatchesFoundPage(query))
+      case StatusCheckConflict(_) => Ok(multipleMatchesFoundPage(query, true))
       case StatusCheckNotFound(_) => Ok(statusCheckFailurePage(query))
       case _                      => InternalServerError(externalErrorPage())
     }

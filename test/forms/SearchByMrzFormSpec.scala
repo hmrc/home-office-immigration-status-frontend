@@ -207,8 +207,7 @@ class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecti
         val invalidInput = input(documentNumber = documentNumber)
 
         form.bind(invalidInput).value must not be defined
-        form.bind(invalidInput).errors mustBe List(
-          FormError("documentNumber", List("error.documentNumber.invalid")))
+        form.bind(invalidInput).errors mustBe List(FormError("documentNumber", List("error.documentNumber.invalid")))
       }
     }
 
@@ -224,8 +223,7 @@ class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecti
         val invalidInput = input(documentNumber = documentNumber)
 
         form.bind(invalidInput).value must not be defined
-        form.bind(invalidInput).errors mustBe List(
-          FormError("documentNumber", List("error.documentNumber.invalid")))
+        form.bind(invalidInput).errors mustBe List(FormError("documentNumber", List("error.documentNumber.invalid")))
       }
     }
   }

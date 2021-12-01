@@ -126,7 +126,7 @@ class StatusResultControllerSpec extends ControllerSpec {
 
         status(result) mustBe OK
         contentAsString(result) mustBe inject[MultipleMatchesFoundPage]
-          .apply(query)(request, messages)
+          .apply(query, true)(request, messages)
           .toString
         verifyConnector()
         verify(mockSessionCacheService).get(any(), any())
