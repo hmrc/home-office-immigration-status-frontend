@@ -52,7 +52,7 @@ class SearchByNinoControllerSpec extends ControllerSpec {
 
   override def beforeEach(): Unit = {
     reset(mockView)
-    when(mockView(any())(any(), any(), any())).thenReturn(fakeView)
+    when(mockView(any())(any(), any())).thenReturn(fakeView)
     reset(mockSessionCacheService)
     super.beforeEach()
   }
@@ -71,7 +71,7 @@ class SearchByNinoControllerSpec extends ControllerSpec {
         status(result) mustBe OK
         contentAsString(result) mustBe fakeView.toString
         withClue("the form was prefilled with a previous query, how?") {
-          verify(mockView).apply(refEq(emptyForm, "mapping"))(is(request), any(), any())
+          verify(mockView).apply(refEq(emptyForm, "mapping"))(is(request), any())
         }
         verify(mockSessionCacheService).get(any(), any())
       }
@@ -83,7 +83,7 @@ class SearchByNinoControllerSpec extends ControllerSpec {
         status(result) mustBe OK
         contentAsString(result) mustBe fakeView.toString
         withClue("the form did not prepopulate with the defined query") {
-          verify(mockView).apply(refEq(prePopForm, "mapping"))(is(request), any(), any())
+          verify(mockView).apply(refEq(prePopForm, "mapping"))(is(request), any())
         }
         verify(mockSessionCacheService).get(any(), any())
       }
@@ -126,7 +126,7 @@ class SearchByNinoControllerSpec extends ControllerSpec {
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe fakeView.toString
-        verify(mockView).apply(refEq(formWithErrors, "mapping"))(is(request), any(), any())
+        verify(mockView).apply(refEq(formWithErrors, "mapping"))(is(request), any())
         withClue("The session should contain the valid form answers") {
           val updatedSession = await(result).session(request)
           updatedSession.get("query") must not be defined
@@ -148,7 +148,7 @@ class SearchByNinoControllerSpec extends ControllerSpec {
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe fakeView.toString
-        verify(mockView).apply(refEq(formWithErrors, "mapping"))(is(requestWithForm), any(), any())
+        verify(mockView).apply(refEq(formWithErrors, "mapping"))(is(requestWithForm), any())
         withClue("The session should contain the valid form answers") {
           val updatedSession = await(result).session(request)
           updatedSession.get("query") must not be defined

@@ -50,7 +50,7 @@ class SearchByMrzController @Inject()(
           Ok(view(form))
         }
       } else {
-        Future.successful(Redirect(routes.LandingController.onPageLoad))
+        Future.successful(NotFound)
       }
     }
 
@@ -67,7 +67,7 @@ class SearchByMrzController @Inject()(
               } yield Redirect(routes.StatusResultController.onPageLoad)
           )
       } else {
-        Future.successful(Redirect(routes.LandingController.onPageLoad))
+        Future.successful(NotFound)
       }
     }
 

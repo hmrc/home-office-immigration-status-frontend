@@ -25,10 +25,11 @@
     inputText: components.inputText,
     inputDate: components.inputDate,
     fieldset: components.fieldset,
-    alternateSearch: components.AlternateSearchLink
+    alternateSearch: components.AlternateSearchLink, 
+    appConfig: AppConfig
 )
 
-@(form: Form[NinoSearchFormModel])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(form: Form[NinoSearchFormModel])(implicit request: Request[_], messages: Messages)
 
 @govukWrapper(title = if(form.hasErrors) messages("lookup.title.Error") else messages("lookup.title")) {
 

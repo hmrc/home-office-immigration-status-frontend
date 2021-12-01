@@ -21,7 +21,7 @@ import forms.SearchByMRZForm
 import models.{FormQueryModel, MrzSearchFormModel}
 import org.mockito.Mockito.{mock, never, reset, verify, when}
 import play.api.Application
-import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
+import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK, SEE_OTHER}
 import play.api.data.FormBinding.Implicits.formBinding
 import org.mockito.ArgumentMatchers.{any, refEq, eq => is}
 import play.api.inject.bind
@@ -104,8 +104,7 @@ class SearchByMrzControllerSpec extends ControllerSpec {
         when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(false)
         val result = sut.onPageLoad(request)
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result).get mustBe routes.LandingController.onPageLoad.url
+        status(result) mustBe NOT_FOUND
       }
     }
   }
@@ -204,8 +203,7 @@ class SearchByMrzControllerSpec extends ControllerSpec {
         )
         val result = sut.onSubmit(requestWithForm)
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result).get mustBe routes.LandingController.onPageLoad.url
+        status(result) mustBe NOT_FOUND
       }
     }
   }

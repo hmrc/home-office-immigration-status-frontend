@@ -30,17 +30,21 @@ import views.html.SearchByNinoView
 import views.html.components.{AlternateSearchLink, inputDate}
 import java.util.UUID
 import config.AppConfig
+import services.SessionCacheService
 
 class SearchByNinoViewSpec extends ViewSpec {
 
   val mockAlternateSearch = mock(classOf[AlternateSearchLink])
   val mockDobInput = mock(classOf[inputDate])
   val mockAppConfig = mock(classOf[AppConfig])
+  val mockSessionCacheService = mock(classOf[SessionCacheService])
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
       bind[AlternateSearchLink].toInstance(mockAlternateSearch),
-      bind[inputDate].toInstance(mockDobInput)
+      bind[inputDate].toInstance(mockDobInput),
+      bind[SessionCacheService].toInstance(mockSessionCacheService),
+      bind[AppConfig].toInstance(mockAppConfig)
     )
     .build()
 
@@ -60,7 +64,7 @@ class SearchByNinoViewSpec extends ViewSpec {
     reset(mockAppConfig)
     when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(documentSearchEnabled)
 
-    asDocument(sut(form)(request, messages, mockAppConfig))
+    asDocument(sut(form)(request, messages))
   }
 
   "With the document search enabled, the view" must {
