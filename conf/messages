@@ -147,8 +147,6 @@ status-check-failure-conflict='You can change the customer's details you have en
 status-check-failure-conflict.nino='National Insurance number'
 status-check-failure-conflict.passport='passport or ID card'
 
-
-
 # Button
 button.search='Search'
 button.submit='Submit'
