@@ -25,6 +25,7 @@ import org.mockito.Mockito.{mock, when}
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
+import services.SessionCacheService
 import utils.NinoGenerator
 import views.html.MultipleMatchesFoundPage
 import views.html.components.{SearchAgainButton, ShowChangeQuery}
@@ -33,7 +34,7 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
 
   val mockShowChangeQuery: ShowChangeQuery = mock(classOf[ShowChangeQuery])
   val mockSearchAgainButton: SearchAgainButton = mock(classOf[SearchAgainButton])
-  val mockAppConfig = mock(classOf[AppConfig])
+  implicit val mockAppConfig: AppConfig = mock(classOf[AppConfig])
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
@@ -63,7 +64,9 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
 
     "have mrzlink" in {
       when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(true)
-      val e: Element = doc.getElementById("mrzlink")
+      lazy val mrzLinkDoc: Document = asDocument(sut(query, true)(request, messages))
+
+      val e: Element = mrzLinkDoc.getElementById("mrzlink")
       e.text() mustBe messages("status-check-failure-conflict") + "Search by " + messages(
         "status-check-failure-conflict.passport")
     }
@@ -71,13 +74,14 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
     "have ninolink" in {
       when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(true)
       lazy val ninoLinkDoc: Document = asDocument(sut(query, false)(request, messages))
+
       val e: Element = ninoLinkDoc.getElementById("ninolink")
       e.text() mustBe messages("status-check-failure-conflict") + "Search by " + messages(
         "status-check-failure-conflict.nino")
     }
 
     "mrzlink and ninolink do not show when feature disabled" in {
-      when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(false)
+      //when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(false)
       assertNotRenderedById(doc, "nino-link")
       assertNotRenderedById(doc, "mrzlink")
     }
