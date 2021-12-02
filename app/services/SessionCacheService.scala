@@ -20,6 +20,8 @@ import com.google.inject.{ImplementedBy, Inject, Singleton}
 import repositories.SessionCacheRepository
 import models.{FormQueryModel, SearchFormModel}
 import uk.gov.hmrc.http.HeaderCarrier
+import crypto.FormModelEncrypter
+import config.AppConfig
 
 import scala.concurrent.{ExecutionContext, Future}
 import java.time.LocalDateTime
@@ -28,17 +30,28 @@ import play.api.Logging
 
 @Singleton
 class SessionCacheServiceImpl @Inject()(
-  sessionCacheRepository: SessionCacheRepository
+  sessionCacheRepository: SessionCacheRepository,
+  encrypter: FormModelEncrypter,
+  appConfig: AppConfig
 ) extends SessionCacheService with Logging {
 
-  def get(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[FormQueryModel]] =
-    withSessionId(sessionCacheRepository.findById(_))
+  private val secretKey = appConfig.mongoEncryptionKey
+
+  def get(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SearchFormModel]] =
+    withSessionId { sessionId =>
+      sessionCacheRepository
+        .findById(sessionId)
+        .map(
+          _.flatMap(formQueryModel => encrypter.decryptSearchFormModel(formQueryModel.data, sessionId, secretKey))
+        )
+    }
 
   def set(formModel: SearchFormModel, now: LocalDateTime = LocalDateTime.now)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext): Future[Unit] =
     withSessionId { sessionId =>
-      val formQueryModel = FormQueryModel(sessionId, formModel)
+      val encryptedFormModel = encrypter.encryptSearchFormModel(formModel, sessionId, secretKey)
+      val formQueryModel = FormQueryModel(sessionId, encryptedFormModel)
       val selector = Json.obj("_id"  -> formQueryModel.id)
       val modifier = Json.obj("$set" -> (formQueryModel copy (lastUpdated = now)))
       sessionCacheRepository.findAndUpdate(query = selector, update = modifier, upsert = true).map(_ => ())
@@ -60,7 +73,7 @@ class SessionCacheServiceImpl @Inject()(
 @ImplementedBy(classOf[SessionCacheServiceImpl])
 trait SessionCacheService {
 
-  def get(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[FormQueryModel]]
+  def get(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SearchFormModel]]
 
   def set(formModel: SearchFormModel, now: LocalDateTime = LocalDateTime.now)(
     implicit hc: HeaderCarrier,

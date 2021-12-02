@@ -59,7 +59,6 @@ class SearchByNinoControllerSpec extends ControllerSpec {
 
   "onPageLoad" must {
     val query = NinoSearchFormModel(generateNino, "pan", "peter", LocalDate.now())
-    val formQuery = FormQueryModel("123", query)
     val emptyForm = inject[SearchByNinoForm].apply()
     val prePopForm = emptyForm.fill(query)
 
@@ -77,7 +76,7 @@ class SearchByNinoControllerSpec extends ControllerSpec {
       }
 
       "there is a existing query on the session" in {
-        when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(formQuery)))
+        when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(query)))
         val result = sut.onPageLoad(request)
 
         status(result) mustBe OK

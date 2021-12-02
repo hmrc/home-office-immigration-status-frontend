@@ -61,7 +61,6 @@ class SearchByMrzControllerSpec extends ControllerSpec {
 
   "onPageLoad" must {
     val query = MrzSearchFormModel("docType", "docNum", LocalDate.now(), "nationality")
-    val formQuery = FormQueryModel("123", query)
     val emptyForm = inject[SearchByMRZForm].apply()
     val prePopForm = emptyForm.fill(query)
 
@@ -81,7 +80,8 @@ class SearchByMrzControllerSpec extends ControllerSpec {
 
       "there is a existing query on the session" in {
         when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(true)
-        when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(formQuery)))
+        when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(query)))
+
         val result = sut.onPageLoad(request)
 
         status(result) mustBe OK
