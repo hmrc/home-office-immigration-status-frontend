@@ -17,10 +17,11 @@
 package views
 
 import models.NinoSearchFormModel
-
 import java.time.LocalDate
+
+import config.AppConfig
 import org.jsoup.nodes.{Document, Element}
-import org.mockito.Mockito.{mock, verify}
+import org.mockito.Mockito.{mock, when}
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -32,11 +33,13 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
 
   val mockShowChangeQuery: ShowChangeQuery = mock(classOf[ShowChangeQuery])
   val mockSearchAgainButton: SearchAgainButton = mock(classOf[SearchAgainButton])
+  val mockAppConfig = mock(classOf[AppConfig])
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
       bind[ShowChangeQuery].toInstance(mockShowChangeQuery),
-      bind[SearchAgainButton].toInstance(mockSearchAgainButton)
+      bind[SearchAgainButton].toInstance(mockSearchAgainButton),
+      bind[AppConfig].toInstance(mockAppConfig)
     )
     .build()
 
@@ -59,16 +62,24 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
     }
 
     "have mrzlink" in {
+      when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(true)
       val e: Element = doc.getElementById("mrzlink")
       e.text() mustBe messages("status-check-failure-conflict") + "Search by " + messages(
         "status-check-failure-conflict.passport")
     }
 
     "have ninolink" in {
+      when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(true)
       lazy val ninoLinkDoc: Document = asDocument(sut(query, false)(request, messages))
       val e: Element = ninoLinkDoc.getElementById("ninolink")
       e.text() mustBe messages("status-check-failure-conflict") + "Search by " + messages(
         "status-check-failure-conflict.nino")
+    }
+
+    "mrzlink and ninolink do not show when feature disabled" in {
+      when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(false)
+      assertNotRenderedById(doc, "nino-link")
+      assertNotRenderedById(doc, "mrzlink")
     }
 
     "have the show and change query section" in {
