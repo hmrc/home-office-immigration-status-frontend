@@ -65,26 +65,26 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
 
   "statusPublicFundsByNino" should {
     "only access the audit service when the call downstream was successful" in {
-      when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any())).thenReturn(Future.unit)
+      when(mockAuditService.auditStatusCheckEvent(any(), any())(any(), any(), any())).thenReturn(Future.unit)
       val statusCheckResult = StatusCheckResult("Damon Albarn", testDate, "GBR", Nil)
       val result = Right(StatusCheckResponse("CorrelationId", statusCheckResult))
       when(mockConnector.statusPublicFundsByNino(any())(any(), any())).thenReturn(Future.successful(result))
 
       await(sut.search(formModel))
-      verify(mockAuditService).auditEvent(any(), any(), any())(any(), any(), any())
+      verify(mockAuditService).auditStatusCheckEvent(any(), any())(any(), any(), any())
     }
 
     "don't access the audit service when the call downstream was not successful" in {
-      when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any())).thenReturn(Future.unit)
+      when(mockAuditService.auditStatusCheckEvent(any(), any())(any(), any(), any())).thenReturn(Future.unit)
       when(mockConnector.statusPublicFundsByNino(any())(any(), any()))
         .thenReturn(Future.failed(new Exception("It went wrong")))
 
       intercept[Exception](await(sut.search(formModel)))
-      verify(mockAuditService, never).auditEvent(any(), any(), any())(any(), any(), any())
+      verify(mockAuditService, never).auditStatusCheckEvent(any(), any())(any(), any(), any())
     }
 
     "not fail if the audit call fails" in {
-      when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any()))
+      when(mockAuditService.auditStatusCheckEvent(any(), any())(any(), any(), any()))
         .thenReturn(Future.failed(new Exception("It went wrong")))
       val statusCheckResult = StatusCheckResult("Damon Albarn", testDate, "GBR", Nil)
       val result = Right(StatusCheckResponse("CorrelationId", statusCheckResult))
@@ -95,211 +95,32 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
 
   "statusPublicFundsByMrz" should {
     "only access the audit service when the call downstream was successful" in {
-      when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any())).thenReturn(Future.unit)
+      when(mockAuditService.auditStatusCheckEvent(any(), any())(any(), any(), any())).thenReturn(Future.unit)
       val statusCheckResult = StatusCheckResult("Damon Albarn", testDate, "GBR", Nil)
       val result = Right(StatusCheckResponse("CorrelationId", statusCheckResult))
       when(mockConnector.statusPublicFundsByMrz(any())(any(), any())).thenReturn(Future.successful(result))
 
       await(sut.search(mrzSearchFormModel))
-      verify(mockAuditService).auditEvent(any(), any(), any())(any(), any(), any())
+      verify(mockAuditService).auditStatusCheckEvent(any(), any())(any(), any(), any())
     }
 
     "don't access the audit service when the call downstream was not successful" in {
-      when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any())).thenReturn(Future.unit)
+      when(mockAuditService.auditStatusCheckEvent(any(), any())(any(), any(), any())).thenReturn(Future.unit)
       when(mockConnector.statusPublicFundsByMrz(any())(any(), any()))
         .thenReturn(Future.failed(new Exception("It went wrong")))
 
       intercept[Exception](await(sut.search(mrzSearchFormModel)))
-      verify(mockAuditService, never).auditEvent(any(), any(), any())(any(), any(), any())
+      verify(mockAuditService, never).auditStatusCheckEvent(any(), any())(any(), any(), any())
     }
 
     "not fail if the audit call fails" in {
-      when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any()))
+      when(mockAuditService.auditStatusCheckEvent(any(), any())(any(), any(), any()))
         .thenReturn(Future.failed(new Exception("It went wrong")))
       val statusCheckResult = StatusCheckResult("Damon Albarn", testDate, "GBR", Nil)
       val result = Right(StatusCheckResponse("CorrelationId", statusCheckResult))
       when(mockConnector.statusPublicFundsByMrz(any())(any(), any())).thenReturn(Future.successful(result))
       await(sut.search(mrzSearchFormModel)) mustEqual result
     }
-  }
-
-  "auditResult" should {
-    "audit a SuccessfulRequest" when {
-
-      "the response from the home office is successful with no statuses" in {
-        when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any())).thenReturn(Future.unit)
-
-        val statusCheckResult = StatusCheckResult("Damon Albarn", testDate, "GBR", Nil)
-        val result = Right(StatusCheckResponse("CorrelationId", statusCheckResult))
-
-        val expectedDetails = Seq(
-          "nationality" -> "GBR"
-        )
-
-        sut.auditResult(result)
-        verify(mockAuditService)
-          .auditEvent(refEq(SuccessfulRequest), refEq("StatusCheckRequest"), refEq(expectedDetails))(
-            any(),
-            any(),
-            any())
-      }
-
-      "the response from the home office is successful with astatus" in {
-        when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any())).thenReturn(Future.unit)
-
-        val immigrationStatuses = List(
-          ImmigrationStatus(
-            statusStartDate = LocalDate.parse("17/06/2021", formatter),
-            statusEndDate = Some(LocalDate.parse("19/09/2021", formatter)),
-            productType = "EUS",
-            immigrationStatus = "ILR",
-            noRecourseToPublicFunds = false
-          )
-        )
-        val statusCheckResult = StatusCheckResult("Liam Fray", testDate, "FRA", immigrationStatuses)
-        val result = Right(StatusCheckResponse("CorrelationId", statusCheckResult))
-
-        val expectedDetails = Seq(
-          "nationality"              -> "FRA",
-          "productType1"             -> "EUS",
-          "immigrationStatus1"       -> "ILR",
-          "noRecourseToPublicFunds1" -> false,
-          "statusStartDate1"         -> LocalDate.parse("17/06/2021", formatter),
-          "statusEndDate1"           -> Some(LocalDate.parse("19/09/2021", formatter)),
-        )
-
-        sut.auditResult(result)
-        verify(mockAuditService)
-          .auditEvent(refEq(SuccessfulRequest), refEq("StatusCheckRequest"), refEq(expectedDetails))(
-            any(),
-            any(),
-            any())
-      }
-
-      "the response from the home office is successful with status" in {
-        when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any())).thenReturn(Future.unit)
-
-        val immigrationStatuses = List(
-          ImmigrationStatus(
-            statusStartDate = LocalDate.parse("17/06/2021", formatter),
-            statusEndDate = Some(LocalDate.parse("19/09/2021", formatter)),
-            productType = "STUDY",
-            immigrationStatus = "LTR",
-            noRecourseToPublicFunds = true
-          ),
-          ImmigrationStatus(
-            statusStartDate = LocalDate.parse("20/03/2019", formatter),
-            statusEndDate = Some(LocalDate.parse("19/09/2019", formatter)),
-            productType = "STUDY",
-            immigrationStatus = "LTE",
-            noRecourseToPublicFunds = false
-          )
-        )
-        val statusCheckResult = StatusCheckResult("Jarvis Cocker", testDate, "ITA", immigrationStatuses)
-        val result = Right(StatusCheckResponse("CorrelationId", statusCheckResult))
-
-        val expectedDetails = Seq(
-          "nationality"              -> "ITA",
-          "productType1"             -> "STUDY",
-          "immigrationStatus1"       -> "LTR",
-          "noRecourseToPublicFunds1" -> true,
-          "statusStartDate1"         -> LocalDate.parse("17/06/2021", formatter),
-          "statusEndDate1"           -> Some(LocalDate.parse("19/09/2021", formatter)),
-          "productType2"             -> "STUDY",
-          "immigrationStatus2"       -> "LTE",
-          "noRecourseToPublicFunds2" -> false,
-          "statusStartDate2"         -> LocalDate.parse("20/03/2019", formatter),
-          "statusEndDate2"           -> Some(LocalDate.parse("19/09/2019", formatter)),
-        )
-
-        sut.auditResult(result)
-        verify(mockAuditService)
-          .auditEvent(refEq(SuccessfulRequest), refEq("StatusCheckRequest"), refEq(expectedDetails))(
-            any(),
-            any(),
-            any())
-      }
-
-    }
-
-    "audit a NotFoundResponse" when {
-      "the connector returns a StatusCheckNotFound" in {
-        when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any())).thenReturn(Future.unit)
-        val error = StatusCheckNotFound("Some response")
-        val result = Left(error)
-        val expectedDetails =
-          Seq("statusCode" -> error.statusCode, "error" -> error.responseBody)
-
-        sut.auditResult(result)
-        verify(mockAuditService)
-          .auditEvent(refEq(MatchNotFound), refEq("StatusCheckRequest"), refEq(expectedDetails))(any(), any(), any())
-      }
-    }
-
-    "audit a DownstreamError" when {
-      "the connector returns a StatusCheckBadRequest" in {
-        when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any())).thenReturn(Future.unit)
-        val error = StatusCheckBadRequest("Some response")
-        val result = Left(error)
-        val expectedDetails =
-          Seq("statusCode" -> error.statusCode, "error" -> error.responseBody)
-
-        sut.auditResult(result)
-        verify(mockAuditService)
-          .auditEvent(refEq(DownstreamError), refEq("StatusCheckRequest"), refEq(expectedDetails))(any(), any(), any())
-      }
-
-      "the connector returns a StatusCheckConflict" in {
-        when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any()))
-          .thenReturn(Future.unit)
-        val error = StatusCheckConflict("Some response")
-        val result = Left(error)
-        val expectedDetails =
-          Seq("statusCode" -> error.statusCode, "error" -> error.responseBody)
-
-        sut.auditResult(result)
-        verify(mockAuditService)
-          .auditEvent(refEq(DownstreamError), refEq("StatusCheckRequest"), refEq(expectedDetails))(any(), any(), any())
-      }
-
-      "the connector returns a StatusCheckInternalServerError" in {
-        when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any())).thenReturn(Future.unit)
-        val error = StatusCheckInternalServerError("Some response")
-        val result = Left(error)
-        val expectedDetails =
-          Seq("statusCode" -> error.statusCode, "error" -> error.responseBody)
-
-        sut.auditResult(result)
-        verify(mockAuditService)
-          .auditEvent(refEq(DownstreamError), refEq("StatusCheckRequest"), refEq(expectedDetails))(any(), any(), any())
-      }
-
-      "the connector returns a StatusCheckInvalidResponse" in {
-        when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any())).thenReturn(Future.unit)
-        val error = StatusCheckInvalidResponse("Some response")
-        val result = Left(error)
-        val expectedDetails =
-          Seq("statusCode" -> error.statusCode, "error" -> error.responseBody)
-
-        sut.auditResult(result)
-        verify(mockAuditService)
-          .auditEvent(refEq(DownstreamError), refEq("StatusCheckRequest"), refEq(expectedDetails))(any(), any(), any())
-      }
-
-      "the connector returns a OtherErrorResponse" in {
-        when(mockAuditService.auditEvent(any(), any(), any())(any(), any(), any())).thenReturn(Future.unit)
-        val TEAPOT = 418
-        val error = OtherErrorResponse(TEAPOT, "Some response")
-        val result = Left(error)
-        val expectedDetails =
-          Seq("statusCode" -> error.statusCode, "error" -> error.responseBody)
-
-        sut.auditResult(result)
-        verify(mockAuditService)
-          .auditEvent(refEq(DownstreamError), refEq("StatusCheckRequest"), refEq(expectedDetails))(any(), any(), any())
-      }
-    }
-
   }
 
 }

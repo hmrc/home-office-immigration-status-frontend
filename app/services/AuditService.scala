@@ -17,9 +17,10 @@
 package services
 
 import com.google.inject.Singleton
-
 import com.google.inject.{ImplementedBy, Inject}
+import models.{HomeOfficeError, MrzSearch, NinoSearch, Search, StatusCheckResponse}
 import play.api.mvc.Request
+import services.HomeOfficeImmigrationStatusFrontendEvent.StatusCheckRequest
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.AuditExtensions._
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
@@ -57,18 +58,98 @@ class AuditServiceImpl @Inject()(val auditConnector: AuditConnector) extends Aud
   private def send(events: DataEvent*)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] =
     Future {
       events.foreach { event =>
+        println(event.toString)
         Try(auditConnector.sendEvent(event))
       }
     }
+
+  def auditStatusCheckEvent(search: Search, result: Either[HomeOfficeError, StatusCheckResponse])(
+    implicit hc: HeaderCarrier,
+    request: Request[Any],
+    ec: ExecutionContext): Future[Unit] = {
+
+    val auditTransaction = getTransactionFromSearch(search)
+
+    val details = constructDetailsFrom(search, result)
+
+    auditEvent(StatusCheckRequest, auditTransaction, details)
+  }
+
+  private[services] def constructDetailsFrom(
+    search: Search,
+    result: Either[HomeOfficeError, StatusCheckResponse]): Seq[(String, Any)] = {
+    val resultDetails = detailsFromResult(result)
+    val searchDetails = detailsFromQuery(search)
+    Seq(
+      "search" -> searchDetails,
+      "result" -> resultDetails
+    )
+  }
+
+  private[services] def getTransactionFromSearch(search: Search): String = search match {
+    case _: NinoSearch => "NinoStatusCheckRequest"
+    case _: MrzSearch  => "MrzStatusCheckRequest"
+  }
+
+  private[services] def detailsFromResult(result: Either[HomeOfficeError, StatusCheckResponse]): Seq[(String, Any)] =
+    result match {
+      case Right(response) => detailsFromStatusCheckResponse(response)
+      case Left(error)     => detailsFromError(error)
+    }
+
+  private[services] def detailsFromQuery(search: Search): Seq[(String, Any)] =
+    search match {
+      case s: NinoSearch => detailsFromNinoQuery(s)
+      case s: MrzSearch  => detailsFromMrzQuery(s)
+    }
+
+  private def detailsFromNinoQuery(search: NinoSearch): Seq[(String, Any)] =
+    Seq(
+      "nino"        -> search.nino.toString,
+      "givenName"   -> search.givenName,
+      "familyName"  -> search.familyName,
+      "dateOfBirth" -> search.dateOfBirth
+    )
+
+  private def detailsFromMrzQuery(search: MrzSearch): Seq[(String, Any)] =
+    Seq(
+      "documentType"   -> search.documentType,
+      "documentNumber" -> search.documentNumber,
+      "dateOfBirth"    -> search.dateOfBirth.toString,
+      "nationality"    -> search.nationality
+    )
+
+  private def detailsFromStatusCheckResponse(response: StatusCheckResponse): Seq[(String, Any)] = {
+
+    val statusDetails = response.result.statusesSortedByDate.zipWithIndex.map {
+      case (status, idx) =>
+        val count = idx + 1
+        Seq(
+          s"productType$count"             -> status.productType,
+          s"immigrationStatus$count"       -> status.immigrationStatus,
+          s"noRecourseToPublicFunds$count" -> status.noRecourseToPublicFunds,
+          s"statusStartDate$count"         -> status.statusStartDate,
+          s"statusEndDate$count"           -> status.statusEndDate
+        )
+    }
+
+    val baseDetails = Seq(
+      "fullName"    -> response.result.fullName,
+      "dateOfBirth" -> response.result.dateOfBirth.toString,
+      "nationality" -> response.result.nationality
+    )
+
+    (baseDetails +: statusDetails).flatten
+  }
+
+  private def detailsFromError(error: HomeOfficeError): Seq[(String, Any)] =
+    Seq("statusCode" -> error.statusCode, "error" -> error.responseBody)
 
 }
 
 @ImplementedBy(classOf[AuditServiceImpl])
 trait AuditService {
-  def auditEvent(
-    event: HomeOfficeImmigrationStatusFrontendEvent,
-    transactionName: String,
-    details: Seq[(String, Any)] = Seq.empty)(
+  def auditStatusCheckEvent(search: Search, result: Either[HomeOfficeError, StatusCheckResponse])(
     implicit hc: HeaderCarrier,
     request: Request[Any],
     ec: ExecutionContext): Future[Unit]

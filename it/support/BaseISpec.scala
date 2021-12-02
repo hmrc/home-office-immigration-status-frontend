@@ -1,6 +1,7 @@
 package support
 
 import akka.stream.Materializer
+import models.{HomeOfficeError, Search, StatusCheckResponse}
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers
@@ -14,7 +15,7 @@ import play.api.mvc.{Request, Result}
 import play.api.test.Helpers.{charset, contentAsString, contentType, defaultAwaitTimeout, status}
 import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.HtmlFormat
-import services.{AuditService, HomeOfficeImmigrationStatusFrontendEvent}
+import services.AuditService
 import stubs.{AuthStubs, DataStreamStubs}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -40,10 +41,7 @@ trait BaseISpec
   implicit val defaultTimeout: FiniteDuration = 5 seconds
 
   object FakeAuditService extends AuditService {
-    def auditEvent(
-      event: HomeOfficeImmigrationStatusFrontendEvent,
-      transactionName: String,
-      details: Seq[(String, Any)] = Seq.empty)(
+    def auditStatusCheckEvent(search: Search, result: Either[HomeOfficeError, StatusCheckResponse])(
       implicit hc: HeaderCarrier,
       request: Request[Any],
       ec: ExecutionContext): Future[Unit] = Future.unit
