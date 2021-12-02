@@ -24,6 +24,10 @@ import java.time.format.DateTimeFormatter
 
 sealed trait Search
 
+object Search {
+  implicit val formats: Format[Search] = Json.format[Search]
+}
+
 final case class NinoSearch(
   nino: Nino,
   givenName: String,

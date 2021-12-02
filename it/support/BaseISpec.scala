@@ -44,7 +44,7 @@ trait BaseISpec
     def auditStatusCheckEvent(search: Search, result: Either[HomeOfficeError, StatusCheckResponse])(
       implicit hc: HeaderCarrier,
       request: Request[Any],
-      ec: ExecutionContext): Future[Unit] = Future.unit
+      ec: ExecutionContext): Unit = ()
   }
 
   protected def appBuilder: GuiceApplicationBuilder =

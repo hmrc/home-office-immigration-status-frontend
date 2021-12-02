@@ -65,7 +65,7 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
 
   "statusPublicFundsByNino" should {
     "only access the audit service when the call downstream was successful" in {
-      when(mockAuditService.auditStatusCheckEvent(any(), any())(any(), any(), any())).thenReturn(Future.unit)
+      doNothing().when(mockAuditService).auditStatusCheckEvent(any(), any())(any(), any(), any())
       val statusCheckResult = StatusCheckResult("Damon Albarn", testDate, "GBR", Nil)
       val result = Right(StatusCheckResponse("CorrelationId", statusCheckResult))
       when(mockConnector.statusPublicFundsByNino(any())(any(), any())).thenReturn(Future.successful(result))
@@ -75,7 +75,7 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
     }
 
     "don't access the audit service when the call downstream was not successful" in {
-      when(mockAuditService.auditStatusCheckEvent(any(), any())(any(), any(), any())).thenReturn(Future.unit)
+      doNothing().when(mockAuditService).auditStatusCheckEvent(any(), any())(any(), any(), any())
       when(mockConnector.statusPublicFundsByNino(any())(any(), any()))
         .thenReturn(Future.failed(new Exception("It went wrong")))
 
@@ -83,19 +83,11 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
       verify(mockAuditService, never).auditStatusCheckEvent(any(), any())(any(), any(), any())
     }
 
-    "not fail if the audit call fails" in {
-      when(mockAuditService.auditStatusCheckEvent(any(), any())(any(), any(), any()))
-        .thenReturn(Future.failed(new Exception("It went wrong")))
-      val statusCheckResult = StatusCheckResult("Damon Albarn", testDate, "GBR", Nil)
-      val result = Right(StatusCheckResponse("CorrelationId", statusCheckResult))
-      when(mockConnector.statusPublicFundsByNino(any())(any(), any())).thenReturn(Future.successful(result))
-      await(sut.search(formModel)) mustEqual result
-    }
   }
 
   "statusPublicFundsByMrz" should {
     "only access the audit service when the call downstream was successful" in {
-      when(mockAuditService.auditStatusCheckEvent(any(), any())(any(), any(), any())).thenReturn(Future.unit)
+      doNothing().when(mockAuditService).auditStatusCheckEvent(any(), any())(any(), any(), any())
       val statusCheckResult = StatusCheckResult("Damon Albarn", testDate, "GBR", Nil)
       val result = Right(StatusCheckResponse("CorrelationId", statusCheckResult))
       when(mockConnector.statusPublicFundsByMrz(any())(any(), any())).thenReturn(Future.successful(result))
@@ -105,7 +97,7 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
     }
 
     "don't access the audit service when the call downstream was not successful" in {
-      when(mockAuditService.auditStatusCheckEvent(any(), any())(any(), any(), any())).thenReturn(Future.unit)
+      doNothing().when(mockAuditService).auditStatusCheckEvent(any(), any())(any(), any(), any())
       when(mockConnector.statusPublicFundsByMrz(any())(any(), any()))
         .thenReturn(Future.failed(new Exception("It went wrong")))
 
@@ -113,14 +105,6 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
       verify(mockAuditService, never).auditStatusCheckEvent(any(), any())(any(), any(), any())
     }
 
-    "not fail if the audit call fails" in {
-      when(mockAuditService.auditStatusCheckEvent(any(), any())(any(), any(), any()))
-        .thenReturn(Future.failed(new Exception("It went wrong")))
-      val statusCheckResult = StatusCheckResult("Damon Albarn", testDate, "GBR", Nil)
-      val result = Right(StatusCheckResponse("CorrelationId", statusCheckResult))
-      when(mockConnector.statusPublicFundsByMrz(any())(any(), any())).thenReturn(Future.successful(result))
-      await(sut.search(mrzSearchFormModel)) mustEqual result
-    }
   }
 
 }
