@@ -59,7 +59,6 @@ class SearchByNinoControllerSpec extends ControllerSpec {
 
   "onPageLoad" must {
     val query = NinoSearchFormModel(generateNino, "pan", "peter", LocalDate.now())
-    val formQuery = FormQueryModel("123", query)
     val emptyForm = inject[SearchByNinoForm].apply()
     val prePopForm = emptyForm.fill(query)
 

@@ -49,7 +49,7 @@ class SearchByMrzController @Inject()(
         sessionCacheService.get.map { result =>
           val form = result match {
             case Some(formModel: MrzSearchFormModel) => formProvider().fill(formModel)
-            case _                                                         => formProvider()
+            case _                                   => formProvider()
           }
           Ok(view(form))
         }
