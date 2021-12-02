@@ -37,7 +37,7 @@
             "alternate-search.mrz-link", controllers.routes.SearchByMrzController.onPageLoad.url, "status-check-failure-conflict.passport")</p> }
 
         @if(!IsNinoSearch) { <p class="govuk-body" id="ninolink"> @messages("status-check-failure-conflict")  @alternateSearch(
-            "alternate-search.nino-link", controllers.routes.StatusCheckByNinoController.onPageLoad.url, "status-check-failure-conflict.nino")</p> }
+            "alternate-search.nino-link", controllers.routes.SearchByNinoController.onPageLoad.url, "status-check-failure-conflict.nino")</p> }
     }
 
     <h2 class="govuk-heading-m" id="personal-details">@messages("status-check-failure.heading2CustomerDetails")</h2>
