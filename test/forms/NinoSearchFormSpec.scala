@@ -32,7 +32,7 @@ class NinoSearchFormSpec extends PlaySpec with OptionValues with ScalaCheckDrive
 
   implicit def noShrink[T]: Shrink[T] = Shrink.shrinkAny
 
-  val formProvider: StatusCheckByNinoFormProvider = new StatusCheckByNinoFormProvider()
+  val formProvider: SearchByNinoForm = new SearchByNinoForm()
   val form: Form[NinoSearchFormModel] = formProvider()
 
   val now: LocalDate = LocalDate.now()

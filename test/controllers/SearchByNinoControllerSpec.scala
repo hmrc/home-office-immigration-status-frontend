@@ -17,7 +17,7 @@
 package controllers
 
 import controllers.actions.AccessAction
-import forms.StatusCheckByNinoFormProvider
+import forms.SearchByNinoForm
 import models.{FormQueryModel, NinoSearchFormModel}
 
 import java.time.LocalDate
@@ -32,27 +32,27 @@ import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import services.SessionCacheService
 import utils.NinoGenerator.generateNino
-import views.html.StatusCheckByNinoPage
+import views.html.SearchByNinoView
 
 import scala.concurrent.Future
 
-class StatusCheckByNinoControllerSpec extends ControllerSpec {
+class SearchByNinoControllerSpec extends ControllerSpec {
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
       bind[AccessAction].to[FakeAccessAction],
-      bind[StatusCheckByNinoPage].toInstance(mockView),
+      bind[SearchByNinoView].toInstance(mockView),
       bind[SessionCacheService].toInstance(mockSessionCacheService)
     )
     .build()
 
-  lazy val sut = inject[StatusCheckByNinoController]
-  val mockView = mock(classOf[StatusCheckByNinoPage])
+  lazy val sut = inject[SearchByNinoController]
+  val mockView = mock(classOf[SearchByNinoView])
   val fakeView = HtmlFormat.escape("Correct Form View")
 
   override def beforeEach(): Unit = {
     reset(mockView)
-    when(mockView(any(), any())(any(), any())).thenReturn(fakeView)
+    when(mockView(any())(any(), any())).thenReturn(fakeView)
     reset(mockSessionCacheService)
     super.beforeEach()
   }
@@ -60,7 +60,7 @@ class StatusCheckByNinoControllerSpec extends ControllerSpec {
   "onPageLoad" must {
     val query = NinoSearchFormModel(generateNino, "pan", "peter", LocalDate.now())
     val formQuery = FormQueryModel("123", query)
-    val emptyForm = inject[StatusCheckByNinoFormProvider].apply()
+    val emptyForm = inject[SearchByNinoForm].apply()
     val prePopForm = emptyForm.fill(query)
 
     "display the check by nino form view" when {
@@ -71,7 +71,7 @@ class StatusCheckByNinoControllerSpec extends ControllerSpec {
         status(result) mustBe OK
         contentAsString(result) mustBe fakeView.toString
         withClue("the form was prefilled with a previous query, how?") {
-          verify(mockView).apply(refEq(emptyForm, "mapping"), any())(is(request), any())
+          verify(mockView).apply(refEq(emptyForm, "mapping"))(is(request), any())
         }
         verify(mockSessionCacheService).get(any(), any())
       }
@@ -83,7 +83,7 @@ class StatusCheckByNinoControllerSpec extends ControllerSpec {
         status(result) mustBe OK
         contentAsString(result) mustBe fakeView.toString
         withClue("the form did not prepopulate with the defined query") {
-          verify(mockView).apply(refEq(prePopForm, "mapping"), any())(is(request), any())
+          verify(mockView).apply(refEq(prePopForm, "mapping"))(is(request), any())
         }
         verify(mockSessionCacheService).get(any(), any())
       }
@@ -119,14 +119,14 @@ class StatusCheckByNinoControllerSpec extends ControllerSpec {
     }
 
     "return the errored form" when {
-      val form = inject[StatusCheckByNinoFormProvider].apply()
+      val form = inject[SearchByNinoForm].apply()
       "the submitted form is empty" in {
         val result = sut.onSubmit(request)
         val formWithErrors = form.bindFromRequest()(request, implicitly)
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe fakeView.toString
-        verify(mockView).apply(refEq(formWithErrors, "mapping"), any())(is(request), any())
+        verify(mockView).apply(refEq(formWithErrors, "mapping"))(is(request), any())
         withClue("The session should contain the valid form answers") {
           val updatedSession = await(result).session(request)
           updatedSession.get("query") must not be defined
@@ -148,7 +148,7 @@ class StatusCheckByNinoControllerSpec extends ControllerSpec {
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe fakeView.toString
-        verify(mockView).apply(refEq(formWithErrors, "mapping"), any())(is(requestWithForm), any())
+        verify(mockView).apply(refEq(formWithErrors, "mapping"))(is(requestWithForm), any())
         withClue("The session should contain the valid form answers") {
           val updatedSession = await(result).session(request)
           updatedSession.get("query") must not be defined

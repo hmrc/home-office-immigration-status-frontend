@@ -15,6 +15,7 @@
  *@
 
 @import models.NinoSearchFormModel
+@import config.AppConfig
 
 @this(
     govukWrapper: govuk_wrapper,
@@ -24,23 +25,26 @@
     inputText: components.inputText,
     inputDate: components.inputDate,
     fieldset: components.fieldset,
-    alternateSearch: components.AlternateSearchLink
+    alternateSearch: components.AlternateSearchLink, 
+    appConfig: AppConfig
 )
 
-@(statusCheckForm: Form[NinoSearchFormModel],submitFormCall: Call)(implicit request: Request[_], messages: Messages)
+@(form: Form[NinoSearchFormModel])(implicit request: Request[_], messages: Messages)
 
-@govukWrapper(title = if(statusCheckForm.hasErrors) messages("lookup.title.Error") else messages("lookup.title")) {
+@govukWrapper(title = if(form.hasErrors) messages("lookup.title.Error") else messages("lookup.title")) {
 
-    @formHelper(submitFormCall) {
+    @formHelper(controllers.routes.SearchByNinoController.onSubmit) {
 
-        @errorSummary(statusCheckForm.errors)
+        @errorSummary(form.errors)
 
         @fieldset("lookup.title") {
 
-            @alternateSearch("alternate-search.mrz-link", controllers.routes.SearchByMrzController.onPageLoad.url, "alt-search-by-mrz")
+            @if(appConfig.documentSearchFeatureEnabled) {
+                @alternateSearch("alternate-search.mrz-link", controllers.routes.SearchByMrzController.onPageLoad.url, "alt-search-by-mrz")
+            }
 
             @inputText(
-                statusCheckForm,
+                form,
                 id = "nino",
                 name = "nino",
                 label = "lookup.nino.label",
@@ -49,7 +53,7 @@
             )
 
             @inputText(
-                statusCheckForm,
+                form,
                 id = "givenName",
                 name = "givenName",
                 label = "lookup.givenName.label",
@@ -57,7 +61,7 @@
             )
 
             @inputText(
-                statusCheckForm,
+                form,
                 id = "familyName",
                 name = "familyName",
                 label = "lookup.familyName.label",
@@ -65,7 +69,7 @@
             )
 
             @inputDate(
-                statusCheckForm,
+                form,
                 id = "dateOfBirth",
                 legendClasses = "govuk-label",
                 legendContent = messages("lookup.dateOfBirth.label"),

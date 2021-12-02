@@ -20,7 +20,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import config.AppConfig
 import controllers.actions.AccessAction
-import forms.StatusCheckByNinoFormProvider
+import forms.SearchByNinoForm
 import models.{FormQueryModel, NinoSearchFormModel}
 import views.html._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -29,12 +29,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class StatusCheckByNinoController @Inject()(
+class SearchByNinoController @Inject()(
   access: AccessAction,
   override val messagesApi: MessagesApi,
   controllerComponents: MessagesControllerComponents,
-  formProvider: StatusCheckByNinoFormProvider,
-  statusCheckByNinoPage: StatusCheckByNinoPage,
+  formProvider: SearchByNinoForm,
+  searchByNinoView: SearchByNinoView,
   sessionCacheService: SessionCacheService
 )(implicit val appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(controllerComponents) with I18nSupport {
@@ -46,7 +46,7 @@ class StatusCheckByNinoController @Inject()(
           case Some(FormQueryModel(_, formModel: NinoSearchFormModel, _)) => formProvider().fill(formModel)
           case _                                                          => formProvider()
         }
-        Ok(statusCheckByNinoPage(form, routes.StatusCheckByNinoController.onSubmit))
+        Ok(searchByNinoView(form))
       }
     }
 
@@ -55,9 +55,7 @@ class StatusCheckByNinoController @Inject()(
       formProvider()
         .bindFromRequest()
         .fold(
-          formWithErrors =>
-            Future.successful(
-              BadRequest(statusCheckByNinoPage(formWithErrors, routes.StatusCheckByNinoController.onSubmit))),
+          formWithErrors => Future.successful(BadRequest(searchByNinoView(formWithErrors))),
           query =>
             for {
               _ <- sessionCacheService.set(query)

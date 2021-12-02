@@ -38,7 +38,7 @@ class LandingControllerSpec extends ControllerSpec {
       when(mockSessionCacheService.delete(any(), any())).thenReturn(Future.unit)
       val result = sut.onPageLoad(request)
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.StatusCheckByNinoController.onPageLoad.url
+      redirectLocation(result).get mustBe routes.SearchByNinoController.onPageLoad.url
     }
 
     "clear the query from the session" in {
