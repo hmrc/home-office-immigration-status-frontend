@@ -72,11 +72,11 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
     }
 
     "have the show and change query section" in {
-      verify(mockShowChangeQuery).apply(query)(messages)
+      assertRenderedById(doc, "show-query")
     }
 
     "have the search again button" in {
-      verify(mockSearchAgainButton).apply()(messages)
+      assertRenderedById(doc, "search-button")
     }
   }
 }
