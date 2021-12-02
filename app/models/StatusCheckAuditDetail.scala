@@ -21,7 +21,7 @@ import play.api.libs.json.{Format, Json}
 case class StatusCheckAuditDetail(
   statusCode: Int,
   search: Search,
-  result: Option[StatusCheckResponse],
+  response: Option[StatusCheckResponse],
   error: Option[String])
 
 object StatusCheckAuditDetail {
