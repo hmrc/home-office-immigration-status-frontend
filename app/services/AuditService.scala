@@ -18,7 +18,7 @@ package services
 
 import com.google.inject.Singleton
 import com.google.inject.{ImplementedBy, Inject}
-import models.{HomeOfficeError, Search, StatusCheckAuditDetail, StatusCheckResponse}
+import models.{HomeOfficeError, Search, StatusCheckAuditDetail, StatusCheckFailureAuditDetail, StatusCheckResponse, StatusCheckSuccessAuditDetail}
 import play.api.mvc.Request
 import services.HomeOfficeImmigrationStatusFrontendEvent.StatusCheckRequest
 import uk.gov.hmrc.http.HeaderCarrier
@@ -42,8 +42,8 @@ class AuditServiceImpl @Inject()(val auditConnector: AuditConnector) extends Aud
     search: Search,
     result: Either[HomeOfficeError, StatusCheckResponse]): StatusCheckAuditDetail =
     result match {
-      case Right(response) => StatusCheckAuditDetail(200, search, Some(response), None)
-      case Left(error)     => StatusCheckAuditDetail(error.statusCode, search, None, Some(error.responseBody))
+      case Right(response) => StatusCheckSuccessAuditDetail(200, search, response)
+      case Left(error)     => StatusCheckFailureAuditDetail(error.statusCode, search, error.responseBody)
     }
 
 }

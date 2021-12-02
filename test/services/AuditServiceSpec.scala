@@ -55,7 +55,7 @@ class AuditServiceSpec extends PlaySpec {
         val statusCheckResult = StatusCheckResult("Damon Albarn", testDate, "GBR", Nil)
         val result = StatusCheckResponse("CorrelationId", statusCheckResult)
 
-        val expectedDetails = StatusCheckAuditDetail(200, search, Some(result), None)
+        val expectedDetails = StatusCheckSuccessAuditDetail(200, search, result)
 
         sut.constructDetails(search, Right(result)) mustEqual expectedDetails
       }
@@ -73,7 +73,7 @@ class AuditServiceSpec extends PlaySpec {
 
         val result = StatusCheckNotFound("Nothing to see here")
 
-        val expectedDetails = StatusCheckAuditDetail(404, search, None, Some("Nothing to see here"))
+        val expectedDetails = StatusCheckFailureAuditDetail(404, search, "Nothing to see here")
 
         sut.constructDetails(search, Left(result)) mustEqual expectedDetails
       }
@@ -94,7 +94,7 @@ class AuditServiceSpec extends PlaySpec {
 
       val result = StatusCheckNotFound("Nothing to see here")
 
-      val expectedDetails = StatusCheckAuditDetail(404, search, None, Some("Nothing to see here"))
+      val expectedDetails = StatusCheckFailureAuditDetail(404, search, "Nothing to see here")
 
       sut.auditStatusCheckEvent(search, Left(result))
 
