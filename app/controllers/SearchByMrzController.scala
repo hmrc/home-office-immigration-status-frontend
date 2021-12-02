@@ -25,6 +25,9 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionCacheService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.SearchByMrzView
+import uk.gov.hmrc.http.NotFoundException
+import play.api.mvc.Request
+import errors.ErrorHandler
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -35,32 +38,41 @@ class SearchByMrzController @Inject()(
   view: SearchByMrzView,
   sessionCacheService: SessionCacheService,
   formProvider: SearchByMRZForm,
-  cc: MessagesControllerComponents
+  cc: MessagesControllerComponents,
+  errorHandler: ErrorHandler
 )(implicit val appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(cc) with I18nSupport {
 
   val onPageLoad: Action[AnyContent] =
     access.async { implicit request =>
-      sessionCacheService.get.map { result =>
-        val form = result match {
-          case Some(FormQueryModel(_, formModel: MrzSearchFormModel, _)) => formProvider().fill(formModel)
-          case _                                                         => formProvider()
+      if (appConfig.documentSearchFeatureEnabled) {
+        sessionCacheService.get.map { result =>
+          val form = result match {
+            case Some(formModel: MrzSearchFormModel) => formProvider().fill(formModel)
+            case _                                   => formProvider()
+          }
+          Ok(view(form))
         }
-        Ok(view(form))
+      } else {
+        Future.successful(NotFound(errorHandler.notFoundTemplate))
       }
     }
 
   val onSubmit: Action[AnyContent] =
     access.async { implicit request =>
-      formProvider()
-        .bindFromRequest()
-        .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
-          query =>
-            for {
-              _ <- sessionCacheService.set(query)
-            } yield Redirect(routes.StatusResultController.onPageLoad)
-        )
+      if (appConfig.documentSearchFeatureEnabled) {
+        formProvider()
+          .bindFromRequest()
+          .fold(
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
+            query =>
+              for {
+                _ <- sessionCacheService.set(query)
+              } yield Redirect(routes.StatusResultController.onPageLoad)
+          )
+      } else {
+        Future.successful(NotFound(errorHandler.notFoundTemplate))
+      }
     }
 
 }

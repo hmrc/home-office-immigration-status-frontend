@@ -50,12 +50,12 @@ class StatusResultController @Inject()(
   val onPageLoad: Action[AnyContent] =
     access.async { implicit request =>
       sessionCacheService.get.flatMap {
-        case Some(FormQueryModel(_, query, _)) =>
+        case Some(query) =>
           homeOfficeService
             .search(query)
             .map(result => result.fold(handleError(query), displaySuccessfulResult(query)))
         case None =>
-          Future.successful(Redirect(routes.StatusCheckByNinoController.onPageLoad))
+          Future.successful(Redirect(routes.SearchByNinoController.onPageLoad))
       }
     }
 

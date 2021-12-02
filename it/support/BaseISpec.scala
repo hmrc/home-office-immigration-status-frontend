@@ -62,7 +62,8 @@ trait BaseISpec
         "microservice.services.auth.host" -> wireMockHost,
         "microservice.services.auth.port" -> wireMockPort,
         "microservice.services.home-office-immigration-status-proxy.host" -> wireMockHost,
-        "microservice.services.home-office-immigration-status-proxy.port" -> wireMockPort
+        "microservice.services.home-office-immigration-status-proxy.port" -> wireMockPort,
+        "feature-switch.mrz.enabled" -> true
       ).overrides(
         bind[AuditService].toInstance(FakeAuditService)
       )
