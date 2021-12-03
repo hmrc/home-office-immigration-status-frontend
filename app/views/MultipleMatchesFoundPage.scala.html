@@ -22,6 +22,7 @@
     showChangeQuery: components.ShowChangeQuery,
     searchAgainButton : components.SearchAgainButton,
     alternateSearch: components.AlternateSearchLink,
+    alternateText: components.AlternateLinkText,
     appConfig: AppConfig
 )
 
@@ -32,12 +33,7 @@
     <h1 class="govuk-heading-xl" id="status-check-failure-conflict-title">@messages("status-check-failure-conflict.title")</h1>
 
     @if(appConfig.documentSearchFeatureEnabled) {
-
-        @if(IsNinoSearch) { <p class="govuk-body" id="mrzlink"> @messages("status-check-failure-conflict") @alternateSearch(
-            "alternate-search.mrz-link", controllers.routes.SearchByMrzController.onPageLoad.url, "status-check-failure-conflict.passport")</p> }
-
-        @if(!IsNinoSearch) { <p class="govuk-body" id="ninolink"> @messages("status-check-failure-conflict")  @alternateSearch(
-            "alternate-search.nino-link", controllers.routes.SearchByNinoController.onPageLoad.url, "status-check-failure-conflict.nino")</p> }
+        @alternateText(IsNinoSearch)
     }
 
     <h2 class="govuk-heading-m" id="personal-details">@messages("status-check-failure.heading2CustomerDetails")</h2>
