@@ -18,7 +18,7 @@ package services
 
 import com.google.inject.Singleton
 import com.google.inject.{ImplementedBy, Inject}
-import models.{HomeOfficeError, Search, StatusCheckAuditDetail, StatusCheckFailureAuditDetail, StatusCheckResponse, StatusCheckSuccessAuditDetail}
+import models.{Search, StatusCheckAuditDetail, StatusCheckResponseWithStatus}
 import play.api.mvc.Request
 import services.HomeOfficeImmigrationStatusFrontendEvent.StatusCheckRequest
 import uk.gov.hmrc.http.HeaderCarrier
@@ -29,28 +29,20 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class AuditServiceImpl @Inject()(val auditConnector: AuditConnector) extends AuditService {
 
-  def auditStatusCheckEvent(search: Search, result: Either[HomeOfficeError, StatusCheckResponse])(
+  def auditStatusCheckEvent(search: Search, result: StatusCheckResponseWithStatus)(
     implicit hc: HeaderCarrier,
     request: Request[Any],
     ec: ExecutionContext): Unit = {
 
-    val details = constructDetails(search, result)
+    val details = StatusCheckAuditDetail(result.statusCode, search, result.statusCheckResponse)
     auditConnector.sendExplicitAudit(StatusCheckRequest.toString, details)
   }
-
-  private[services] def constructDetails(
-    search: Search,
-    result: Either[HomeOfficeError, StatusCheckResponse]): StatusCheckAuditDetail =
-    result match {
-      case Right(response) => StatusCheckSuccessAuditDetail(200, search, response)
-      case Left(error)     => StatusCheckFailureAuditDetail(error.statusCode, search, error.responseBody)
-    }
 
 }
 
 @ImplementedBy(classOf[AuditServiceImpl])
 trait AuditService {
-  def auditStatusCheckEvent(search: Search, result: Either[HomeOfficeError, StatusCheckResponse])(
+  def auditStatusCheckEvent(search: Search, result: StatusCheckResponseWithStatus)(
     implicit hc: HeaderCarrier,
     request: Request[Any],
     ec: ExecutionContext): Unit

@@ -1,15 +1,17 @@
 package connectors
 
-import models.HomeOfficeError._
+import models.StatusCheckError._
 import models._
 import org.scalatest.concurrent.ScalaFutures
 import play.api.Application
 import stubs.HomeOfficeImmigrationStatusStubs
 import support.BaseISpec
 import uk.gov.hmrc.http._
-
 import java.time.{LocalDate, ZoneId}
 import java.util.UUID
+
+import play.api.http.Status.{BAD_REQUEST, CONFLICT, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationStatusConnectorISpecSetup {
@@ -18,65 +20,78 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
 
     "statusPublicFundsByNino" should {
 
-      "return status when range provided" in {
+      "return status when successful" in {
         givenCheckByNinoSucceeds()
 
-        val result: Either[HomeOfficeError, StatusCheckResponse] = connector.statusPublicFundsByNino(request).futureValue
+        val result = connector.statusPublicFundsByNino(request).futureValue
 
-        result should be ('right)
-      }
+        val expectedResult = StatusCheckResult(
+          fullName = "Jane Doe",
+          dateOfBirth = LocalDate.parse("2001-01-31"),
+          nationality = "IRL",
+          statuses = List(
+            ImmigrationStatus(
+              productType = "EUS",
+              immigrationStatus = "ILR",
+              noRecourseToPublicFunds = true,
+              statusEndDate = Some(LocalDate.parse("2018-01-31")),
+              statusStartDate = LocalDate.parse("2018-12-12")
+            )
+          )
+        )
+        val expectedResponse = StatusCheckResponseWithStatus(OK, StatusCheckSuccessfulResponse(Some(correlationId), expectedResult))
 
-      "return status when no range provided" in {
-        givenCheckByNinoSucceeds()
-
-        val result: Either[HomeOfficeError, StatusCheckResponse] = connector.statusPublicFundsByNino(request).futureValue
-
-        result should be ('right)
+        result shouldBe expectedResponse
       }
 
       "return check error when 400 response ERR_REQUEST_INVALID" in {
         givenCheckByNinoErrorWhenMissingInputField()
 
-        val result: Either[HomeOfficeError, StatusCheckResponse] = connector.statusPublicFundsByNino(request).futureValue
+        val result = connector.statusPublicFundsByNino(request).futureValue
 
-        result should be ('left)
-        result.left.get shouldBe a[StatusCheckBadRequest]
+        val expectedResult = StatusCheckResponseWithStatus(BAD_REQUEST, StatusCheckErrorResponse(Some(correlationId), StatusCheckError("ERR_REQUEST_INVALID")))
+
+        result shouldBe expectedResult
       }
 
       "return check error when 404 response ERR_NOT_FOUND" in {
         givenStatusCheckErrorWhenStatusNotFound()
 
-        val result: Either[HomeOfficeError, StatusCheckResponse] = connector.statusPublicFundsByNino(request).futureValue
+        val result = connector.statusPublicFundsByNino(request).futureValue
 
-        result should be ('left)
-        result.left.get shouldBe a[StatusCheckNotFound]
+        val expectedResult = StatusCheckResponseWithStatus(NOT_FOUND, StatusCheckErrorResponse(Some(correlationId), StatusCheckError("ERR_NOT_FOUND")))
+
+        result shouldBe expectedResult
       }
 
       "return check error when 400 response ERR_VALIDATION" in {
         givenStatusCheckErrorWhenDOBInvalid()
 
-        val result: Either[HomeOfficeError, StatusCheckResponse] = connector.statusPublicFundsByNino(request).futureValue
+        val result = connector.statusPublicFundsByNino(request).futureValue
 
-        result should be ('left)
-        result.left.get shouldBe a[StatusCheckBadRequest]
+        val expectedResult = StatusCheckResponseWithStatus(BAD_REQUEST, StatusCheckErrorResponse(Some(correlationId), StatusCheckError("ERR_VALIDATION", Option(Seq(FieldError("ERR_INVALID_DOB", "dateOfBirth"))))))
+
+        result shouldBe expectedResult
       }
 
-      "throw exception if other 4xx response" in {
-        givenStatusPublicFundsCheckStub("nino", 429, validByNinoRequestBody(), "")
+      "return check error if invalid JSON body return" in {
+        givenStatusPublicFundsCheckStub("nino", CONFLICT, validByNinoRequestBody(), "", "some-correlation-id")
 
-        val result: Either[HomeOfficeError, StatusCheckResponse] = connector.statusPublicFundsByNino(request).futureValue
+        val result = connector.statusPublicFundsByNino(request).futureValue
 
-        result should be ('left)
-        result.left.get shouldBe a[OtherErrorResponse]
+        val expectedResult = StatusCheckResponseWithStatus(CONFLICT, StatusCheckErrorResponse(Some("some-correlation-id"), StatusCheckError("UNKNOWN_ERROR")))
+
+        result shouldBe expectedResult
       }
 
       "throw exception if 5xx response" in {
         givenAnExternalServiceErrorCheckByNino
 
-        val result: Either[HomeOfficeError, StatusCheckResponse] = connector.statusPublicFundsByNino(request).futureValue
+        val result = connector.statusPublicFundsByNino(request).futureValue
 
-        result should be ('left)
-        result.left.get shouldBe a[StatusCheckInternalServerError]
+        val expectedResult = StatusCheckResponseWithStatus(INTERNAL_SERVER_ERROR, StatusCheckErrorResponse(Some("some-correlation-id"), StatusCheckError("UNKNOWN_ERROR")))
+
+        result shouldBe expectedResult
       }
     }
   }

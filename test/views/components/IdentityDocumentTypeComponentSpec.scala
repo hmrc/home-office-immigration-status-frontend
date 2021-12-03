@@ -49,7 +49,7 @@ class IdentityDocumentTypeComponentSpec extends ViewSpec {
         val optionsWithSelected =
           doc.select("option").asScala.toList.map(option => (option.attr("value"), option.hasAttr("selected")))
 
-        optionsWithSelected.head mustBe ("PASSPORT", true)
+        optionsWithSelected.headOption mustBe Some(("PASSPORT", true))
         optionsWithSelected.tail.foreach {
           case (option, selected) =>
             withClue(s"$option was selected when it shouldnt be.") {

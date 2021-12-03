@@ -18,11 +18,34 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class StatusCheckResponse(
-  correlationId: String,
-  result: StatusCheckResult
-)
+final case class StatusCheckResponseWithStatus(statusCode: Int, statusCheckResponse: StatusCheckResponse)
+
+object StatusCheckResponseWithStatus {
+  implicit val formats: OFormat[StatusCheckResponseWithStatus] = Json.format[StatusCheckResponseWithStatus]
+}
+
+sealed trait StatusCheckResponse {
+  def correlationId: Option[String]
+}
 
 object StatusCheckResponse {
   implicit val formats: OFormat[StatusCheckResponse] = Json.format[StatusCheckResponse]
+}
+
+final case class StatusCheckSuccessfulResponse(
+  correlationId: Option[String],
+  result: StatusCheckResult
+) extends StatusCheckResponse
+
+object StatusCheckSuccessfulResponse {
+  implicit val formats: OFormat[StatusCheckSuccessfulResponse] = Json.format[StatusCheckSuccessfulResponse]
+}
+
+final case class StatusCheckErrorResponse(
+  correlationId: Option[String],
+  error: StatusCheckError
+) extends StatusCheckResponse
+
+object StatusCheckErrorResponse {
+  implicit val formats: OFormat[StatusCheckErrorResponse] = Json.format[StatusCheckErrorResponse]
 }

@@ -19,7 +19,7 @@ package services
 import java.util.UUID
 
 import javax.inject.{Inject, Singleton}
-import models.{HomeOfficeError, MrzSearch, NinoSearch, Search, SearchFormModel, StatusCheckResponse}
+import models.{MrzSearch, NinoSearch, Search, SearchFormModel, StatusCheckError, StatusCheckResponse, StatusCheckResponseWithStatus, StatusCheckSuccessfulResponse}
 import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
 import connectors.HomeOfficeImmigrationStatusProxyConnector
@@ -38,10 +38,12 @@ class HomeOfficeImmigrationStatusProxyService @Inject()(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext,
     request: Request[Any],
-    appConfig: AppConfig): Future[Either[HomeOfficeError, StatusCheckResponse]] = {
+    appConfig: AppConfig): Future[StatusCheckResponseWithStatus] = {
 
-    val headerCarrier = hc.withExtraHeaders(HEADER_X_CORRELATION_ID -> UUID.randomUUID().toString)
+    val correlationId: String = UUID.randomUUID().toString
+    val headerCarrier = hc.withExtraHeaders(HEADER_X_CORRELATION_ID -> correlationId)
     val searchFromRequest = query.toSearch(appConfig.defaultQueryTimeRangeInMonths)
+
     sendRequestAuditingResults(searchFromRequest) {
       searchFromRequest match {
         case search: NinoSearch => connector.statusPublicFundsByNino(search)(headerCarrier, ec)
@@ -50,11 +52,10 @@ class HomeOfficeImmigrationStatusProxyService @Inject()(
     }
   }
 
-  private def sendRequestAuditingResults[A](search: Search)(
-    future: Future[Either[HomeOfficeError, StatusCheckResponse]])(
+  private def sendRequestAuditingResults[A](search: Search)(future: Future[StatusCheckResponseWithStatus])(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext,
-    request: Request[Any]): Future[Either[HomeOfficeError, StatusCheckResponse]] =
+    request: Request[Any]): Future[StatusCheckResponseWithStatus] =
     future.map { result =>
       auditService.auditStatusCheckEvent(search, result)
       result

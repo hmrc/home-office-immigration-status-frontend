@@ -18,24 +18,8 @@ package models
 
 import play.api.libs.json.{Format, Json}
 
-sealed trait StatusCheckAuditDetail {
-  def statusCode: Int
-  def search: Search
-}
+case class StatusCheckAuditDetail(statusCode: Int, search: Search, response: StatusCheckResponse)
 
 object StatusCheckAuditDetail {
   implicit val formats: Format[StatusCheckAuditDetail] = Json.format[StatusCheckAuditDetail]
-}
-
-case class StatusCheckSuccessAuditDetail(statusCode: Int, search: Search, response: StatusCheckResponse)
-    extends StatusCheckAuditDetail
-
-object StatusCheckSuccessAuditDetail {
-  implicit val formats: Format[StatusCheckSuccessAuditDetail] = Json.format[StatusCheckSuccessAuditDetail]
-}
-
-case class StatusCheckFailureAuditDetail(statusCode: Int, search: Search, error: String) extends StatusCheckAuditDetail
-
-object StatusCheckFailureAuditDetail {
-  implicit val formats: Format[StatusCheckFailureAuditDetail] = Json.format[StatusCheckFailureAuditDetail]
 }

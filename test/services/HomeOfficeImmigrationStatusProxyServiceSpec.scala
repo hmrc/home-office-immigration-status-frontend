@@ -18,7 +18,7 @@ package services
 
 import connectors.HomeOfficeImmigrationStatusProxyConnector
 import controllers.ControllerSpec
-import models.HomeOfficeError._
+import models.StatusCheckError._
 import models._
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
@@ -63,11 +63,13 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
   val statusRequest = formModel.toSearch(6)
   implicit val conf = appConfig
 
+  val statusCheckResult = StatusCheckResult("Damon Albarn", testDate, "GBR", Nil)
+  val result =
+    StatusCheckResponseWithStatus(200, StatusCheckSuccessfulResponse(Some("CorrelationId"), statusCheckResult))
+
   "statusPublicFundsByNino" should {
     "only access the audit service when the call downstream was successful" in {
       doNothing().when(mockAuditService).auditStatusCheckEvent(any(), any())(any(), any(), any())
-      val statusCheckResult = StatusCheckResult("Damon Albarn", testDate, "GBR", Nil)
-      val result = Right(StatusCheckResponse("CorrelationId", statusCheckResult))
       when(mockConnector.statusPublicFundsByNino(any())(any(), any())).thenReturn(Future.successful(result))
 
       await(sut.search(formModel))
@@ -88,8 +90,6 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
   "statusPublicFundsByMrz" should {
     "only access the audit service when the call downstream was successful" in {
       doNothing().when(mockAuditService).auditStatusCheckEvent(any(), any())(any(), any(), any())
-      val statusCheckResult = StatusCheckResult("Damon Albarn", testDate, "GBR", Nil)
-      val result = Right(StatusCheckResponse("CorrelationId", statusCheckResult))
       when(mockConnector.statusPublicFundsByMrz(any())(any(), any())).thenReturn(Future.successful(result))
 
       await(sut.search(mrzSearchFormModel))

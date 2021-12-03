@@ -1,7 +1,7 @@
 package support
 
 import akka.stream.Materializer
-import models.{HomeOfficeError, Search, StatusCheckResponse}
+import models.{Search, StatusCheckError, StatusCheckResponseWithStatus, StatusCheckSuccessfulResponse}
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers
@@ -41,7 +41,7 @@ trait BaseISpec
   implicit val defaultTimeout: FiniteDuration = 5 seconds
 
   object FakeAuditService extends AuditService {
-    def auditStatusCheckEvent(search: Search, result: Either[HomeOfficeError, StatusCheckResponse])(
+    def auditStatusCheckEvent(search: Search, result: StatusCheckResponseWithStatus)(
       implicit hc: HeaderCarrier,
       request: Request[Any],
       ec: ExecutionContext): Unit = ()

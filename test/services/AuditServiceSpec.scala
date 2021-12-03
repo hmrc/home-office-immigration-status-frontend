@@ -24,7 +24,6 @@ import org.mockito.Mockito._
 import org.mockito.ArgumentMatchers.{any, refEq}
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import models._
-import models.HomeOfficeError._
 import play.api.libs.json.{JsObject}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -41,9 +40,14 @@ class AuditServiceSpec extends PlaySpec {
   val testDate = LocalDate.now
   val formatter = DateTimeFormatter.ofPattern("d/MM/yyyy")
 
-  "constructDetails" should {
-    "create an StatusCheckAuditDetail with response" when {
+  val correlationId = Some("correlationId")
+
+  "auditStatusCheckEvent" should {
+
+    "call auditConnector.send" when {
+
       "a result is passed in" in {
+        doNothing().when(mockAuditConnector).sendExplicitAudit(any[String](), any[JsObject]())(any(), any())
         val search = MrzSearch(
           "documentType",
           "documentNumber",
@@ -53,16 +57,19 @@ class AuditServiceSpec extends PlaySpec {
         )
 
         val statusCheckResult = StatusCheckResult("Damon Albarn", testDate, "GBR", Nil)
-        val result = StatusCheckResponse("CorrelationId", statusCheckResult)
+        val response = StatusCheckSuccessfulResponse(correlationId, statusCheckResult)
+        val responseWithStatus = StatusCheckResponseWithStatus(200, response)
 
-        val expectedDetails = StatusCheckSuccessAuditDetail(200, search, result)
+        val expectedDetails = StatusCheckAuditDetail(200, search, response)
 
-        sut.constructDetails(search, Right(result)) mustEqual expectedDetails
+        sut.auditStatusCheckEvent(search, responseWithStatus)
+
+        verify(mockAuditConnector)
+          .sendExplicitAudit(refEq("StatusCheckRequest"), refEq(expectedDetails))(any(), any(), any())
       }
-    }
 
-    "create an StatusCheckAuditDetail with error" when {
-      "a result is passed in" in {
+      "an error is passed in" in {
+        doNothing().when(mockAuditConnector).sendExplicitAudit(any[String](), any[JsObject]())(any(), any())
         val search = MrzSearch(
           "documentType",
           "documentNumber",
@@ -71,38 +78,18 @@ class AuditServiceSpec extends PlaySpec {
           StatusCheckRange(Some(LocalDate.now(ZoneId.of("UTC")).minusMonths(1)), Some(LocalDate.now(ZoneId.of("UTC"))))
         )
 
-        val result = StatusCheckNotFound("Nothing to see here")
+        val statusCheckResult = StatusCheckError("UNKNOWN_ERROR")
+        val error = StatusCheckErrorResponse(correlationId, statusCheckResult)
+        val responseWithStatus = StatusCheckResponseWithStatus(500, error)
 
-        val expectedDetails = StatusCheckFailureAuditDetail(404, search, "Nothing to see here")
+        val expectedDetails = StatusCheckAuditDetail(500, search, error)
 
-        sut.constructDetails(search, Left(result)) mustEqual expectedDetails
+        sut.auditStatusCheckEvent(search, responseWithStatus)
+
+        verify(mockAuditConnector)
+          .sendExplicitAudit(refEq("StatusCheckRequest"), refEq(expectedDetails))(any(), any(), any())
       }
     }
-  }
-
-  "auditStatusCheckEvent" should {
-    "call auditConnector.send" in {
-      doNothing().when(mockAuditConnector).sendExplicitAudit(any[String](), any[JsObject]())(any(), any())
-
-      val search = MrzSearch(
-        "documentType",
-        "documentNumber",
-        LocalDate.now,
-        "nationality",
-        StatusCheckRange(Some(LocalDate.now(ZoneId.of("UTC")).minusMonths(1)), Some(LocalDate.now(ZoneId.of("UTC"))))
-      )
-
-      val result = StatusCheckNotFound("Nothing to see here")
-
-      val expectedDetails = StatusCheckFailureAuditDetail(404, search, "Nothing to see here")
-
-      sut.auditStatusCheckEvent(search, Left(result))
-
-      verify(mockAuditConnector)
-        .sendExplicitAudit(refEq("StatusCheckRequest"), refEq(expectedDetails))(any(), any(), any())
-
-    }
-
   }
 
 }

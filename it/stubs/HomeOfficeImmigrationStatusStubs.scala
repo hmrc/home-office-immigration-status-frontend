@@ -109,7 +109,7 @@ trait HomeOfficeImmigrationStatusStubs extends JourneyTestData {
   }
 
   def givenAnExternalServiceErrorCheckByNino(): StubMapping =
-    givenStatusPublicFundsCheckStub("nino", 500, validByNinoRequestBody(), "")
+    givenStatusPublicFundsCheckStub("nino", 500, validByNinoRequestBody(), "", "some-correlation-id")
 
   def givenStatusCheckErrorWhenDOBInvalid(): StubMapping = {
 
@@ -131,7 +131,7 @@ trait HomeOfficeImmigrationStatusStubs extends JourneyTestData {
 
   }
 
-  def givenStatusPublicFundsCheckStub(endpoint: String, httpResponseCode: Int, requestBody: String, responseBody: String): StubMapping =
+  def givenStatusPublicFundsCheckStub(endpoint: String, httpResponseCode: Int, requestBody: String, responseBody: String, correlationId: String = "correlationId"): StubMapping =
     stubFor(
       post(urlEqualTo(s"/v1/status/public-funds/$endpoint"))
         .withHeader("X-Correlation-Id", new AnythingPattern())
@@ -141,6 +141,7 @@ trait HomeOfficeImmigrationStatusStubs extends JourneyTestData {
           aResponse()
             .withStatus(httpResponseCode)
             .withHeader("Content-Type", "application/json")
+            .withHeader("X-Correlation-Id", correlationId)
             .withBody(responseBody)
         ))
 }
