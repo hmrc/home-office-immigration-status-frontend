@@ -32,10 +32,13 @@ class StatusCheckResponseHttpParserSpec extends AnyWordSpecLike with Matchers {
 
   "StatusCheckResponseReads.read" should {
 
+    implicit val resultWrites = Json.writes[StatusCheckResult]
+    val responseWrites = Json.writes[StatusCheckSuccessfulResponse]
+
     "return a success where a 200 is returned with a valid response" in {
       val statusCheckResult = StatusCheckResult("Damon Albarn", LocalDate.now, "GBR", Nil)
       val statusCheckResponse = StatusCheckSuccessfulResponse(Some("CorrelationId"), statusCheckResult)
-      val responseBody = Json.toJson(statusCheckResponse).toString
+      val responseBody = Json.toJson(statusCheckResponse)(responseWrites).toString
       val response = HttpResponse(OK, responseBody, Map("X-Correlation-Id" -> Seq("correlationId")))
 
       val expectedResponse = StatusCheckResponseWithStatus(OK, statusCheckResponse)

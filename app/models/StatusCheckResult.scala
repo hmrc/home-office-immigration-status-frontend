@@ -39,12 +39,16 @@ case class StatusCheckResult(
 object StatusCheckResult {
   implicit val reads: Reads[StatusCheckResult] = Json.reads[StatusCheckResult]
   implicit val writesSeparatingStatuses: Writes[StatusCheckResult] = Writes { models =>
-    JsObject(Json.obj(
-      "fullName"  -> models.fullName,
-      "dateOfBirth"      -> models.dateOfBirth,
-      "nationality"      -> models.nationality,
-      "mostRecentStatus" -> models.mostRecentStatus,
-      "previousStatuses" -> models.previousStatuses
-    ).fields.filterNot(_._2 == JsNull))
+    JsObject(
+      Json
+        .obj(
+          "fullName"         -> models.fullName,
+          "dateOfBirth"      -> models.dateOfBirth,
+          "nationality"      -> models.nationality,
+          "mostRecentStatus" -> models.mostRecentStatus,
+          "previousStatuses" -> models.previousStatuses
+        )
+        .fields
+        .filterNot(_._2 == JsNull))
   }
 }
