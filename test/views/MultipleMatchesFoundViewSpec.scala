@@ -21,11 +21,10 @@ import java.time.LocalDate
 
 import config.AppConfig
 import org.jsoup.nodes.{Document, Element}
-import org.mockito.Mockito.{mock, when}
+import org.mockito.Mockito.{mock, verify, when}
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import services.SessionCacheService
 import utils.NinoGenerator
 import views.html.MultipleMatchesFoundPage
 import views.html.components.{SearchAgainButton, ShowChangeQuery}
@@ -48,7 +47,7 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
 
   val nino = NinoGenerator.generateNino
   val query = NinoSearchFormModel(nino, "Pan", "", LocalDate.now())
-  lazy val doc: Document = asDocument(sut(query, true)(request, messages))
+  lazy val doc: Document = asDocument(sut(query)(request, messages))
 
   "MultipleMatchesFoundPage" must {
 
@@ -64,7 +63,7 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
 
     "have mrzlink" in {
       when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(true)
-      lazy val mrzLinkDoc: Document = asDocument(sut(query, true)(request, messages))
+      lazy val mrzLinkDoc: Document = asDocument(sut(query)(request, messages))
 
       val e: Element = mrzLinkDoc.getElementById("mrzlink")
       e.text() mustBe messages("status-check-failure-conflict") + "Search by " + messages(
@@ -72,8 +71,8 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
     }
 
     "have ninolink" in {
-      when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(true)
-      lazy val ninoLinkDoc: Document = asDocument(sut(query, false)(request, messages))
+      when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(false)
+      lazy val ninoLinkDoc: Document = asDocument(sut(query)(request, messages))
 
       val e: Element = ninoLinkDoc.getElementById("ninolink")
       e.text() mustBe messages("status-check-failure-conflict") + "Search by " + messages(
@@ -81,16 +80,18 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
     }
 
     "mrzlink and ninolink do not show when feature disabled" in {
-      //when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(false)
+      when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(false)
       assertNotRenderedById(doc, "nino-link")
       assertNotRenderedById(doc, "mrzlink")
     }
 
     "have the show and change query section" in {
+      //verify(mockShowChangeQuery).apply(query)(messages)
       assertRenderedById(doc, "show-query")
     }
 
     "have the search again button" in {
+      //verify(mockSearchAgainButton).apply()(messages)
       assertRenderedById(doc, "search-button")
     }
   }
