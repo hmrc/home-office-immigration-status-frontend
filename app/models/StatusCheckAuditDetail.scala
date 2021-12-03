@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package services
+package models
 
-sealed trait HomeOfficeImmigrationStatusFrontendEvent
+import play.api.libs.json.{Format, Json, Writes}
 
-object HomeOfficeImmigrationStatusFrontendEvent {
-  case object SuccessfulRequest extends HomeOfficeImmigrationStatusFrontendEvent
-  case object MatchNotFound extends HomeOfficeImmigrationStatusFrontendEvent
-  case object DownstreamError extends HomeOfficeImmigrationStatusFrontendEvent
+case class StatusCheckAuditDetail(statusCode: Int, search: Search, response: StatusCheckResponse)
+
+object StatusCheckAuditDetail {
+  implicit val writes: Writes[StatusCheckAuditDetail] = {
+    implicit val responseWrites = StatusCheckResponse.auditWrites
+    Json.writes[StatusCheckAuditDetail]
+  }
 }

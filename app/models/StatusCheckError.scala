@@ -18,24 +18,14 @@ package models
 
 import play.api.libs.json.{Format, Json}
 
-case class ValidationError(
-  // Code of the validation failure
-  code: String,
-  // Name of the field
-  name: String
-)
-
-object ValidationError {
-  implicit val formats: Format[ValidationError] = Json.format[ValidationError]
-}
-
-case class StatusCheckError(
-  // Top level error code
-  errCode: String,
-  // Field level validation errors
-  fields: Option[List[ValidationError]] = None
-)
+final case class StatusCheckError(errCode: String, fields: Option[Seq[FieldError]] = None)
 
 object StatusCheckError {
   implicit val formats: Format[StatusCheckError] = Json.format[StatusCheckError]
+}
+
+final case class FieldError(code: String, name: String)
+
+object FieldError {
+  implicit val formats: Format[FieldError] = Json.format[FieldError]
 }

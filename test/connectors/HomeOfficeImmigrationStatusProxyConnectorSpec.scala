@@ -84,16 +84,18 @@ class HomeOfficeImmigrationStatusProxyConnectorSpec
     StatusCheckRange(Some(LocalDate.now(ZoneId.of("UTC")).minusMonths(1)), Some(LocalDate.now(ZoneId.of("UTC"))))
   )
 
+  val correlationId = Some("some-correlation-id")
+
   "statusPublicFundsByNino" should {
     "send a HTTP request with the correct body" in {
       val url = new URL("http://localhost:1234/v1/status/public-funds/nino").toExternalForm
       val response =
-        Right(StatusCheckResponse("some-correlation-id", StatusCheckResult("Full Name", LocalDate.now, "USA", Nil)))
+        Right(StatusCheckSuccessfulResponse(correlationId, StatusCheckResult("Full Name", LocalDate.now, "USA", Nil)))
 
       when(
         mockHttpClient.POST(any(), any(), any[Seq[(String, String)]])(
           any[Writes[NinoSearch]],
-          any[HttpReads[Either[HomeOfficeError, StatusCheckResponse]]],
+          any[HttpReads[Either[StatusCheckError, StatusCheckSuccessfulResponse]]],
           any[HeaderCarrier],
           any[ExecutionContext]))
         .thenReturn(Future.successful(response))
@@ -109,12 +111,12 @@ class HomeOfficeImmigrationStatusProxyConnectorSpec
     "send a HTTP request with the correct body" in {
       val url = new URL("http://localhost:1234/v1/status/public-funds/mrz").toExternalForm
       val response =
-        Right(StatusCheckResponse("some-correlation-id", StatusCheckResult("Full Name", LocalDate.now, "USA", Nil)))
+        Right(StatusCheckSuccessfulResponse(correlationId, StatusCheckResult("Full Name", LocalDate.now, "USA", Nil)))
 
       when(
         mockHttpClient.POST(any(), any(), any[Seq[(String, String)]])(
           any[Writes[MrzSearch]],
-          any[HttpReads[Either[HomeOfficeError, StatusCheckResponse]]],
+          any[HttpReads[Either[StatusCheckError, StatusCheckSuccessfulResponse]]],
           any[HeaderCarrier],
           any[ExecutionContext]))
         .thenReturn(Future.successful(response))

@@ -18,12 +18,13 @@ package connectors
 
 import java.net.URL
 import java.util.UUID
+
 import javax.inject.{Inject, Singleton}
 import com.codahale.metrics.MetricRegistry
 import com.kenshoo.play.metrics.Metrics
 import play.api.libs.json.{Json, Writes}
 import uk.gov.hmrc.agent.kenshoo.monitoring.HttpAPIMonitor
-import models.{HomeOfficeError, MrzSearch, NinoSearch, StatusCheckResponse}
+import models.{MrzSearch, NinoSearch, StatusCheckError, StatusCheckResponse, StatusCheckResponseWithStatus, StatusCheckSuccessfulResponse}
 import config.AppConfig
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -42,24 +43,20 @@ class HomeOfficeImmigrationStatusProxyConnector @Inject()(appConfig: AppConfig, 
 
   override val kenshooRegistry: MetricRegistry = metrics.defaultRegistry
 
-  def statusPublicFundsByNino(request: NinoSearch)(
-    implicit hc: HeaderCarrier,
-    ec: ExecutionContext): Future[Either[HomeOfficeError, StatusCheckResponse]] =
+  def statusPublicFundsByNino(
+    request: NinoSearch)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[StatusCheckResponseWithStatus] =
     monitor("ConsumedAPI-home-office-immigration-status-proxy-status-by-nino-POST") {
       http
-        .POST[NinoSearch, Either[HomeOfficeError, StatusCheckResponse]](
+        .POST[NinoSearch, StatusCheckResponseWithStatus](
           new URL(baseUrl + publicFundsByNinoPath).toExternalForm,
           request)
     }
 
-  def statusPublicFundsByMrz(request: MrzSearch)(
-    implicit hc: HeaderCarrier,
-    ec: ExecutionContext): Future[Either[HomeOfficeError, StatusCheckResponse]] =
+  def statusPublicFundsByMrz(
+    request: MrzSearch)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[StatusCheckResponseWithStatus] =
     monitor("ConsumedAPI-home-office-immigration-status-proxy-status-by-mrz-POST") {
       http
-        .POST[MrzSearch, Either[HomeOfficeError, StatusCheckResponse]](
-          new URL(baseUrl + publicFundsByMrzPath).toExternalForm,
-          request)
+        .POST[MrzSearch, StatusCheckResponseWithStatus](new URL(baseUrl + publicFundsByMrzPath).toExternalForm, request)
     }
 
 }

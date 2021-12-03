@@ -17,59 +17,34 @@
 package services
 
 import com.google.inject.Singleton
-
 import com.google.inject.{ImplementedBy, Inject}
+import models.{Search, StatusCheckAuditDetail, StatusCheckResponseWithStatus}
 import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.audit.AuditExtensions._
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
-import uk.gov.hmrc.play.audit.model.DataEvent
 
-import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class AuditServiceImpl @Inject()(val auditConnector: AuditConnector) extends AuditService {
 
-  def auditEvent(
-    event: HomeOfficeImmigrationStatusFrontendEvent,
-    transactionName: String,
-    details: Seq[(String, Any)] = Seq.empty)(
+  def auditStatusCheckEvent(search: Search, result: StatusCheckResponseWithStatus)(
     implicit hc: HeaderCarrier,
     request: Request[Any],
-    ec: ExecutionContext): Future[Unit] =
-    send(createEvent(event, transactionName, details: _*))
+    ec: ExecutionContext): Unit = {
 
-  private def createEvent(
-    event: HomeOfficeImmigrationStatusFrontendEvent,
-    transactionName: String,
-    details: (String, Any)*)(implicit hc: HeaderCarrier, request: Request[Any]): DataEvent = {
+    val AUDIT_TYPE = "StatusCheckRequest"
 
-    val detail = hc.toAuditDetails(details.map(pair => pair._1 -> pair._2.toString): _*)
-    val tags = hc.toAuditTags(transactionName, request.path)
-    DataEvent(
-      auditSource = "home-office-immigration-status-frontend",
-      auditType = event.toString,
-      tags = tags,
-      detail = detail)
+    val details = StatusCheckAuditDetail(result.statusCode, search, result.statusCheckResponse)
+    auditConnector.sendExplicitAudit(AUDIT_TYPE, details)
   }
-
-  private def send(events: DataEvent*)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] =
-    Future {
-      events.foreach { event =>
-        Try(auditConnector.sendEvent(event))
-      }
-    }
 
 }
 
 @ImplementedBy(classOf[AuditServiceImpl])
 trait AuditService {
-  def auditEvent(
-    event: HomeOfficeImmigrationStatusFrontendEvent,
-    transactionName: String,
-    details: Seq[(String, Any)] = Seq.empty)(
+  def auditStatusCheckEvent(search: Search, result: StatusCheckResponseWithStatus)(
     implicit hc: HeaderCarrier,
     request: Request[Any],
-    ec: ExecutionContext): Future[Unit]
+    ec: ExecutionContext): Unit
 }

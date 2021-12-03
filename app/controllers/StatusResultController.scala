@@ -21,13 +21,14 @@ import play.api.mvc._
 import config.AppConfig
 import services.HomeOfficeImmigrationStatusProxyService
 import controllers.actions.AccessAction
-import models._
-import models.HomeOfficeError._
+import models.{StatusCheckResponse, _}
+import models.StatusCheckError._
 import views._
 import views.html._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import services.SessionCacheService
 import javax.inject.{Inject, Singleton}
+
 import scala.concurrent.{ExecutionContext, Future}
 import play.api.Logging
 import errors.ErrorHandler
@@ -51,23 +52,28 @@ class StatusResultController @Inject()(
     access.async { implicit request =>
       sessionCacheService.get.flatMap {
         case Some(query) =>
-          homeOfficeService
-            .search(query)
-            .map(result => result.fold(handleError(query), displaySuccessfulResult(query)))
+          homeOfficeService.search(query).map(handleResult(query, _))
         case None =>
           Future.successful(Redirect(routes.SearchByNinoController.onPageLoad))
       }
     }
 
-  private def handleError(query: SearchFormModel)(error: HomeOfficeError)(
+  private def handleResult(query: SearchFormModel, response: StatusCheckResponseWithStatus)(
     implicit request: Request[AnyContent]): Result =
-    error match {
-      case StatusCheckConflict(_) => Ok(multipleMatchesFoundPage(query))
-      case StatusCheckNotFound(_) => Ok(statusCheckFailurePage(query))
-      case _                      => InternalServerError(externalErrorPage())
+    response match {
+      case StatusCheckResponseWithStatus(_, success: StatusCheckSuccessfulResponse) =>
+        displaySuccessfulResult(query, success)
+      case StatusCheckResponseWithStatus(status, _: StatusCheckErrorResponse) => handleError(query, status)
     }
 
-  private def displaySuccessfulResult(query: SearchFormModel)(response: StatusCheckResponse)(
+  private def handleError(query: SearchFormModel, status: Int)(implicit request: Request[AnyContent]): Result =
+    status match {
+      case CONFLICT  => Ok(multipleMatchesFoundPage(query))
+      case NOT_FOUND => Ok(statusCheckFailurePage(query))
+      case _         => InternalServerError(externalErrorPage())
+    }
+
+  private def displaySuccessfulResult(query: SearchFormModel, response: StatusCheckSuccessfulResponse)(
     implicit request: Request[AnyContent]): Result =
     response.result.statuses match {
       case Nil =>

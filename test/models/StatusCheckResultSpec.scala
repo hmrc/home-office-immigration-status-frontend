@@ -17,8 +17,9 @@
 package models
 
 import org.scalatestplus.play.PlaySpec
-
 import java.time.LocalDate
+
+import play.api.libs.json.{JsNull, JsUndefined, Json, Writes}
 
 class StatusCheckResultSpec extends PlaySpec {
 
@@ -79,5 +80,48 @@ class StatusCheckResultSpec extends PlaySpec {
         sut.previousStatuses mustBe expected
       }
     }
+  }
+
+  "auditWrites" must {
+
+    "write json with mostRecentStatus and previous status" in {
+      val date = LocalDate.now
+      val mostRecentStatus = makeImmigrationStatus()
+      val previousStatuses = Seq(makeImmigrationStatus(100), makeImmigrationStatus(1000))
+      val result =
+        StatusCheckResult("some name", date, "some nationality", (previousStatuses :+ mostRecentStatus).toList)
+
+      val resultJson = Json.toJson(result)(StatusCheckResult.auditWrites)
+
+      (resultJson \ "mostRecentStatus").get mustEqual Json.toJson(mostRecentStatus)
+      (resultJson \ "previousStatuses").get mustEqual Json.toJson(previousStatuses)
+      resultJson \ "statuses" mustBe a[JsUndefined]
+    }
+
+    "write json with mostRecentStatus" in {
+      val date = LocalDate.now
+      val mostRecentStatus = makeImmigrationStatus()
+      val result =
+        StatusCheckResult("some name", date, "some nationality", List(mostRecentStatus))
+
+      val resultJson = Json.toJson(result)(StatusCheckResult.auditWrites)
+
+      (resultJson \ "mostRecentStatus").get mustEqual Json.toJson(mostRecentStatus)
+      (resultJson \ "previousStatuses").get mustEqual Json.toJson(List.empty[ImmigrationStatus])
+      resultJson \ "statuses" mustBe a[JsUndefined]
+    }
+
+    "write json without mostRecentStatus and previous status" in {
+      val date = LocalDate.now
+      val result =
+        StatusCheckResult("some name", date, "some nationality", Nil)
+
+      val resultJson = Json.toJson(result)(StatusCheckResult.auditWrites)
+
+      resultJson \ "mostRecentStatus" mustBe a[JsUndefined]
+      (resultJson \ "previousStatuses").get mustEqual Json.toJson(List.empty[ImmigrationStatus])
+      resultJson \ "statuses" mustBe a[JsUndefined]
+    }
+
   }
 }

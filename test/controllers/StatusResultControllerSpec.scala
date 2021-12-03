@@ -19,12 +19,12 @@ package controllers
 import services.HomeOfficeImmigrationStatusProxyService
 import controllers.actions.AccessAction
 import models._
-
 import java.time.LocalDate
+
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
 import play.api.Application
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import play.api.http.Status.{CONFLICT, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
@@ -32,7 +32,7 @@ import services.SessionCacheService
 import uk.gov.hmrc.domain.Nino
 import views.html.{ExternalErrorPage, MultipleMatchesFoundPage, StatusCheckFailurePage, StatusFoundPage, StatusNotAvailablePage}
 import views.{StatusFoundPageContext, StatusNotAvailablePageContext}
-import models.HomeOfficeError._
+import models.StatusCheckError._
 import utils.NinoGenerator.generateNino
 
 import scala.concurrent.Future
@@ -57,6 +57,8 @@ class StatusResultControllerSpec extends ControllerSpec {
 
   val mockProxyService = mock(classOf[HomeOfficeImmigrationStatusProxyService])
 
+  val correlationId = Some("CorrelationId")
+
   "onPageLoad" must {
     "redirect to the form" when {
       "there is no query to search" in {
@@ -75,7 +77,7 @@ class StatusResultControllerSpec extends ControllerSpec {
     "display the return from HO" when {
       val query = NinoSearchFormModel(generateNino, "pan", "peter", LocalDate.now())
 
-      def mockProxyServiceWith(hoResponse: Either[HomeOfficeError, StatusCheckResponse]) =
+      def mockProxyServiceWith(hoResponse: StatusCheckResponseWithStatus) =
         when(
           mockProxyService
             .search(refEq(query))(any(), any(), any(), any()))
@@ -90,7 +92,8 @@ class StatusResultControllerSpec extends ControllerSpec {
           java.time.LocalDate.now(),
           "",
           List(ImmigrationStatus(java.time.LocalDate.now(), None, "", "", false)))
-        mockProxyServiceWith(Right(StatusCheckResponse("id", result = hoResult)))
+        mockProxyServiceWith(
+          StatusCheckResponseWithStatus(OK, StatusCheckSuccessfulResponse(correlationId, result = hoResult)))
 
         val result = sut.onPageLoad()(request)
 
@@ -105,7 +108,8 @@ class StatusResultControllerSpec extends ControllerSpec {
       "is found with no statuses" in {
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(query)))
         val hoResult = StatusCheckResult("", java.time.LocalDate.now(), "", Nil)
-        mockProxyServiceWith(Right(StatusCheckResponse("id", result = hoResult)))
+        mockProxyServiceWith(
+          StatusCheckResponseWithStatus(OK, StatusCheckSuccessfulResponse(correlationId, result = hoResult)))
 
         val result = sut.onPageLoad()(request)
 
@@ -119,7 +123,10 @@ class StatusResultControllerSpec extends ControllerSpec {
 
       "has conflict error" in {
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(query)))
-        mockProxyServiceWith(Left(StatusCheckConflict("Some response")))
+        mockProxyServiceWith(
+          StatusCheckResponseWithStatus(
+            CONFLICT,
+            StatusCheckErrorResponse(correlationId, StatusCheckError("Some response"))))
 
         val result = sut.onPageLoad()(request)
 
@@ -133,7 +140,10 @@ class StatusResultControllerSpec extends ControllerSpec {
 
       "has not found error" in {
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(query)))
-        mockProxyServiceWith(Left(StatusCheckNotFound("Some response")))
+        mockProxyServiceWith(
+          StatusCheckResponseWithStatus(
+            NOT_FOUND,
+            StatusCheckErrorResponse(correlationId, StatusCheckError("Some response"))))
 
         val result = sut.onPageLoad()(request)
 
@@ -148,7 +158,10 @@ class StatusResultControllerSpec extends ControllerSpec {
       "has some other error" in {
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(query)))
         val TEAPOT = 418
-        mockProxyServiceWith(Left(OtherErrorResponse(TEAPOT, "Some response")))
+        mockProxyServiceWith(
+          StatusCheckResponseWithStatus(
+            TEAPOT,
+            StatusCheckErrorResponse(correlationId, StatusCheckError("Some response"))))
 
         val result = sut.onPageLoad()(request)
 

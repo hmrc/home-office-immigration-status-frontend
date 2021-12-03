@@ -16,14 +16,12 @@
 
 package services
 
-import java.net.URL
 import java.util.UUID
+
 import javax.inject.{Inject, Singleton}
-import models.{HomeOfficeError, MrzSearch, MrzSearchFormModel, NinoSearch, NinoSearchFormModel, SearchFormModel, StatusCheckResponse}
+import models.{MrzSearch, NinoSearch, Search, SearchFormModel, StatusCheckError, StatusCheckResponse, StatusCheckResponseWithStatus, StatusCheckSuccessfulResponse}
 import play.api.mvc.Request
-import services.HomeOfficeImmigrationStatusFrontendEvent._
 import uk.gov.hmrc.http.HeaderCarrier
-import models.HomeOfficeError._
 import connectors.HomeOfficeImmigrationStatusProxyConnector
 import config.AppConfig
 
@@ -34,18 +32,19 @@ class HomeOfficeImmigrationStatusProxyService @Inject()(
   connector: HomeOfficeImmigrationStatusProxyConnector,
   auditService: AuditService) {
 
-  private val auditTransaction = "StatusCheckRequest"
   private val HEADER_X_CORRELATION_ID = "X-Correlation-Id"
 
   def search(query: SearchFormModel)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext,
     request: Request[Any],
-    appConfig: AppConfig): Future[Either[HomeOfficeError, StatusCheckResponse]] = {
+    appConfig: AppConfig): Future[StatusCheckResponseWithStatus] = {
 
-    val headerCarrier = hc.withExtraHeaders(HEADER_X_CORRELATION_ID -> UUID.randomUUID().toString)
+    val correlationId: String = UUID.randomUUID().toString
+    val headerCarrier = hc.withExtraHeaders(HEADER_X_CORRELATION_ID -> correlationId)
     val searchFromRequest = query.toSearch(appConfig.defaultQueryTimeRangeInMonths)
-    sendRequestAuditingResults {
+
+    sendRequestAuditingResults(searchFromRequest) {
       searchFromRequest match {
         case search: NinoSearch => connector.statusPublicFundsByNino(search)(headerCarrier, ec)
         case search: MrzSearch  => connector.statusPublicFundsByMrz(search)(headerCarrier, ec)
@@ -53,51 +52,13 @@ class HomeOfficeImmigrationStatusProxyService @Inject()(
     }
   }
 
-  private def sendRequestAuditingResults[A](future: Future[Either[HomeOfficeError, StatusCheckResponse]])(
+  private def sendRequestAuditingResults[A](search: Search)(future: Future[StatusCheckResponseWithStatus])(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext,
-    request: Request[Any]): Future[Either[HomeOfficeError, StatusCheckResponse]] =
+    request: Request[Any]): Future[StatusCheckResponseWithStatus] =
     future.map { result =>
-      auditResult(result)
+      auditService.auditStatusCheckEvent(search, result)
       result
     }
-
-  def auditResult(result: Either[HomeOfficeError, StatusCheckResponse])(
-    implicit hc: HeaderCarrier,
-    ec: ExecutionContext,
-    request: Request[Any]): Future[Unit] =
-    result match {
-      case Right(response) =>
-        val details = detailsFromStatusCheckResponse(response)
-        auditService.auditEvent(SuccessfulRequest, auditTransaction, details)
-      case Left(error: StatusCheckNotFound) =>
-        auditService.auditEvent(MatchNotFound, auditTransaction, detailsFromError(error))
-      case Left(error) =>
-        auditService.auditEvent(DownstreamError, auditTransaction, detailsFromError(error))
-    }
-
-  private def detailsFromStatusCheckResponse(response: StatusCheckResponse): Seq[(String, Any)] = {
-
-    val statusDetails = response.result.statusesSortedByDate.zipWithIndex.map {
-      case (status, idx) =>
-        val count = idx + 1
-        Seq(
-          s"productType$count"             -> status.productType,
-          s"immigrationStatus$count"       -> status.immigrationStatus,
-          s"noRecourseToPublicFunds$count" -> status.noRecourseToPublicFunds,
-          s"statusStartDate$count"         -> status.statusStartDate,
-          s"statusEndDate$count"           -> status.statusEndDate
-        )
-    }
-
-    val baseDetails = Seq(
-      "nationality" -> response.result.nationality
-    )
-
-    (baseDetails +: statusDetails).flatten
-  }
-
-  private def detailsFromError(error: HomeOfficeError): Seq[(String, Any)] =
-    Seq("statusCode" -> error.statusCode, "error" -> error.responseBody)
 
 }

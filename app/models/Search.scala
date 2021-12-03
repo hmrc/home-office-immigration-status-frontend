@@ -16,13 +16,17 @@
 
 package models
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Format, JsObject, JsValue, Json, Reads, Writes}
 import uk.gov.hmrc.domain.Nino
-
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 sealed trait Search
+
+object Search {
+  implicit val reads: Reads[Search] = Json.reads[Search]
+  implicit val writes: Writes[Search] = (o: Search) => Json.toJson(o)(Json.writes[Search]).as[JsObject] - "_type"
+}
 
 final case class NinoSearch(
   nino: Nino,

@@ -21,41 +21,41 @@ import play.api.http.Status._
 import models._
 import play.api.Logging
 import scala.util.{Failure, Success, Try}
-import models.HomeOfficeError._
+import models.StatusCheckError._
 
 object StatusCheckResponseHttpParser extends Logging {
 
-  implicit object StatusCheckResponseReads extends HttpReads[Either[HomeOfficeError, StatusCheckResponse]] {
+  implicit object StatusCheckResponseReads extends HttpReads[StatusCheckResponseWithStatus] {
 
-    override def read(
-      method: String,
-      url: String,
-      response: HttpResponse): Either[HomeOfficeError, StatusCheckResponse] =
+    private val UNKNOWN_ERROR = "UNKNOWN_ERROR"
+    private val HEADER_X_CORRELATION_ID = "X-Correlation-Id"
+
+    override def read(method: String, url: String, response: HttpResponse): StatusCheckResponseWithStatus = {
+      val correlationId: Option[String] = response.header(HEADER_X_CORRELATION_ID)
       response.status match {
         case OK =>
-          Try(response.json.as[StatusCheckResponse]) match {
+          Try(response.json.as[StatusCheckSuccessfulResponse]) match {
             case Success(res) =>
               logger.info(s"Successful request with response ${response.body}")
-              Right(res)
+              StatusCheckResponseWithStatus(OK, res)
             case Failure(e) =>
               logger.error(s"Invalid json returned in ${response.body}", e)
-              Left(StatusCheckInvalidResponse(e.getMessage))
+              StatusCheckResponseWithStatus(
+                INTERNAL_SERVER_ERROR,
+                StatusCheckErrorResponse(correlationId, StatusCheckError(UNKNOWN_ERROR)))
           }
-        case NOT_FOUND =>
-          logger.info(s"Match not found with response ${response.body}")
-          Left(StatusCheckNotFound(response.body))
-        case BAD_REQUEST =>
-          logger.error(s"Bad request returned with response ${response.body}")
-          Left(StatusCheckBadRequest(response.body))
-        case CONFLICT =>
-          logger.warn(s"Multiple matches found for customer with response ${response.body}")
-          Left(StatusCheckConflict(response.body))
-        case INTERNAL_SERVER_ERROR =>
-          logger.error(s"Internal server error returned with response ${response.body}")
-          Left(StatusCheckInternalServerError(response.body))
         case status =>
           logger.error(s"A $status response was returned with body ${response.body}")
-          Left(OtherErrorResponse(status, response.body))
+          Try(response.json.as[StatusCheckErrorResponse]) match {
+            case Success(res) =>
+              StatusCheckResponseWithStatus(status, res)
+            case Failure(e) =>
+              StatusCheckResponseWithStatus(
+                status,
+                StatusCheckErrorResponse(correlationId, StatusCheckError(UNKNOWN_ERROR)))
+          }
       }
+    }
+
   }
 }

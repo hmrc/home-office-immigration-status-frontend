@@ -65,7 +65,7 @@ class CountrySelectSpec extends ViewSpec {
   "nationality" must {
     "have the data-all-countries attribute" in {
       val countrySelect: Option[Elements] = Option(doc.select("nationality[data-all-countries]"))
-      countrySelect mustBe a[Some[_]]
+      countrySelect mustBe defined
     }
 
     "have an item for each country" in {
