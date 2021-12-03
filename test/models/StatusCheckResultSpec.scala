@@ -82,7 +82,7 @@ class StatusCheckResultSpec extends PlaySpec {
     }
   }
 
-  "writesSeparatingStatuses" must {
+  "auditWrites" must {
 
     "write json with mostRecentStatus and previous status" in {
       val date = LocalDate.now
@@ -91,7 +91,7 @@ class StatusCheckResultSpec extends PlaySpec {
       val result =
         StatusCheckResult("some name", date, "some nationality", (previousStatuses :+ mostRecentStatus).toList)
 
-      val resultJson = Json.toJson(result)
+      val resultJson = Json.toJson(result)(StatusCheckResult.auditWrites)
 
       (resultJson \ "mostRecentStatus").get mustEqual Json.toJson(mostRecentStatus)
       (resultJson \ "previousStatuses").get mustEqual Json.toJson(previousStatuses)
@@ -104,7 +104,7 @@ class StatusCheckResultSpec extends PlaySpec {
       val result =
         StatusCheckResult("some name", date, "some nationality", List(mostRecentStatus))
 
-      val resultJson = Json.toJson(result)
+      val resultJson = Json.toJson(result)(StatusCheckResult.auditWrites)
 
       (resultJson \ "mostRecentStatus").get mustEqual Json.toJson(mostRecentStatus)
       (resultJson \ "previousStatuses").get mustEqual Json.toJson(List.empty[ImmigrationStatus])
@@ -116,7 +116,7 @@ class StatusCheckResultSpec extends PlaySpec {
       val result =
         StatusCheckResult("some name", date, "some nationality", Nil)
 
-      val resultJson = Json.toJson(result)
+      val resultJson = Json.toJson(result)(StatusCheckResult.auditWrites)
 
       resultJson \ "mostRecentStatus" mustBe a[JsUndefined]
       (resultJson \ "previousStatuses").get mustEqual Json.toJson(List.empty[ImmigrationStatus])

@@ -16,20 +16,19 @@
 
 package models
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{Json, OFormat, Reads, Writes}
 
 final case class StatusCheckResponseWithStatus(statusCode: Int, statusCheckResponse: StatusCheckResponse)
-
-object StatusCheckResponseWithStatus {
-  implicit val formats: OFormat[StatusCheckResponseWithStatus] = Json.format[StatusCheckResponseWithStatus]
-}
 
 sealed trait StatusCheckResponse {
   def correlationId: Option[String]
 }
 
 object StatusCheckResponse {
-  implicit val formats: OFormat[StatusCheckResponse] = Json.format[StatusCheckResponse]
+  val auditWrites: Writes[StatusCheckResponse] = {
+    implicit val successWrites = StatusCheckSuccessfulResponse.auditWrites
+    Json.writes[StatusCheckResponse]
+  }
 }
 
 final case class StatusCheckSuccessfulResponse(
@@ -38,7 +37,11 @@ final case class StatusCheckSuccessfulResponse(
 ) extends StatusCheckResponse
 
 object StatusCheckSuccessfulResponse {
-  implicit val formats: OFormat[StatusCheckSuccessfulResponse] = Json.format[StatusCheckSuccessfulResponse]
+  implicit val reads: Reads[StatusCheckSuccessfulResponse] = Json.reads[StatusCheckSuccessfulResponse]
+  val auditWrites: Writes[StatusCheckSuccessfulResponse] = {
+    implicit val resultWrites = StatusCheckResult.auditWrites
+    Json.writes[StatusCheckSuccessfulResponse]
+  }
 }
 
 final case class StatusCheckErrorResponse(

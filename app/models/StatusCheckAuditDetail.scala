@@ -16,10 +16,13 @@
 
 package models
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Format, Json, Writes}
 
 case class StatusCheckAuditDetail(statusCode: Int, search: Search, response: StatusCheckResponse)
 
 object StatusCheckAuditDetail {
-  implicit val formats: Format[StatusCheckAuditDetail] = Json.format[StatusCheckAuditDetail]
+  implicit val writes: Writes[StatusCheckAuditDetail] = {
+    implicit val responseWrites = StatusCheckResponse.auditWrites
+    Json.writes[StatusCheckAuditDetail]
+  }
 }

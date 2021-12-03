@@ -25,7 +25,6 @@ import org.mockito.Mockito._
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import services.HomeOfficeImmigrationStatusFrontendEvent._
 import uk.gov.hmrc.domain.Nino
 import utils.NinoGenerator
 

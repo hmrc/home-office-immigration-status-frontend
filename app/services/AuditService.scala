@@ -20,7 +20,6 @@ import com.google.inject.Singleton
 import com.google.inject.{ImplementedBy, Inject}
 import models.{Search, StatusCheckAuditDetail, StatusCheckResponseWithStatus}
 import play.api.mvc.Request
-import services.HomeOfficeImmigrationStatusFrontendEvent.StatusCheckRequest
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 
@@ -34,8 +33,10 @@ class AuditServiceImpl @Inject()(val auditConnector: AuditConnector) extends Aud
     request: Request[Any],
     ec: ExecutionContext): Unit = {
 
+    val AUDIT_TYPE = "StatusCheckRequest"
+
     val details = StatusCheckAuditDetail(result.statusCode, search, result.statusCheckResponse)
-    auditConnector.sendExplicitAudit(StatusCheckRequest.toString, details)
+    auditConnector.sendExplicitAudit(AUDIT_TYPE, details)
   }
 
 }

@@ -38,7 +38,7 @@ case class StatusCheckResult(
 
 object StatusCheckResult {
   implicit val reads: Reads[StatusCheckResult] = Json.reads[StatusCheckResult]
-  implicit val writesSeparatingStatuses: Writes[StatusCheckResult] = Writes { models =>
+  val auditWrites: Writes[StatusCheckResult] = Writes { models =>
     JsObject(
       Json
         .obj(

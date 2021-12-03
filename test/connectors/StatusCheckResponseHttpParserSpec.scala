@@ -16,7 +16,6 @@
 
 package connectors
 
-import org.scalatestplus.play.PlaySpec
 import uk.gov.hmrc.http.HttpResponse
 import models._
 import java.time.LocalDate
@@ -24,9 +23,7 @@ import play.api.libs.json.Json
 import connectors.StatusCheckResponseHttpParser._
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
-import cats.scalatest.EitherValues._
 import play.api.http.Status._
-import models.StatusCheckError._
 
 class StatusCheckResponseHttpParserSpec extends AnyWordSpecLike with Matchers {
 
