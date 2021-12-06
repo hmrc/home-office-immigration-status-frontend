@@ -20,10 +20,10 @@
 
 @(IsNinoSearch: Boolean)(implicit messages: Messages)
 
-@if(IsNinoSearch) { <p class="govuk-body" id="mrzlink"> @messages("status-check-failure-conflict") @alternateSearch(
-  "alternate-search.mrz-link", controllers.routes.SearchByMrzController.onPageLoad.url, "status-check-failure-conflict.passport")</p> }
+if(IsNinoSearch) { <p class="govuk-body" id="mrzlink"> @messages("status-check-failure-conflict") @alternateSearch(
+ "alternate-search.mrz-link", controllers.routes.SearchByMrzController.onPageLoad.url, "status-check-failure-conflict.passport")</p> }
 
-@if(!IsNinoSearch) { <p class="govuk-body" id="ninolink"> @messages("status-check-failure-conflict")  @alternateSearch(
-  "alternate-search.nino-link", controllers.routes.SearchByNinoController.onPageLoad.url, "status-check-failure-conflict.nino")</p> }
+if(!IsNinSearch) { <p class="govuk-body" id="ninolink"> @messages("status-check-failure-conflict")  @alternateSearch(
+ "alternate-search.nino-link", controllers.routes.SearchByNinoController.onPageLoad.url, "status-check-failure-conflict.nino")</p> }
 
 <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">

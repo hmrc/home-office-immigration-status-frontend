@@ -25,6 +25,7 @@ import org.mockito.Mockito.{mock, verify, when}
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
+import services.SessionCacheService
 import utils.NinoGenerator
 import views.html.MultipleMatchesFoundPage
 import views.html.components.{SearchAgainButton, ShowChangeQuery}
@@ -34,12 +35,14 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
   val mockShowChangeQuery: ShowChangeQuery = mock(classOf[ShowChangeQuery])
   val mockSearchAgainButton: SearchAgainButton = mock(classOf[SearchAgainButton])
   implicit val mockAppConfig: AppConfig = mock(classOf[AppConfig])
+  val mockSessionCacheService: SessionCacheService = mock(classOf[SessionCacheService])
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
       bind[ShowChangeQuery].toInstance(mockShowChangeQuery),
       bind[SearchAgainButton].toInstance(mockSearchAgainButton),
-      bind[AppConfig].toInstance(mockAppConfig)
+      bind[AppConfig].toInstance(mockAppConfig),
+      bind[SessionCacheService].toInstance(mockSessionCacheService)
     )
     .build()
 
@@ -70,28 +73,26 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
         "status-check-failure-conflict.passport")
     }
 
-    "have ninolink" in {
+    /*"have ninolink" in {
       when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(false)
       lazy val ninoLinkDoc: Document = asDocument(sut(query)(request, messages))
 
       val e: Element = ninoLinkDoc.getElementById("ninolink")
       e.text() mustBe messages("status-check-failure-conflict") + "Search by " + messages(
         "status-check-failure-conflict.nino")
-    }
+    }*/
 
     "mrzlink and ninolink do not show when feature disabled" in {
       when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(false)
-      assertNotRenderedById(doc, "nino-link")
+      assertNotRenderedById(doc, "ninolink")
       assertNotRenderedById(doc, "mrzlink")
     }
 
     "have the show and change query section" in {
-      //verify(mockShowChangeQuery).apply(query)(messages)
       assertRenderedById(doc, "show-query")
     }
 
     "have the search again button" in {
-      //verify(mockSearchAgainButton).apply()(messages)
       assertRenderedById(doc, "search-button")
     }
   }

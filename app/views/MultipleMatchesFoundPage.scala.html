@@ -21,6 +21,7 @@
     govukWrapper: govuk_wrapper,
     showChangeQuery: components.ShowChangeQuery,
     searchAgainButton : components.SearchAgainButton,
+    alternateSearch: components.AlternateSearchLink,
     alternateText: components.AlternateLinkText,
     appConfig: AppConfig
 )
@@ -32,11 +33,11 @@
     <h1 class="govuk-heading-xl" id="status-check-failure-conflict-title">@messages("status-check-failure-conflict.title")</h1>
 
     @if(appConfig.documentSearchFeatureEnabled) {
-        @alternateText(query.isInstanceOf[NinoSearchFormModel]))
+        @alternateText(query.isInstanceOf[NinoSearchFormModel])
     }
 
     <h2 class="govuk-heading-m" id="personal-details">@messages("status-check-failure.heading2CustomerDetails")</h2>
 
-    <p id="show-query"> @showChangeQuery(query)</p>
-    <p id="search-button"> @searchAgainButton()</p>
+    <p id ="show-query"> @showChangeQuery(query)</p>
+    <p id ="search-button"> @searchAgainButton()</p>
 }
