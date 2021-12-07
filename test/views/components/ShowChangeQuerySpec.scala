@@ -55,7 +55,7 @@ class ShowChangeQuerySpec extends ViewSpec {
             data,
             id,
             s"${messages("generic.change")} ${messages(actionText)}",
-            routes.SearchByNinoController.onPageLoad.url + "#" + fieldId
+            routes.SearchByNinoController.onPageLoad(false).url + "#" + fieldId
           )
       }
     }

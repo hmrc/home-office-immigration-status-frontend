@@ -68,7 +68,7 @@ class SearchByMrzControllerSpec extends ControllerSpec {
       "there is no query on the session" in {
         when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(true)
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(None))
-        val result = sut.onPageLoad(request)
+        val result = sut.onPageLoad(false)(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe fakeView.toString
@@ -82,7 +82,7 @@ class SearchByMrzControllerSpec extends ControllerSpec {
         when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(true)
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(query)))
 
-        val result = sut.onPageLoad(request)
+        val result = sut.onPageLoad(false)(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe fakeView.toString
@@ -95,16 +95,31 @@ class SearchByMrzControllerSpec extends ControllerSpec {
       "the session cache returns a failure" in {
         when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(true)
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.failed(new Exception("Something happened")))
-        intercept[Exception](await(sut.onPageLoad(request)))
+        intercept[Exception](await(sut.onPageLoad(false)(request)))
         verify(mockSessionCacheService).get(any(), any())
       }
     }
     "redirect to the landing page" when {
       "the feature switch is off" in {
         when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(false)
-        val result = sut.onPageLoad(request)
+        val result = sut.onPageLoad(false)(request)
 
         status(result) mustBe NOT_FOUND
+      }
+    }
+
+    "clear mongo and display an empty form" when {
+      "clearForm is set to true" in {
+        when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(true)
+        when(mockSessionCacheService.delete(any(), any())).thenReturn(Future.unit)
+        val result = sut.onPageLoad(true)(request)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe fakeView.toString
+        withClue("the form was prefilled with a previous query, how?") {
+          verify(mockView).apply(refEq(emptyForm, "mapping"))(is(request), any())
+        }
+        verify(mockSessionCacheService).delete(any(), any())
       }
     }
   }

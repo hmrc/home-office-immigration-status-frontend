@@ -5,10 +5,10 @@ GET   /assets/*file                 controllers.Assets.versioned(path="/public",
 
 GET   /                             controllers.LandingController.onPageLoad
 
-GET   /search-by-nino               controllers.SearchByNinoController.onPageLoad
+GET   /search-by-nino               controllers.SearchByNinoController.onPageLoad(clearForm: Boolean ?= false)
 POST  /search-by-nino               controllers.SearchByNinoController.onSubmit
 
-GET   /search-by-passport           controllers.SearchByMrzController.onPageLoad
+GET   /search-by-passport           controllers.SearchByMrzController.onPageLoad(clearForm: Boolean ?= false)
 POST  /search-by-passport           controllers.SearchByMrzController.onSubmit
 
 GET   /status-result                controllers.StatusResultController.onPageLoad

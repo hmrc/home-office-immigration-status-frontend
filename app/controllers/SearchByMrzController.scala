@@ -21,15 +21,14 @@ import controllers.actions.AccessAction
 import forms.SearchByMRZForm
 import models.{FormQueryModel, MrzSearchFormModel}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
 import services.SessionCacheService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.SearchByMrzView
 import uk.gov.hmrc.http.NotFoundException
-import play.api.mvc.Request
 import errors.ErrorHandler
-
 import javax.inject.Inject
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class SearchByMrzController @Inject()(
@@ -43,20 +42,32 @@ class SearchByMrzController @Inject()(
 )(implicit val appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(cc) with I18nSupport {
 
-  val onPageLoad: Action[AnyContent] =
+  def onPageLoad(clearForm: Boolean): Action[AnyContent] =
     access.async { implicit request =>
       if (appConfig.documentSearchFeatureEnabled) {
-        sessionCacheService.get.map { result =>
-          val form = result match {
-            case Some(formModel: MrzSearchFormModel) => formProvider().fill(formModel)
-            case _                                   => formProvider()
-          }
-          Ok(view(form))
+        if (clearForm) {
+          clearStoredRequestAndShowEmptyForm
+        } else {
+          composeFormWithStoredRequest
         }
       } else {
         Future.successful(NotFound(errorHandler.notFoundTemplate))
       }
     }
+
+  private def composeFormWithStoredRequest(implicit request: Request[_]): Future[Result] = sessionCacheService.get.map {
+    result =>
+      val form = result match {
+        case Some(formModel: MrzSearchFormModel) => formProvider().fill(formModel)
+        case _                                   => formProvider()
+      }
+      Ok(view(form))
+  }
+
+  private def clearStoredRequestAndShowEmptyForm(implicit request: Request[_]): Future[Result] =
+    for {
+      _ <- sessionCacheService.delete
+    } yield Ok(view(formProvider()))
 
   val onSubmit: Action[AnyContent] =
     access.async { implicit request =>
