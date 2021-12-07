@@ -16,10 +16,14 @@
 
 package controllers
 
+import java.time.LocalDate
+
+import models.{MrzSearchFormModel, NinoSearchFormModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{redirectLocation, status}
+import utils.NinoGenerator
 
 import scala.concurrent.Future
 
@@ -32,19 +36,38 @@ class LandingControllerSpec extends ControllerSpec {
     super.beforeEach
   }
 
+  val nino = NinoGenerator.generateNino
+  val ninoSearchFormModel = NinoSearchFormModel(nino, "Pan", "", LocalDate.now())
+  val mrzSearchFormModel = MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
+
   "onPageLoad" must {
 
-    "redirect to check by nino" in {
-      when(mockSessionCacheService.delete(any(), any())).thenReturn(Future.unit)
-      val result = sut.onPageLoad(request)
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result).get mustBe routes.SearchByNinoController.onPageLoad.url
+    "redirect to nino search with clearForm=true" when {
+      "there is a nino query in mongo" in {
+        when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(ninoSearchFormModel)))
+        val result = sut.onPageLoad(request)
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result).get mustBe routes.SearchByNinoController.onPageLoad(true).url
+      }
     }
 
-    "clear the query from the session" in {
-      when(mockSessionCacheService.delete(any(), any())).thenReturn(Future.unit)
-      await(sut.onPageLoad(request))
-      verify(mockSessionCacheService).delete(any(), any())
+    "redirect to mrz search with clearForm=true" when {
+      "there is an mrz query in mongo" in {
+        when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(mrzSearchFormModel)))
+        val result = sut.onPageLoad(request)
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result).get mustBe routes.SearchByMrzController.onPageLoad(true).url
+      }
     }
+
+    "redirect to check by nino with clearForm=false" when {
+      "there is no query in mongo" in {
+        when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(None))
+        val result = sut.onPageLoad(request)
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result).get mustBe routes.SearchByNinoController.onPageLoad(false).url
+      }
+    }
+
   }
 }

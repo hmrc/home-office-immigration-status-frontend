@@ -21,7 +21,7 @@
 @(IsNinoSearch: Boolean)(implicit messages: Messages)
 
 @if(IsNinoSearch) { <p class="govuk-inset-text" id="mrzlink"> @messages("status-check-failure-conflict") @alternateSearch(
- "status-check-failure-conflict.mrz-link", controllers.routes.SearchByMrzController.onPageLoad.url, "status-check-failure-conflict.mrz") </p> }
+ "status-check-failure-conflict.mrz-link", controllers.routes.SearchByMrzController.onPageLoad(true).url, "status-check-failure-conflict.mrz") </p> }
 
 @if(!IsNinoSearch) { <p class="govuk-inset-text" id="ninolink"> @messages("status-check-failure-conflict") @alternateSearch(
- "status-check-failure-conflict.nino-link", controllers.routes.SearchByNinoController.onPageLoad.url, "status-check-failure-conflict.nino") </p> }
+ "status-check-failure-conflict.nino-link", controllers.routes.SearchByNinoController.onPageLoad(true).url, "status-check-failure-conflict.nino") </p> }

@@ -39,16 +39,28 @@ class SearchByNinoController @Inject()(
 )(implicit val appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(controllerComponents) with I18nSupport {
 
-  val onPageLoad: Action[AnyContent] =
+  def onPageLoad(clearForm: Boolean): Action[AnyContent] =
     access.async { implicit request =>
-      sessionCacheService.get.map { result =>
-        val form = result match {
-          case Some(formModel: NinoSearchFormModel) => formProvider().fill(formModel)
-          case _                                    => formProvider()
-        }
-        Ok(searchByNinoView(form))
+      if (clearForm) {
+        clearStoredRequestAndShowEmptyForm
+      } else {
+        composeFormWithStoredRequest
       }
     }
+
+  private def composeFormWithStoredRequest(implicit request: Request[_]): Future[Result] = sessionCacheService.get.map {
+    result =>
+      val form = result match {
+        case Some(formModel: NinoSearchFormModel) => formProvider().fill(formModel)
+        case _                                    => formProvider()
+      }
+      Ok(searchByNinoView(form))
+  }
+
+  private def clearStoredRequestAndShowEmptyForm(implicit request: Request[_]): Future[Result] =
+    for {
+      _ <- sessionCacheService.delete
+    } yield Ok(searchByNinoView(formProvider()))
 
   val onSubmit: Action[AnyContent] =
     access.async { implicit request =>
