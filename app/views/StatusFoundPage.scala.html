@@ -35,6 +35,14 @@
 
     <h1 class="govuk-heading-xl" id="status-found-title"><span id="full-name">@context.result.fullName</span>@context.currentStatusLabel</h1>
 
+    @if(context.isZambrano) {
+        @warning(WarningText(
+            iconFallbackText = messages("generic.warning"),
+            content = Text(messages("status-found.zambrano")),
+            attributes = Map("id" -> "zambrano-warning")
+        ))
+    }
+
     @summaryList("immigrationStatus", context.immigrationStatusRows)
 
     @if(!context.hasRecourseToPublicFunds) {

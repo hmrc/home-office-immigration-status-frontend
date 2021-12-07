@@ -202,4 +202,36 @@ class StatusFoundPageViewSpec extends ViewSpec {
       }
     }
   }
+
+  "have zambrano warning message" when {
+    "context.isZambrano is true" in {
+      val context = StatusFoundPageContext(
+        NinoSearchFormModel(NinoGenerator.generateNino, "Pan", "", LocalDate.now()),
+        StatusCheckResult("Pan", LocalDate.now(), "JPN", List(ValidStatus)),
+        Call("", "/expected")
+      )
+      val html: HtmlFormat.Appendable =
+        sut(context)(request, messages)
+
+      val doc = asDocument(html)
+
+      assertElementHasText(doc, "#zambrano-warning", "! Warning " + messages("status-found.zambrano"))
+    }
+  }
+  "have no zambrano warning message" when {
+    "context.isZambrano is false" in {
+      val context = StatusFoundPageContext(
+        NinoSearchFormModel(NinoGenerator.generateNino, "Pan", "", LocalDate.now()),
+        StatusCheckResult("Pan", LocalDate.now(), "FRA", List(ValidStatus)),
+        Call("", "/expected")
+      )
+
+      val html: HtmlFormat.Appendable =
+        sut(context)(request, messages)
+
+      val doc = asDocument(html)
+
+      assertNotRenderedById(doc, "zambrano-warning")
+    }
+  }
 }

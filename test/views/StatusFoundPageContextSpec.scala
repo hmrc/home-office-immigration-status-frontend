@@ -16,7 +16,7 @@
 
 package views
 
-import models.{ImmigrationStatus, NinoSearchFormModel, StatusCheckResult}
+import models.{EEACountries, ImmigrationStatus, NinoSearchFormModel, StatusCheckResult}
 import org.mockito.ArgumentMatchers.{any, matches}
 import org.mockito.Mockito._
 import org.scalatest.matchers.should.Matchers
@@ -27,13 +27,15 @@ import play.api.i18n._
 import play.api.mvc.Call
 import utils.NinoGenerator
 import viewmodels.RowViewModel
-
 import java.time.LocalDate
+
+import config.Countries
 
 class StatusFoundPageContextSpec
     extends AnyWordSpecLike with Matchers with OptionValues with BeforeAndAfterEach with GuiceOneAppPerSuite {
 
   val realMessages: Messages = app.injector.instanceOf[MessagesApi].preferred(Seq.empty[Lang])
+  val allCountries: Countries = app.injector.instanceOf[Countries]
   //todo mockito Sugar
   val mockMessages: Messages = mock(classOf[MessagesImpl], RETURNS_DEEP_STUBS)
   val currentStatusLabelMsg = "current status label msg"
@@ -188,6 +190,8 @@ class StatusFoundPageContextSpec
       val mockResult: StatusCheckResult = mock(classOf[StatusCheckResult])
       val fakeImmigrationStatus = ImmigrationStatus(LocalDate.now(), None, "TEST", "STATUS", true)
       when(mockResult.previousStatuses).thenReturn(Seq(fakeImmigrationStatus))
+      when(mockResult.mostRecentStatus).thenReturn(Some(fakeImmigrationStatus))
+      when(mockResult.nationality).thenReturn("FRA")
 
       StatusFoundPageContext(null, mockResult, null).previousStatuses shouldBe Seq(fakeImmigrationStatus)
     }
@@ -274,6 +278,60 @@ class StatusFoundPageContextSpec
     }
     "work for unknown" in {
       StatusFoundPageContext.immigrationStatusLabel("FOO", "BAR") shouldBe "FOO - BAR"
+    }
+  }
+
+  "isZambrano" should {
+
+    val nonEEACountries = allCountries.countries.filter(c => !EEACountries.countries.contains(c.value))
+
+    "return false" when {
+      "the product type is EUS and the nationality is an EEA country" in {
+        EEACountries.countries.foreach { country =>
+          val mockResult: StatusCheckResult = mock(classOf[StatusCheckResult])
+          val fakeImmigrationStatus = ImmigrationStatus(LocalDate.now(), None, "EUS", "STATUS", true)
+          when(mockResult.mostRecentStatus).thenReturn(Some(fakeImmigrationStatus))
+          when(mockResult.nationality).thenReturn(country)
+
+          StatusFoundPageContext(null, mockResult, null).isZambrano shouldBe false
+        }
+      }
+
+      "the product type is NOT EUS and the nationality is an EEA country" in {
+        EEACountries.countries.foreach { country =>
+          val mockResult: StatusCheckResult = mock(classOf[StatusCheckResult])
+          val fakeImmigrationStatus = ImmigrationStatus(LocalDate.now(), None, "WORK", "STATUS", true)
+          when(mockResult.mostRecentStatus).thenReturn(Some(fakeImmigrationStatus))
+          when(mockResult.nationality).thenReturn(country)
+
+          StatusFoundPageContext(null, mockResult, null).isZambrano shouldBe false
+        }
+      }
+
+      "the product type is NOT EUS and the nationality is a non EEA country" in {
+        nonEEACountries.foreach { country =>
+          val mockResult: StatusCheckResult = mock(classOf[StatusCheckResult])
+          val fakeImmigrationStatus = ImmigrationStatus(LocalDate.now(), None, "WORK", "STATUS", true)
+          when(mockResult.mostRecentStatus).thenReturn(Some(fakeImmigrationStatus))
+          when(mockResult.nationality).thenReturn(country.value)
+
+          StatusFoundPageContext(null, mockResult, null).isZambrano shouldBe false
+        }
+      }
+
+    }
+
+    "return true" when {
+      "the product type is EUS and the nationality is a non EEA country" in {
+        nonEEACountries.foreach { country =>
+          val mockResult: StatusCheckResult = mock(classOf[StatusCheckResult])
+          val fakeImmigrationStatus = ImmigrationStatus(LocalDate.now(), None, "EUS", "STATUS", true)
+          when(mockResult.mostRecentStatus).thenReturn(Some(fakeImmigrationStatus))
+          when(mockResult.nationality).thenReturn(country.value)
+
+          StatusFoundPageContext(null, mockResult, null).isZambrano shouldBe true
+        }
+      }
     }
   }
 }
