@@ -79,8 +79,8 @@ date.day='Day'
 date.month='Month'
 date.year='Year'
 
-alternate-search.nino-link='search by National Insurance number'
-alternate-search.mrz-link='search by passport or ID card'
+alternate-search.nino-link='Search by National Insurance number'
+alternate-search.mrz-link='Search by passport or ID card'
 
 # Status page
 status-found.title='Applicant'
@@ -144,8 +144,8 @@ status-check-failure-conflict.title='A unique match has not been found'
 status-check-failure-conflict.listParagraph='This is because there are multiple matches with these details'
 
 status-check-failure-conflict='You can change the customer’s details you have entered or '
-status-check-failure-conflict.nino='National Insurance number'
-status-check-failure-conflict.passport='passport or ID card'
+status-check-failure-conflict.nino-link='search by National Insurance number'
+status-check-failure-conflict.mrz-link='search by passport or ID card'
 
 # Button
 button.search='Search'

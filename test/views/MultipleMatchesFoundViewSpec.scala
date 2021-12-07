@@ -68,18 +68,16 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
       lazy val mrzLinkDoc: Document = asDocument(sut(query)(request, messages))
 
       val e: Element = mrzLinkDoc.getElementById("mrzlink")
-      e.text() mustBe messages("status-check-failure-conflict") + "search by " + messages(
-        "status-check-failure-conflict.passport")
+      e.text() mustBe messages("status-check-failure-conflict") + messages("status-check-failure-conflict.mrz-link")
     }
 
-    /*"have ninolink" in {
+    "have ninolink" in {
       when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(false)
       lazy val ninoLinkDoc: Document = asDocument(sut(query)(request, messages))
 
       val e: Element = ninoLinkDoc.getElementById("ninolink")
-      e.text() mustBe messages("status-check-failure-conflict") + "search by " + messages(
-        "status-check-failure-conflict.nino")
-    }*/
+      e.text() mustBe messages("status-check-failure-conflict") + messages("status-check-failure-conflict.nino-link")
+    }
 
     "mrzlink and ninolink do not show when feature disabled" in {
       when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(false)
