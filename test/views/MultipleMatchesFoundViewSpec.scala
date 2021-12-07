@@ -16,7 +16,7 @@
 
 package views
 
-import models.NinoSearchFormModel
+import models.{MrzSearchFormModel, NinoSearchFormModel}
 import java.time.LocalDate
 import config.AppConfig
 import org.jsoup.nodes.{Document, Element}
@@ -72,8 +72,9 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
     }
 
     "have ninolink" in {
-      when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(false)
-      lazy val ninoLinkDoc: Document = asDocument(sut(query)(request, messages))
+      when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(true)
+      val mrzSearchFormModel = MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
+      lazy val ninoLinkDoc: Document = asDocument(sut(mrzSearchFormModel)(request, messages))
 
       val e: Element = ninoLinkDoc.getElementById("ninolink")
       e.text() mustBe messages("status-check-failure-conflict") + messages("status-check-failure-conflict.nino-link")
