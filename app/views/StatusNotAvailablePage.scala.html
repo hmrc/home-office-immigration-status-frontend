@@ -23,6 +23,7 @@
     govukButton : GovukButton,
     govukWrapper: govuk_wrapper,
     summaryList: components.SummaryList,
+    searchAgainButton : components.SearchAgainButton
 )
 
 @(context: StatusNotAvailablePageContext)(implicit request: Request[_], messages: Messages)
@@ -30,7 +31,7 @@
 @govukWrapper(title = messages("status-not-available.title")) {
 
     <h1 class="govuk-heading-xl" id="status-not-available-title">
-        <span id="full-name">@context.fullName.getOrElse(messages("status-not-available.applicant"))</span>
+        <span id="full-name">@context.result.fullName</span>
         @messages("app.hasNoActiveStatus")
     </h1>
 
@@ -43,5 +44,5 @@
 
     @summaryList("notAvailablePersonalData", context.notAvailablePersonalData)
 
-    @govukButton(Button(content = Text(messages("generic.searchAgain")), href=Some(context.searchAgainCall.url)))
+    @searchAgainButton()
 }

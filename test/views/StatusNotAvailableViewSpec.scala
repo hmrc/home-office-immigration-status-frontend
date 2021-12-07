@@ -17,9 +17,9 @@
 package views
 
 import controllers.routes
-import models.NinoSearchFormModel
-
+import models.{NinoSearchFormModel, StatusCheckResult}
 import java.time.LocalDate
+
 import org.jsoup.nodes.{Document, Element}
 import org.mockito.Mockito.mock
 import play.api.Application
@@ -32,28 +32,27 @@ import views.html.components.{SearchAgainButton, ShowChangeQuery}
 class StatusNotAvailableViewSpec extends ViewSpec {
 
   val mockShowChangeQuery: ShowChangeQuery = mock(classOf[ShowChangeQuery])
-  val mockSearchAgainButton: SearchAgainButton = mock(classOf[SearchAgainButton])
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
-      bind[ShowChangeQuery].toInstance(mockShowChangeQuery),
-      bind[SearchAgainButton].toInstance(mockSearchAgainButton)
+      bind[ShowChangeQuery].toInstance(mockShowChangeQuery)
     )
     .build()
 
   lazy val sut: StatusNotAvailablePage = inject[StatusNotAvailablePage]
 
   val nino = NinoSearchFormModel(generateNino, "Applicant", "", LocalDate.now())
+  val result = StatusCheckResult("Full name", LocalDate.now(), "JPN", Nil)
 
   val query =
-    StatusNotAvailablePageContext(nino, routes.LandingController.onPageLoad)
+    StatusNotAvailablePageContext(nino, result, routes.LandingController.onPageLoad)
 
   lazy val doc: Document = asDocument(sut(query)(request, messages))
 
   "StatusNotAvailable" must {
     "have a status conflict title" in {
       val e: Element = doc.getElementById("status-not-available-title")
-      e.text() mustBe messages("status-not-available.title")
+      e.text() mustBe "Full name " + messages("app.hasNoActiveStatus")
     }
 
     "status has paragraph list" in {
