@@ -20,78 +20,71 @@ import models.{MrzSearchFormModel, NinoSearchFormModel}
 import java.time.LocalDate
 import config.AppConfig
 import org.jsoup.nodes.{Document, Element}
-import org.mockito.Mockito.{mock, verify, when}
+import org.mockito.Mockito.{mock, when}
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import services.SessionCacheService
 import utils.NinoGenerator
 import views.html.MultipleMatchesFoundPage
-import views.html.components.{SearchAgainButton, ShowChangeQuery}
 
 class MultipleMatchesFoundViewSpec extends ViewSpec {
 
-  val mockShowChangeQuery: ShowChangeQuery = mock(classOf[ShowChangeQuery])
-  val mockSearchAgainButton: SearchAgainButton = mock(classOf[SearchAgainButton])
   implicit val mockAppConfig: AppConfig = mock(classOf[AppConfig])
   val mockSessionCacheService: SessionCacheService = mock(classOf[SessionCacheService])
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
-      bind[ShowChangeQuery].toInstance(mockShowChangeQuery),
-      bind[SearchAgainButton].toInstance(mockSearchAgainButton),
       bind[AppConfig].toInstance(mockAppConfig),
       bind[SessionCacheService].toInstance(mockSessionCacheService)
     )
     .build()
 
   lazy val sut = inject[MultipleMatchesFoundPage]
-
   val nino = NinoGenerator.generateNino
-  val query = NinoSearchFormModel(nino, "Pan", "", LocalDate.now())
-  lazy val doc: Document = asDocument(sut(query)(request, messages))
+
+  val ninSearchFormModel = NinoSearchFormModel(nino, "Pan", "", LocalDate.now())
+  val mrzSearchFormModel = MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
+
+  when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(false)
+  val DocWithoutFeature: Document = asDocument(sut(ninSearchFormModel)(request, messages))
+
+  when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(true)
+  val NinoDocWithFeature: Document = asDocument(sut(ninSearchFormModel)(request, messages))
+  val MrzDocWithFeature: Document = asDocument(sut(mrzSearchFormModel)(request, messages))
 
   "MultipleMatchesFoundPage" must {
-
     "have a status conflict title" in {
-      val e: Element = doc.getElementById("status-check-failure-conflict-title")
+      val e: Element = DocWithoutFeature.getElementById("status-check-failure-conflict-title")
       e.text() mustBe messages("status-check-failure-conflict.title")
     }
 
     "have personal details heading" in {
-      val e: Element = doc.getElementById("personal-details")
+      val e: Element = DocWithoutFeature.getElementById("personal-details")
       e.text() mustBe messages("status-check-failure.heading2CustomerDetails")
     }
 
-    "have mrzlink" in {
-      when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(true)
-      lazy val mrzLinkDoc: Document = asDocument(sut(query)(request, messages))
-
-      val e: Element = mrzLinkDoc.getElementById("mrzlink")
+    "nino doc has mrzlink" in {
+      val e: Element = NinoDocWithFeature.getElementById("mrzlink")
       e.text() mustBe messages("status-check-failure-conflict") + messages("status-check-failure-conflict.mrz-link")
     }
 
-    "have ninolink" in {
-      when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(true)
-      val mrzSearchFormModel = MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
-      lazy val ninoLinkDoc: Document = asDocument(sut(mrzSearchFormModel)(request, messages))
-
-      val e: Element = ninoLinkDoc.getElementById("ninolink")
+    "mrz doc has ninolink" in {
+      val e: Element = MrzDocWithFeature.getElementById("ninolink")
       e.text() mustBe messages("status-check-failure-conflict") + messages("status-check-failure-conflict.nino-link")
     }
 
     "mrzlink and ninolink do not show when feature disabled" in {
-      when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(false)
-      assertNotRenderedById(doc, "ninolink")
-      assertNotRenderedById(doc, "mrzlink")
+      assertNotRenderedById(DocWithoutFeature, "ninolink")
+      assertNotRenderedById(DocWithoutFeature, "mrzlink")
     }
 
     "have the show and change query section" in {
-      assertRenderedById(doc, "show-query")
+      assertRenderedById(DocWithoutFeature, "inputted-data")
     }
 
     "have the search again button" in {
-      assertRenderedById(doc, "search-button")
+      assertRenderedByCssSelector(DocWithoutFeature, ".govuk-button")
     }
   }
 }
