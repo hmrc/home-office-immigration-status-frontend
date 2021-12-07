@@ -34,7 +34,7 @@ final case class RowWithActionViewModel(
 }
 
 object RowWithActionViewModel {
-  private def changeInputUrl(fieldId: String) = s"${routes.SearchByNinoController.onPageLoad.url}#$fieldId"
+  private def changeInputUrl(fieldId: String) = s"${routes.SearchByNinoController.onPageLoad(false).url}#$fieldId"
   private val changeMessageKey = "generic.change"
 
   def apply(
