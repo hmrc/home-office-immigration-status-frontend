@@ -21,16 +21,16 @@ import play.modules.reactivemongo.ReactiveMongoComponent
 import config.AppConfig
 import models.FormQueryModel
 import uk.gov.hmrc.mongo.ReactiveRepository
-import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
 import reactivemongo.api.indexes.{Index, IndexType}
-import reactivemongo.bson.{BSONDocument, BSONObjectID}
+import reactivemongo.bson.BSONDocument
+import repositories.SessionCacheRepository.CollectionName
 
 @Singleton
 class SessionCacheRepository @Inject()(
   mongoComponent: ReactiveMongoComponent,
   appConfig: AppConfig
 ) extends ReactiveRepository[FormQueryModel, String](
-      collectionName = appConfig.mongoCollectionName,
+      collectionName = CollectionName,
       mongo = mongoComponent.mongoConnector.db,
       domainFormat = FormQueryModel.formats,
       idFormat = implicitly
@@ -43,4 +43,8 @@ class SessionCacheRepository @Inject()(
   )
 
   override def indexes: Seq[Index] = Seq(TTL)
+}
+
+object SessionCacheRepository {
+  private val CollectionName = "form-query"
 }

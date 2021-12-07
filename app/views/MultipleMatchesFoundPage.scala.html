@@ -20,7 +20,9 @@
 @this(
     govukWrapper: govuk_wrapper,
     showChangeQuery: components.ShowChangeQuery,
-    searchAgainButton : components.SearchAgainButton
+    searchAgainButton : components.SearchAgainButton,
+    alternateText: components.AlternateLinkText,
+    appConfig: AppConfig
 )
 
 @(query: SearchFormModel)(implicit request: Request[_], messages: Messages)
@@ -29,7 +31,9 @@
 
     <h1 class="govuk-heading-xl" id="status-check-failure-conflict-title">@messages("status-check-failure-conflict.title")</h1>
 
-    <p class="govuk-body">@messages("status-check-failure-conflict.listParagraph")</p>
+    @if(appConfig.documentSearchFeatureEnabled) {
+        @alternateText(query.isInstanceOf[NinoSearchFormModel])
+    }
 
     <h2 class="govuk-heading-m" id="personal-details">@messages("status-check-failure.heading2CustomerDetails")</h2>
 
