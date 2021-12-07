@@ -18,7 +18,6 @@ package views
 
 import models.NinoSearchFormModel
 import java.time.LocalDate
-
 import config.AppConfig
 import org.jsoup.nodes.{Document, Element}
 import org.mockito.Mockito.{mock, verify, when}
@@ -69,7 +68,7 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
       lazy val mrzLinkDoc: Document = asDocument(sut(query)(request, messages))
 
       val e: Element = mrzLinkDoc.getElementById("mrzlink")
-      e.text() mustBe messages("status-check-failure-conflict") + "Search by " + messages(
+      e.text() mustBe messages("status-check-failure-conflict") + "search by " + messages(
         "status-check-failure-conflict.passport")
     }
 
@@ -78,7 +77,7 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
       lazy val ninoLinkDoc: Document = asDocument(sut(query)(request, messages))
 
       val e: Element = ninoLinkDoc.getElementById("ninolink")
-      e.text() mustBe messages("status-check-failure-conflict") + "Search by " + messages(
+      e.text() mustBe messages("status-check-failure-conflict") + "search by " + messages(
         "status-check-failure-conflict.nino")
     }*/
 

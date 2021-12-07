@@ -79,8 +79,8 @@ date.day='Day'
 date.month='Month'
 date.year='Year'
 
-alternate-search.nino-link='Search by National Insurance number'
-alternate-search.mrz-link='Search by passport or ID card'
+alternate-search.nino-link='search by National Insurance number'
+alternate-search.mrz-link='search by passport or ID card'
 
 # Status page
 status-found.title='Applicant'
