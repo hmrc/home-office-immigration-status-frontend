@@ -21,7 +21,7 @@ import play.api.mvc.Call
 import viewmodels.{RowViewModel => Row}
 import models.{MrzSearchFormModel, NinoSearchFormModel, SearchFormModel, StatusCheckResult}
 
-case class StatusNotAvailablePageContext(query: SearchFormModel, result: StatusCheckResult, searchAgainCall: Call) {
+case class StatusNotAvailablePageContext(query: SearchFormModel, result: StatusCheckResult) {
 
   def notAvailablePersonalData(implicit messages: Messages): Seq[Row] =
     query match {

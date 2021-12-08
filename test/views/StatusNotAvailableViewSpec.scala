@@ -16,10 +16,8 @@
 
 package views
 
-import controllers.routes
 import models.{NinoSearchFormModel, StatusCheckResult}
 import java.time.LocalDate
-
 import org.jsoup.nodes.{Document, Element}
 import org.mockito.Mockito.mock
 import play.api.Application
@@ -44,8 +42,7 @@ class StatusNotAvailableViewSpec extends ViewSpec {
   val nino = NinoSearchFormModel(generateNino, "Applicant", "", LocalDate.now())
   val result = StatusCheckResult("Full name", LocalDate.now(), "JPN", Nil)
 
-  val query =
-    StatusNotAvailablePageContext(nino, result, routes.LandingController.onPageLoad)
+  val query = StatusNotAvailablePageContext(nino, result)
 
   lazy val doc: Document = asDocument(sut(query)(request, messages))
 

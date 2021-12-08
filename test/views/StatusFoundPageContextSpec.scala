@@ -60,8 +60,7 @@ class StatusFoundPageContextSpec
         dateOfBirth = LocalDate.now,
         nationality = "Some nationality",
         statuses = List(ImmigrationStatus(LocalDate.MIN, endDate, pt, is, hasRecourseToPublicFunds))
-      ),
-      call
+      )
     )
 
   "currentStatusLabel" when {
@@ -160,10 +159,8 @@ class StatusFoundPageContextSpec
 
     "there is no immigration Status" should {
       "display no status" in {
-        val context = StatusFoundPageContext(
-          query,
-          StatusCheckResult("Some name", LocalDate.MIN, "some nation", statuses = Nil),
-          call)
+        val context =
+          StatusFoundPageContext(query, StatusCheckResult("Some name", LocalDate.MIN, "some nation", statuses = Nil))
 
         context.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
         val msgKey = "status-found.current.noStatus"
@@ -179,7 +176,7 @@ class StatusFoundPageContextSpec
       val fakeImmigrationStatus = ImmigrationStatus(LocalDate.now(), None, "TEST", "STATUS", true)
       when(mockResult.mostRecentStatus).thenReturn(Some(fakeImmigrationStatus))
 
-      StatusFoundPageContext(null, mockResult, null).mostRecentStatus shouldBe Some(fakeImmigrationStatus)
+      StatusFoundPageContext(null, mockResult).mostRecentStatus shouldBe Some(fakeImmigrationStatus)
     }
   }
 
@@ -189,7 +186,7 @@ class StatusFoundPageContextSpec
       val fakeImmigrationStatus = ImmigrationStatus(LocalDate.now(), None, "TEST", "STATUS", true)
       when(mockResult.previousStatuses).thenReturn(Seq(fakeImmigrationStatus))
 
-      StatusFoundPageContext(null, mockResult, null).previousStatuses shouldBe Seq(fakeImmigrationStatus)
+      StatusFoundPageContext(null, mockResult).previousStatuses shouldBe Seq(fakeImmigrationStatus)
     }
   }
 
@@ -208,8 +205,7 @@ class StatusFoundPageContextSpec
             dateOfBirth = LocalDate.now,
             nationality = "Some nationality",
             statuses = Nil
-          ),
-          call
+          )
         )
 
         assert(context.hasRecourseToPublicFunds == true)

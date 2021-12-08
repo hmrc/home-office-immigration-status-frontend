@@ -49,10 +49,9 @@ class StatusNotAvailablePageContextSpec
     "populate the row objects correctly for a nino search" when {
       val dob = LocalDate.now()
       val query = NinoSearchFormModel(NinoGenerator.generateNino, "Surname", "Forename", dob)
-      val call = Call("GET", "/")
       val result = StatusCheckResult("Full name", dob, "JPN", Nil)
 
-      def createContext = StatusNotAvailablePageContext(query, result, call)
+      def createContext = StatusNotAvailablePageContext(query, result)
 
       Seq(
         ("nino", "generic.nino", query.nino.nino),
@@ -69,10 +68,9 @@ class StatusNotAvailablePageContextSpec
     "populate the row objects correctly for an mrz search" when {
       val dob = LocalDate.now()
       val query = MrzSearchFormModel("PASSPORT", "12345", dob, "JPN")
-      val call = Call("GET", "/")
       val result = StatusCheckResult("Full name", dob, "JPN", Nil)
 
-      def createContext = StatusNotAvailablePageContext(query, result, call)
+      def createContext = StatusNotAvailablePageContext(query, result)
 
       Seq(
         ("documentType", "lookup.identity.label", "Passport"),

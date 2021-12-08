@@ -78,11 +78,9 @@ class StatusResultController @Inject()(
     response.result.statuses match {
       case Nil =>
         logger.info(s"Match found with no statuses - CorrelationId: ${response.correlationId}")
-        Ok(
-          statusNotAvailablePage(
-            StatusNotAvailablePageContext(query, response.result, routes.LandingController.onPageLoad)))
+        Ok(statusNotAvailablePage(StatusNotAvailablePageContext(query, response.result)))
       case _ =>
-        Ok(statusFoundPage(StatusFoundPageContext(query, response.result, routes.LandingController.onPageLoad)))
+        Ok(statusFoundPage(StatusFoundPageContext(query, response.result)))
     }
 
 }
