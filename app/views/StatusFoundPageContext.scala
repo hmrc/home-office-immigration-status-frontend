@@ -22,7 +22,7 @@ import viewmodels.{RowViewModel => Row}
 import views.StatusFoundPageContext.RichMessages
 import models.{ImmigrationStatus, MrzSearchFormModel, NinoSearchFormModel, SearchFormModel, StatusCheckResult}
 
-final case class StatusFoundPageContext(query: SearchFormModel, result: StatusCheckResult, searchAgainCall: Call) {
+final case class StatusFoundPageContext(query: SearchFormModel, result: StatusCheckResult) {
 
   val mostRecentStatus: Option[ImmigrationStatus] = result.mostRecentStatus
   val previousStatuses: Seq[ImmigrationStatus] = result.previousStatuses

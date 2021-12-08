@@ -34,8 +34,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
   def buildContext(statuses: List[ImmigrationStatus] = List(ValidStatus)): StatusFoundPageContext =
     StatusFoundPageContext(
       NinoSearchFormModel(NinoGenerator.generateNino, "Pan", "", LocalDate.now()),
-      StatusCheckResult("Pan", LocalDate.now(), "D", statuses),
-      Call("", "/expected")
+      StatusCheckResult("Pan", LocalDate.now(), "D", statuses)
     )
 
   "StatusFoundPageView" must {
@@ -101,7 +100,8 @@ class StatusFoundPageViewSpec extends ViewSpec {
     "have the search again button" in {
       val button = doc.select("#content > a")
       button.text() mustBe "Search again"
-      button.attr("href") mustBe "/expected"
+      button.attr("href") mustBe "/check-immigration-status"
+      button.attr("id") mustBe "search-again-button"
     }
 
     "Immigration route" when {

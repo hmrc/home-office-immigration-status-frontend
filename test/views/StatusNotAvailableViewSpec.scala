@@ -16,7 +16,6 @@
 
 package views
 
-import controllers.routes
 import models.NinoSearchFormModel
 
 import java.time.LocalDate
@@ -32,12 +31,10 @@ import views.html.components.{SearchAgainButton, ShowChangeQuery}
 class StatusNotAvailableViewSpec extends ViewSpec {
 
   val mockShowChangeQuery: ShowChangeQuery = mock(classOf[ShowChangeQuery])
-  val mockSearchAgainButton: SearchAgainButton = mock(classOf[SearchAgainButton])
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
-      bind[ShowChangeQuery].toInstance(mockShowChangeQuery),
-      bind[SearchAgainButton].toInstance(mockSearchAgainButton)
+      bind[ShowChangeQuery].toInstance(mockShowChangeQuery)
     )
     .build()
 
@@ -46,7 +43,7 @@ class StatusNotAvailableViewSpec extends ViewSpec {
   val nino = NinoSearchFormModel(generateNino, "Applicant", "", LocalDate.now())
 
   val query =
-    StatusNotAvailablePageContext(nino, routes.LandingController.onPageLoad)
+    StatusNotAvailablePageContext(nino)
 
   lazy val doc: Document = asDocument(sut(query)(request, messages))
 
