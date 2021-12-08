@@ -21,26 +21,21 @@ import java.time.LocalDate
 
 import config.AppConfig
 import org.jsoup.nodes.{Document, Element}
-import org.mockito.Mockito.{mock, verify, when}
+import org.mockito.Mockito.{mock, when}
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import services.SessionCacheService
 import utils.NinoGenerator
 import views.html.StatusCheckFailurePage
-import views.html.components.{SearchAgainButton, ShowChangeQuery}
 
 class StatusCheckFailureViewSpec extends ViewSpec {
 
-  val mockShowChangeQuery: ShowChangeQuery = mock(classOf[ShowChangeQuery])
-  val mockSearchAgainButton: SearchAgainButton = mock(classOf[SearchAgainButton])
   implicit val mockAppConfig: AppConfig = mock(classOf[AppConfig])
   val mockSessionCacheService: SessionCacheService = mock(classOf[SessionCacheService])
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
-      bind[ShowChangeQuery].toInstance(mockShowChangeQuery),
-      bind[SearchAgainButton].toInstance(mockSearchAgainButton),
       bind[AppConfig].toInstance(mockAppConfig),
       bind[SessionCacheService].toInstance(mockSessionCacheService)
     )
