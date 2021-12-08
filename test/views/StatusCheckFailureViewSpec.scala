@@ -18,7 +18,6 @@ package views
 
 import models.{MrzSearchFormModel, NinoSearchFormModel}
 import java.time.LocalDate
-
 import config.AppConfig
 import org.jsoup.nodes.{Document, Element}
 import org.mockito.Mockito.{mock, when}
