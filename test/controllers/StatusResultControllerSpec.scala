@@ -99,7 +99,7 @@ class StatusResultControllerSpec extends ControllerSpec {
 
         status(result) mustBe OK
         contentAsString(result) mustBe inject[StatusFoundPage]
-          .apply(StatusFoundPageContext(query, hoResult, routes.LandingController.onPageLoad))(request, messages)
+          .apply(StatusFoundPageContext(query, hoResult))(request, messages)
           .toString
         verifyConnector()
         verify(mockSessionCacheService).get(any(), any())
@@ -115,7 +115,7 @@ class StatusResultControllerSpec extends ControllerSpec {
 
         status(result) mustBe OK
         contentAsString(result) mustBe inject[StatusNotAvailablePage]
-          .apply(StatusNotAvailablePageContext(query, routes.LandingController.onPageLoad))(request, messages)
+          .apply(StatusNotAvailablePageContext(query))(request, messages)
           .toString
         verifyConnector()
         verify(mockSessionCacheService).get(any(), any())

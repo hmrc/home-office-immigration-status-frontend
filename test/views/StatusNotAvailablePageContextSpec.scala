@@ -48,7 +48,7 @@ class StatusNotAvailablePageContextSpec
   val query = NinoSearchFormModel(NinoGenerator.generateNino, "Surname", "Forename", LocalDate.now())
   val call = Call("GET", "/")
 
-  def createContext = StatusNotAvailablePageContext(query, call)
+  def createContext = StatusNotAvailablePageContext(query)
 
   "notAvailablePersonalData" must {
     "populate the row objects correctly" when {

@@ -21,7 +21,7 @@ import play.api.mvc.Call
 import viewmodels.{RowViewModel => Row}
 import models.{MrzSearchFormModel, NinoSearchFormModel, SearchFormModel}
 
-case class StatusNotAvailablePageContext(query: SearchFormModel, searchAgainCall: Call) {
+case class StatusNotAvailablePageContext(query: SearchFormModel) {
 
   def fullName: Option[String] =
     query match {
