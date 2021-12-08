@@ -30,13 +30,14 @@ import viewmodels.RowViewModel
 import java.time.LocalDate
 
 import config.Countries
+import play.api.test.Injecting
 
 class StatusFoundPageContextSpec
-    extends AnyWordSpecLike with Matchers with OptionValues with BeforeAndAfterEach with GuiceOneAppPerSuite {
+    extends AnyWordSpecLike with Matchers with OptionValues with BeforeAndAfterEach with GuiceOneAppPerSuite
+    with Injecting {
 
-  val realMessages: Messages = app.injector.instanceOf[MessagesApi].preferred(Seq.empty[Lang])
-  val allCountries: Countries = app.injector.instanceOf[Countries]
-  //todo mockito Sugar
+  val realMessages: Messages = inject[MessagesApi].preferred(Seq.empty)
+  val allCountries: Countries = inject[Countries]
   val mockMessages: Messages = mock(classOf[MessagesImpl], RETURNS_DEEP_STUBS)
   val currentStatusLabelMsg = "current status label msg"
 
