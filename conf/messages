@@ -142,10 +142,10 @@ status-check-failure.contact-helpdesk-link='contact the IT help desk (opens in n
 status-check-failure.contact-helpdesk-text='If you need to escalate this'
 status-check-failure-conflict.title='A unique match has not been found'
 status-check-failure-conflict.listParagraph='This is because there are multiple matches with these details'
-
 status-check-failure-conflict='You can change the customer’s details you have entered or '
 status-check-failure-conflict.nino-link='search by National Insurance number'
 status-check-failure-conflict.mrz-link='search by passport or ID card'
+status-check-failure-conflict.multiple.label='This is because there are multiple matches with these details.'
 
 # Button
 button.search='Search'
