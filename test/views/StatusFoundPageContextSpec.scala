@@ -33,7 +33,7 @@ import java.time.LocalDate
 class StatusFoundPageContextSpec
     extends AnyWordSpecLike with Matchers with OptionValues with BeforeAndAfterEach with GuiceOneAppPerSuite {
 
-  val realMessages: Messages = app.injector.instanceOf[MessagesApi].preferred(Seq.empty[Lang])
+  val realMessages: Messages = app.injector.instanceOf[MessagesApi].preferred(Seq.empty)
   //todo mockito Sugar
   val mockMessages: Messages = mock(classOf[MessagesImpl], RETURNS_DEEP_STUBS)
   val currentStatusLabelMsg = "current status label msg"
@@ -272,4 +272,47 @@ class StatusFoundPageContextSpec
       StatusFoundPageContext.immigrationStatusLabel("FOO", "BAR") shouldBe "FOO - BAR"
     }
   }
+
+  "show status label where it includes a pipe" should {
+    implicit val messages: Messages = realMessages
+    Seq(
+      ("EUS|EUN_JFM", "ILR", "EU Settlement Scheme (joiner family member) - Settled status"),
+      ("EUS|EUN_JFM", "LTR", "EU Settlement Scheme (joiner family member) - Pre-settled status"),
+      (
+        "EUS|EUN_JFM",
+        "COA_IN_TIME_GRANT",
+        "EU Settlement Scheme (joiner family member) - Pending EU Settlement Scheme application"),
+      ("EUS|TCN_JFM", "ILR", "EU Settlement Scheme (joiner family member) - Settled status"),
+      ("EUS|TCN_JFM", "LTR", "EU Settlement Scheme (joiner family member) - Pre-settled status"),
+      (
+        "EUS|TCN_JFM",
+        "COA_IN_TIME_GRANT",
+        "EU Settlement Scheme (joiner family member) - Pending EU Settlement Scheme application"),
+      ("EUS|TCNBRC_JFM", "ILR", "EU Settlement Scheme (joiner family member) - Settled status"),
+      ("EUS|TCNBRC_JFM", "LTR", "EU Settlement Scheme (joiner family member) - Pre-settled status"),
+      (
+        "EUS|TCNBRC_JFM",
+        "COA_IN_TIME_GRANT",
+        "EU Settlement Scheme (joiner family member) - Pending EU Settlement Scheme application"),
+      ("EUS|_JFM", "ILR", "EU Settlement Scheme (joiner family member) - Settled status"),
+      ("EUS|_JFM", "LTR", "EU Settlement Scheme (joiner family member) - Pre-settled status"),
+      (
+        "EUS|_JFM",
+        "COA_IN_TIME_GRANT",
+        "EU Settlement Scheme (joiner family member) - Pending EU Settlement Scheme application"),
+      ("EUS|_FMFW", "ILR", "EU Settlement Scheme (frontier worker family member) - Settled status"),
+      ("EUS|_FMFW", "LTR", "EU Settlement Scheme (frontier worker family member) - Pre-settled status"),
+      (
+        "EUS|_FMFW",
+        "COA_IN_TIME_GRANT",
+        "EU Settlement Scheme (frontier worker family member) - Pending EU Settlement Scheme application")
+    ).foreach {
+      case (productType, status, label) =>
+        s"work for $productType $status" in {
+          StatusFoundPageContext.immigrationStatusLabel(productType, status) shouldBe label
+        }
+    }
+
+  }
+
 }
