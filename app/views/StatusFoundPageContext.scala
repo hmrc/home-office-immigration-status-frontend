@@ -52,18 +52,16 @@ final case class StatusFoundPageContext(query: SearchFormModel, result: StatusCh
   def hasRecourseToPublicFunds: Boolean = !mostRecentStatus.exists(_.noRecourseToPublicFunds)
 
   val prefix = "status-found.current."
-  def default(messages: Messages, status: ImmigrationStatus) =
-    messages(prefix + "hasFBIS", status.productType, status.immigrationStatus)
   def key(key: String, status: ImmigrationStatus): String = prefix + key + status.expiredMsg
 
   def currentStatusLabel(implicit messages: Messages): String =
     mostRecentStatus match {
       case Some(status) =>
-        if (status.isEUS)
-          messages.getOrElse(key("EUS." + status.immigrationStatus, status), default(messages, status))
-        else
-          messages.getOrElse(key("nonEUS." + status.immigrationStatus, status), default(messages, status))
-      case None => messages(prefix + "noStatus")
+        val default = messages(prefix + "hasFBIS", status.productType, status.immigrationStatus)
+        val eusPrefix = if (status.isEUS) "EUS." else "nonEUS."
+        messages.getOrElse(key(eusPrefix + status.immigrationStatus, status), default)
+      case None =>
+        messages(prefix + "noStatus")
     }
 
   def getImmigrationRoute(productType: String)(implicit messages: Messages) =
