@@ -98,25 +98,22 @@ status-found.previous.noRecourseToPublicFunds.false='Yes'
 ## current statuses require a key and a key.expired
 #############################
 status-found.current.EUS.ILR=' has settled status'
-status-found.current.EUS.ILR.expired='’s settled status has ended '
-status-found.current.EUS.LTR=' has pre-settled status
+status-found.current.EUS.ILR.expired='’s settled status has ended'
+status-found.current.EUS.LTR=' has pre-settled status'
 status-found.current.EUS.LTR.expired='’s pre-settled status has ended'
 status-found.current.EUS.COA_IN_TIME_GRANT=' has a pending EU Settlement Scheme application'
 status-found.current.EUS.COA_IN_TIME_GRANT.expired=' has a pending EU Settlement Scheme application'
-
 status-found.current.EUS.POST_GRACE_PERIOD_COA_GRANT=' has a pending EU Settlement Scheme application'
 status-found.current.EUS.POST_GRACE_PERIOD_COA_GRANT.expired=' has a pending EU Settlement Scheme application'
 
 status-found.current.nonEUS.LTR=' has limited leave to remain'
-status-found.current.nonEUS.LTR.expired='’s limited leave to remain has ended
+status-found.current.nonEUS.LTR.expired='’s limited leave to remain has ended'
 status-found.current.nonEUS.LTE=' has limited leave to enter'
 status-found.current.nonEUS.LTE.expired='’s limited leave to enter has ended'
 status-found.current.nonEUS.ILR=' has indefinite leave to remain'
 status-found.current.nonEUS.ILR.expired='’s indefinite leave to enter has ended'
-
 status-found.current.nonEUS.PERMIT=' has a frontier worker permit'
 status-found.current.nonEUS.PERMIT.expired='’s frontier worker permit has ended'
-
 
 status-found.current.hasFBIS=' has '{0}' - '{1}'
 status-found.current.noStatus=' has no immigration status'
