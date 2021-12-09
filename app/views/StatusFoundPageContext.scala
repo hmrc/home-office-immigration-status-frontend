@@ -17,7 +17,6 @@
 package views
 
 import play.api.i18n.Messages
-import play.api.mvc.Call
 import viewmodels.{RowViewModel => Row}
 import views.StatusFoundPageContext.RichMessages
 import models.{ImmigrationStatus, MrzSearchFormModel, NinoSearchFormModel, SearchFormModel, StatusCheckResult}
@@ -52,19 +51,20 @@ final case class StatusFoundPageContext(query: SearchFormModel, result: StatusCh
 
   def hasRecourseToPublicFunds: Boolean = !mostRecentStatus.exists(_.noRecourseToPublicFunds)
 
-  def currentStatusLabel(implicit messages: Messages): String = {
-    val prefix = "status-found.current."
+  val prefix = "status-found.current."
+  def default(messages: Messages, status: ImmigrationStatus) =
+    messages(prefix + "hasFBIS", status.productType, status.immigrationStatus)
+  def key(key: String, status: ImmigrationStatus): String = prefix + key + status.expiredMsg
+
+  def currentStatusLabel(implicit messages: Messages): String =
     mostRecentStatus match {
       case Some(status) =>
-        def default = messages(prefix + "hasFBIS", status.productType, status.immigrationStatus)
-        def key(key: String): String = prefix + key + status.expiredMsg
         if (status.isEUS)
-          messages.getOrElse(key("EUS." + status.immigrationStatus), default)
+          messages.getOrElse(key("EUS." + status.immigrationStatus, status), default(messages, status))
         else
-          messages.getOrElse(key("nonEUS." + status.immigrationStatus), default)
+          messages.getOrElse(key("nonEUS." + status.immigrationStatus, status), default(messages, status))
       case None => messages(prefix + "noStatus")
     }
-  }
 
   def getImmigrationRoute(productType: String)(implicit messages: Messages) =
     messages.getOrElse(s"immigration.${productType.toLowerCase}", productType)

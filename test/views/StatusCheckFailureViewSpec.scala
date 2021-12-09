@@ -17,14 +17,12 @@
 package views
 
 import models.NinoSearchFormModel
-
 import java.time.LocalDate
 import org.jsoup.nodes.{Document, Element}
 import org.mockito.Mockito.{mock, verify}
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import uk.gov.hmrc.domain.Nino
 import utils.NinoGenerator
 import views.html.StatusCheckFailurePage
 import views.html.components.{SearchAgainButton, ShowChangeQuery}

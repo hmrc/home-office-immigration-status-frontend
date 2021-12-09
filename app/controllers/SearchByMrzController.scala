@@ -19,13 +19,12 @@ package controllers
 import config.AppConfig
 import controllers.actions.AccessAction
 import forms.SearchByMRZForm
-import models.{FormQueryModel, MrzSearchFormModel}
+import models.MrzSearchFormModel
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
 import services.SessionCacheService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.SearchByMrzView
-import uk.gov.hmrc.http.NotFoundException
 import errors.ErrorHandler
 import javax.inject.Inject
 
