@@ -33,5 +33,9 @@ class SearchAgainButtonSpec extends ViewSpec {
     "link to the correct place" in {
       button.attr("href") mustBe routes.LandingController.onPageLoad.url
     }
+
+    "have id search-again-button" in {
+      button.attr("id") mustBe "search-again-button"
+    }
   }
 }

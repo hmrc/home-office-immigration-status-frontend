@@ -54,7 +54,7 @@ class StatusResultController @Inject()(
         case Some(query) =>
           homeOfficeService.search(query).map(handleResult(query, _))
         case None =>
-          Future.successful(Redirect(routes.SearchByNinoController.onPageLoad))
+          Future.successful(Redirect(routes.SearchByNinoController.onPageLoad(false)))
       }
     }
 
@@ -78,9 +78,9 @@ class StatusResultController @Inject()(
     response.result.statuses match {
       case Nil =>
         logger.info(s"Match found with no statuses - CorrelationId: ${response.correlationId}")
-        Ok(statusNotAvailablePage(StatusNotAvailablePageContext(query, routes.LandingController.onPageLoad)))
+        Ok(statusNotAvailablePage(StatusNotAvailablePageContext(query)))
       case _ =>
-        Ok(statusFoundPage(StatusFoundPageContext(query, response.result, routes.LandingController.onPageLoad)))
+        Ok(statusFoundPage(StatusFoundPageContext(query, response.result)))
     }
 
 }

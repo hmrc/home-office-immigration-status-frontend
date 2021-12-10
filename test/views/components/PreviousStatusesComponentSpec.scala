@@ -99,7 +99,7 @@ class PreviousStatusesComponentSpec extends ViewSpec {
     "have all of the things in the list in the correct order" in {
       val doc: Document = asDocument(sut(singleStatus)(messages))
       List(
-        ("EU Settlement Scheme - Indefinite leave to remain", "status-found.previous.status", "status-previous-0"),
+        ("EU Settlement Scheme - Settled status", "status-found.previous.status", "status-previous-0"),
         ("01 January 2012", "status-found.previous.startDate", "startDate-previous-0"),
         ("01 January 2013", "status-found.previous.endDate", "expiryDate-previous-0"),
         ("No", "status-found.previous.recourse", "recourse-previous-0")
@@ -144,12 +144,12 @@ class PreviousStatusesComponentSpec extends ViewSpec {
         "ILR" in {
           val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("EUS", "ILR"))(messages))
           assertRenderedById(doc, "status-previous-0")
-          assertElementHasText(doc, "#status-previous-0", "EU Settlement Scheme - Indefinite leave to remain")
+          assertElementHasText(doc, "#status-previous-0", "EU Settlement Scheme - Settled status")
         }
         "LTR" in {
           val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("EUS", "LTR"))(messages))
           assertRenderedById(doc, "status-previous-0")
-          assertElementHasText(doc, "#status-previous-0", "EU Settlement Scheme - Leave to remain")
+          assertElementHasText(doc, "#status-previous-0", "EU Settlement Scheme - Pre-settled status")
         }
       }
 
@@ -157,12 +157,12 @@ class PreviousStatusesComponentSpec extends ViewSpec {
         "LTE" in {
           val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("STUDY", "LTE"))(messages))
           assertRenderedById(doc, "status-previous-0")
-          assertElementHasText(doc, "#status-previous-0", "Student - Leave to enter (FBIS)")
+          assertElementHasText(doc, "#status-previous-0", "Student - Limited leave to enter")
         }
         "LTR" in {
           val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("STUDY", "LTR"))(messages))
           assertRenderedById(doc, "status-previous-0")
-          assertElementHasText(doc, "#status-previous-0", "Student - Leave to remain (FBIS)")
+          assertElementHasText(doc, "#status-previous-0", "Student - Limited leave to remain")
         }
       }
 
@@ -173,7 +173,7 @@ class PreviousStatusesComponentSpec extends ViewSpec {
           assertElementHasText(
             doc,
             "#status-previous-0",
-            "Dependants of Skilled workers and Students - Leave to enter (FBIS)")
+            "Dependants of Skilled workers and Students - Limited leave to enter")
         }
         "LTR" in {
           val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("DEPENDANT", "LTR"))(messages))
@@ -181,7 +181,7 @@ class PreviousStatusesComponentSpec extends ViewSpec {
           assertElementHasText(
             doc,
             "#status-previous-0",
-            "Dependants of Skilled workers and Students - Leave to remain (FBIS)")
+            "Dependants of Skilled workers and Students - Limited leave to remain")
         }
       }
 
@@ -189,12 +189,12 @@ class PreviousStatusesComponentSpec extends ViewSpec {
         "LTE" in {
           val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("WORK", "LTE"))(messages))
           assertRenderedById(doc, "status-previous-0")
-          assertElementHasText(doc, "#status-previous-0", "Worker - Leave to enter (FBIS)")
+          assertElementHasText(doc, "#status-previous-0", "Worker - Limited leave to enter")
         }
         "LTR" in {
           val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("WORK", "LTR"))(messages))
           assertRenderedById(doc, "status-previous-0")
-          assertElementHasText(doc, "#status-previous-0", "Worker - Leave to remain (FBIS)")
+          assertElementHasText(doc, "#status-previous-0", "Worker - Limited leave to remain")
         }
       }
 
@@ -203,7 +203,7 @@ class PreviousStatusesComponentSpec extends ViewSpec {
           val doc: Document =
             asDocument(sut(singleStatusCustomImmigrationStatus("FRONTIER_WORKER", "PERMIT"))(messages))
           assertRenderedById(doc, "status-previous-0")
-          assertElementHasText(doc, "#status-previous-0", "Frontier worker - Permit (FBIS)")
+          assertElementHasText(doc, "#status-previous-0", "Frontier worker - Frontier worker permit")
         }
       }
 
@@ -211,12 +211,12 @@ class PreviousStatusesComponentSpec extends ViewSpec {
         "LTE" in {
           val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("BNO", "LTE"))(messages))
           assertRenderedById(doc, "status-previous-0")
-          assertElementHasText(doc, "#status-previous-0", "British National Overseas - Leave to enter (FBIS)")
+          assertElementHasText(doc, "#status-previous-0", "British National Overseas - Limited leave to enter")
         }
         "LTR" in {
           val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("BNO", "LTR"))(messages))
           assertRenderedById(doc, "status-previous-0")
-          assertElementHasText(doc, "#status-previous-0", "British National Overseas - Leave to remain (FBIS)")
+          assertElementHasText(doc, "#status-previous-0", "British National Overseas - Limited leave to remain")
         }
       }
 
@@ -224,12 +224,18 @@ class PreviousStatusesComponentSpec extends ViewSpec {
         "LTE" in {
           val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("BNO_LOTR", "LTE"))(messages))
           assertRenderedById(doc, "status-previous-0")
-          assertElementHasText(doc, "#status-previous-0", "British National Overseas - Leave outside the rules (FBIS)")
+          assertElementHasText(
+            doc,
+            "#status-previous-0",
+            "British National Overseas (leave outside the rules) - Limited leave to enter")
         }
         "LTR" in {
           val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("BNO_LOTR", "LTR"))(messages))
           assertRenderedById(doc, "status-previous-0")
-          assertElementHasText(doc, "#status-previous-0", "British National Overseas - Leave outside the rules (FBIS)")
+          assertElementHasText(
+            doc,
+            "#status-previous-0",
+            "British National Overseas (leave outside the rules) - Limited leave to remain")
         }
       }
 
@@ -237,7 +243,7 @@ class PreviousStatusesComponentSpec extends ViewSpec {
         "LTR" in {
           val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("GRADUATE", "LTR"))(messages))
           assertRenderedById(doc, "status-previous-0")
-          assertElementHasText(doc, "#status-previous-0", "Graduate - Leave to remain (FBIS)")
+          assertElementHasText(doc, "#status-previous-0", "Graduate - Limited leave to remain")
         }
       }
 
@@ -245,13 +251,13 @@ class PreviousStatusesComponentSpec extends ViewSpec {
         "COA_IN_TIME_GRANT" in {
           val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("EUS", "COA_IN_TIME_GRANT"))(messages))
           assertRenderedById(doc, "status-previous-0")
-          assertElementHasText(doc, "#status-previous-0", "EU Settlement - Certificate of application (In time)")
+          assertElementHasText(doc, "#status-previous-0", "EU Settlement - Pending EU Settlement Scheme application")
         }
         "POST_GRACE_PERIOD_COA_GRANT" in {
           val doc: Document =
             asDocument(sut(singleStatusCustomImmigrationStatus("EUS", "POST_GRACE_PERIOD_COA_GRANT"))(messages))
           assertRenderedById(doc, "status-previous-0")
-          assertElementHasText(doc, "#status-previous-0", "EU Settlement - Certificate of application (Out of time)")
+          assertElementHasText(doc, "#status-previous-0", "EU Settlement - Pending EU Settlement Scheme application")
         }
       }
 
@@ -259,12 +265,12 @@ class PreviousStatusesComponentSpec extends ViewSpec {
         "LTR" in {
           val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("SPORTSPERSON", "LTR"))(messages))
           assertRenderedById(doc, "status-previous-0")
-          assertElementHasText(doc, "#status-previous-0", "International Sportsperson - Leave to remain (FBIS)")
+          assertElementHasText(doc, "#status-previous-0", "International Sportsperson - Limited leave to remain")
         }
         "LTE" in {
           val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("SPORTSPERSON", "LTE"))(messages))
           assertRenderedById(doc, "status-previous-0")
-          assertElementHasText(doc, "#status-previous-0", "International Sportsperson - Leave to enter (FBIS)")
+          assertElementHasText(doc, "#status-previous-0", "International Sportsperson - Limited leave to enter")
         }
       }
 
@@ -272,7 +278,10 @@ class PreviousStatusesComponentSpec extends ViewSpec {
         "LTR" in {
           val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("SETTLEMENT", "ILR"))(messages))
           assertRenderedById(doc, "status-previous-0")
-          assertElementHasText(doc, "#status-previous-0", "British National Overseas - Settlement (FBIS)")
+          assertElementHasText(
+            doc,
+            "#status-previous-0",
+            "British National Overseas or Settlement Protection - Indefinite leave to remain")
         }
       }
 
@@ -280,12 +289,12 @@ class PreviousStatusesComponentSpec extends ViewSpec {
         "LTR" in {
           val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("TEMP_WORKER", "LTR"))(messages))
           assertRenderedById(doc, "status-previous-0")
-          assertElementHasText(doc, "#status-previous-0", "Temporary Worker - Leave to remain (FBIS)")
+          assertElementHasText(doc, "#status-previous-0", "Temporary Worker - Limited leave to remain")
         }
         "LTE" in {
           val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("TEMP_WORKER", "LTE"))(messages))
           assertRenderedById(doc, "status-previous-0")
-          assertElementHasText(doc, "#status-previous-0", "Temporary Worker - Leave to enter (FBIS)")
+          assertElementHasText(doc, "#status-previous-0", "Temporary Worker - Limited leave to enter")
         }
       }
     }

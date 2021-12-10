@@ -20,8 +20,9 @@ import play.api.mvc._
 import controllers.actions.AccessAction
 import services.SessionCacheService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-
 import javax.inject.{Inject, Singleton}
+import models.{MrzSearchFormModel, NinoSearchFormModel}
+
 import scala.concurrent.ExecutionContext
 
 @Singleton
@@ -33,6 +34,14 @@ class LandingController @Inject()(
     extends FrontendController(controllerComponents) {
 
   val onPageLoad: Action[AnyContent] = access.async { implicit request =>
-    sessionCacheService.delete.map(_ => Redirect(routes.SearchByNinoController.onPageLoad))
+    sessionCacheService.get.map { result =>
+      result match {
+        case Some(_: NinoSearchFormModel) =>
+          Redirect(routes.SearchByNinoController.onPageLoad(true))
+        case Some(_: MrzSearchFormModel) =>
+          Redirect(routes.SearchByMrzController.onPageLoad(true))
+        case _ => Redirect(routes.SearchByNinoController.onPageLoad(false))
+      }
+    }
   }
 }

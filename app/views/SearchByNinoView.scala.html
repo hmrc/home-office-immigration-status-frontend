@@ -40,7 +40,7 @@
         @fieldset("lookup.title") {
 
             @if(appConfig.documentSearchFeatureEnabled) {
-                @alternateSearch("alternate-search.mrz-link", controllers.routes.SearchByMrzController.onPageLoad.url, "alt-search-by-mrz")
+                @alternateSearch("alternate-search.mrz-link", controllers.routes.SearchByMrzController.onPageLoad(true).url, "alt-search-by-mrz")
             }
 
             @inputText(

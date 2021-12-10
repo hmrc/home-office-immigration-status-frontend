@@ -64,7 +64,7 @@ class SearchByMrzViewSpec extends ViewSpec {
       verify(mockAlternateSearch)
         .apply(
           "alternate-search.nino-link",
-          controllers.routes.SearchByNinoController.onPageLoad.url,
+          controllers.routes.SearchByNinoController.onPageLoad(true).url,
           "alt-search-by-nino")(messages)
     }
 

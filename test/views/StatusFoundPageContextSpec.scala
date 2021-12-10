@@ -36,8 +36,13 @@ class StatusFoundPageContextSpec
     extends AnyWordSpecLike with Matchers with OptionValues with BeforeAndAfterEach with GuiceOneAppPerSuite
     with Injecting {
 
+<<<<<<< HEAD
   val realMessages: Messages = inject[MessagesApi].preferred(Seq.empty)
   val allCountries: Countries = inject[Countries]
+=======
+  val realMessages: Messages = app.injector.instanceOf[MessagesApi].preferred(Seq.empty)
+  //todo mockito Sugar
+>>>>>>> origin/main
   val mockMessages: Messages = mock(classOf[MessagesImpl], RETURNS_DEEP_STUBS)
   val currentStatusLabelMsg = "current status label msg"
 
@@ -63,8 +68,7 @@ class StatusFoundPageContextSpec
         dateOfBirth = LocalDate.now,
         nationality = "Some nationality",
         statuses = List(ImmigrationStatus(LocalDate.MIN, endDate, pt, is, hasRecourseToPublicFunds))
-      ),
-      call
+      )
     )
 
   "currentStatusLabel" when {
@@ -163,10 +167,8 @@ class StatusFoundPageContextSpec
 
     "there is no immigration Status" should {
       "display no status" in {
-        val context = StatusFoundPageContext(
-          query,
-          StatusCheckResult("Some name", LocalDate.MIN, "some nation", statuses = Nil),
-          call)
+        val context =
+          StatusFoundPageContext(query, StatusCheckResult("Some name", LocalDate.MIN, "some nation", statuses = Nil))
 
         context.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
         val msgKey = "status-found.current.noStatus"
@@ -182,7 +184,7 @@ class StatusFoundPageContextSpec
       val fakeImmigrationStatus = ImmigrationStatus(LocalDate.now(), None, "TEST", "STATUS", true)
       when(mockResult.mostRecentStatus).thenReturn(Some(fakeImmigrationStatus))
 
-      StatusFoundPageContext(null, mockResult, null).mostRecentStatus shouldBe Some(fakeImmigrationStatus)
+      StatusFoundPageContext(null, mockResult).mostRecentStatus shouldBe Some(fakeImmigrationStatus)
     }
   }
 
@@ -194,7 +196,7 @@ class StatusFoundPageContextSpec
       when(mockResult.mostRecentStatus).thenReturn(Some(fakeImmigrationStatus))
       when(mockResult.nationality).thenReturn("FRA")
 
-      StatusFoundPageContext(null, mockResult, null).previousStatuses shouldBe Seq(fakeImmigrationStatus)
+      StatusFoundPageContext(null, mockResult).previousStatuses shouldBe Seq(fakeImmigrationStatus)
     }
   }
 
@@ -213,8 +215,7 @@ class StatusFoundPageContextSpec
             dateOfBirth = LocalDate.now,
             nationality = "Some nationality",
             statuses = Nil
-          ),
-          call
+          )
         )
 
         assert(context.hasRecourseToPublicFunds == true)
@@ -282,6 +283,7 @@ class StatusFoundPageContextSpec
     }
   }
 
+<<<<<<< HEAD
   "isZambrano" should {
 
     val nonEEACountries = allCountries.countries.filter(c => !EEACountries.countries.contains(c.value))
@@ -335,4 +337,47 @@ class StatusFoundPageContextSpec
       }
     }
   }
+
+  "show status label where it includes a pipe" should {
+    implicit val messages: Messages = realMessages
+    Seq(
+      ("EUS|EUN_JFM", "ILR", "EU Settlement Scheme (joiner family member) - Settled status"),
+      ("EUS|EUN_JFM", "LTR", "EU Settlement Scheme (joiner family member) - Pre-settled status"),
+      (
+        "EUS|EUN_JFM",
+        "COA_IN_TIME_GRANT",
+        "EU Settlement Scheme (joiner family member) - Pending EU Settlement Scheme application"),
+      ("EUS|TCN_JFM", "ILR", "EU Settlement Scheme (joiner family member) - Settled status"),
+      ("EUS|TCN_JFM", "LTR", "EU Settlement Scheme (joiner family member) - Pre-settled status"),
+      (
+        "EUS|TCN_JFM",
+        "COA_IN_TIME_GRANT",
+        "EU Settlement Scheme (joiner family member) - Pending EU Settlement Scheme application"),
+      ("EUS|TCNBRC_JFM", "ILR", "EU Settlement Scheme (joiner family member) - Settled status"),
+      ("EUS|TCNBRC_JFM", "LTR", "EU Settlement Scheme (joiner family member) - Pre-settled status"),
+      (
+        "EUS|TCNBRC_JFM",
+        "COA_IN_TIME_GRANT",
+        "EU Settlement Scheme (joiner family member) - Pending EU Settlement Scheme application"),
+      ("EUS|_JFM", "ILR", "EU Settlement Scheme (joiner family member) - Settled status"),
+      ("EUS|_JFM", "LTR", "EU Settlement Scheme (joiner family member) - Pre-settled status"),
+      (
+        "EUS|_JFM",
+        "COA_IN_TIME_GRANT",
+        "EU Settlement Scheme (joiner family member) - Pending EU Settlement Scheme application"),
+      ("EUS|_FMFW", "ILR", "EU Settlement Scheme (frontier worker family member) - Settled status"),
+      ("EUS|_FMFW", "LTR", "EU Settlement Scheme (frontier worker family member) - Pre-settled status"),
+      (
+        "EUS|_FMFW",
+        "COA_IN_TIME_GRANT",
+        "EU Settlement Scheme (frontier worker family member) - Pending EU Settlement Scheme application")
+    ).foreach {
+      case (productType, status, label) =>
+        s"work for $productType $status" in {
+          StatusFoundPageContext.immigrationStatusLabel(productType, status) shouldBe label
+        }
+    }
+
+  }
+
 }

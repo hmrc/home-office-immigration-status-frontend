@@ -17,12 +17,11 @@
 package views
 
 import play.api.i18n.Messages
-import play.api.mvc.Call
 import viewmodels.{RowViewModel => Row}
 import views.StatusFoundPageContext.RichMessages
 import models.{EEACountries, ImmigrationStatus, MrzSearchFormModel, NinoSearchFormModel, SearchFormModel, StatusCheckResult}
 
-final case class StatusFoundPageContext(query: SearchFormModel, result: StatusCheckResult, searchAgainCall: Call) {
+final case class StatusFoundPageContext(query: SearchFormModel, result: StatusCheckResult) {
 
   val mostRecentStatus: Option[ImmigrationStatus] = result.mostRecentStatus
   val previousStatuses: Seq[ImmigrationStatus] = result.previousStatuses
@@ -79,9 +78,13 @@ final case class StatusFoundPageContext(query: SearchFormModel, result: StatusCh
 object StatusFoundPageContext {
 
   implicit class RichMessages(val messages: Messages) extends AnyVal {
-    def getOrElse(key: String, default: String): String =
-      if (messages.isDefinedAt(key)) messages(key) else default
+    def getOrElse(key: String, default: String): String = {
+      val newKey = replacePipesInKey(key)
+      if (messages.isDefinedAt(newKey)) messages(newKey) else default
+    }
   }
+
+  def replacePipesInKey(key: String): String = key.replace('|', '.')
 
   def immigrationStatusLabel(productType: String, status: String)(implicit messages: Messages): String =
     messages.getOrElse(

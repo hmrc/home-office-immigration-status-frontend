@@ -65,7 +65,7 @@ class SearchByNinoControllerSpec extends ControllerSpec {
     "display the check by nino form view" when {
       "there is no query on the session" in {
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(None))
-        val result = sut.onPageLoad(request)
+        val result = sut.onPageLoad(false)(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe fakeView.toString
@@ -77,7 +77,7 @@ class SearchByNinoControllerSpec extends ControllerSpec {
 
       "there is a existing query on the session" in {
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(query)))
-        val result = sut.onPageLoad(request)
+        val result = sut.onPageLoad(false)(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe fakeView.toString
@@ -89,8 +89,22 @@ class SearchByNinoControllerSpec extends ControllerSpec {
 
       "the session cache returns a failure" in {
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.failed(new Exception("Something happened")))
-        intercept[Exception](await(sut.onPageLoad(request)))
+        intercept[Exception](await(sut.onPageLoad(false)(request)))
         verify(mockSessionCacheService).get(any(), any())
+      }
+    }
+
+    "clear mongo and display an empty form" when {
+      "clearForm is set to true" in {
+        when(mockSessionCacheService.delete(any(), any())).thenReturn(Future.unit)
+        val result = sut.onPageLoad(true)(request)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe fakeView.toString
+        withClue("the form was prefilled with a previous query, how?") {
+          verify(mockView).apply(refEq(emptyForm, "mapping"))(is(request), any())
+        }
+        verify(mockSessionCacheService).delete(any(), any())
       }
     }
   }

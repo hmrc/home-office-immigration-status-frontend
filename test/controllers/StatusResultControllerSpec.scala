@@ -66,7 +66,7 @@ class StatusResultControllerSpec extends ControllerSpec {
         val result = sut.onPageLoad()(request)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).get mustBe routes.SearchByNinoController.onPageLoad.url
+        redirectLocation(result).get mustBe routes.SearchByNinoController.onPageLoad(false).url
         withClue("Connector should not be called") {
           verify(mockProxyService, times(0)).search(any())(any(), any(), any(), any())
         }
@@ -99,7 +99,7 @@ class StatusResultControllerSpec extends ControllerSpec {
 
         status(result) mustBe OK
         contentAsString(result) mustBe inject[StatusFoundPage]
-          .apply(StatusFoundPageContext(query, hoResult, routes.LandingController.onPageLoad))(request, messages)
+          .apply(StatusFoundPageContext(query, hoResult))(request, messages)
           .toString
         verifyConnector()
         verify(mockSessionCacheService).get(any(), any())
@@ -115,7 +115,7 @@ class StatusResultControllerSpec extends ControllerSpec {
 
         status(result) mustBe OK
         contentAsString(result) mustBe inject[StatusNotAvailablePage]
-          .apply(StatusNotAvailablePageContext(query, routes.LandingController.onPageLoad))(request, messages)
+          .apply(StatusNotAvailablePageContext(query))(request, messages)
           .toString
         verifyConnector()
         verify(mockSessionCacheService).get(any(), any())
