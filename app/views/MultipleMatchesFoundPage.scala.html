@@ -31,6 +31,8 @@
 
     <h1 class="govuk-heading-xl" id="status-check-failure-conflict-title">@messages("status-check-failure-conflict.title")</h1>
 
+    <p id="multiplelabel" class="govuk-body">@messages("status-check-failure-conflict.multiple.label")</p>
+
     @if(appConfig.documentSearchFeatureEnabled) {
         @alternateText(query.isInstanceOf[NinoSearchFormModel])
     }
