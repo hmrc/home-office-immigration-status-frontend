@@ -36,13 +36,9 @@ class StatusFoundPageContextSpec
     extends AnyWordSpecLike with Matchers with OptionValues with BeforeAndAfterEach with GuiceOneAppPerSuite
     with Injecting {
 
-<<<<<<< HEAD
   val realMessages: Messages = inject[MessagesApi].preferred(Seq.empty)
   val allCountries: Countries = inject[Countries]
-=======
-  val realMessages: Messages = app.injector.instanceOf[MessagesApi].preferred(Seq.empty)
-  //todo mockito Sugar
->>>>>>> origin/main
+
   val mockMessages: Messages = mock(classOf[MessagesImpl], RETURNS_DEEP_STUBS)
   val currentStatusLabelMsg = "current status label msg"
 
@@ -283,7 +279,6 @@ class StatusFoundPageContextSpec
     }
   }
 
-<<<<<<< HEAD
   "isZambrano" should {
 
     val nonEEACountries = allCountries.countries.filter(c => !EEACountries.countries.contains(c.value))
@@ -296,7 +291,7 @@ class StatusFoundPageContextSpec
           when(mockResult.mostRecentStatus).thenReturn(Some(fakeImmigrationStatus))
           when(mockResult.nationality).thenReturn(country)
 
-          StatusFoundPageContext(null, mockResult, null).isZambrano shouldBe false
+          StatusFoundPageContext(null, mockResult).isZambrano shouldBe false
         }
       }
 
@@ -307,7 +302,7 @@ class StatusFoundPageContextSpec
           when(mockResult.mostRecentStatus).thenReturn(Some(fakeImmigrationStatus))
           when(mockResult.nationality).thenReturn(country)
 
-          StatusFoundPageContext(null, mockResult, null).isZambrano shouldBe false
+          StatusFoundPageContext(null, mockResult).isZambrano shouldBe false
         }
       }
 
@@ -318,7 +313,7 @@ class StatusFoundPageContextSpec
           when(mockResult.mostRecentStatus).thenReturn(Some(fakeImmigrationStatus))
           when(mockResult.nationality).thenReturn(country.value)
 
-          StatusFoundPageContext(null, mockResult, null).isZambrano shouldBe false
+          StatusFoundPageContext(null, mockResult).isZambrano shouldBe false
         }
       }
 
@@ -332,7 +327,7 @@ class StatusFoundPageContextSpec
           when(mockResult.mostRecentStatus).thenReturn(Some(fakeImmigrationStatus))
           when(mockResult.nationality).thenReturn(country.value)
 
-          StatusFoundPageContext(null, mockResult, null).isZambrano shouldBe true
+          StatusFoundPageContext(null, mockResult).isZambrano shouldBe true
         }
       }
     }

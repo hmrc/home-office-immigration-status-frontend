@@ -223,8 +223,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
     "context.isZambrano is true" in {
       val context = StatusFoundPageContext(
         NinoSearchFormModel(NinoGenerator.generateNino, "Pan", "", LocalDate.now()),
-        StatusCheckResult("Pan", LocalDate.now(), "JPN", List(ValidStatus)),
-        Call("", "/expected")
+        StatusCheckResult("Pan", LocalDate.now(), "JPN", List(ValidStatus))
       )
       val html: HtmlFormat.Appendable =
         sut(context)(request, messages)
@@ -238,8 +237,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
     "context.isZambrano is false" in {
       val context = StatusFoundPageContext(
         NinoSearchFormModel(NinoGenerator.generateNino, "Pan", "", LocalDate.now()),
-        StatusCheckResult("Pan", LocalDate.now(), "FRA", List(ValidStatus)),
-        Call("", "/expected")
+        StatusCheckResult("Pan", LocalDate.now(), "FRA", List(ValidStatus))
       )
 
       val html: HtmlFormat.Appendable =
