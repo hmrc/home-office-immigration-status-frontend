@@ -16,4 +16,4 @@
 
 package config
 
-final case class CountryInput(value: String, label: String)
+final case class CountryInput(alpha3: String, name: String)

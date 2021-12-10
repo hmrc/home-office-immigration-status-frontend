@@ -71,7 +71,7 @@ class CountrySelectSpec extends ViewSpec {
     "have an item for each country" in {
       val options = doc.select("option")
       val optionTuples = options.asScala.toList.map(option => (option.attr("value"), option.text()))
-      val countryConfigTuples = countries.countries.map(country => country.value -> country.label) :+ "" -> ""
+      val countryConfigTuples = countries.countries.map(country => country.alpha3 -> country.name) :+ "" -> ""
       optionTuples must contain theSameElementsAs countryConfigTuples
     }
 

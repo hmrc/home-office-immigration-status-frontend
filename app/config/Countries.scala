@@ -20,13 +20,15 @@ import com.google.inject.{Inject, Singleton}
 import play.api.Environment
 import play.api.libs.json.{Json, Reads}
 import com.typesafe.config.ConfigException
+import config.Countries.ISOCountry
 
 @Singleton
 class Countries @Inject()(environment: Environment) {
 
-  private def alpha2ToHmrcName: Map[String, String] =
+  private def alpha2ToHmrcName: Map[String, String] = {
+    val file = "location-autocomplete-canonical-list.json"
     environment
-      .resourceAsStream("location-autocomplete-canonical-list.json")
+      .resourceAsStream(file)
       .flatMap { inputStream =>
         val locationJsValue = Json.parse(inputStream)
         Json
@@ -40,18 +42,13 @@ class Countries @Inject()(environment: Environment) {
             }.collect { case (Some(code), name) => code -> name }.toMap
           }
       }
-      .getOrElse(throw new ConfigException.BadValue(
-        "location-autocomplete-canonical-list.json",
-        "Alpha2 to Name map cannot be constructed."))
-
-  case class ISOCountry(name: String, alpha2: String, alpha3: String, numeric: String)
-  object ISOCountry {
-    implicit val reads: Reads[ISOCountry] = Json.reads[ISOCountry]
+      .getOrElse(throw new ConfigException.BadValue(file, "Alpha2 to Name map cannot be constructed."))
   }
 
-  private def iso3166CountryCodes: Seq[ISOCountry] =
+  private def iso3166CountryCodes: Seq[ISOCountry] = {
+    val file = "ISO_3166-alpha3-alpha2-numeric.json"
     environment
-      .resourceAsStream("ISO_3166-alpha3-alpha2-numeric.json")
+      .resourceAsStream(file)
       .flatMap { in =>
         val locationJsValue = Json.parse(in)
         Json
@@ -59,13 +56,24 @@ class Countries @Inject()(environment: Environment) {
           .asOpt
       }
       .getOrElse {
-        throw new ConfigException.BadValue("ISO_3166-alpha3-alpha2-numeric.json", "ISO codes json does not exist")
+        throw new ConfigException.BadValue(file, "ISO codes json does not exist")
       }
-
-  val countries: Seq[CountryInput] = iso3166CountryCodes.map { isoCountry =>
-    val hmrcName = alpha2ToHmrcName.getOrElse(isoCountry.alpha2, isoCountry.name)
-
-    CountryInput(isoCountry.alpha3, hmrcName)
   }
 
+  val countries: Seq[CountryInput] = {
+    val hmrcNameMap = alpha2ToHmrcName
+    iso3166CountryCodes.map { isoCountry =>
+      val hmrcName = hmrcNameMap.getOrElse(isoCountry.alpha2, isoCountry.name)
+
+      CountryInput(isoCountry.alpha3, hmrcName)
+    }
+  }
+
+}
+
+object Countries {
+  private case class ISOCountry(name: String, alpha2: String, alpha3: String, numeric: String)
+  private object ISOCountry {
+    implicit val reads: Reads[ISOCountry] = Json.reads[ISOCountry]
+  }
 }

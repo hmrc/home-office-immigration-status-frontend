@@ -28,7 +28,7 @@ import javax.inject.Singleton
 @Singleton
 class SearchByMRZForm @Inject()(countries: Countries) extends FormFieldMappings {
 
-  private val allowedCountries = countries.countries.map(_.value)
+  private val allowedCountries = countries.countries.map(_.alpha3)
 
   def apply(): Form[MrzSearchFormModel] = Form[MrzSearchFormModel] {
     mapping(

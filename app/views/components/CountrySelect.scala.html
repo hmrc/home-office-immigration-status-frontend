@@ -35,9 +35,9 @@
     items = Seq(SelectItem(value = Some(""), text = "")) ++ 
         countries.countries.map(country =>
             SelectItem(
-                value = Some(country.value),
-                text = country.label,
-                selected = form("nationality").value.contains(country.value)
+                value = Some(country.alpha3),
+                text = country.name,
+                selected = form("nationality").value.contains(country.alpha3)
             )
         ),
     formGroupClasses = "autocomplete-wrapper",

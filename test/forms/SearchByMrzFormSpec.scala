@@ -34,7 +34,7 @@ class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecti
   implicit def noShrink[T]: Shrink[T] = Shrink.shrinkAny
 
   lazy val formProvider: SearchByMRZForm = inject[SearchByMRZForm]
-  lazy val countriesValues = inject[Countries].countries.map(_.value)
+  lazy val countriesValues = inject[Countries].countries.map(_.alpha3)
   lazy val form: Form[MrzSearchFormModel] = formProvider()
 
   val now: LocalDate = LocalDate.now()
