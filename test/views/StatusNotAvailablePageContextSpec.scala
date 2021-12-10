@@ -55,7 +55,7 @@ class StatusNotAvailablePageContextSpec
 
       Seq(
         ("nino", "generic.nino", query.nino.nino),
-        ("nationality", "generic.nationality", result.nationality),
+        ("nationality", "generic.nationality", ISO31661Alpha3.getCountryNameFor(result.nationality)),
         ("dob", "generic.dob", DateFormat.format(Locale.UK)(query.dateOfBirth))
       ).foreach {
         case (id, msgKey, data) =>
@@ -75,7 +75,7 @@ class StatusNotAvailablePageContextSpec
       Seq(
         ("documentType", "lookup.identity.label", "Passport"),
         ("documentNumber", "lookup.mrz.label", query.documentNumber),
-        ("nationality", "generic.nationality", result.nationality),
+        ("nationality", "generic.nationality", ISO31661Alpha3.getCountryNameFor(result.nationality)),
         ("dob", "generic.dob", DateFormat.format(Locale.UK)(query.dateOfBirth))
       ).foreach {
         case (id, msgKey, data) =>
