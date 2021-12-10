@@ -16,7 +16,7 @@
 
 package views
 
-import models.{EEACountries, ImmigrationStatus, NinoSearchFormModel, StatusCheckResult}
+import models.{EEACountries, ImmigrationStatus, MrzSearchFormModel, NinoSearchFormModel, StatusCheckResult}
 import org.mockito.ArgumentMatchers.{any, matches}
 import org.mockito.Mockito._
 import org.scalatest.matchers.should.Matchers
@@ -54,11 +54,23 @@ class StatusFoundPageContextSpec
     }
 
   val query = NinoSearchFormModel(NinoGenerator.generateNino, "Surname", "Forename", LocalDate.now())
+  val mrzQuery = MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
   val call = Call("GET", "/")
 
   def createContext(pt: String, is: String, endDate: Option[LocalDate], hasRecourseToPublicFunds: Boolean = false) =
     StatusFoundPageContext(
       query,
+      StatusCheckResult(
+        fullName = "Some name",
+        dateOfBirth = LocalDate.now,
+        nationality = "Some nationality",
+        statuses = List(ImmigrationStatus(LocalDate.MIN, endDate, pt, is, hasRecourseToPublicFunds))
+      )
+    )
+
+  def createMrzContext(pt: String, is: String, endDate: Option[LocalDate], hasRecourseToPublicFunds: Boolean = false) =
+    StatusFoundPageContext(
+      mrzQuery,
       StatusCheckResult(
         fullName = "Some name",
         dateOfBirth = LocalDate.now,
@@ -229,12 +241,28 @@ class StatusFoundPageContextSpec
       val context = createContext("PT", "IS", Some(LocalDate.now()))
       Seq(
         ("nino", "generic.nino", query.nino.nino),
-        ("dob", "generic.dob", context.result.dobFormatted(realMessages.lang.locale)),
-        ("nationality", "generic.nationality", context.result.countryName)
+        ("nationality", "generic.nationality", context.result.countryName),
+        ("dob", "generic.dob", context.result.dobFormatted(realMessages.lang.locale))
       ).foreach {
         case (id, msgKey, data) =>
-          s"row is for $id" in {
+          s"it's a NINO search and the row is $id" in {
             assert(context.detailRows(realMessages).contains(RowViewModel(id, msgKey, data)))
+          }
+      }
+
+      val mrzContext = createMrzContext("PT", "IS", Some(LocalDate.now()))
+      Seq(
+        (
+          "documentType",
+          "lookup.identity.label",
+          MrzSearchFormModel.documentTypeToMessageKey(mrzQuery.documentType)(realMessages)),
+        ("documentNumber", "lookup.mrz.label", mrzQuery.documentNumber),
+        ("nationality", "generic.nationality", mrzContext.result.countryName),
+        ("dob", "generic.dob", mrzContext.result.dobFormatted(realMessages.lang.locale))
+      ).foreach {
+        case (id, msgKey, data) =>
+          s"it's a mrz search and the row is $id" in {
+            assert(mrzContext.detailRows(realMessages).contains(RowViewModel(id, msgKey, data)))
           }
       }
     }

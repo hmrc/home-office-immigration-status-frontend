@@ -74,8 +74,8 @@ class StatusFoundPageViewSpec extends ViewSpec {
         "startDate",
         "expiryDate",
         "nino",
-        "dob",
-        "nationality"
+        "nationality",
+        "dob"
       ).zipWithIndex.foreach {
         case (id, index) =>
           val row: Element = doc.select(s".govuk-summary-list__row").get(index)

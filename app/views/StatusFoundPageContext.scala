@@ -43,10 +43,17 @@ final case class StatusFoundPageContext(query: SearchFormModel, result: StatusCh
     case q: NinoSearchFormModel =>
       Seq(
         Row("nino", "generic.nino", q.nino.nino),
-        Row("dob", "generic.dob", result.dobFormatted(messages.lang.locale)),
-        Row("nationality", "generic.nationality", result.countryName)
+        Row("nationality", "generic.nationality", result.countryName),
+        Row("dob", "generic.dob", result.dobFormatted(messages.lang.locale))
       )
-    case q: MrzSearchFormModel => Nil
+    case q: MrzSearchFormModel =>
+      val documentTypeText = MrzSearchFormModel.documentTypeToMessageKey(q.documentType)
+      Seq(
+        Row("documentType", "lookup.identity.label", documentTypeText),
+        Row("documentNumber", "lookup.mrz.label", q.documentNumber),
+        Row("nationality", "generic.nationality", result.countryName),
+        Row("dob", "generic.dob", result.dobFormatted(messages.lang.locale))
+      )
   }
 
   def hasRecourseToPublicFunds: Boolean = !mostRecentStatus.exists(_.noRecourseToPublicFunds)
