@@ -28,14 +28,16 @@ import play.api.mvc.Call
 import uk.gov.hmrc.domain.Nino
 import utils.NinoGenerator
 import viewmodels.RowViewModel
-
 import java.time.LocalDate
 import java.util.Locale
 
-class StatusNotAvailablePageContextSpec
-    extends AnyWordSpecLike with Matchers with OptionValues with BeforeAndAfterEach with GuiceOneAppPerSuite {
+import play.api.test.Injecting
 
-  val realMessages: Messages = app.injector.instanceOf[MessagesApi].preferred(Seq.empty[Lang])
+class StatusNotAvailablePageContextSpec
+    extends AnyWordSpecLike with Matchers with OptionValues with BeforeAndAfterEach with GuiceOneAppPerSuite
+    with Injecting {
+
+  val realMessages: Messages = inject[MessagesApi].preferred(Seq.empty[Lang])
   val mockMessages: Messages = mock(classOf[MessagesImpl], RETURNS_DEEP_STUBS)
   val currentStatusLabelMsg = "current status label msg"
 

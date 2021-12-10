@@ -19,7 +19,7 @@ package views
 import play.api.i18n.Messages
 import viewmodels.{RowViewModel => Row}
 import views.StatusFoundPageContext.RichMessages
-import models.{ImmigrationStatus, MrzSearchFormModel, NinoSearchFormModel, SearchFormModel, StatusCheckResult}
+import models.{EEACountries, ImmigrationStatus, MrzSearchFormModel, NinoSearchFormModel, SearchFormModel, StatusCheckResult}
 
 final case class StatusFoundPageContext(query: SearchFormModel, result: StatusCheckResult) {
 
@@ -70,6 +70,9 @@ final case class StatusFoundPageContext(query: SearchFormModel, result: StatusCh
 
   def immigrationRoute(implicit messages: Messages) =
     mostRecentStatus.map(status => getImmigrationRoute(status.productType))
+
+  val isZambrano: Boolean = mostRecentStatus.map(_.isEUS).getOrElse(false) && !EEACountries.countries.contains(
+    result.nationality)
 }
 
 object StatusFoundPageContext {
