@@ -174,7 +174,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
           sut(buildContext(List(ValidStatusCustomProductType("SPORTSPERSON"))))(request, messages)
 
         val doc = asDocument(html)
-        assertElementHasText(doc, "#immigrationRoute", "Sportsperson")
+        assertElementHasText(doc, "#immigrationRoute", "International Sportsperson")
       }
 
       "SETTLEMENT displays" in {
@@ -182,7 +182,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
           sut(buildContext(List(ValidStatusCustomProductType("SETTLEMENT"))))(request, messages)
 
         val doc = asDocument(html)
-        assertElementHasText(doc, "#immigrationRoute", "Settlement Protection")
+        assertElementHasText(doc, "#immigrationRoute", "British National Overseas or Settlement Protection")
       }
 
       "TEMP_WORKER displays" in {
