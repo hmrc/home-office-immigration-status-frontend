@@ -22,7 +22,6 @@ import services.SessionCacheService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.{Inject, Singleton}
 import models.{MrzSearchFormModel, NinoSearchFormModel}
-
 import scala.concurrent.ExecutionContext
 
 @Singleton

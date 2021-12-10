@@ -21,7 +21,7 @@ import play.api.mvc._
 import config.AppConfig
 import controllers.actions.AccessAction
 import forms.SearchByNinoForm
-import models.{FormQueryModel, NinoSearchFormModel}
+import models.NinoSearchFormModel
 import views.html._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import services.SessionCacheService
