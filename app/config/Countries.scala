@@ -60,14 +60,20 @@ class Countries @Inject()(environment: Environment) {
       }
   }
 
-  val countries: Seq[CountryInput] = {
+  val countries: Seq[Country] = {
     val hmrcNameMap = alpha2ToHmrcName
     iso3166CountryCodes.map { isoCountry =>
       val hmrcName = hmrcNameMap.getOrElse(isoCountry.alpha2, isoCountry.name)
 
-      CountryInput(isoCountry.alpha3, hmrcName)
+      Country(isoCountry.alpha3, hmrcName)
     }
   }
+
+  private val code2Country: Map[String, String] = countries.map(country => country.alpha3 -> country.name).toMap
+
+  def getCountryNameFor(code: String): String =
+    if (code == "D") "Germany" // an exception required by the Home Office API
+    else code2Country.getOrElse(code, code)
 
 }
 
