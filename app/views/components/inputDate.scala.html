@@ -65,7 +65,7 @@
                     || form.errors.exists(_.args.contains("year"))) " govuk-input--error" else ""}",
             name = s"$id.year",
             label = Some(messages("date.year")),
-            value = form(s"$id.year").valueSearchFormModel
+            value = form(s"$id.year").value
         )
     ),
         hint = hintHtml.fold(hintMessage.map(text => Hint(content = HtmlContent(Html(messages(text))))))(
