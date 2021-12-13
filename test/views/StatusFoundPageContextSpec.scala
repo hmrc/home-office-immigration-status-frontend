@@ -311,7 +311,7 @@ class StatusFoundPageContextSpec
 
   "isZambrano" should {
 
-    val nonEEACountries = allCountries.countries.filter(c => !EEACountries.countries.contains(c.value))
+    val nonEEACountries = allCountries.countries.filter(c => !EEACountries.countries.contains(c.alpha3))
 
     "return false" when {
       "the product type is EUS and the nationality is an EEA country" in {
@@ -341,7 +341,7 @@ class StatusFoundPageContextSpec
           val mockResult: StatusCheckResult = mock(classOf[StatusCheckResult])
           val fakeImmigrationStatus = ImmigrationStatus(LocalDate.now(), None, "WORK", "STATUS", true)
           when(mockResult.mostRecentStatus).thenReturn(Some(fakeImmigrationStatus))
-          when(mockResult.nationality).thenReturn(country.value)
+          when(mockResult.nationality).thenReturn(country.alpha3)
 
           StatusFoundPageContext(null, mockResult).isZambrano shouldBe false
         }
@@ -355,7 +355,7 @@ class StatusFoundPageContextSpec
           val mockResult: StatusCheckResult = mock(classOf[StatusCheckResult])
           val fakeImmigrationStatus = ImmigrationStatus(LocalDate.now(), None, "EUS", "STATUS", true)
           when(mockResult.mostRecentStatus).thenReturn(Some(fakeImmigrationStatus))
-          when(mockResult.nationality).thenReturn(country.value)
+          when(mockResult.nationality).thenReturn(country.alpha3)
 
           StatusFoundPageContext(null, mockResult).isZambrano shouldBe true
         }
