@@ -118,7 +118,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
           sut(buildContext(List(ValidStatusCustomProductType("STUDY"))))(request, messages)
 
         val doc = asDocument(html)
-        assertElementHasText(doc, "#immigrationRoute", "Student (FBIS)")
+        assertElementHasText(doc, "#immigrationRoute", "Student")
       }
 
       "DEPENDANT displays" in {
@@ -126,7 +126,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
           sut(buildContext(List(ValidStatusCustomProductType("DEPENDANT"))))(request, messages)
 
         val doc = asDocument(html)
-        assertElementHasText(doc, "#immigrationRoute", "Dependants of Skilled workers and Students (FBIS)")
+        assertElementHasText(doc, "#immigrationRoute", "Dependants of Skilled workers and Students")
       }
 
       "WORK displays" in {
@@ -134,7 +134,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
           sut(buildContext(List(ValidStatusCustomProductType("WORK"))))(request, messages)
 
         val doc = asDocument(html)
-        assertElementHasText(doc, "#immigrationRoute", "Worker (FBIS)")
+        assertElementHasText(doc, "#immigrationRoute", "Worker")
       }
 
       "FRONTIER_WORKER displays" in {
@@ -142,7 +142,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
           sut(buildContext(List(ValidStatusCustomProductType("FRONTIER_WORKER"))))(request, messages)
 
         val doc = asDocument(html)
-        assertElementHasText(doc, "#immigrationRoute", "Frontier worker (FBIS)")
+        assertElementHasText(doc, "#immigrationRoute", "Frontier worker")
       }
 
       "BNO displays" in {
@@ -150,7 +150,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
           sut(buildContext(List(ValidStatusCustomProductType("BNO"))))(request, messages)
 
         val doc = asDocument(html)
-        assertElementHasText(doc, "#immigrationRoute", "British National Overseas (FBIS)")
+        assertElementHasText(doc, "#immigrationRoute", "British National Overseas")
       }
 
       "BNO_LOTR displays" in {
@@ -158,7 +158,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
           sut(buildContext(List(ValidStatusCustomProductType("BNO_LOTR"))))(request, messages)
 
         val doc = asDocument(html)
-        assertElementHasText(doc, "#immigrationRoute", "British National Overseas (FBIS)")
+        assertElementHasText(doc, "#immigrationRoute", "British National Overseas (leave outside the rules)")
       }
 
       "GRADUATE displays" in {
@@ -166,7 +166,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
           sut(buildContext(List(ValidStatusCustomProductType("GRADUATE"))))(request, messages)
 
         val doc = asDocument(html)
-        assertElementHasText(doc, "#immigrationRoute", "Graduate (FBIS)")
+        assertElementHasText(doc, "#immigrationRoute", "Graduate")
       }
 
       "SPORTSPERSON displays" in {
@@ -174,7 +174,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
           sut(buildContext(List(ValidStatusCustomProductType("SPORTSPERSON"))))(request, messages)
 
         val doc = asDocument(html)
-        assertElementHasText(doc, "#immigrationRoute", "International Sportsperson (FBIS)")
+        assertElementHasText(doc, "#immigrationRoute", "International Sportsperson")
       }
 
       "SETTLEMENT displays" in {
@@ -182,7 +182,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
           sut(buildContext(List(ValidStatusCustomProductType("SETTLEMENT"))))(request, messages)
 
         val doc = asDocument(html)
-        assertElementHasText(doc, "#immigrationRoute", "British National Overseas (FBIS)")
+        assertElementHasText(doc, "#immigrationRoute", "British National Overseas or Settlement Protection")
       }
 
       "TEMP_WORKER displays" in {
@@ -190,7 +190,23 @@ class StatusFoundPageViewSpec extends ViewSpec {
           sut(buildContext(List(ValidStatusCustomProductType("TEMP_WORKER"))))(request, messages)
 
         val doc = asDocument(html)
-        assertElementHasText(doc, "#immigrationRoute", "Temporary Worker (FBIS)")
+        assertElementHasText(doc, "#immigrationRoute", "Temporary Worker")
+      }
+
+      "EUS|EUN_JFM displays" in {
+        val html: HtmlFormat.Appendable =
+          sut(buildContext(List(ValidStatusCustomProductType("EUS|EUN_JFM"))))(request, messages)
+
+        val doc = asDocument(html)
+        assertElementHasText(doc, "#immigrationRoute", "EU Settlement Scheme (joiner family member)")
+      }
+
+      "EUS|_FMFW displays" in {
+        val html: HtmlFormat.Appendable =
+          sut(buildContext(List(ValidStatusCustomProductType("EUS|_FMFW"))))(request, messages)
+
+        val doc = asDocument(html)
+        assertElementHasText(doc, "#immigrationRoute", "EU Settlement Scheme (frontier worker family member)")
       }
 
       "Error with ProductType displays" in {
@@ -200,6 +216,36 @@ class StatusFoundPageViewSpec extends ViewSpec {
         val doc = asDocument(html)
         assertElementHasText(doc, "#immigrationRoute", "error")
       }
+    }
+  }
+
+  "have zambrano warning message" when {
+    "context.isZambrano is true" in {
+      val context = StatusFoundPageContext(
+        NinoSearchFormModel(NinoGenerator.generateNino, "Pan", "", LocalDate.now()),
+        StatusCheckResult("Pan", LocalDate.now(), "JPN", List(ValidStatus))
+      )
+      val html: HtmlFormat.Appendable =
+        sut(context)(request, messages)
+
+      val doc = asDocument(html)
+
+      assertElementHasText(doc, "#zambrano-warning", "! Warning " + messages("status-found.zambrano"))
+    }
+  }
+  "have no zambrano warning message" when {
+    "context.isZambrano is false" in {
+      val context = StatusFoundPageContext(
+        NinoSearchFormModel(NinoGenerator.generateNino, "Pan", "", LocalDate.now()),
+        StatusCheckResult("Pan", LocalDate.now(), "FRA", List(ValidStatus))
+      )
+
+      val html: HtmlFormat.Appendable =
+        sut(context)(request, messages)
+
+      val doc = asDocument(html)
+
+      assertNotRenderedById(doc, "zambrano-warning")
     }
   }
 }

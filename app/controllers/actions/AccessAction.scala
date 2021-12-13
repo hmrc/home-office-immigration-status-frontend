@@ -18,7 +18,6 @@ package controllers.actions
 
 import com.google.inject.{ImplementedBy, Inject}
 import play.api.mvc.{ActionBuilder, AnyContent, BodyParsers, Request, Result}
-
 import scala.concurrent.{ExecutionContext, Future}
 
 class AccessActionImpl @Inject()(

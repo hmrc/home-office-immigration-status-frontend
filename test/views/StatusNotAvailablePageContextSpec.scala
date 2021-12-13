@@ -31,11 +31,13 @@ import java.time.LocalDate
 import java.util.Locale
 
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import play.api.test.Injecting
 
 class StatusNotAvailablePageContextSpec
-    extends AnyWordSpecLike with Matchers with OptionValues with BeforeAndAfterEach with GuiceOneAppPerSuite {
+    extends AnyWordSpecLike with Matchers with OptionValues with BeforeAndAfterEach with GuiceOneAppPerSuite
+    with Injecting {
 
-  val realMessages: Messages = app.injector.instanceOf[MessagesApi].preferred(Seq.empty[Lang])
+  val realMessages: Messages = inject[MessagesApi].preferred(Seq.empty[Lang])
   val mockMessages: Messages = mock(classOf[MessagesImpl], RETURNS_DEEP_STUBS)
   val currentStatusLabelMsg = "current status label msg"
 

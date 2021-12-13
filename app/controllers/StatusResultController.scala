@@ -18,20 +18,17 @@ package controllers
 
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
+import play.api.Logging
 import config.AppConfig
 import services.HomeOfficeImmigrationStatusProxyService
 import controllers.actions.AccessAction
-import models.{StatusCheckResponse, _}
-import models.StatusCheckError._
+import models._
 import views._
 import views.html._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import services.SessionCacheService
 import javax.inject.{Inject, Singleton}
-
 import scala.concurrent.{ExecutionContext, Future}
-import play.api.Logging
-import errors.ErrorHandler
 
 @Singleton
 class StatusResultController @Inject()(
@@ -82,5 +79,4 @@ class StatusResultController @Inject()(
       case _ =>
         Ok(statusFoundPage(StatusFoundPageContext(query, response.result)))
     }
-
 }

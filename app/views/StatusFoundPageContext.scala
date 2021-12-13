@@ -17,10 +17,9 @@
 package views
 
 import play.api.i18n.Messages
-import play.api.mvc.Call
 import viewmodels.{RowViewModel => Row}
 import views.StatusFoundPageContext.RichMessages
-import models.{ImmigrationStatus, MrzSearchFormModel, NinoSearchFormModel, SearchFormModel, StatusCheckResult}
+import models.{EEACountries, ImmigrationStatus, MrzSearchFormModel, NinoSearchFormModel, SearchFormModel, StatusCheckResult}
 
 final case class StatusFoundPageContext(query: SearchFormModel, result: StatusCheckResult) {
 
@@ -52,33 +51,39 @@ final case class StatusFoundPageContext(query: SearchFormModel, result: StatusCh
 
   def hasRecourseToPublicFunds: Boolean = !mostRecentStatus.exists(_.noRecourseToPublicFunds)
 
-  def currentStatusLabel(implicit messages: Messages): String = {
-    val prefix = "status-found.current."
+  val prefix = "status-found.current."
+  def key(key: String, status: ImmigrationStatus): String = prefix + key + status.expiredMsg
+
+  def currentStatusLabel(implicit messages: Messages): String =
     mostRecentStatus match {
       case Some(status) =>
-        def default = messages(prefix + "hasFBIS", status.productType, status.immigrationStatus)
-        def key(key: String): String = prefix + key + status.expiredMsg
-        if (status.isEUS)
-          messages.getOrElse(key("EUS." + status.immigrationStatus), default)
-        else
-          messages.getOrElse(key("nonEUS." + status.immigrationStatus), default)
-      case None => messages(prefix + "noStatus")
+        val default = messages(prefix + "hasFBIS", status.productType, status.immigrationStatus)
+        val eusPrefix = if (status.isEUS) "EUS." else "nonEUS."
+        messages.getOrElse(key(eusPrefix + status.immigrationStatus, status), default)
+      case None =>
+        messages(prefix + "noStatus")
     }
-  }
 
   def getImmigrationRoute(productType: String)(implicit messages: Messages) =
     messages.getOrElse(s"immigration.${productType.toLowerCase}", productType)
 
   def immigrationRoute(implicit messages: Messages) =
     mostRecentStatus.map(status => getImmigrationRoute(status.productType))
+
+  val isZambrano: Boolean = mostRecentStatus.map(_.isEUS).getOrElse(false) && !EEACountries.countries.contains(
+    result.nationality)
 }
 
 object StatusFoundPageContext {
 
   implicit class RichMessages(val messages: Messages) extends AnyVal {
-    def getOrElse(key: String, default: String): String =
-      if (messages.isDefinedAt(key)) messages(key) else default
+    def getOrElse(key: String, default: String): String = {
+      val newKey = replacePipesInKey(key)
+      if (messages.isDefinedAt(newKey)) messages(newKey) else default
+    }
   }
+
+  def replacePipesInKey(key: String): String = key.replace('|', '.')
 
   def immigrationStatusLabel(productType: String, status: String)(implicit messages: Messages): String =
     messages.getOrElse(

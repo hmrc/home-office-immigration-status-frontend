@@ -79,6 +79,10 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
       assertNotRenderedById(DocWithoutFeature, "mrzlink")
     }
 
+    "have the show and multiple label" in {
+      assertRenderedById(DocWithoutFeature, "multiplelabel")
+    }
+
     "have the show and change query section" in {
       assertRenderedById(DocWithoutFeature, "inputted-data")
     }

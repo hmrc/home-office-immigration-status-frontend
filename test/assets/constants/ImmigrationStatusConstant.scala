@@ -52,4 +52,5 @@ object ImmigrationStatusConstant {
     immigrationStatus = status,
     noRecourseToPublicFunds = true
   )
+
 }

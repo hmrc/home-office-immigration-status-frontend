@@ -20,17 +20,17 @@ import com.google.inject.{ImplementedBy, Inject}
 import play.api.Logger
 import play.api.mvc.Results.Forbidden
 import play.api.mvc._
+import play.api.Environment
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve._
-import support.CallOps
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import config.AppConfig
-import play.api.Environment
+import support.CallOps
 
 import scala.concurrent.{ExecutionContext, Future}
 
