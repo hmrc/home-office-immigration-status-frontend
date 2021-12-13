@@ -16,8 +16,7 @@
 
 package views
 
-import models.NinoSearchFormModel
-
+import models.{NinoSearchFormModel, StatusCheckResult}
 import java.time.LocalDate
 import org.jsoup.nodes.{Document, Element}
 import org.mockito.Mockito.mock
@@ -41,16 +40,16 @@ class StatusNotAvailableViewSpec extends ViewSpec {
   lazy val sut: StatusNotAvailablePage = inject[StatusNotAvailablePage]
 
   val nino = NinoSearchFormModel(generateNino, "Applicant", "", LocalDate.now())
+  val result = StatusCheckResult("Full name", LocalDate.now(), "JPN", Nil)
 
-  val query =
-    StatusNotAvailablePageContext(nino)
+  val query = StatusNotAvailablePageContext(nino, result)
 
   lazy val doc: Document = asDocument(sut(query)(request, messages))
 
   "StatusNotAvailable" must {
     "have a status conflict title" in {
       val e: Element = doc.getElementById("status-not-available-title")
-      e.text() mustBe messages("status-not-available.title")
+      e.text() mustBe "Full name " + messages("app.hasNoActiveStatus")
     }
 
     "status has paragraph list" in {
