@@ -25,7 +25,7 @@
     govukWrapper: govuk_wrapper,
     summaryList: components.SummaryList,
     previousStatuses: components.PreviousStatuses,
-    warning: GovukWarningText,
+    warning: components.StatusFoundWarnings,
     details: GovukDetails,
     searchAgainButton: components.SearchAgainButton
 )
@@ -36,23 +36,9 @@
 
     <h1 class="govuk-heading-xl" id="status-found-title"><span id="full-name">@context.result.fullName</span>@context.currentStatusLabel</h1>
 
-    @if(context.isZambrano) {
-        @warning(WarningText(
-            iconFallbackText = messages("generic.warning"),
-            content = Text(messages("status-found.zambrano")),
-            attributes = Map("id" -> "zambrano-warning")
-        ))
-    }
+    @warning(context)
 
     @summaryList("immigrationStatus", context.immigrationStatusRows)
-
-    @if(!context.hasRecourseToPublicFunds) {
-        @warning(WarningText(
-            iconFallbackText = messages("generic.warning"),
-            content = Text(messages("status-found.warning")),
-            attributes = Map("id" -> "recourse-warning")
-        ))
-    }
 
     @summaryList("details", context.detailRows)
 
