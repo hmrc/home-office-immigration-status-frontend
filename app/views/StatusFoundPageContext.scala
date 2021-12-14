@@ -17,7 +17,6 @@
 package views
 
 import play.api.i18n.Messages
-import play.api.mvc.Call
 import viewmodels.{RowViewModel => Row}
 import views.StatusFoundPageContext.RichMessages
 import models.{ImmigrationStatus, MrzSearchFormModel, NinoSearchFormModel, SearchFormModel, StatusCheckResult}
