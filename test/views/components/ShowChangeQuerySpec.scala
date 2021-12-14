@@ -67,7 +67,7 @@ class ShowChangeQuerySpec extends ViewSpec {
     Row("nationality", "lookup.nationality.label", getCountryNameFor(q.nationality), "change-nationality", "nationality", "mrz.nationality"),
     Row("dob", "generic.dob", DateFormat.format(locale)(q.dateOfBirth), "change-dob", "dateOfBirth.day", "generic.dob.lowercase")
      */
-/*
+    /*
     "mrz - have all of the things in the list in the correct order" in {
       List(
         (mrzQuery.documentType, "lookup.identity.label", "documenttype", "documenttype", "mrz.idtype", "", mrzQuery),

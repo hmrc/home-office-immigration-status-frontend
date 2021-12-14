@@ -35,8 +35,8 @@
         )
     case q: MrzSearchFormModel =>
         Seq(
-            Row("idtype", "lookup.identity.label", q.documentType, "change-id-type", "documenttype", "mrz.idtype", query),
-            Row("idnumber", "lookup.mrz.label", q.documentNumber, "change-id-number", "documentNumber", "mrz.type", query),
+            Row("idType", "lookup.identity.label", q.documentType, "change-id-type", "documenttype", "mrz.idtype", query),
+            Row("idNumber", "lookup.mrz.label", q.documentNumber, "change-id-number", "documentNumber", "mrz.type", query),
             Row("nationality", "lookup.nationality.label", getCountryNameFor(q.nationality), "change-nationality", "nationality", "mrz.nationality", query),
             Row("dob", "generic.dob", DateFormat.format(locale)(q.dateOfBirth), "change-dob", "dateOfBirth.day", "generic.dob.lowercase", query)
         )
