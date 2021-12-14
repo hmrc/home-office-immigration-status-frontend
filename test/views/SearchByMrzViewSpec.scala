@@ -69,11 +69,11 @@ class SearchByMrzViewSpec extends ViewSpec {
     }
 
     "have documentType" in {
-      assertRenderedById(doc, "documenttype")
+      assertRenderedById(doc, "documentType")
     }
 
     "have the identity component contains options" in {
-      val e: Element = doc.getElementById("documenttype")
+      val e: Element = doc.getElementById("documentType")
       e.text() mustBe messages(
         "Passport European National Insurance Card Biometric Residence Card Biometric Residence Permit")
     }

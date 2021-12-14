@@ -28,15 +28,15 @@
 @fields = @{query match {
     case q: NinoSearchFormModel => 
         Seq(
-            Row("nino", "generic.nino", q.nino.nino, "", "nino", "generic.nino", query),
+            Row("nino", "generic.nino", q.nino.nino, "change-nino", "nino", "generic.nino", query),
             Row("givenName", "generic.givenName", q.givenName, "change-given-name", "givenName", "generic.givenName.lowercase", query),
             Row("familyName", "generic.familyName", q.familyName, "change-family-name", "familyName", "generic.familyName.lowercase", query),
             Row("dob", "generic.dob", DateFormat.format(locale)(q.dateOfBirth), "change-dob", "dateOfBirth.day", "generic.dob.lowercase", query)
         )
     case q: MrzSearchFormModel =>
         Seq(
-            Row("idType", "lookup.identity.label", q.documentType, "change-id-type", "documenttype", "mrz.idtype", query),
-            Row("idNumber", "lookup.mrz.label", q.documentNumber, "change-id-number", "documentNumber", "mrz.type", query),
+            Row("documentType", "lookup.identity.label", q.documentType, "change-id-type", "documentType", "mrz.idtype", query),
+            Row("documentNumber", "lookup.mrz.label", q.documentNumber, "change-id-number", "documentNumber", "mrz.idnumber", query),
             Row("nationality", "lookup.nationality.label", getCountryNameFor(q.nationality), "change-nationality", "nationality", "mrz.nationality", query),
             Row("dob", "generic.dob", DateFormat.format(locale)(q.dateOfBirth), "change-dob", "dateOfBirth.day", "generic.dob.lowercase", query)
         )

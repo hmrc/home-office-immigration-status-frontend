@@ -34,6 +34,7 @@ class ShowChangeQuerySpec extends ViewSpec {
   val mrzQuery = MrzSearchFormModel("documentType", "documentNumber", dateOfBirth, "nationality")
 
   val doc = asDocument(sut(query)(messages))
+  val mrzDoc = asDocument(sut(mrzQuery)(messages))
 
   "showChangeQuery" must {
     "nino - have all of the things in the list in the correct order" in {
@@ -61,36 +62,20 @@ class ShowChangeQuerySpec extends ViewSpec {
       }
     }
 
-    /*
-    Row("idtype", "lookup.identity.label", q.documentType, "change-id-type", "documenttype", "mrz.idtype"),
-    Row("idnumber", "lookup.mrz.label", q.documentNumber, "change-id-number", "documentNumber", "mrz.idnumber"),
-    Row("nationality", "lookup.nationality.label", getCountryNameFor(q.nationality), "change-nationality", "nationality", "mrz.nationality"),
-    Row("dob", "generic.dob", DateFormat.format(locale)(q.dateOfBirth), "change-dob", "dateOfBirth.day", "generic.dob.lowercase")
-     */
-    /*
     "mrz - have all of the things in the list in the correct order" in {
       List(
-        (mrzQuery.documentType, "lookup.identity.label", "documenttype", "documenttype", "mrz.idtype", "", mrzQuery),
-        (mrzQuery.documentNumber, "lookup.mrz.label", "documentNumber", "documentNumber", "mrz.idnumber", "", mrzQuery),
-        (
-          mrzQuery.nationality,
-          "lookup.nationality.label",
-          "nationality",
-          "nationality",
-          "mrz.nationality",
-          "",
-          mrzQuery),
+        (mrzQuery.documentType, "lookup.identity.label", "documentType", "documentType", "mrz.idtype"),
+        (mrzQuery.documentNumber, "lookup.mrz.label", "documentNumber", "documentNumber", "mrz.idnumber"),
+        (mrzQuery.nationality, "lookup.nationality.label", "nationality", "nationality", "mrz.nationality"),
         (
           DateFormat.format(messages.lang.locale)(mrzQuery.dateOfBirth),
           "generic.dob",
           "dob",
           "dateOfBirth.day",
-          "generic.dob.lowercase",
-          "",
-          mrzQuery)
+          "generic.dob.lowercase")
       ).zipWithIndex.foreach {
-        case ((data, msgKey, id, fieldId, actionText, empty, model), index) =>
-          val row = doc.select(s"#inputted-data > .govuk-summary-list__row:nth-child(${index + 1})")
+        case ((data, msgKey, id, fieldId, actionText), index) =>
+          val row = mrzDoc.select(s"#inputted-data > .govuk-summary-list__row:nth-child(${index + 1})")
           assertOneThirdRowWithAction(
             row,
             messages(msgKey),
@@ -100,6 +85,6 @@ class ShowChangeQuerySpec extends ViewSpec {
             routes.SearchByMrzController.onPageLoad(false).url + "#" + fieldId
           )
       }
-    }*/
+    }
   }
 }

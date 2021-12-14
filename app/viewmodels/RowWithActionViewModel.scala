@@ -37,8 +37,8 @@ final case class RowWithActionViewModel(
 object RowWithActionViewModel {
 
   private def changeInputUrl(fieldId: String, formModel: SearchFormModel) = formModel match {
-    case f: NinoSearchFormModel => s"${routes.SearchByNinoController.onPageLoad(false).url}#$fieldId"
-    case f: MrzSearchFormModel  => s"${routes.SearchByMrzController.onPageLoad(false).url}#$fieldId"
+    case _: NinoSearchFormModel => s"${routes.SearchByNinoController.onPageLoad(false).url}#$fieldId"
+    case _: MrzSearchFormModel  => s"${routes.SearchByMrzController.onPageLoad(false).url}#$fieldId"
   }
 
   private val changeMessageKey = "generic.change"
