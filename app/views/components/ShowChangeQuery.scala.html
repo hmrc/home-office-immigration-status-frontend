@@ -18,6 +18,7 @@
 @import views.DateFormat
 @import viewmodels.{RowWithActionViewModel => Row}
 @import views.ISO31661Alpha3.getCountryNameFor
+@import models.MrzSearchFormModel.documentTypeToMessageKey
 
 @this(summaryList: SummaryList)
 
@@ -35,7 +36,7 @@
         )
     case q: MrzSearchFormModel =>
         Seq(
-            Row("documentType", "lookup.identity.label", q.documentType, "change-id-type", "documentType", "mrz.idtype", query),
+            Row("documentType", "lookup.identity.label", documentTypeToMessageKey(q.documentType), "change-id-type", "documentType", "mrz.idtype", query),
             Row("documentNumber", "lookup.mrz.label", q.documentNumber, "change-id-number", "documentNumber", "mrz.idnumber", query),
             Row("nationality", "lookup.nationality.label", getCountryNameFor(q.nationality), "change-nationality", "nationality", "mrz.nationality", query),
             Row("dob", "generic.dob", DateFormat.format(locale)(q.dateOfBirth), "change-dob", "dateOfBirth.day", "generic.dob.lowercase", query)
