@@ -115,7 +115,7 @@ class StatusResultControllerSpec extends ControllerSpec {
 
         status(result) mustBe OK
         contentAsString(result) mustBe inject[StatusNotAvailablePage]
-          .apply(StatusNotAvailablePageContext(query))(request, messages)
+          .apply(StatusNotAvailablePageContext(query, hoResult))(request, messages)
           .toString
         verifyConnector()
         verify(mockSessionCacheService).get(any(), any())

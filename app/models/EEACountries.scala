@@ -14,18 +14,42 @@
  * limitations under the License.
  */
 
-package config
+package models
 
-import play.api.libs.json.{Format, Json}
+object EEACountries {
 
-final case class RawCountries(countries: Seq[RawCountry])
+  val countries = Seq(
+    "AUT",
+    "BEL",
+    "BGR",
+    "HRV",
+    "CYP",
+    "CZE",
+    "DNK",
+    "EST",
+    "FIN",
+    "FRA",
+    "DEU",
+    "GRC",
+    "HUN",
+    "ISL",
+    "IRL",
+    "ITA",
+    "LVA",
+    "LIE",
+    "LTU",
+    "LUX",
+    "MLT",
+    "NLD",
+    "NOR",
+    "POL",
+    "PRT",
+    "ROU",
+    "SVK",
+    "SVN",
+    "ESP",
+    "SWE",
+    "CHE",
+  )
 
-object RawCountries {
-  implicit val format: Format[RawCountries] = Json.format[RawCountries]
-}
-
-final case class RawCountry(name: String, alpha2: String, alpha3: String)
-
-object RawCountry {
-  implicit val format: Format[RawCountry] = Json.format[RawCountry]
 }

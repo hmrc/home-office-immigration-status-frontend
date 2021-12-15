@@ -17,28 +17,37 @@
 package views
 
 import play.api.i18n.Messages
-import play.api.mvc.Call
 import viewmodels.{RowViewModel => Row}
-import models.{MrzSearchFormModel, NinoSearchFormModel, SearchFormModel}
+import models.{MrzSearchFormModel, NinoSearchFormModel, SearchFormModel, StatusCheckResult}
 
-case class StatusNotAvailablePageContext(query: SearchFormModel) {
+case class StatusNotAvailablePageContext(query: SearchFormModel, result: StatusCheckResult) {
 
-  def fullName: Option[String] =
-    query match {
-      case q: NinoSearchFormModel => Some(s"${q.givenName} ${q.familyName}")
-      case q: MrzSearchFormModel  => None
-    }
-
-  def notAvailablePersonalData(implicit messages: Messages) =
+  def notAvailablePersonalData(implicit messages: Messages): Seq[Row] =
     query match {
       case q: NinoSearchFormModel =>
         Seq(
           Row("nino", "generic.nino", q.nino.nino),
-          Row("givenName", "generic.givenName", q.givenName),
-          Row("familyName", "generic.familyName", q.familyName),
+          Row("nationality", "generic.nationality", ISO31661Alpha3.getCountryNameFor(result.nationality)),
           Row("dob", "generic.dob", DateFormat.format(messages.lang.locale)(q.dateOfBirth))
         )
       case q: MrzSearchFormModel =>
-        Nil
+        val documentTypeText = StatusNotAvailablePageContext.documentTypeToMessageKey(q.documentType)
+        Seq(
+          Row("documentType", "lookup.identity.label", documentTypeText),
+          Row("documentNumber", "lookup.mrz.label", q.documentNumber),
+          Row("nationality", "generic.nationality", ISO31661Alpha3.getCountryNameFor(result.nationality)),
+          Row("dob", "generic.dob", DateFormat.format(messages.lang.locale)(q.dateOfBirth))
+        )
     }
+
+}
+
+object StatusNotAvailablePageContext {
+  def documentTypeToMessageKey(documentType: String)(implicit messages: Messages): String = documentType match {
+    case "PASSPORT" => messages("lookup.passport")
+    case "NAT"      => messages("lookup.euni")
+    case "BRC"      => messages("lookup.res.card")
+    case "BRP"      => messages("lookup.res.permit")
+    case docType    => docType
+  }
 }

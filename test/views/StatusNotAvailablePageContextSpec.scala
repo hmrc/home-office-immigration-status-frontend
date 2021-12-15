@@ -16,7 +16,7 @@
 
 package views
 
-import models.NinoSearchFormModel
+import models.{MrzSearchFormModel, NinoSearchFormModel, StatusCheckResult}
 import org.mockito.ArgumentMatchers.{any, matches}
 import org.mockito.Mockito.{RETURNS_DEEP_STUBS, mock, reset, when}
 import org.scalatest.matchers.should.Matchers
@@ -25,17 +25,19 @@ import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.mvc.Call
-import uk.gov.hmrc.domain.Nino
 import utils.NinoGenerator
 import viewmodels.RowViewModel
-
 import java.time.LocalDate
 import java.util.Locale
 
-class StatusNotAvailablePageContextSpec
-    extends AnyWordSpecLike with Matchers with OptionValues with BeforeAndAfterEach with GuiceOneAppPerSuite {
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import play.api.test.Injecting
 
-  val realMessages: Messages = app.injector.instanceOf[MessagesApi].preferred(Seq.empty[Lang])
+class StatusNotAvailablePageContextSpec
+    extends AnyWordSpecLike with Matchers with OptionValues with BeforeAndAfterEach with GuiceOneAppPerSuite
+    with Injecting {
+
+  val realMessages: Messages = inject[MessagesApi].preferred(Seq.empty[Lang])
   val mockMessages: Messages = mock(classOf[MessagesImpl], RETURNS_DEEP_STUBS)
   val currentStatusLabelMsg = "current status label msg"
 
@@ -45,17 +47,37 @@ class StatusNotAvailablePageContextSpec
     when(mockMessages(matches("status-not-available\\.current.*"), any())).thenReturn(currentStatusLabelMsg)
   }
 
-  val query = NinoSearchFormModel(NinoGenerator.generateNino, "Surname", "Forename", LocalDate.now())
-  val call = Call("GET", "/")
+  "notAvailablePersonalData" should {
+    "populate the row objects correctly for a nino search" when {
+      val dob = LocalDate.now()
+      val query = NinoSearchFormModel(NinoGenerator.generateNino, "Surname", "Forename", dob)
+      val result = StatusCheckResult("Full name", dob, "JPN", Nil)
 
-  def createContext = StatusNotAvailablePageContext(query)
+      def createContext = StatusNotAvailablePageContext(query, result)
 
-  "notAvailablePersonalData" must {
-    "populate the row objects correctly" when {
       Seq(
         ("nino", "generic.nino", query.nino.nino),
-        ("givenName", "generic.givenName", query.givenName),
-        ("familyName", "generic.familyName", query.familyName),
+        ("nationality", "generic.nationality", ISO31661Alpha3.getCountryNameFor(result.nationality)),
+        ("dob", "generic.dob", DateFormat.format(Locale.UK)(query.dateOfBirth))
+      ).foreach {
+        case (id, msgKey, data) =>
+          s"row is for $id" in {
+            assert(createContext.notAvailablePersonalData(realMessages).contains(RowViewModel(id, msgKey, data)))
+          }
+      }
+    }
+
+    "populate the row objects correctly for an mrz search" when {
+      val dob = LocalDate.now()
+      val query = MrzSearchFormModel("PASSPORT", "12345", dob, "JPN")
+      val result = StatusCheckResult("Full name", dob, "JPN", Nil)
+
+      def createContext = StatusNotAvailablePageContext(query, result)
+
+      Seq(
+        ("documentType", "lookup.identity.label", "Passport"),
+        ("documentNumber", "lookup.mrz.label", query.documentNumber),
+        ("nationality", "generic.nationality", ISO31661Alpha3.getCountryNameFor(result.nationality)),
         ("dob", "generic.dob", DateFormat.format(Locale.UK)(query.dateOfBirth))
       ).foreach {
         case (id, msgKey, data) =>
@@ -65,4 +87,23 @@ class StatusNotAvailablePageContextSpec
       }
     }
   }
+
+  "documentTypeToMessageKey" should {
+    "populate the document type correctly" when {
+
+      Seq(
+        ("PASSPORT", realMessages("lookup.passport")),
+        ("NAT", realMessages("lookup.euni")),
+        ("BRC", realMessages("lookup.res.card")),
+        ("BRP", realMessages("lookup.res.permit"))
+      ).foreach {
+        case (docType, text) =>
+          s"documentType is set to $docType" in {
+            StatusNotAvailablePageContext.documentTypeToMessageKey(docType)(realMessages) mustEqual text
+          }
+      }
+
+    }
+  }
+
 }

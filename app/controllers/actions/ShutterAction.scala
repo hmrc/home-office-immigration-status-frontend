@@ -17,14 +17,11 @@
 package controllers.actions
 
 import com.google.inject.{ImplementedBy, Inject}
-import play.api.Logger
 import play.api.mvc._
 import config.AppConfig
-import play.api.Environment
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results._
 import views.html.ShutteringPage
-import akka.stream.Materializer
 
 import scala.concurrent.{ExecutionContext, Future}
 
