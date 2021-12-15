@@ -20,7 +20,7 @@ import play.api.i18n.Messages
 import viewmodels.{RowViewModel => Row}
 import views.StatusFoundPageContext.RichMessages
 import models.{EEACountries, ImmigrationStatus, MrzSearchFormModel, NinoSearchFormModel, SearchFormModel, StatusCheckResult}
-import play.api.Logger
+import play.api.{Logger, Logging}
 
 final case class StatusFoundPageContext(query: SearchFormModel, result: StatusCheckResult) {
 
@@ -81,9 +81,7 @@ final case class StatusFoundPageContext(query: SearchFormModel, result: StatusCh
   val isZambrano: Boolean = mostRecentStatus.exists(_.isEUS) && !EEACountries.countries.contains(result.nationality)
 }
 
-object StatusFoundPageContext {
-
-  private val logger: Logger = Logger(getClass)
+object StatusFoundPageContext extends Logging{
 
   implicit class RichMessages(val messages: Messages) extends AnyVal {
     def getOrElse(key: String, default: String): String =
