@@ -17,6 +17,11 @@ generic.searchAgain='Search again'
 generic.change='Change'
 generic.warning='Warning'
 
+# mrz results
+mrz.idtype='identity document type'
+mrz.idnumber='identity document number'
+mrz.nationality='country of nationality'
+
 # Validation errors
 error.summary.heading='There is a problem'
 error.prefix='Error:'

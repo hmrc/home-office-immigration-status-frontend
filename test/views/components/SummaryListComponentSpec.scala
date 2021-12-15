@@ -42,7 +42,7 @@ class SummaryListComponentSpec extends ViewSpec {
       val list: Element = doc.getElementById("the-list-id")
       Seq(1, 2, 3).foreach { i =>
         val row: Elements = list.select(s".govuk-summary-list__row:nth-child($i)")
-        assertOneThirdRow(row, s"message.$i", s"data$i", i.toString)
+        assertCustomWidthRow(row, s"message.$i", s"data$i", i.toString, "third")
       }
     }
   }

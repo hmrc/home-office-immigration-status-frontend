@@ -83,7 +83,7 @@ object ISO31661Alpha3 {
     "CXR" -> "Christmas Island",
     "CYM" -> "Cayman Islands",
     "CYP" -> "Cyprus",
-    "CZE" -> "Czech Republic",
+    "CZE" -> "Czechia",
     "DEU" -> "Germany",
     "DJI" -> "Djibouti",
     "DMA" -> "Dominica",

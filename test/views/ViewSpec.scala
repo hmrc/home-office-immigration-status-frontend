@@ -64,16 +64,16 @@ trait ViewSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
   def assertNotRenderedById(doc: Document, id: String) =
     assert(doc.getElementById(id) == null, "\n\nElement " + id + " was rendered on the page.\n")
 
-  def assertOneThirdRow(e: Elements, key: String, value: String, id: String): Assertion = {
+  def assertCustomWidthRow(e: Elements, key: String, value: String, id: String, length: String): Assertion = {
     if (e.isEmpty) throw new IllegalArgumentException("Element not defined.")
     assert(e.hasClass("govuk-summary-list__row"))
     val keyElement = e.select("dt")
     assert(keyElement.text() == key)
-    assert(keyElement.hasClass("govuk-summary-list__key govuk-!-width-one-third"))
+    assert(keyElement.hasClass(s"govuk-summary-list__key govuk-!-width-one-$length"))
     val valueElement = e.select("dd:nth-of-type(1)")
     assert(valueElement.text() == value)
     assert(valueElement.attr("id") == id)
-    assert(valueElement.hasClass("govuk-summary-list__value govuk-!-width-one-third"))
+    assert(valueElement.hasClass(s"govuk-summary-list__value govuk-!-width-one-third"))
   }
 
   def assertOneThirdRowWithAction(
@@ -82,10 +82,11 @@ trait ViewSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
     value: String,
     id: String,
     actionText: String,
-    actionUrl: String): Assertion = {
-    assertOneThirdRow(e, key, value, id)
+    actionUrl: String,
+    rowWidth: String): Assertion = {
+    assertCustomWidthRow(e, key, value, id, rowWidth)
     val actionElement = e.select("dd:nth-of-type(2)")
-    assert(actionElement.hasClass("govuk-summary-list__actions govuk-!-width-one-third"))
+    assert(actionElement.hasClass(s"govuk-summary-list__actions govuk-!-width-one-third"))
     assert(actionElement.select("a").text() == actionText)
     assert(actionElement.select("a").attr("href") == actionUrl)
   }
