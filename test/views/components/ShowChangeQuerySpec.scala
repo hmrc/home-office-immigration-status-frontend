@@ -57,7 +57,8 @@ class ShowChangeQuerySpec extends ViewSpec {
             data,
             id,
             s"${messages("generic.change")} ${messages(actionText)}",
-            routes.SearchByNinoController.onPageLoad(false).url + "#" + fieldId
+            routes.SearchByNinoController.onPageLoad(false).url + "#" + fieldId,
+            "half"
           )
       }
     }
@@ -82,7 +83,8 @@ class ShowChangeQuerySpec extends ViewSpec {
             data,
             id,
             s"${messages("generic.change")} ${messages(actionText)}",
-            routes.SearchByMrzController.onPageLoad(false).url + "#" + fieldId
+            routes.SearchByMrzController.onPageLoad(false).url + "#" + fieldId,
+            "half"
           )
       }
     }

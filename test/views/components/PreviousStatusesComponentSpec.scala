@@ -106,7 +106,7 @@ class PreviousStatusesComponentSpec extends ViewSpec {
       ).zipWithIndex.foreach {
         case ((data, msgKey, id), index) =>
           val row: Elements = doc.select(s"#history-0 > .govuk-summary-list__row:nth-child(${index + 1})")
-          assertOneThirdRow(row, messages(msgKey), data, id)
+          assertCustomWidthRow(row, messages(msgKey), data, id, "third")
       }
     }
 
