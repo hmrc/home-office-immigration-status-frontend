@@ -159,7 +159,7 @@ class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecti
     "nationality contains invalid country code" in {
       val invalidNationality: Gen[String] = Gen.asciiPrintableStr
         .suchThat(_.trim.nonEmpty)
-        .suchThat(!countriesValues.contains(_))
+        .suchThat(sample => !countriesValues.contains(sample.toUpperCase))
         .suchThat(_.trim.nonEmpty)
 
       forAll(invalidNationality) { nationality =>
@@ -180,7 +180,7 @@ class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecti
     "documentType contains invalid chars" in {
       val invalidDocType: Gen[String] = Gen.asciiPrintableStr
         .suchThat(_.trim.nonEmpty)
-        .suchThat(!SearchByMRZForm.AllowedDocumentTypes.contains(_))
+        .suchThat(sample => !SearchByMRZForm.AllowedDocumentTypes.contains(sample.toUpperCase))
         .suchThat(_.trim.nonEmpty)
 
       forAll(invalidDocType) { documentType =>
