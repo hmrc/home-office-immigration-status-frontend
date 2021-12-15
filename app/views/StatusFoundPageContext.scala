@@ -83,12 +83,13 @@ final case class StatusFoundPageContext(query: SearchFormModel, result: StatusCh
 
 object StatusFoundPageContext {
 
+  private val logger: Logger = Logger(getClass)
+
   implicit class RichMessages(val messages: Messages) extends AnyVal {
     def getOrElse(key: String, default: String): String =
       if (messages.isDefinedAt(key)) messages(key)
       else {
-        Logger(getClass).warn(
-          s"$key was not defined. Consider adding this to the messages file. Using default placeholder text.")
+        logger.warn(s"$key was not defined. Consider adding this to the messages file. Using default placeholder text.")
         default
       }
   }
