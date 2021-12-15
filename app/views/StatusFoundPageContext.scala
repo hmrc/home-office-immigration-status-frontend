@@ -81,7 +81,7 @@ final case class StatusFoundPageContext(query: SearchFormModel, result: StatusCh
   val isZambrano: Boolean = mostRecentStatus.exists(_.isEUS) && !EEACountries.countries.contains(result.nationality)
 }
 
-object StatusFoundPageContext extends Logging{
+object StatusFoundPageContext extends Logging {
 
   implicit class RichMessages(val messages: Messages) extends AnyVal {
     def getOrElse(key: String, default: String): String =
