@@ -20,6 +20,7 @@ import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import controllers.routes
 import views.html.components.summaryRowWithAction
+import models.{MrzSearchFormModel, NinoSearchFormModel, SearchFormModel}
 
 final case class RowWithActionViewModel(
   id: String,
@@ -34,7 +35,12 @@ final case class RowWithActionViewModel(
 }
 
 object RowWithActionViewModel {
-  private def changeInputUrl(fieldId: String) = s"${routes.SearchByNinoController.onPageLoad(false).url}#$fieldId"
+
+  private def changeInputUrl(fieldId: String, formModel: SearchFormModel) = formModel match {
+    case _: NinoSearchFormModel => s"${routes.SearchByNinoController.onPageLoad(false).url}#$fieldId"
+    case _: MrzSearchFormModel  => s"${routes.SearchByMrzController.onPageLoad(false).url}#$fieldId"
+  }
+
   private val changeMessageKey = "generic.change"
 
   def apply(
@@ -43,12 +49,13 @@ object RowWithActionViewModel {
     data: String,
     actionId: String,
     fieldId: String,
-    spanMessageKey: String): RowWithActionViewModel =
+    spanMessageKey: String,
+    formModel: SearchFormModel): RowWithActionViewModel =
     new RowWithActionViewModel(
       id,
       messageKey,
       data,
-      changeInputUrl(fieldId),
+      changeInputUrl(fieldId, formModel),
       actionId,
       changeMessageKey,
       spanMessageKey)
@@ -58,7 +65,15 @@ object RowWithActionViewModel {
     messageKey: String,
     data: String,
     actionId: String,
-    fieldId: String
+    fieldId: String,
+    formModel: SearchFormModel,
   ): RowWithActionViewModel =
-    new RowWithActionViewModel(id, messageKey, data, changeInputUrl(fieldId), actionId, changeMessageKey, messageKey)
+    new RowWithActionViewModel(
+      id,
+      messageKey,
+      data,
+      changeInputUrl(fieldId, formModel),
+      actionId,
+      changeMessageKey,
+      messageKey)
 }

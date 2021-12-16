@@ -193,17 +193,17 @@ class StatusFoundPageViewSpec extends ViewSpec {
         assertElementHasText(doc, "#immigrationRoute", "Temporary Worker")
       }
 
-      "EUS|EUN_JFM displays" in {
+      "EUS_EUN_JFM displays" in {
         val html: HtmlFormat.Appendable =
-          sut(buildContext(List(ValidStatusCustomProductType("EUS|EUN_JFM"))))(request, messages)
+          sut(buildContext(List(ValidStatusCustomProductType("EUS_EUN_JFM"))))(request, messages)
 
         val doc = asDocument(html)
         assertElementHasText(doc, "#immigrationRoute", "EU Settlement Scheme (joiner family member)")
       }
 
-      "EUS|_FMFW displays" in {
+      "EUS_FMFW displays" in {
         val html: HtmlFormat.Appendable =
-          sut(buildContext(List(ValidStatusCustomProductType("EUS|_FMFW"))))(request, messages)
+          sut(buildContext(List(ValidStatusCustomProductType("EUS_FMFW"))))(request, messages)
 
         val doc = asDocument(html)
         assertElementHasText(doc, "#immigrationRoute", "EU Settlement Scheme (frontier worker family member)")

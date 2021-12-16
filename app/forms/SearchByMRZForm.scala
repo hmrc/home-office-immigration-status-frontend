@@ -50,6 +50,5 @@ class SearchByMRZForm @Inject()(countries: Countries) extends FormFieldMappings 
 
 object SearchByMRZForm {
   final val AllowedDocumentTypes = Seq("PASSPORT", "NAT", "BRC", "BRP")
-
   final val DocumentNumberMaxLength = 30
 }

@@ -84,5 +84,4 @@ class SearchByMrzController @Inject()(
         Future.successful(NotFound(errorHandler.notFoundTemplate))
       }
     }
-
 }

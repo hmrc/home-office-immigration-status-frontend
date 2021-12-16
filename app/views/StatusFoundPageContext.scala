@@ -20,6 +20,7 @@ import play.api.i18n.Messages
 import viewmodels.{RowViewModel => Row}
 import views.StatusFoundPageContext.RichMessages
 import models.{EEACountries, ImmigrationStatus, MrzSearchFormModel, NinoSearchFormModel, SearchFormModel, StatusCheckResult}
+import play.api.{Logger, Logging}
 
 final case class StatusFoundPageContext(query: SearchFormModel, result: StatusCheckResult) {
 
@@ -77,20 +78,19 @@ final case class StatusFoundPageContext(query: SearchFormModel, result: StatusCh
   def immigrationRoute(implicit messages: Messages) =
     mostRecentStatus.map(status => getImmigrationRoute(status.productType))
 
-  val isZambrano: Boolean = mostRecentStatus.map(_.isEUS).getOrElse(false) && !EEACountries.countries.contains(
-    result.nationality)
+  val isZambrano: Boolean = mostRecentStatus.exists(_.isEUS) && !EEACountries.countries.contains(result.nationality)
 }
 
-object StatusFoundPageContext {
+object StatusFoundPageContext extends Logging {
 
   implicit class RichMessages(val messages: Messages) extends AnyVal {
-    def getOrElse(key: String, default: String): String = {
-      val newKey = replacePipesInKey(key)
-      if (messages.isDefinedAt(newKey)) messages(newKey) else default
-    }
+    def getOrElse(key: String, default: String): String =
+      if (messages.isDefinedAt(key)) messages(key)
+      else {
+        logger.warn(s"$key was not defined. Consider adding this to the messages file. Using default placeholder text.")
+        default
+      }
   }
-
-  def replacePipesInKey(key: String): String = key.replace('|', '.')
 
   def immigrationStatusLabel(productType: String, status: String)(implicit messages: Messages): String =
     messages.getOrElse(
