@@ -133,8 +133,8 @@ status-found.detailsLabel='View customer’s information from the last six month
 # Status not available page
 status-not-available.applicant='Applicant'
 status-not-available.title='Applicant does not have an active status'
-status-not-available.listParagraph='This may be for a number of reasons, including:'
-status-not-available.list-item1='The status ended over six months ago'
+status-not-available.listParagraph='This may be because:'
+status-not-available.list-item1='their status expired more than six months ago'
 status-not-available.list-item2='the Home Office does not have a record of any status for them'
 
 # Failure page
