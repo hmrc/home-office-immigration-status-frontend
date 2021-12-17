@@ -157,7 +157,7 @@ button.search='Search'
 button.submit='Submit'
 
 # Global errors
-external.error.500.title='Sorry, there is a problem with the service'
+external.error.500.title='Sorry, the service is unavailable'
 external.error.500.message='Try again later.'
 external.error.500.listParagraph='This could be for a number of reasons, including:'
 external.error.500.list-item1='An external service error'
