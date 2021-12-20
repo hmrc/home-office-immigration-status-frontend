@@ -199,15 +199,17 @@ class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecti
     }
 
     "documentNumber is too long" in {
-      val invalidDocNumber = Gen.asciiPrintableStr
-        .suchThat(_.trim.nonEmpty)
+      val tooLongGen: Gen[String] = Gen
+        .listOf(Gen.oneOf(Gen.alphaLowerChar, Gen.alphaUpperChar))
         .suchThat(_.length > SearchByMRZForm.DocumentNumberMaxLength)
+        .map(_.mkString)
+        .suchThat(_.trim.nonEmpty)
 
-      forAll(invalidDocNumber) { documentNumber =>
+      forAll(tooLongGen) { documentNumber =>
         val invalidInput = input(documentNumber = documentNumber)
 
         form.bind(invalidInput).value must not be defined
-        form.bind(invalidInput).errors mustBe List(FormError("documentNumber", List("error.documentNumber.invalid")))
+        form.bind(invalidInput).errors mustBe List(FormError("documentNumber", List("error.documentNumber.length")))
       }
     }
 
@@ -223,7 +225,8 @@ class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecti
         val invalidInput = input(documentNumber = documentNumber)
 
         form.bind(invalidInput).value must not be defined
-        form.bind(invalidInput).errors mustBe List(FormError("documentNumber", List("error.documentNumber.invalid")))
+        form.bind(invalidInput).errors mustBe List(
+          FormError("documentNumber", List("error.documentNumber.invalid-characters")))
       }
     }
   }
