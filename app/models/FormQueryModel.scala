@@ -16,9 +16,12 @@
 
 package models
 
-import play.api.libs.json.{Format, Json}
-import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.mongoEntity
+import play.api.libs.json.{Reads, Writes}
 import java.time.LocalDateTime
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
+
+import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
 final case class FormQueryModel(
   id: String,
@@ -26,5 +29,22 @@ final case class FormQueryModel(
   lastUpdated: LocalDateTime = LocalDateTime.now())
 
 object FormQueryModel {
-  implicit val formats: Format[FormQueryModel] = mongoEntity { Json.format[FormQueryModel] }
+
+  implicit lazy val format = Format(reads, writes)
+
+  implicit lazy val reads: Reads[FormQueryModel] = {
+    (
+      (__ \ "_id").read[String] and
+        (__ \ "data").read[EncryptedSearchFormModel] and
+        (__ \ "lastUpdated").read(MongoJavatimeFormats.localDateTimeReads)
+    )(FormQueryModel.apply _)
+  }
+
+  implicit lazy val writes: Writes[FormQueryModel] = {
+    (
+      (__ \ "_id").write[String] and
+        (__ \ "data").write[EncryptedSearchFormModel] and
+        (__ \ "lastUpdated").write(MongoJavatimeFormats.localDateTimeWrites)
+    )(unlift(FormQueryModel.unapply))
+  }
 }

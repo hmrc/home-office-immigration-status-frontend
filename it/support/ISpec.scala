@@ -26,9 +26,7 @@ trait ISpec extends BaseISpec {
   def setFormQuery(formModel: NinoSearchFormModel, sessionId: String) = {
     val encryptedFormModel = formModelEncrypter.encryptSearchFormModel(formModel, sessionId, "VqmXp7yigDFxbCUdDdNZVIvbW6RgPNJsliv6swQNCL8=")
     val formQueryModel = FormQueryModel(sessionId, encryptedFormModel)
-    val selector = Json.obj("_id" -> formQueryModel.id)
-    val modifier = Json.obj("$set" -> (formQueryModel copy (lastUpdated = LocalDateTime.now)))
-    cacheRepo.findAndUpdate(query = selector, update = modifier, upsert = true).map(_ => ())
+    cacheRepo.set(formQueryModel).map(_ => ())
   }
 
   def request(path: String, sessionId: String = "123"): WSRequest =
