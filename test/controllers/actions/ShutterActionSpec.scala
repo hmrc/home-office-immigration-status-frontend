@@ -66,7 +66,7 @@ class ShutterActionSpec extends ControllerSpec {
 
   "applyFiltering" must {
 
-    "don't filter where shuttered is false" in {
+    "not filter where shuttered is false" in {
       when(mockAppConfig.shuttered).thenReturn(false)
       val fut = shutterAction.invokeBlock(request, block)
       contentAsString(fut) mustEqual "Invoked"
@@ -74,6 +74,7 @@ class ShutterActionSpec extends ControllerSpec {
 
     "filter to the shutter page where shuttered is true" in {
       when(mockAppConfig.shuttered).thenReturn(true)
+      when(mockAppConfig.shutterMessage).thenReturn(None)
       val fut = shutterAction.invokeBlock(request, block)
       contentAsString(fut) mustEqual shutteringPage().toString
     }

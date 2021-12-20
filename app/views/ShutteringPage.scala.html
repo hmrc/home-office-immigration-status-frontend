@@ -17,7 +17,8 @@
 @import config.AppConfig
 
 @this(
-    govukWrapper: govuk_wrapper
+    govukWrapper: govuk_wrapper,
+    appConfig: AppConfig
 )
 
 @()(implicit request: Request[_], messages: Messages)
@@ -26,7 +27,7 @@
 
     <h1 class="govuk-heading-xl" id="title">@messages("shuttering.title")</h1>
 
-    <p class="govuk-body">@messages("shuttering.message")</p>
+    <p class="govuk-body">@appConfig.shutterMessage.getOrElse(messages("shuttering.defaultMessage"))</p>
 
 }
 

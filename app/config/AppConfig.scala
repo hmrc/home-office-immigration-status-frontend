@@ -25,6 +25,7 @@ class AppConfig @Inject()(servicesConfig: ServicesConfig, val configuration: Con
 
   val appName: String = servicesConfig.getString("appName")
   val shuttered: Boolean = configuration.getOptional[Boolean]("isShuttered").getOrElse(false)
+  val shutterMessage: Option[String] = configuration.getOptional[String]("shutterMessage")
   val authBaseUrl: String = servicesConfig.baseUrl("auth")
   val homeOfficeImmigrationStatusProxyBaseUrl: String = servicesConfig.baseUrl("home-office-immigration-status-proxy")
   val mongoSessionExpiration: Int = servicesConfig.getInt("mongodb.ttl.seconds")
