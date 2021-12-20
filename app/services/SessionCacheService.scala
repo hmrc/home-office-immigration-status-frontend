@@ -40,7 +40,7 @@ class SessionCacheServiceImpl @Inject()(
   def get(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SearchFormModel]] =
     withSessionId { sessionId =>
       sessionCacheRepository
-        .findById(sessionId)
+        .get(sessionId)
         .map(
           _.flatMap(formQueryModel => encrypter.decryptSearchFormModel(formQueryModel.data, sessionId, secretKey))
         )
@@ -51,14 +51,12 @@ class SessionCacheServiceImpl @Inject()(
     ec: ExecutionContext): Future[Unit] =
     withSessionId { sessionId =>
       val encryptedFormModel = encrypter.encryptSearchFormModel(formModel, sessionId, secretKey)
-      val formQueryModel = FormQueryModel(sessionId, encryptedFormModel)
-      val selector = Json.obj("_id"  -> formQueryModel.id)
-      val modifier = Json.obj("$set" -> (formQueryModel copy (lastUpdated = now)))
-      sessionCacheRepository.findAndUpdate(query = selector, update = modifier, upsert = true).map(_ => ())
+      val formQueryModel = FormQueryModel(sessionId, encryptedFormModel, now)
+      sessionCacheRepository.set(formQueryModel)
     }
 
   def delete(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] =
-    withSessionId(sessionCacheRepository.removeById(_).map(_ => ()))
+    withSessionId(sessionCacheRepository.delete(_))
 
   private def withSessionId[A](f: String => Future[A])(implicit hc: HeaderCarrier) =
     hc.sessionId match {

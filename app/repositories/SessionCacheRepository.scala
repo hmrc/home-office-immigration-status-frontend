@@ -16,35 +16,60 @@
 
 package repositories
 
-import com.google.inject.{Inject, Singleton}
-import play.modules.reactivemongo.ReactiveMongoComponent
+import java.time.LocalDateTime
+import java.util.concurrent.TimeUnit
+
+import com.google.inject.{ImplementedBy, Inject, Singleton}
 import config.AppConfig
 import models.FormQueryModel
-import uk.gov.hmrc.mongo.ReactiveRepository
-import reactivemongo.api.indexes.{Index, IndexType}
-import reactivemongo.bson.BSONDocument
+import org.mongodb.scala.MongoCollection
+import org.mongodb.scala.model.Filters.equal
+import org.mongodb.scala.model.{FindOneAndReplaceOptions, IndexModel, IndexOptions}
+import org.mongodb.scala.model.Indexes.ascending
+import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import repositories.SessionCacheRepository.CollectionName
+import uk.gov.hmrc.mongo.MongoComponent
+
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SessionCacheRepository @Inject()(
-  mongoComponent: ReactiveMongoComponent,
+  mongoComponent: MongoComponent,
   appConfig: AppConfig
-) extends ReactiveRepository[FormQueryModel, String](
+)(implicit ec: ExecutionContext)
+    extends PlayMongoRepository[FormQueryModel](
       collectionName = CollectionName,
-      mongo = mongoComponent.mongoConnector.db,
-      domainFormat = FormQueryModel.formats,
-      idFormat = implicitly
-    ) {
-
-  private val TTL = Index(
-    key = Seq("lastUpdated" -> IndexType.Ascending),
-    name = Some("lastUpdatedTTL"),
-    options = BSONDocument("expireAfterSeconds" -> appConfig.mongoSessionExpiration)
-  )
-
-  override def indexes: Seq[Index] = Seq(TTL)
-}
+      mongoComponent = mongoComponent,
+      domainFormat = FormQueryModel.format,
+      indexes = Seq(
+        IndexModel(
+          ascending("lastUpdated"),
+          IndexOptions()
+            .name("lastUpdatedTTL")
+            .expireAfter(appConfig.mongoSessionExpiration, TimeUnit.SECONDS))
+      )
+    ) with SearchableWithMongoCollection
 
 object SessionCacheRepository {
-  private val CollectionName = "form-query"
+  val CollectionName = "form-query"
+}
+
+trait SearchableWithMongoCollection {
+
+  def collection: MongoCollection[FormQueryModel]
+
+  def get(id: String)(implicit ec: ExecutionContext): Future[Option[FormQueryModel]] =
+    collection.find(equal("_id", id)).toFuture().map(_.headOption)
+
+  def set(formQueryModel: FormQueryModel)(implicit ec: ExecutionContext): Future[Unit] = {
+    val query = equal("_id", formQueryModel.id)
+    collection
+      .findOneAndReplace(query, formQueryModel, FindOneAndReplaceOptions().upsert(true))
+      .toFuture()
+      .map(_ => ())
+  }
+
+  def delete(id: String)(implicit ec: ExecutionContext): Future[Unit] =
+    collection.deleteOne(equal("_id", id)).toFuture().map(_ => ())
+
 }

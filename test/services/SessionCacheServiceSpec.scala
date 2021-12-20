@@ -60,75 +60,64 @@ class SessionCacheServiceSpec
     familyName = "Jazz",
     dateOfBirth = LocalDate.now)
   val encryptedFormModel = encrypter.encryptSearchFormModel(formModel, "123", secretKey)
-  val formQuery = FormQueryModel(id = "123", data = encryptedFormModel)
+  val formQuery = FormQueryModel(id = "123", data = encryptedFormModel, now)
 
   "get" must {
 
     "check the repository and return none where the header carrier has a session id" in {
-      when(mockRepo.findById(any(), any())(any())).thenReturn(Future.successful(None))
+      when(mockRepo.get(any())(any())).thenReturn(Future.successful(None))
       val hc = HeaderCarrier(sessionId = Some(SessionId("123")))
       val result = Await.result(sut.get(hc, implicitly), 5 seconds)
       result mustBe None
-      verify(mockRepo).findById(refEq("123"), any())(any())
+      verify(mockRepo).get(refEq("123"))(any())
     }
 
     "check the repository and return some where the header carrier has a session id" in {
-      when(mockRepo.findById(any(), any())(any())).thenReturn(Future.successful(Some(formQuery)))
+      when(mockRepo.get(any())(any())).thenReturn(Future.successful(Some(formQuery)))
       val hc = HeaderCarrier(sessionId = Some(SessionId("123")))
       val result = Await.result(sut.get(hc, implicitly), 5 seconds)
       result mustBe Some(formModel)
-      verify(mockRepo).findById(refEq("123"), any())(any())
+      verify(mockRepo).get(refEq("123"))(any())
     }
 
     "return an error where the header carrier has no session id" in {
       val hc = HeaderCarrier(sessionId = None)
       intercept[NoSessionIdException.type] { Await.result(sut.get(hc, implicitly), 5 seconds) }
-      verify(mockRepo, never()).findById(any(), any())(any())
+      verify(mockRepo, never()).get(any())(any())
     }
   }
 
   "set" must {
 
-    "call findAndUpdate in the repo" in {
-      val selector = Json.obj("_id"  -> formQuery.id)
-      val modifier = Json.obj("$set" -> (formQuery copy (lastUpdated = now)))
+    "call set in the repo" in {
       val hc = HeaderCarrier(sessionId = Some(SessionId("123")))
 
-      val mockReturn = mock(
-        classOf[reactivemongo.api.commands.FindAndModifyCommand.Result[
-          SessionCacheServiceSpec.this.mockRepo.collection.pack.type]])
-
-      when(mockRepo.findAndUpdate(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())(any()))
-        .thenReturn(Future.successful(mockReturn))
+      when(mockRepo.set(any())(any())).thenReturn(Future.unit)
 
       Await.result(sut.set(formModel, now)(hc, implicitly), 5 seconds)
-      verify(mockRepo)
-        .findAndUpdate(refEq(selector), refEq(modifier), any(), any(), any(), any(), any(), any(), any(), any(), any())(
-          any())
+      verify(mockRepo).set(refEq(formQuery))(any())
     }
 
     "return an error where the header carrier has no session id" in {
       val hc = HeaderCarrier(sessionId = None)
       intercept[NoSessionIdException.type] { Await.result(sut.set(formModel, now)(hc, implicitly), 5 seconds) }
-      verify(mockRepo, never)
-        .findAndUpdate(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())(any())
+      verify(mockRepo, never).set(any())(any())
     }
   }
 
   "delete" must {
 
-    "call removeById where the header carrier has a session id" in {
-      val mockResponse = mock(classOf[reactivemongo.api.commands.WriteResult])
-      when(mockRepo.removeById(any(), any())(any())).thenReturn(Future.successful(mockResponse))
+    "call delete where the header carrier has a session id" in {
+      when(mockRepo.delete(any())(any())).thenReturn(Future.unit)
       val hc = HeaderCarrier(sessionId = Some(SessionId("123")))
       Await.result(sut.delete(hc, implicitly), 5 seconds)
-      verify(mockRepo).removeById(refEq("123"), any())(any())
+      verify(mockRepo).delete(refEq("123"))(any())
     }
 
     "return an error where the header carrier has no session id" in {
       val hc = HeaderCarrier(sessionId = None)
       intercept[NoSessionIdException.type] { Await.result(sut.delete(hc, implicitly), 5 seconds) }
-      verify(mockRepo, never()).removeById(any(), any())(any())
+      verify(mockRepo, never()).delete(any())(any())
     }
   }
 }
