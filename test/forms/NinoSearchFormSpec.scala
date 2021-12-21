@@ -95,34 +95,52 @@ class NinoSearchFormSpec extends PlaySpec with OptionValues with ScalaCheckDrive
         }
       }
 
-      "year is 2 digit, default add 19XX" in {
-        val yearStr = for {
-          y1 <- Gen.numChar
-          y2 <- Gen.numChar
-        } yield s"$y1$y2"
-        forAll(yearStr.suchThat(_.length == 2)) { year =>
-          val validInput = inputYear(year = year)
-
-          val out = NinoSearchFormModel(testNino, "first", "last", yesterday.withYear(("19" + year).toInt))
-          val bound = form.bind(validInput)
-          bound.errors mustBe Nil
-          bound.value mustBe Some(out)
-        }
-      }
     }
 
     "fail to bind" when {
+
+      "dob day is invalid" in {
+        val invalidInput = input() + ("dateOfBirth.day" -> "")
+
+        form.bind(invalidInput).value must not be defined
+        form.bind(invalidInput).errors mustBe List(FormError("dateOfBirth.day", List("error.dateOfBirth.day.required")))
+      }
+
+      "dob month is invalid" in {
+        val invalidInput = input() + ("dateOfBirth.month" -> "")
+
+        form.bind(invalidInput).value must not be defined
+        form.bind(invalidInput).errors mustBe List(
+          FormError("dateOfBirth.month", List("error.dateOfBirth.month.required")))
+      }
+
+      "dob year is invalid" in {
+        val invalidInput = input() + ("dateOfBirth.year" -> "")
+
+        form.bind(invalidInput).value must not be defined
+        form.bind(invalidInput).errors mustBe List(
+          FormError("dateOfBirth.year", List("error.dateOfBirth.year.required")))
+      }
+
+      "dob is invalid" in {
+        val invalidInput = input(dateOfBirth = now) + ("dateOfBirth.day" -> "35")
+
+        form.bind(invalidInput).value must not be defined
+        form.bind(invalidInput).errors mustBe List(FormError("dateOfBirth", List("error.dateOfBirth.invalid-format")))
+      }
+
       "dob is today" in {
         val invalidInput = input(dateOfBirth = now)
 
         form.bind(invalidInput).value must not be defined
-        form.bind(invalidInput).errors mustBe List(FormError("dateOfBirth", List("error.dateOfBirth.invalid-format")))
+        form.bind(invalidInput).errors mustBe List(FormError("dateOfBirth", List("error.dateOfBirth.past")))
       }
+
       "dob is future" in {
         val invalidInput = input(dateOfBirth = tomorrow)
 
         form.bind(invalidInput).value must not be defined
-        form.bind(invalidInput).errors mustBe List(FormError("dateOfBirth", List("error.dateOfBirth.invalid-format")))
+        form.bind(invalidInput).errors mustBe List(FormError("dateOfBirth", List("error.dateOfBirth.past")))
       }
 
       "givenName is empty" in {

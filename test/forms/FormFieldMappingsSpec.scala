@@ -16,12 +16,16 @@
 
 package forms
 
+import org.scalacheck.Gen
 import org.scalatest.OptionValues
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
-import play.api.data.validation.{Constraint, Invalid, Valid}
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
+import scala.util.Try
 
-class FormFieldMappingsSpec extends AnyWordSpecLike with Matchers with OptionValues with FormFieldMappings {
+class FormFieldMappingsSpec
+    extends AnyWordSpecLike with Matchers with OptionValues with FormFieldMappings with ScalaCheckDrivenPropertyChecks {
 
   val validateName: Constraint[String] = validName(fieldName = "bar", minLenInc = 0)
   val invalid: Invalid = Invalid("error.bar.invalid-format")
@@ -46,5 +50,49 @@ class FormFieldMappingsSpec extends AnyWordSpecLike with Matchers with OptionVal
       validateName("Ar#tur") shouldBe invalid
       validateName("ĄĘÓŚŻĆŁąęółśćńżźāēīūčģķļņšž") shouldBe Valid
     }
+
+    val intGen = Gen.numStr.suchThat(str => str.length > 0).map(_.take(9))
+
+    "isInt" should {
+      "return true for a number" in {
+        forAll(intGen)(n => isInt(n) == true)
+      }
+
+      "return false for a non-numeric string" in {
+        forAll(Gen.alphaStr.suchThat(_.length > 0))(n => isInt(n) == true)
+      }
+    }
+
+    "isNotZero" should {
+      "return true for a number over zero" in {
+        forAll(intGen.suchThat(_.toInt > 0))(n => isNotZero(n) == true)
+      }
+
+      "return false for zero" in {
+        isNotZero("0") == false
+      }
+    }
+
+    "validateNonEmptyInt" should {
+      "checks emptiness" in {
+        validateNonEmptyInt("myField", None)("") shouldBe Invalid(ValidationError("error.dateOfBirth.myField.required"))
+      }
+
+      "check that the string is an int" in {
+        forAll(Gen.alphaStr.suchThat(_.length > 0))(validateNonEmptyInt("myField", None)(_) shouldBe Invalid(
+          ValidationError("error.dateOfBirth.myField.invalid")))
+      }
+
+      "check that the string is not zero" in {
+        validateNonEmptyInt("myField", None)("0") shouldBe Invalid(
+          ValidationError("error.dateOfBirth.myField.required"))
+      }
+
+      "check that the string is a minimum number of characters" in {
+        validateNonEmptyInt("myField", Some(2))("1") shouldBe Invalid(
+          ValidationError("error.dateOfBirth.myField.length", 2))
+      }
+    }
+
   }
 }

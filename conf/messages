@@ -30,9 +30,14 @@ error.browser.title.prefix='Error:'
 #shared
 error.dateOfBirth.required='Enter date of birth in the correct format'
 error.dateOfBirth.invalid-format='Invalid date of birth'
-error.year.invalid-format='Enter a year of birth'
-error.day.invalid-format='Enter a day of birth'
-error.month.invalid-format='Enter a month of birth'
+error.dateOfBirth.past='Date of birth must be in the past'
+error.dateOfBirth.day.invalid='Day must only include numbers'
+error.dateOfBirth.month.invalid='Month must only include numbers'
+error.dateOfBirth.year.invalid='Year must only include numbers'
+error.dateOfBirth.day.required='Date of birth must include a day'
+error.dateOfBirth.month.required='Date of birth must include a month'
+error.dateOfBirth.year.required='Date of birth must include a year'
+error.dateOfBirth.year.length='Enter a year in the right format'
 
 #Nino form
 error.nino.required='Enter National Insurance number in the correct format'
