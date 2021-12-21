@@ -14,23 +14,15 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
-
 @this(
-    govukWrapper: govuk_wrapper,
-    appConfig: AppConfig
+    govukWrapper: govuk_wrapper
 )
 
 @()(implicit request: Request[_], messages: Messages)
 
 @govukWrapper(title = messages("internal.error.500.title")) {
 
-   <h1 class="govuk-heading-xl" id="internal-error-title">@messages("internal.error.500.title")</h1>
+    <h1 class="govuk-heading-xl" id="internal-error-title">@messages("internal.error.500.title")</h1>
 
-   <p class="govuk-body">@messages("internal.error.500.message")</p>
-
-   <p class="govuk-body">
-       <a href="@{appConfig.helpdeskUrl}" rel="noopener noreferrer" class="govuk-link" target="_blank"> @messages("internal.error.500.helpdesk-link")</a>
-       @messages("internal.error.500.helpdesk-text")
-   </p>
+    <p class="govuk-body">@messages("internal.error.500.message")</p>
 }

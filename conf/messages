@@ -157,16 +157,16 @@ button.search='Search'
 button.submit='Submit'
 
 # Global errors
-external.error.500.title='Sorry, the service is unavailable'
+external.error.500.title='Sorry, there is a problem with the service'
 external.error.500.message='Try again later.'
+external.error.500.helpdesk-link='Contact the IT help desk (opens in new tab)'
+external.error.500.helpdesk-text=' to report this problem.'
 external.error.500.listParagraph='This could be for a number of reasons, including:'
 external.error.500.list-item1='An external service error'
 external.error.500.list-item2='Too many users on the service'
 
 internal.error.500.title='Sorry, there is a problem with the service'
-internal.error.500.message='Try again later.'
-internal.error.500.helpdesk-link='Contact the IT help desk (opens in new tab)'
-internal.error.500.helpdesk-text=' to report this problem.'
+internal.error.500.message='Contact the Helpline.'
 
 # Shuttering
 shuttering.title='Sorry, the service is unavailable'
