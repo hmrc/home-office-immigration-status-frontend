@@ -37,7 +37,9 @@ error.dateOfBirth.year.invalid='Year must only include numbers'
 error.dateOfBirth.day.required='Date of birth must include a day'
 error.dateOfBirth.month.required='Date of birth must include a month'
 error.dateOfBirth.year.required='Date of birth must include a year'
-error.dateOfBirth.year.length='Enter a year in the right format'
+error.dateOfBirth.day.min='Enter a day in the right format'
+error.dateOfBirth.month.min='Enter a month in the right format'
+error.dateOfBirth.year.min='Enter a year in the right format'
 
 #Nino form
 error.nino.required='Enter National Insurance number in the correct format'

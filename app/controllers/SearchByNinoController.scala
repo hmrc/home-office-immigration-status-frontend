@@ -21,11 +21,14 @@ import play.api.mvc._
 import config.AppConfig
 import controllers.actions.AccessAction
 import forms.SearchByNinoForm
+import forms.helpers.FormHelper.updateDateOfBirthErrors
 import models.NinoSearchFormModel
 import views.html._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import services.SessionCacheService
 import javax.inject.{Inject, Singleton}
+import play.api.data.{Form, FormError}
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -67,11 +70,15 @@ class SearchByNinoController @Inject()(
       formProvider()
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(searchByNinoView(formWithErrors))),
+          formWithErrors => {
+            val formUpdatedErrors = updateDateOfBirthErrors(formWithErrors)
+            Future.successful(BadRequest(searchByNinoView(formUpdatedErrors)))
+          },
           query =>
             for {
               _ <- sessionCacheService.set(query)
             } yield Redirect(routes.StatusResultController.onPageLoad)
         )
     }
+
 }

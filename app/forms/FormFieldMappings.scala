@@ -53,50 +53,34 @@ trait FormFieldMappings extends Constraints {
       )
       .transform(_.get, Some.apply)
 
-  private val validateIsRealDate: Constraint[(String, String, String)] =
+  private val validateIsRealDate: Constraint[(Int, Int, Int)] =
     cond("error.dateOfBirth.invalid-format") {
       case (year, month, day) =>
-        Try(LocalDate.of(year.toInt, month.toInt, day.toInt)).isSuccess
+        Try(LocalDate.of(year, month, day)).isSuccess
     }
 
   private val validateInThePast: Constraint[LocalDate] =
     cond[LocalDate]("error.dateOfBirth.past")(_.isBefore(LocalDate.now()))
 
-  private val asDate: (String, String, String) => LocalDate = (y, m, d) => LocalDate.of(y.toInt, m.toInt, d.toInt)
-  private val asTuple: LocalDate => (String, String, String) = d =>
-    (d.getYear.toString, d.getMonthValue.toString, d.getDayOfMonth.toString)
+  private val asDate: (Int, Int, Int) => LocalDate = (y, m, d) => LocalDate.of(y, m, d)
+  private val asTuple: LocalDate => (Int, Int, Int) = d => (d.getYear, d.getMonthValue, d.getDayOfMonth)
 
-  def isInt(str: String): Boolean = Try(str.toInt).isSuccess
+  def isInt(str: String): Boolean = Try(str.trim.toInt).isSuccess
 
-  def isNotZero(str: String): Boolean = Try(str.toInt).map(_ != 0).getOrElse(true)
+  def isNotZero(int: Int): Boolean = int != 0
 
-  def validateNonEmptyInt(field: String, minLengthVal: Option[Int] = None): Constraint[String] = Constraint[String] {
-    fieldValue: String =>
-      val baseValidations: Seq[Constraint[String]] = Seq(
-        nonEmpty(s"error.dateOfBirth.$field.required"),
-        cond[String](s"error.dateOfBirth.$field.invalid")(isInt),
-        cond[String](s"error.dateOfBirth.$field.required")(isNotZero)
-      )
+  def nonEmptyConstraint(field: String): Constraint[String] = nonEmpty(s"error.dateOfBirth.$field.required")
 
-      val validations = minLengthVal match {
-        case None      => baseValidations
-        case Some(len) => baseValidations :+ minLength(len, s"error.dateOfBirth.$field.length")
-      }
-
-      validations.foldLeft[ValidationResult](Valid) { (result, condition) =>
-        result match {
-          case Valid => condition(fieldValue)
-          case _     => result
-        }
-      }
-  }
-
-  def dateComponent(field: String, minLengthVal: Option[Int] = None): Mapping[String] =
-    of[String].transform[String](_.trim, identity).verifying(validateNonEmptyInt(field, minLengthVal))
+  def dateComponent(field: String, minLengthVal: Int = 0): Mapping[Int] =
+    nonEmptyText(s"dateOfBirth.$field")
+      .verifying(cond[String](s"error.dateOfBirth.$field.invalid")(isInt))
+      .transform[Int](_.toInt, _.toString)
+      .verifying(cond[Int](s"error.dateOfBirth.$field.required")(isNotZero))
+      .verifying(min(minValue = minLengthVal, errorMessage = s"error.dateOfBirth.$field.min"))
 
   def dobFieldsMapping: Mapping[LocalDate] =
     tuple(
-      "year"  -> dateComponent("year", Some(4)),
+      "year"  -> dateComponent("year", 1000),
       "month" -> dateComponent("month"),
       "day"   -> dateComponent("day")
     ).verifying(validateIsRealDate)

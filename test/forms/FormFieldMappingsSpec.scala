@@ -21,8 +21,9 @@ import org.scalatest.OptionValues
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import play.api.data.{Form, FormError}
+import play.api.data.Forms.single
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
-import scala.util.Try
 
 class FormFieldMappingsSpec
     extends AnyWordSpecLike with Matchers with OptionValues with FormFieldMappings with ScalaCheckDrivenPropertyChecks {
@@ -55,42 +56,57 @@ class FormFieldMappingsSpec
 
     "isInt" should {
       "return true for a number" in {
-        forAll(intGen)(n => isInt(n) == true)
+        forAll(intGen)(n => isInt(n) shouldBe true)
       }
 
       "return false for a non-numeric string" in {
-        forAll(Gen.alphaStr.suchThat(_.length > 0))(n => isInt(n) == true)
+        forAll(Gen.alphaStr.suchThat(_.length > 0))(n => isInt(n) shouldBe false)
       }
     }
 
     "isNotZero" should {
       "return true for a number over zero" in {
-        forAll(intGen.suchThat(_.toInt > 0))(n => isNotZero(n) == true)
+        forAll(intGen.suchThat(_.toInt > 0))(n => isNotZero(n.toInt) shouldBe true)
       }
 
       "return false for zero" in {
-        isNotZero("0") == false
+        isNotZero(0) == false
       }
     }
 
-    "validateNonEmptyInt" should {
+    "dateComponent" should {
+
+      def form(min: Int) = Form(single("myField" -> dateComponent("myField", min)))
+      def testFormFill(day: String) = Map("myField" -> day)
+
       "checks emptiness" in {
-        validateNonEmptyInt("myField", None)("") shouldBe Invalid(ValidationError("error.dateOfBirth.myField.required"))
+        form(0).bind(testFormFill("")).errors shouldBe List(
+          FormError("myField", List("error.dateOfBirth.myField.required")))
       }
 
       "check that the string is an int" in {
-        forAll(Gen.alphaStr.suchThat(_.length > 0))(validateNonEmptyInt("myField", None)(_) shouldBe Invalid(
-          ValidationError("error.dateOfBirth.myField.invalid")))
+        forAll(Gen.alphaStr.suchThat(_.length > 0))(str =>
+          form(0).bind(testFormFill(str)).errors shouldBe List(
+            FormError("myField", List("error.dateOfBirth.myField.invalid"))))
       }
 
       "check that the string is not zero" in {
-        validateNonEmptyInt("myField", None)("0") shouldBe Invalid(
-          ValidationError("error.dateOfBirth.myField.required"))
+        form(0).bind(testFormFill("0")).errors shouldBe List(
+          FormError("myField", List("error.dateOfBirth.myField.required")))
       }
 
-      "check that the string is a minimum number of characters" in {
-        validateNonEmptyInt("myField", Some(2))("1") shouldBe Invalid(
-          ValidationError("error.dateOfBirth.myField.length", 2))
+      "check that the string meets a minimum value" in {
+        form(2).bind(testFormFill("1")).errors shouldBe List(
+          FormError("myField", List("error.dateOfBirth.myField.min"), Seq(2)))
+      }
+
+      "check that the string is a minimum value for 4 digits" in {
+        form(1000).bind(testFormFill("999")).errors shouldBe List(
+          FormError("myField", List("error.dateOfBirth.myField.min"), Seq(1000)))
+      }
+
+      "not return an error where the field is valid" in {
+        form(1000).bind(testFormFill("1000")).errors shouldBe Nil
       }
     }
 
