@@ -16,6 +16,7 @@
 
 @import config.Countries
 @import views.html.helper.CSPNonce
+@import forms.helpers.FormHelper
 
 @this(
     govukWrapper: govuk_wrapper,
@@ -36,7 +37,7 @@
 
     @formHelper(controllers.routes.SearchByMrzController.onSubmit) {
 
-        @errorSummary(form.errors)
+        @errorSummary(FormHelper.updateDateOfBirthErrors(form.errors))
 
         @fieldset("lookup.title") {
 

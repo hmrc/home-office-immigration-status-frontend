@@ -16,16 +16,14 @@
 
 package forms.helpers
 
-import play.api.data.{Form, FormError}
+import play.api.data.FormError
 
 object FormHelper {
 
-  def updateDateOfBirthErrors[T](form: Form[T]): Form[T] = {
-    val newErrors = form.errors.map {
+  def updateDateOfBirthErrors(errors: Seq[FormError]): Seq[FormError] =
+    errors.map {
       case FormError("dateOfBirth", m, a) => FormError("dateOfBirth.day", m, a)
       case f                              => f
     }
-    form.copy(errors = newErrors)
-  }
 
 }

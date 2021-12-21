@@ -30,18 +30,18 @@ class FormHelperSpec extends AnyWordSpecLike with Matchers {
   "updateDateOfBirthErrors" should {
     "convert all dob errors to have the key be the day" in {
       val filledForm = form.bind(testFormFill("string", ""))
-      FormHelper.updateDateOfBirthErrors(filledForm).errors shouldBe List(
+      FormHelper.updateDateOfBirthErrors(filledForm.errors) shouldBe List(
         FormError("dateOfBirth.day", List("error.required")))
     }
 
     "not change non dob errors" in {
       val filledForm = form.bind(testFormFill("", "dob"))
-      FormHelper.updateDateOfBirthErrors(filledForm).errors shouldBe filledForm.errors
+      FormHelper.updateDateOfBirthErrors(filledForm.errors) shouldBe filledForm.errors
     }
 
     "change only dob errors in a mixture" in {
       val filledForm = form.bind(testFormFill("", ""))
-      FormHelper.updateDateOfBirthErrors(filledForm).errors shouldBe List(
+      FormHelper.updateDateOfBirthErrors(filledForm.errors) shouldBe List(
         FormError("myField1", List("error.required")),
         FormError("dateOfBirth.day", List("error.required")))
     }

@@ -26,7 +26,6 @@ import services.SessionCacheService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.SearchByMrzView
 import errors.ErrorHandler
-import forms.helpers.FormHelper.updateDateOfBirthErrors
 import javax.inject.Inject
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -75,10 +74,7 @@ class SearchByMrzController @Inject()(
         formProvider()
           .bindFromRequest()
           .fold(
-            formWithErrors => {
-              val formUpdatedErrors = updateDateOfBirthErrors(formWithErrors)
-              Future.successful(BadRequest(view(formUpdatedErrors)))
-            },
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
             query =>
               for {
                 _ <- sessionCacheService.set(query)
