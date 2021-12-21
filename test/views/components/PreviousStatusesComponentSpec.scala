@@ -227,7 +227,7 @@ class PreviousStatusesComponentSpec extends ViewSpec {
           assertElementHasText(
             doc,
             "#status-previous-0",
-            "British National Overseas (leave outside the rules) - Limited leave to enter")
+            "British National Overseas (leave outside the Immigration Rules) - Limited leave to enter")
         }
         "LTR" in {
           val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("BNO_LOTR", "LTR"))(messages))
@@ -235,7 +235,7 @@ class PreviousStatusesComponentSpec extends ViewSpec {
           assertElementHasText(
             doc,
             "#status-previous-0",
-            "British National Overseas (leave outside the rules) - Limited leave to remain")
+            "British National Overseas (leave outside the Immigration Rules) - Limited leave to remain")
         }
       }
 
@@ -297,6 +297,31 @@ class PreviousStatusesComponentSpec extends ViewSpec {
           assertElementHasText(doc, "#status-previous-0", "Temporary Worker - Limited leave to enter")
         }
       }
+
+      "PROTECTION" when {
+        "LTR" in {
+          val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("PROTECTION", "LTR"))(messages))
+          assertRenderedById(doc, "status-previous-0")
+          assertElementHasText(doc, "#status-previous-0", "Settlement Protection - Limited leave to remain")
+        }
+      }
+
+      "PROTECTION_ROUTE" when {
+        "LTR" in {
+          val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("PROTECTION_ROUTE", "LTR"))(messages))
+          assertRenderedById(doc, "status-previous-0")
+          assertElementHasText(doc, "#status-previous-0", "Settlement Protection - Limited leave to remain")
+        }
+      }
+
+      "DEPENDANT" when {
+        "ILR" in {
+          val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("DEPENDANT", "ILR"))(messages))
+          assertRenderedById(doc, "status-previous-0")
+          assertElementHasText(doc, "#status-previous-0", "Settlement Protection - Indefinite leave to remain")
+        }
+      }
+
     }
   }
 }
