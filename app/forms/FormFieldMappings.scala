@@ -69,13 +69,13 @@ trait FormFieldMappings extends Constraints {
 
   def isNotZero(int: Int): Boolean = int != 0
 
-  def dateComponent(field: String, minLengthVal: Int = 0): Mapping[Int] =
+  def dateComponent(field: String, minValue: Int = 0): Mapping[Int] =
     nonEmptyText(s"dateOfBirth.$field")
       .verifying(cond[String](s"error.dateOfBirth.$field.invalid")(isInt))
       .transform[Int](_.toInt, _.toString)
       .verifying(cond[Int](s"error.dateOfBirth.$field.required")(isNotZero))
       .transform[Int](identity, identity)
-      .verifying(min(minValue = minLengthVal, errorMessage = s"error.dateOfBirth.$field.min"))
+      .verifying(min(minValue = minValue, errorMessage = s"error.dateOfBirth.$field.min"))
 
   def dobFieldsMapping: Mapping[LocalDate] =
     tuple(
