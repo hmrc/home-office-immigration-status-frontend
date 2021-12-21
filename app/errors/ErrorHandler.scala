@@ -25,14 +25,14 @@ import play.api.{Configuration, Environment, Mode}
 import play.twirl.api.{Html, HtmlFormat}
 import uk.gov.hmrc.auth.core.{InsufficientEnrolments, NoActiveSession}
 import config.AppConfig
-import views.html.{InternalErrorPage, ShutteringPage, error_template}
+import views.html.{ExternalErrorPage, InternalErrorPage, ShutteringPage, error_template}
 import uk.gov.hmrc.http.{JsValidationException, NotFoundException}
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.config.{AuthRedirects, HttpAuditEvent}
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-
 import javax.inject.{Inject, Singleton}
+
 import scala.concurrent.{ExecutionContext, Future}
 import play.api.Logging
 
@@ -41,7 +41,7 @@ class ErrorHandler @Inject()(
   val env: Environment,
   val messagesApi: MessagesApi,
   val auditConnector: AuditConnector,
-  internalErrorPage: InternalErrorPage,
+  externalErrorPage: ExternalErrorPage,
   errorTemplate: error_template,
   shutteringPage: ShutteringPage,
   @Named("appName") val appName: String
@@ -68,7 +68,7 @@ class ErrorHandler @Inject()(
       case _: InsufficientEnrolments => Forbidden
       case e =>
         logger.error(e.getMessage, e)
-        InternalServerError(internalErrorPage())
+        InternalServerError(externalErrorPage())
     }
   }
 

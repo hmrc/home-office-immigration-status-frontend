@@ -43,10 +43,11 @@ error.givenName.required='Enter first name'
 error.givenName.invalid-format='Invalid first name'
 
 #MRZ form
-error.nationality.required='Invalid Nationality'
+error.nationality.required='Enter a country'
 error.nationality.invalid='Invalid Nationality'
-error.documentNumber.required='Enter Identity document number in the correct format'
-error.documentNumber.invalid='Invalid Identity document number'
+error.documentNumber.required='Enter a document number'
+error.documentNumber.length='Document number must be 30 characters or less'
+error.documentNumber.invalid-characters='Document number must only include letters a to z, hyphens and numbers 0 to 9'
 error.documentType.required='Select an Identity document type'
 error.documentType.invalid='Select an Identity document type'
 
@@ -157,8 +158,10 @@ button.search='Search'
 button.submit='Submit'
 
 # Global errors
-external.error.500.title='Sorry, the service is unavailable'
+external.error.500.title='Sorry, there is a problem with the service'
 external.error.500.message='Try again later.'
+external.error.500.helpdesk-link='Contact the IT help desk (opens in new tab)'
+external.error.500.helpdesk-text=' to report this problem.'
 external.error.500.listParagraph='This could be for a number of reasons, including:'
 external.error.500.list-item1='An external service error'
 external.error.500.list-item2='Too many users on the service'
