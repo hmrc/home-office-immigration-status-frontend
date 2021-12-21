@@ -37,45 +37,44 @@
 
         @errorSummary(form.errors)
 
-        @fieldset("lookup.title") {
+        <h1 class="govuk-heading-xl" id="nino-search-title">@messages("lookup.title")</h1>
 
-            @if(appConfig.documentSearchFeatureEnabled) {
-                @alternateSearch("alternate-search.mrz-link", controllers.routes.SearchByMrzController.onPageLoad(true).url, "alt-search-by-mrz")
-            }
-
-            @inputText(
-                form,
-                id = "nino",
-                name = "nino",
-                label = "lookup.nino.label",
-                hint = Some(Html(messages("lookup.nino.hint"))),
-                classes = Some("govuk-!-width-one-half")
-            )
-
-            @inputText(
-                form,
-                id = "givenName",
-                name = "givenName",
-                label = "lookup.givenName.label",
-                classes = Some("govuk-!-width-two-thirds")
-            )
-
-            @inputText(
-                form,
-                id = "familyName",
-                name = "familyName",
-                label = "lookup.familyName.label",
-                classes = Some("govuk-!-width-two-thirds")
-            )
-
-            @inputDate(
-                form,
-                id = "dateOfBirth",
-                legendClasses = "govuk-label",
-                legendContent = messages("lookup.dateOfBirth.label"),
-                hintMessage = Some(messages("lookup.dateOfBirth.hint"))
-            )
+        @if(appConfig.documentSearchFeatureEnabled) {
+            @alternateSearch("alternate-search.mrz-link", controllers.routes.SearchByMrzController.onPageLoad(true).url, "alt-search-by-mrz")
         }
+
+        @inputText(
+            form,
+            id = "nino",
+            name = "nino",
+            label = "lookup.nino.label",
+            hint = Some(Html(messages("lookup.nino.hint"))),
+            classes = Some("govuk-!-width-one-half")
+        )
+
+        @inputText(
+            form,
+            id = "givenName",
+            name = "givenName",
+            label = "lookup.givenName.label",
+            classes = Some("govuk-!-width-two-thirds")
+        )
+
+        @inputText(
+            form,
+            id = "familyName",
+            name = "familyName",
+            label = "lookup.familyName.label",
+            classes = Some("govuk-!-width-two-thirds")
+        )
+
+        @inputDate(
+            form,
+            id = "dateOfBirth",
+            legendClasses = "govuk-label",
+            legendContent = messages("lookup.dateOfBirth.label"),
+            hintMessage = Some(messages("lookup.dateOfBirth.hint"))
+        )
 
         @govukButton(Button(content = Text(messages("button.search")), attributes = Map("id" -> "search-button")))
     }
