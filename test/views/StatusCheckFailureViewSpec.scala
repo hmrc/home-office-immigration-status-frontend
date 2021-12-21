@@ -76,23 +76,20 @@ class StatusCheckFailureViewSpec extends ViewSpec {
       e.text() mustBe messages("status-check-failure.heading2CustomerDetails")
     }
 
-    "nino doc has mrzlink" in {
-      val e: Element = NinoDocWithFeature.getElementById("mrzlink")
-      e.text() mustBe messages("status-check-failure-conflict") + messages("status-check-failure-conflict.mrz-link")
+    "nino doc has mrz alt link" in {
+      assertRenderedById(NinoDocWithFeature, "alternate-search")
+      val e: Element = NinoDocWithFeature.getElementById("status-check-failure-conflict.mrz")
+      e.text() mustBe messages("status-check-failure-conflict.mrz-link")
     }
 
-    "mrz doc has ninolink" in {
-      val e: Element = MrzDocWithFeature.getElementById("ninolink")
-      e.text() mustBe messages("status-check-failure-conflict") + messages("status-check-failure-conflict.nino-link")
+    "mrz doc has nino alt link" in {
+      assertRenderedById(MrzDocWithFeature, "alternate-search")
+      val e: Element = MrzDocWithFeature.getElementById("status-check-failure-conflict.nino")
+      e.text() mustBe messages("status-check-failure-conflict.nino-link")
     }
 
-    "mrzlink and ninolink do not show when feature disabled" in {
-      assertNotRenderedById(DocWithoutFeature, "ninolink")
-      assertNotRenderedById(DocWithoutFeature, "mrzlink")
-    }
-
-    "have the show and change query section" in {
-      assertRenderedById(DocWithoutFeature, "inputted-data")
+    "mrz and nino alt link do not show when feature disabled" in {
+      assertNotRenderedById(DocWithoutFeature, "alternate-search")
     }
 
     "have the search again button" in {
