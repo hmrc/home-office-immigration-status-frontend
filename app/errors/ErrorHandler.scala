@@ -41,7 +41,6 @@ class ErrorHandler @Inject()(
   val env: Environment,
   val messagesApi: MessagesApi,
   val auditConnector: AuditConnector,
-  internalErrorPage: InternalErrorPage,
   externalErrorPage: ExternalErrorPage,
   errorTemplate: error_template,
   shutteringPage: ShutteringPage,
