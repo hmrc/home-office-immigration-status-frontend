@@ -38,9 +38,8 @@ class StatusResultISpec extends ISpec with HomeOfficeImmigrationStatusStubs {
       result.status shouldBe INTERNAL_SERVER_ERROR
       result.body should include(htmlEscapedMessage("external.error.500.title"))
       result.body should include(htmlEscapedMessage("external.error.500.message"))
-      result.body should include(htmlEscapedMessage("external.error.500.listParagraph"))
-      result.body should include(htmlEscapedMessage("external.error.500.list-item1"))
-      result.body should include(htmlEscapedMessage("external.error.500.list-item2"))
+      result.body should include(htmlEscapedMessage("external.error.500.helpdesk-link"))
+      result.body should include(htmlEscapedMessage("external.error.500.helpdesk-text"))
       result.headers.get("Cache-Control").map(_.mkString) shouldBe Some("no-cache, no-store, must-revalidate")
     }
   }
