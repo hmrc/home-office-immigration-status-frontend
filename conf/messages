@@ -36,11 +36,12 @@ error.month.invalid-format='Enter a month of birth'
 
 #Nino form
 error.nino.required='Enter National Insurance number in the correct format'
-error.nino.invalid-format='Invalid National Insurance number'
-error.familyName.required='Enter surname'
-error.familyName.invalid-format='Invalid surname'
+error.nino.invalid-format='National Insurance number must only include letters and numbers'
+error.familyName.required='Enter a last name'
+error.familyName.invalid-format='Last name must only include letters, hyphens and numbers 0 to 9'
+error.familyName.length='Last name must be 2 or more characters'
 error.givenName.required='Enter first name'
-error.givenName.invalid-format='Invalid first name'
+error.givenName.invalid-format='First name must only include letters, hyphens and numbers 0 to 9'
 
 #MRZ form
 error.nationality.required='Enter a country'

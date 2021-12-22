@@ -23,9 +23,9 @@ import play.api.data.validation._
 import uk.gov.hmrc.domain.Nino
 import forms.helpers.ValidateHelper
 import forms.helpers.ValidateHelper.cond
-
 import java.time.LocalDate
 import scala.util.Try
+import play.api.data.validation.Constraints.minLength
 
 trait FormFieldMappings {
 
@@ -40,25 +40,14 @@ trait FormFieldMappings {
 
   val allowedNameCharacters: Set[Char] = Set('-', '\'', ' ')
 
-  def validName(fieldName: String, minLenInc: Int): Constraint[String] =
-    Constraint[String] { fieldValue: String =>
-      nonEmpty(fieldName)(fieldValue) match {
-        case i @ Invalid(_) => i
-        case Valid =>
-          if (fieldValue.length >= minLenInc && fieldValue.forall(
-                ch => Character.isLetter(ch) || allowedNameCharacters.contains(ch)))
-            Valid
-          else
-            Invalid(ValidationError(s"error.$fieldName.invalid-format"))
-      }
-    }
+  def hasAllowedCharacters(fieldName: String): Constraint[String] =
+    cond(s"error.$fieldName.invalid-format")(_.forall(ch =>
+      Character.isLetter(ch) || allowedNameCharacters.contains(ch)))
 
-  def nonEmpty(fieldName: String): Constraint[String] =
-    Constraint[String]("constraint.required") { s =>
-      Option(s)
-        .filter(_.trim.nonEmpty)
-        .fold[ValidationResult](Invalid(ValidationError(s"error.$fieldName.required")))(_ => Valid)
-    }
+  def validName(fieldName: String, minLenInc: Int): Mapping[String] =
+    nonEmptyText(fieldName)
+      .verifying(minLength(minLenInc, s"error.$fieldName.length"))
+      .verifying(hasAllowedCharacters(fieldName))
 
   def nonEmptyText(fieldName: String): Mapping[String] =
     optional(text)
@@ -66,7 +55,7 @@ trait FormFieldMappings {
         s"error.$fieldName.required",
         _.exists(_.trim.nonEmpty)
       )
-      .transform(_.get, Some.apply)
+      .transform(_.get.trim, Some.apply)
 
   private val validateIsRealDate: Constraint[(String, String, String)] =
     cond("error.dateOfBirth.invalid-format") {

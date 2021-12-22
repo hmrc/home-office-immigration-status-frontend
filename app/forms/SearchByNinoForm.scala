@@ -31,8 +31,8 @@ class SearchByNinoForm extends FormFieldMappings {
       "nino" -> uppercaseNormalizedText
         .verifying(validNino)
         .transform(Nino.apply, (n: Nino) => n.nino),
-      "givenName"   -> trimmedName.verifying(validName("givenName", 1)),
-      "familyName"  -> trimmedName.verifying(validName("familyName", 2)),
+      "givenName"   -> validName("givenName", 1),
+      "familyName"  -> validName("familyName", 2),
       "dateOfBirth" -> dobFieldsMapping
     )(NinoSearchFormModel.apply)(NinoSearchFormModel.unapply)
   }
