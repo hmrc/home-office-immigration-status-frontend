@@ -126,7 +126,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
           sut(buildContext(List(ValidStatusCustomProductType("DEPENDANT"))))(request, messages)
 
         val doc = asDocument(html)
-        assertElementHasText(doc, "#immigrationRoute", "Dependants of Skilled workers and Students")
+        assertElementHasText(doc, "#immigrationRoute", "Settlement Protection")
       }
 
       "WORK displays" in {
