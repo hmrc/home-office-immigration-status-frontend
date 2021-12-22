@@ -14,6 +14,8 @@
  * limitations under the License.
  *@
 
+@import views.components.InputDateHelper
+
 @this(govukDateInput: GovukDateInput)
 
 @(
@@ -68,22 +70,8 @@
             value = form(s"$id.year").value
         )
     ),
-        hint = hintHtml.fold(hintMessage.map(text => Hint(content = HtmlContent(Html(messages(text))))))(
-                hint => Some(Hint(content = HtmlContent(hint)))
-        ),
-        errorMessage = hierarchyErrors(id, form, Seq(".day", ".month", ".year", ""))
-                .fold(form.errors.find(_.key.isEmpty))(err => Some(err)).map(
-                    err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
+    hint = hintHtml.fold(hintMessage.map(text => Hint(content = HtmlContent(Html(messages(text))))))(
+            hint => Some(Hint(content = HtmlContent(hint)))
+    ),
+    errorMessage = InputDateHelper.concatDateErrors(id, form, Seq(".day", ".month", ".year", "")).map(err => ErrorMessage(content = Text(err)))
 ))
-    @hierarchyErrors(id: String, form: Form[_], appended: Seq[String]) = @{
-        val allFields = appended.flatMap(suffix => form(s"$id$suffix").error)
-
-        allFields.find(_.messages.find(_.contains("required"))) match {
-            case foundError if foundError.isDefined => foundError
-            case _ =>
-                allFields.find(_.messages.find(_.contains("invalid"))) match {
-                case foundError if foundError.isDefined => foundError
-                case _ => allFields.headOption
-            }
-        }
-    }
