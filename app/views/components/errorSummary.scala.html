@@ -16,22 +16,20 @@
 
 @this(govukErrorSummary: GovukErrorSummary)
 
-@(errors: Seq[FormError], errorFieldSuffix: Option[String] = None, errorId: Option[String] = None)(implicit messages: Messages)
+@(errors: Seq[FormError])(implicit messages: Messages)
 
     @if(errors.nonEmpty) {
         @defining(errors.map { error =>
-            val id = if(error.key == "") { errorId.getOrElse("") } else {
-                error.key + errorFieldSuffix.fold("")(suffix => s".$suffix")
-            }
             ErrorLink(
-                href = Some(s"#$id"),
+                href = Some("#" + error.key),
                 content = Text(messages(error.message, error.args: _*)),
-                attributes = Map("id" -> s"$id-error-summary")
+                attributes = Map("id" -> s"${error.key}-error-summary")
             )
         }) { errorLinks =>
             @govukErrorSummary(ErrorSummary(
                 errorList = errorLinks,
-                title = Text(messages("error.summary.heading"))
+                title = Text(messages("error.summary.heading")),
+                attributes = Map("autofocus" -> "true")
             ))
         }
     }
