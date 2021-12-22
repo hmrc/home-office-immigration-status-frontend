@@ -79,9 +79,9 @@ trait FormFieldMappings extends Constraints {
 
   def dobFieldsMapping: Mapping[LocalDate] =
     tuple(
-      "year"  -> dateComponent("year", 1000),
+      "day"   -> dateComponent("day"),
       "month" -> dateComponent("month"),
-      "day"   -> dateComponent("day")
+      "year"  -> dateComponent("year", 1000)
     ).verifying(validateIsRealDate)
       .transform(asDate.tupled, asTuple)
       .verifying(validateInThePast)
