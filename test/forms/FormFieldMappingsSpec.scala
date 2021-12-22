@@ -92,7 +92,7 @@ class FormFieldMappingsSpec
 
       "check that the string is not zero" in {
         form(0).bind(testFormFill("0")).errors shouldBe List(
-          FormError("myField", List("error.dateOfBirth.myField.required")))
+          FormError("myField", List("error.dateOfBirth.myField.zero")))
       }
 
       "check that the string meets a minimum value" in {

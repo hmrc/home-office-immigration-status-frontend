@@ -55,15 +55,15 @@ trait FormFieldMappings extends Constraints {
 
   private val validateIsRealDate: Constraint[(Int, Int, Int)] =
     cond("error.dateOfBirth.invalid-format") {
-      case (year, month, day) =>
+      case (day, month, year) =>
         Try(LocalDate.of(year, month, day)).isSuccess
     }
 
   private val validateInThePast: Constraint[LocalDate] =
     cond[LocalDate]("error.dateOfBirth.past")(_.isBefore(LocalDate.now()))
 
-  private val asDate: (Int, Int, Int) => LocalDate = (y, m, d) => LocalDate.of(y, m, d)
-  private val asTuple: LocalDate => (Int, Int, Int) = d => (d.getYear, d.getMonthValue, d.getDayOfMonth)
+  private val asDate: (Int, Int, Int) => LocalDate = (d, m, y) => LocalDate.of(y, m, d)
+  private val asTuple: LocalDate => (Int, Int, Int) = d => (d.getDayOfMonth, d.getMonthValue, d.getYear)
 
   def isInt(str: String): Boolean = Try(str.trim.toInt).isSuccess
 
