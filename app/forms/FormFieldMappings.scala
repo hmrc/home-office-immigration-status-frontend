@@ -73,7 +73,7 @@ trait FormFieldMappings extends Constraints {
     nonEmptyText(s"dateOfBirth.$field")
       .verifying(cond[String](s"error.dateOfBirth.$field.invalid")(isInt))
       .transform[Int](_.toInt, _.toString)
-      .verifying(cond[Int](s"error.dateOfBirth.$field.required")(isNotZero))
+      .verifying(cond[Int](s"error.dateOfBirth.$field.zero")(isNotZero))
       .transform[Int](identity, identity)
       .verifying(min(minValue = minValue, errorMessage = s"error.dateOfBirth.$field.min"))
 
