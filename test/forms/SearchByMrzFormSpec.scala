@@ -146,7 +146,9 @@ class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecti
       val invalidInput = input(dateOfBirth = now) + ("dateOfBirth.day" -> "35")
 
       form.bind(invalidInput).value must not be defined
-      form.bind(invalidInput).errors mustBe List(FormError("dateOfBirth", List("error.dateOfBirth.invalid-format")))
+      form.bind(invalidInput).errors.length mustBe 1
+      form.bind(invalidInput).errors.head.key mustBe "dateOfBirth.day"
+      form.bind(invalidInput).errors.head.messages mustBe List("error.dateOfBirth.day.max")
     }
 
     "dob is today" in {

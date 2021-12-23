@@ -72,19 +72,20 @@ trait FormFieldMappings extends Constraints {
 
   def isNotZero(int: Int): Boolean = int != 0
 
-  def dateComponent(field: String, minValue: Int = 0): Mapping[Int] =
+  def dateComponent(field: String, maxValue: Int, minValue: Int = 0): Mapping[Int] =
     nonEmptyText(s"dateOfBirth.$field")
       .verifying(cond[String](s"error.dateOfBirth.$field.invalid")(isInt))
       .transform[Int](_.toInt, _.toString)
       .verifying(cond[Int](s"error.dateOfBirth.$field.zero")(isNotZero))
       .transform[Int](identity, identity)
       .verifying(min(minValue = minValue, errorMessage = s"error.dateOfBirth.$field.min"))
+      .verifying(max(maxValue = maxValue, errorMessage = s"error.dateOfBirth.$field.max"))
 
   def dobFieldsMapping: Mapping[LocalDate] =
     tuple(
-      "day"   -> dateComponent("day"),
-      "month" -> dateComponent("month"),
-      "year"  -> dateComponent("year", 1000)
+      "day"   -> dateComponent("day", 31),
+      "month" -> dateComponent("month", 12),
+      "year"  -> dateComponent("year", 3000, 1000)
     ).verifying(validateIsRealDate)
       .transform(asDate.tupled, asTuple)
       .verifying(validateInThePast)

@@ -22,11 +22,12 @@ import config.AppConfig
 import controllers.actions.AccessAction
 import forms.SearchByNinoForm
 import models.NinoSearchFormModel
+import play.api.data.FormError
 import views.html._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import services.SessionCacheService
-import javax.inject.{Inject, Singleton}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -55,6 +56,7 @@ class SearchByNinoController @Inject()(
         case Some(formModel: NinoSearchFormModel) => formProvider().fill(formModel)
         case _                                    => formProvider()
       }
+
       Ok(searchByNinoView(form))
   }
 
@@ -68,7 +70,18 @@ class SearchByNinoController @Inject()(
       formProvider()
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(searchByNinoView(formWithErrors))),
+          form => {
+            //todo move this to the form
+            val dobErrorsCollated =
+              if (form.errors.count(_.key.contains("dateOfBirth")) > 1) {
+                (form.errors.filterNot(_.key.contains("dateOfBirth")) :+ FormError(
+                  "dateOfBirth",
+                  "error.dateOfBirth.invalid-format"))
+                  .foldLeft(form.discardingErrors)((acc, cur) => acc.withError(cur))
+              } else form
+
+            Future.successful(BadRequest(searchByNinoView(dobErrorsCollated)))
+          },
           query =>
             for {
               _ <- sessionCacheService.set(query)

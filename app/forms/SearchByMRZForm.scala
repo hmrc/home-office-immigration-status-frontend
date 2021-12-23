@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.Countries
 import forms.SearchByMRZForm._
 import models.MrzSearchFormModel
-import play.api.data.Form
+import play.api.data.{Form, FormError}
 import play.api.data.Forms.mapping
 
 import javax.inject.Singleton
