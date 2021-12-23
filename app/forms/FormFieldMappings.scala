@@ -16,18 +16,18 @@
 
 package forms
 
-import play.api.data.Forms.{mapping, of, optional, text}
-import play.api.data.Mapping
+import play.api.data.Forms.{mapping, of, optional, text, tuple}
+import play.api.data.{FieldMapping, Mapping}
 import play.api.data.format.Formats._
 import play.api.data.validation._
 import uk.gov.hmrc.domain.Nino
 import forms.helpers.ValidateHelper
-import forms.helpers.ValidateHelper.cond
-
+import forms.helpers.ValidateHelper.{cond, nonEmpty}
 import java.time.LocalDate
-import scala.util.Try
 
-trait FormFieldMappings {
+import scala.util.{Success, Try}
+
+trait FormFieldMappings extends Constraints {
 
   def validNino: Constraint[String] =
     ValidateHelper.validateField("error.nino.required", "error.nino.invalid-format")(nino => Nino.isValid(nino))
@@ -41,24 +41,9 @@ trait FormFieldMappings {
   val allowedNameCharacters: Set[Char] = Set('-', '\'', ' ')
 
   def validName(fieldName: String, minLenInc: Int): Constraint[String] =
-    Constraint[String] { fieldValue: String =>
-      nonEmpty(fieldName)(fieldValue) match {
-        case i @ Invalid(_) => i
-        case Valid =>
-          if (fieldValue.length >= minLenInc && fieldValue.forall(
-                ch => Character.isLetter(ch) || allowedNameCharacters.contains(ch)))
-            Valid
-          else
-            Invalid(ValidationError(s"error.$fieldName.invalid-format"))
-      }
-    }
-
-  def nonEmpty(fieldName: String): Constraint[String] =
-    Constraint[String]("constraint.required") { s =>
-      Option(s)
-        .filter(_.trim.nonEmpty)
-        .fold[ValidationResult](Invalid(ValidationError(s"error.$fieldName.required")))(_ => Valid)
-    }
+    ValidateHelper.validateField(s"error.$fieldName.required", s"error.$fieldName.invalid-format")(fieldVal =>
+      fieldVal.length >= minLenInc && fieldVal.forall(ch =>
+        Character.isLetter(ch) || allowedNameCharacters.contains(ch)))
 
   def nonEmptyText(fieldName: String): Mapping[String] =
     optional(text)
@@ -68,31 +53,36 @@ trait FormFieldMappings {
       )
       .transform(_.get, Some.apply)
 
-  private val validateIsRealDate: Constraint[(String, String, String)] =
+  private val validateIsRealDate: Constraint[(Int, Int, Int)] =
     cond("error.dateOfBirth.invalid-format") {
-      case (year, month, day) =>
-        Try(LocalDate.of(year.toInt, month.toInt, day.toInt)).isSuccess
+      case (day, month, year) =>
+        Try(LocalDate.of(year, month, day)).isSuccess
     }
 
-  private val validateNotToday: Constraint[LocalDate] =
-    cond[LocalDate]("error.dateOfBirth.invalid-format")(_.isBefore(LocalDate.now()))
+  private val validateInThePast: Constraint[LocalDate] =
+    cond[LocalDate]("error.dateOfBirth.past")(_.isBefore(LocalDate.now()))
 
-  private val formatDateFromFields: (String, String, String) => (String, String, String) = (y, month, day) => {
-    val year = if (y.length == 2) "19" + y else y
-    (year, month, day)
-  }
+  private val asDate: (Int, Int, Int) => LocalDate = (d, m, y) => LocalDate.of(y, m, d)
+  private val asTuple: LocalDate => (Int, Int, Int) = d => (d.getDayOfMonth, d.getMonthValue, d.getYear)
 
-  private val asDate: (String, String, String) => LocalDate = (y, m, d) => LocalDate.of(y.toInt, m.toInt, d.toInt)
-  private val asTuple: LocalDate => (String, String, String) = d =>
-    (d.getYear.toString, d.getMonthValue.toString, d.getDayOfMonth.toString)
+  def isInt(str: String): Boolean = Try(str.trim.toInt).isSuccess
+
+  def isNotZero(int: Int): Boolean = int != 0
+
+  def dateComponent(field: String, minValue: Int = 0): Mapping[Int] =
+    nonEmptyText(s"dateOfBirth.$field")
+      .verifying(cond[String](s"error.dateOfBirth.$field.invalid")(isInt))
+      .transform[Int](_.toInt, _.toString)
+      .verifying(cond[Int](s"error.dateOfBirth.$field.zero")(isNotZero))
+      .transform[Int](identity, identity)
+      .verifying(min(minValue = minValue, errorMessage = s"error.dateOfBirth.$field.min"))
 
   def dobFieldsMapping: Mapping[LocalDate] =
-    mapping(
-      "year"  -> of[String].transform[String](_.trim, identity),
-      "month" -> of[String].transform[String](_.trim, identity),
-      "day"   -> of[String].transform[String](_.trim, identity)
-    )(formatDateFromFields)(Some.apply)
-      .verifying(validateIsRealDate)
+    tuple(
+      "day"   -> dateComponent("day"),
+      "month" -> dateComponent("month"),
+      "year"  -> dateComponent("year", 1000)
+    ).verifying(validateIsRealDate)
       .transform(asDate.tupled, asTuple)
-      .verifying(validateNotToday)
+      .verifying(validateInThePast)
 }
