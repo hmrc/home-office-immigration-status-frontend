@@ -18,7 +18,7 @@ package forms
 
 import models.NinoSearchFormModel
 import uk.gov.hmrc.domain.Nino
-import play.api.data.Form
+import play.api.data.{Form, FormError}
 import play.api.data.Forms._
 
 import javax.inject.Singleton

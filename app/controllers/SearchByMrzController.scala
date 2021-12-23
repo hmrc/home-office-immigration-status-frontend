@@ -26,8 +26,9 @@ import services.SessionCacheService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.SearchByMrzView
 import errors.ErrorHandler
-import javax.inject.Inject
+import play.api.data.FormError
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SearchByMrzController @Inject()(
@@ -74,7 +75,17 @@ class SearchByMrzController @Inject()(
         formProvider()
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
+            form => {
+              //todo move this to the form
+              val dobErrorsCollated =
+                if (form.errors.count(_.key.contains("dateOfBirth")) > 1) {
+                  (form.errors.filterNot(_.key.contains("dateOfBirth")) :+ FormError(
+                    "dateOfBirth",
+                    "error.dateOfBirth.invalid-format"))
+                    .foldLeft(form.discardingErrors)((acc, cur) => acc.withError(cur))
+                } else form
+              Future.successful(BadRequest(view(dobErrorsCollated)))
+            },
             query =>
               for {
                 _ <- sessionCacheService.set(query)

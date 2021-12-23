@@ -70,43 +70,53 @@ class FormFieldMappingsSpec
       }
 
       "return false for zero" in {
-        isNotZero(0) == false
+        isNotZero(0) shouldBe false
       }
     }
 
     "dateComponent" should {
 
-      def form(min: Int) = Form(single("myField" -> dateComponent("myField", min)))
+      def form(max: Int, min: Int) = Form(single("myField" -> dateComponent("myField", max, min)))
       def testFormFill(day: String) = Map("myField" -> day)
 
       "checks emptiness" in {
-        form(0).bind(testFormFill("")).errors shouldBe List(
+        form(10, 0).bind(testFormFill("")).errors shouldBe List(
           FormError("myField", List("error.dateOfBirth.myField.required")))
       }
 
       "check that the string is an int" in {
         forAll(Gen.alphaStr.suchThat(_.length > 0))(str =>
-          form(0).bind(testFormFill(str)).errors shouldBe List(
+          form(10, 0).bind(testFormFill(str)).errors shouldBe List(
             FormError("myField", List("error.dateOfBirth.myField.invalid"))))
       }
 
       "check that the string is not zero" in {
-        form(0).bind(testFormFill("0")).errors shouldBe List(
+        form(10, 0).bind(testFormFill("0")).errors shouldBe List(
           FormError("myField", List("error.dateOfBirth.myField.zero")))
       }
 
       "check that the string meets a minimum value" in {
-        form(2).bind(testFormFill("1")).errors shouldBe List(
+        form(10, 2).bind(testFormFill("1")).errors shouldBe List(
           FormError("myField", List("error.dateOfBirth.myField.min"), Seq(2)))
       }
 
       "check that the string is a minimum value for 4 digits" in {
-        form(1000).bind(testFormFill("999")).errors shouldBe List(
+        form(2000, 1000).bind(testFormFill("999")).errors shouldBe List(
           FormError("myField", List("error.dateOfBirth.myField.min"), Seq(1000)))
       }
 
+      "check that the string meets a maximum value" in {
+        form(10, 2).bind(testFormFill("11")).errors shouldBe List(
+          FormError("myField", List("error.dateOfBirth.myField.max"), Seq(10)))
+      }
+
+      "check that the string is a maximum value for 4 digits" in {
+        form(2000, 1000).bind(testFormFill("2001")).errors shouldBe List(
+          FormError("myField", List("error.dateOfBirth.myField.max"), Seq(2000)))
+      }
+
       "not return an error where the field is valid" in {
-        form(1000).bind(testFormFill("1000")).errors shouldBe Nil
+        form(2000, 1000).bind(testFormFill("1000")).errors shouldBe Nil
       }
     }
 
