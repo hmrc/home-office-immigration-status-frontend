@@ -16,14 +16,18 @@
 
 package forms
 
+import org.scalacheck.Gen
 import org.scalatest.OptionValues
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
+import play.api.data.Mapping
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import play.api.data.{Form, FormError}
 import play.api.data.Forms.single
-import play.api.data.{Form, FormError, Mapping}
-import play.api.data.validation.{Invalid, Valid}
+import play.api.data.validation.Invalid
 
-class FormFieldMappingsSpec extends AnyWordSpecLike with Matchers with OptionValues with FormFieldMappings {
+class FormFieldMappingsSpec
+    extends AnyWordSpecLike with Matchers with OptionValues with FormFieldMappings with ScalaCheckDrivenPropertyChecks {
 
   def validateName(errorName: String, len: Int): Mapping[String] = validName(fieldName = errorName, minLenInc = len)
   val invalid: Invalid = Invalid("error.bar.invalid-format")
@@ -53,5 +57,64 @@ class FormFieldMappingsSpec extends AnyWordSpecLike with Matchers with OptionVal
         FormError("ĄĘÓŚŻĆŁąęółśćńżźāēīūčģķļņšž", List("error.ĄĘÓŚŻĆŁąęółśćńżźāēīūčģķļņšž.required"), Seq()))
 
     }
+
+    val intGen = Gen.numStr.suchThat(str => str.length > 0).map(_.take(9))
+
+    "isInt" should {
+      "return true for a number" in {
+        forAll(intGen)(n => isInt(n) shouldBe true)
+      }
+
+      "return false for a non-numeric string" in {
+        forAll(Gen.alphaStr.suchThat(_.length > 0))(n => isInt(n) shouldBe false)
+      }
+    }
+
+    "isNotZero" should {
+      "return true for a number over zero" in {
+        forAll(intGen.suchThat(_.toInt > 0))(n => isNotZero(n.toInt) shouldBe true)
+      }
+
+      "return false for zero" in {
+        isNotZero(0) == false
+      }
+    }
+
+    "dateComponent" should {
+
+      def form(min: Int) = Form(single("myField" -> dateComponent("myField", min)))
+      def testFormFill(day: String) = Map("myField" -> day)
+
+      "checks emptiness" in {
+        form(0).bind(testFormFill("")).errors shouldBe List(
+          FormError("myField", List("error.dateOfBirth.myField.required")))
+      }
+
+      "check that the string is an int" in {
+        forAll(Gen.alphaStr.suchThat(_.length > 0))(str =>
+          form(0).bind(testFormFill(str)).errors shouldBe List(
+            FormError("myField", List("error.dateOfBirth.myField.invalid"))))
+      }
+
+      "check that the string is not zero" in {
+        form(0).bind(testFormFill("0")).errors shouldBe List(
+          FormError("myField", List("error.dateOfBirth.myField.zero")))
+      }
+
+      "check that the string meets a minimum value" in {
+        form(2).bind(testFormFill("1")).errors shouldBe List(
+          FormError("myField", List("error.dateOfBirth.myField.min"), Seq(2)))
+      }
+
+      "check that the string is a minimum value for 4 digits" in {
+        form(1000).bind(testFormFill("999")).errors shouldBe List(
+          FormError("myField", List("error.dateOfBirth.myField.min"), Seq(1000)))
+      }
+
+      "not return an error where the field is valid" in {
+        form(1000).bind(testFormFill("1000")).errors shouldBe Nil
+      }
+    }
+
   }
 }

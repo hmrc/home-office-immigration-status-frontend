@@ -16,15 +16,9 @@
 
 package forms.helpers
 
-import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
+import play.api.data.validation.{Constraint, Constraints, Invalid, Valid, ValidationError}
 
-import java.time.LocalDate
-
-object ValidateHelper {
-
-  def nonEmpty(failure: String): Constraint[String] = Constraint[String] { fieldValue: String =>
-    if (fieldValue.trim.isEmpty) Invalid(ValidationError(failure)) else Valid
-  }
+object ValidateHelper extends Constraints {
 
   def cond[A](failure: String)(condition: A => Boolean) =
     Constraint[A] { data: A =>
@@ -34,7 +28,8 @@ object ValidateHelper {
 
   def validateField(emptyFailure: String, invalidFailure: String)(condition: String => Boolean): Constraint[String] =
     Constraint[String] { fieldValue: String =>
-      nonEmpty(emptyFailure)(fieldValue) match {
+      val nonEmptyConstraint: Constraint[String] = nonEmpty(emptyFailure)
+      nonEmptyConstraint(fieldValue) match {
         case i: Invalid =>
           i
         case Valid =>
