@@ -57,7 +57,7 @@ error.nationality.required='Enter a country'
 error.nationality.invalid='Invalid Nationality'
 error.documentNumber.required='Enter a document number'
 error.documentNumber.length='Document number must be 30 characters or less'
-error.documentNumber.invalid-characters='Document number must only include letters a to z, hyphens and numbers 0 to 9'
+error.documentNumber.invalid-characters='Document number must only include letters, hyphens and numbers'
 error.documentType.required='Select an Identity document type'
 error.documentType.invalid='Select an Identity document type'
 
