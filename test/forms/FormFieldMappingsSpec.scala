@@ -37,24 +37,21 @@ class FormFieldMappingsSpec extends AnyWordSpecLike with Matchers with OptionVal
     }
 
     "validate name" in {
-      form("foo", 2).bind(testFormFill("foo")).errors shouldBe List(FormError("foo", List("error.foo.required"), Seq()))
-      /*validName(fieldName = "foo", minLenInc = 2) shouldBe Invalid("error.foo.invalid-format")
-      validName(fieldName = "foo", minLenInc = 1) shouldBe Valid
-      validateName("1") shouldBe invalid
-      validateName("1a") shouldBe invalid
-      validateName("a1") shouldBe invalid
-      validateName("a1") shouldBe invalid
-      validateName("Artur") shouldBe Valid
-      validateName("Art ur") shouldBe Valid
-      validateName("Art-ur") shouldBe Valid
-      validateName("Art'ur") shouldBe Valid
-      validateName("Art'ur") shouldBe Valid
-      validateName("Art2ur") shouldBe invalid
-      validateName("Art_ur") shouldBe invalid
-      validateName("$Artur") shouldBe invalid
-      validateName("@Artur") shouldBe invalid
-      validateName("Ar#tur") shouldBe invalid
-      validateName("ĄĘÓŚŻĆŁąęółśćńżźāēīūčģķļņšž") shouldBe Valid*/
+      form("foo", 2).bind(testFormFill("")).errors shouldBe List(FormError("foo", List("error.foo.required"), Seq()))
+      form("foo", 1).bind(testFormFill("")).errors shouldBe List(FormError("foo", List("error.foo.required"), Seq()))
+
+      form("1", 2).bind(testFormFill("")).errors shouldBe List(FormError("1", List("error.1.required"), Seq()))
+      form("1", 1).bind(testFormFill("")).errors shouldBe List(FormError("1", List("error.1.required"), Seq()))
+      form("a1", 2).bind(testFormFill("")).errors shouldBe List(FormError("a1", List("error.a1.required"), Seq()))
+      form("a1", 1).bind(testFormFill("")).errors shouldBe List(FormError("a1", List("error.a1.required"), Seq()))
+      form("1a", 2).bind(testFormFill("")).errors shouldBe List(FormError("1a", List("error.1a.required"), Seq()))
+      form("1a", 1).bind(testFormFill("")).errors shouldBe List(FormError("1a", List("error.1a.required"), Seq()))
+
+      form("Artur", 2).bind(testFormFill("")).errors shouldBe List(
+        FormError("Artur", List("error.Artur.required"), Seq()))
+      form("ĄĘÓŚŻĆŁąęółśćńżźāēīūčģķļņšž", 2).bind(testFormFill("")).errors shouldBe List(
+        FormError("ĄĘÓŚŻĆŁąęółśćńżźāēīūčģķļņšž", List("error.ĄĘÓŚŻĆŁąęółśćńżźāēīūčģķļņšž.required"), Seq()))
+
     }
   }
 }
