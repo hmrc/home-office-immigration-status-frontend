@@ -16,6 +16,7 @@
 
 @import config.Countries
 @import views.html.helper.CSPNonce
+@import forms.helpers.FormHelper
 
 @this(
     govukWrapper: govuk_wrapper,
@@ -36,33 +37,33 @@
 
     @formHelper(controllers.routes.SearchByMrzController.onSubmit) {
 
-        @errorSummary(form.errors)
+        @errorSummary(FormHelper.updateDateOfBirthErrors(form.errors))
 
-        @fieldset("lookup.title") {
+        <h1 class="govuk-heading-xl" id="mrz-search-title">@messages("lookup.title")</h1>
 
-            @alternateSearch("alternate-search.nino-link", controllers.routes.SearchByNinoController.onPageLoad(true).url, "alt-search-by-nino")
+        @alternateSearch("alternate-search.nino-link", controllers.routes.SearchByNinoController.onPageLoad(true).url, "alt-search-by-nino")
 
-            @identityDocumentType(form)
+        @identityDocumentType(form)
 
-            @inputText(
-                form,
-                id = "documentNumber",
-                name = "documentNumber",
-                label = "lookup.mrz.label",
-                hint = Some(Html(messages("lookup.mrz.hint"))),
-                classes = Some("govuk-!-width-one-half")
-            )
+        @inputText(
+            form,
+            id = "documentNumber",
+            name = "documentNumber",
+            label = "lookup.mrz.label",
+            hint = Some(Html(messages("lookup.mrz.hint"))),
+            classes = Some("govuk-!-width-one-half")
+        )
 
-            @countrySelect(form)
+        @countrySelect(form)
 
-            @inputDate(
-                form,
-                id = "dateOfBirth",
-                legendClasses = "govuk-label",
-                legendContent = messages("lookup.dateOfBirth.label"),
-                hintMessage = Some(messages("lookup.dateOfBirth.hint"))
-            )
-        }
+        @inputDate(
+            form,
+            id = "dateOfBirth",
+            legendClasses = "govuk-label",
+            legendContent = messages("lookup.dateOfBirth.label"),
+            hintMessage = Some(messages("lookup.dateOfBirth.hint"))
+        )
+
 
         @govukButton(Button(content = Text(messages("button.search")), attributes = Map("id" -> "search-button")))
     }
