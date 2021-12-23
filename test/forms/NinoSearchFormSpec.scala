@@ -173,7 +173,7 @@ class NinoSearchFormSpec extends PlaySpec with OptionValues with ScalaCheckDrive
           val invalidInput = input(familyName = name)
 
           form.bind(invalidInput).value must not be defined
-          form.bind(invalidInput).errors mustBe List(FormError("familyName", List("error.familyName.invalid-format")))
+          form.bind(invalidInput).errors mustBe List(FormError("familyName", List("error.familyName.length"), Seq(2)))
         }
       }
 
@@ -182,7 +182,8 @@ class NinoSearchFormSpec extends PlaySpec with OptionValues with ScalaCheckDrive
           val invalidInput = input(familyName = name)
 
           form.bind(invalidInput).value must not be defined
-          form.bind(invalidInput).errors mustBe List(FormError("familyName", List("error.familyName.invalid-format")))
+          form.bind(invalidInput).errors mustBe List(
+            FormError("familyName", List("error.familyName.invalid-format"), Seq()))
         }
       }
 
