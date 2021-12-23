@@ -255,3 +255,6 @@ immigration.eus_jfm.coa_in_time_grant='EU Settlement Scheme (joiner family membe
 immigration.eus_fmfw.ilr='EU Settlement Scheme (frontier worker family member) - Settled status'
 immigration.eus_fmfw.ltr='EU Settlement Scheme (frontier worker family member) - Pre-settled status'
 immigration.eus_fmfw.coa_in_time_grant='EU Settlement Scheme (frontier worker family member) - Pending EU Settlement Scheme application'
+immigration.protection.ltr='Settlement Protection - Limited leave to remain'
+immigration.protection_route.ltr='Settlement Protection - Limited leave to remain'
+immigration.dependant.ilr='Settlement Protection - Indefinite leave to remain'
