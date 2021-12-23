@@ -26,6 +26,7 @@ import views.html._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import services.SessionCacheService
 import javax.inject.{Inject, Singleton}
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -74,4 +75,5 @@ class SearchByNinoController @Inject()(
             } yield Redirect(routes.StatusResultController.onPageLoad)
         )
     }
+
 }
