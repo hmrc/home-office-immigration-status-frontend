@@ -1,7 +1,7 @@
 package support
 
 import akka.stream.Materializer
-import models.{Search, StatusCheckError, StatusCheckResponseWithStatus, StatusCheckSuccessfulResponse}
+import models.{Search, StatusCheckResponseWithStatus}
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers
