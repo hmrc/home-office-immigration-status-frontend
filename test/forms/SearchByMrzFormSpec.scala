@@ -83,13 +83,16 @@ class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecti
                      .listOfN(
                        SearchByMRZForm.DocumentNumberMaxLength,
                        Gen.frequency((9, Gen.alphaNumChar), (1, Gen.const('-'))))
-                     .map(_.mkString)
+                     .map(_.mkString.toUpperCase)
           nat <- Gen.oneOf(countriesValues)
         } yield MrzSearchFormModel(docType, docNum, yesterday, nat)
 
         forAll(validGen) { out =>
           val validInput =
-            input(nationality = out.nationality, documentType = out.documentType, documentNumber = out.documentNumber)
+            input(
+              nationality = out.nationality,
+              documentType = out.documentType,
+              documentNumber = out.documentNumber.toLowerCase)
 
           val bound = form.bind(validInput)
           bound.errors mustBe Nil
@@ -100,7 +103,7 @@ class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecti
       "nationality and doc type are lower case" in {
 
         val validInput = input(nationality = "afg", documentType = "passport")
-        val out = MrzSearchFormModel("PASSPORT", "docNumber", yesterday, "AFG")
+        val out = MrzSearchFormModel("PASSPORT", "DOCNUMBER", yesterday, "AFG")
         val bound = form.bind(validInput)
 
         bound.errors mustBe Nil
