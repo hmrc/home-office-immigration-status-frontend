@@ -36,7 +36,7 @@ class SearchByMRZForm @Inject()(countries: Countries) extends FormFieldMappings 
         .transform[String](_.toUpperCase, identity)
         .verifying("error.documentType.invalid", AllowedDocumentTypes.contains(_)),
       "documentNumber" -> nonEmptyText("documentNumber")
-        .transform[String](_.replaceAll("\\s", ""), identity)
+        .transform[String](_.replaceAll("\\s", "").toUpperCase, identity)
         .verifying("error.documentNumber.length", dn => dn.length <= DocumentNumberMaxLength)
         .verifying(
           "error.documentNumber.invalid-characters",
