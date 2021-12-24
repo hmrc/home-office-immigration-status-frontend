@@ -19,7 +19,7 @@ package models
 import java.time.LocalDate
 
 import play.api.libs.json.{JsNull, JsObject, Json, Reads, Writes}
-import views.{DateFormat, ISO31661Alpha3}
+import views.DateFormat
 import java.util.Locale
 
 case class StatusCheckResult(
@@ -29,7 +29,6 @@ case class StatusCheckResult(
   statuses: List[ImmigrationStatus]
 ) {
   //todo seperate these to view model?
-  val countryName: String = ISO31661Alpha3.getCountryNameFor(nationality)
   def dobFormatted(locale: Locale): String = DateFormat.format(locale)(dateOfBirth)
   val statusesSortedByDate = statuses.sortBy(f = _.statusStartDate.toEpochDay * -1)
   val mostRecentStatus: Option[ImmigrationStatus] = statusesSortedByDate.headOption

@@ -14,13 +14,15 @@
  * limitations under the License.
  *@
 
-@import views.{DateFormat, ISO31661Alpha3, StatusFoundPageContext}
+@import views.{DateFormat, StatusFoundPageContext}
 @import config.AppConfig
 @import viewmodels.{RowViewModel => Row}
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.helper.CSPNonce
+@import config.Countries
 
 @this(
+    countries: Countries,
     govukButton : GovukButton,
     govukWrapper: govuk_wrapper,
     summaryList: components.SummaryList,
@@ -40,7 +42,7 @@
 
     @summaryList("immigrationStatus", context.immigrationStatusRows)
 
-    @summaryList("details", context.detailRows)
+    @summaryList("details", context.detailRows(countries))
 
     @if(context.previousStatuses.nonEmpty) {
         @details(Details(id = Some("previousStatuses"), summary = Text(messages("status-found.detailsLabel")), content = HtmlContent(previousStatuses(context.previousStatuses))))

@@ -36,7 +36,8 @@ class StatusFoundPageContextSpec
     extends AnyWordSpecLike with Matchers with OptionValues with BeforeAndAfterEach with GuiceOneAppPerSuite
     with Injecting {
 
-  val realMessages: Messages = inject[MessagesApi].preferred(Seq.empty)
+  lazy val realMessages: Messages = inject[MessagesApi].preferred(Seq.empty)
+  lazy val countries = inject[Countries]
   val allCountries: Countries = inject[Countries]
 
   val mockMessages: Messages = mock(classOf[MessagesImpl], RETURNS_DEEP_STUBS)
@@ -243,12 +244,12 @@ class StatusFoundPageContextSpec
       val context = createNinoContext("PT", "IS", Some(LocalDate.now()))
       Seq(
         ("nino", "generic.nino", ninoQuery.nino.nino),
-        ("nationality", "generic.nationality", context.result.countryName),
+        ("nationality", "generic.nationality", countries.getCountryNameFor(context.result.nationality)),
         ("dob", "generic.dob", context.result.dobFormatted(realMessages.lang.locale))
       ).foreach {
         case (id, msgKey, data) =>
           s"it's a NINO search and the row is $id" in {
-            assert(context.detailRows(realMessages).contains(RowViewModel(id, msgKey, data)))
+            assert(context.detailRows(countries)(realMessages).contains(RowViewModel(id, msgKey, data)))
           }
       }
 
@@ -259,12 +260,12 @@ class StatusFoundPageContextSpec
           "lookup.identity.label",
           MrzSearchFormModel.documentTypeToMessageKey(mrzQuery.documentType)(realMessages)),
         ("documentNumber", "lookup.mrz.label", mrzQuery.documentNumber),
-        ("nationality", "generic.nationality", mrzContext.result.countryName),
+        ("nationality", "generic.nationality", countries.getCountryNameFor(mrzContext.result.nationality)),
         ("dob", "generic.dob", mrzContext.result.dobFormatted(realMessages.lang.locale))
       ).foreach {
         case (id, msgKey, data) =>
           s"it's a mrz search and the row is $id" in {
-            assert(mrzContext.detailRows(realMessages).contains(RowViewModel(id, msgKey, data)))
+            assert(mrzContext.detailRows(countries)(realMessages).contains(RowViewModel(id, msgKey, data)))
           }
       }
     }
