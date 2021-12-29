@@ -114,6 +114,9 @@ status-found.previous.endDate='Previous end date'
 status-found.previous.noRecourseToPublicFunds.true='No'
 status-found.previous.noRecourseToPublicFunds.false='Yes'
 
+summary.list.aria.label.immigrationStatus='Immigration details'
+summary.list.aria.label.details='Customer details'
+
 #############################
 ## current statuses require a key and a key.expired
 #############################
