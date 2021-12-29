@@ -16,6 +16,7 @@
 
 package views
 
+import config.Countries
 import play.api.i18n.Messages
 import viewmodels.{RowViewModel => Row}
 import views.StatusFoundPageContext.RichMessages
@@ -40,11 +41,11 @@ final case class StatusFoundPageContext(query: SearchFormModel, result: StatusCh
       else None
     ).flatten
 
-  def detailRows(implicit messages: Messages): Seq[Row] = query match {
+  def detailRows(countries: Countries)(implicit messages: Messages): Seq[Row] = query match {
     case q: NinoSearchFormModel =>
       Seq(
         Row("nino", "generic.nino", q.nino.nino),
-        Row("nationality", "generic.nationality", result.countryName),
+        Row("nationality", "generic.nationality", countries.getCountryNameFor(result.nationality)),
         Row("dob", "generic.dob", result.dobFormatted(messages.lang.locale))
       )
     case q: MrzSearchFormModel =>
@@ -52,7 +53,7 @@ final case class StatusFoundPageContext(query: SearchFormModel, result: StatusCh
       Seq(
         Row("documentType", "lookup.identity.label", documentTypeText),
         Row("documentNumber", "lookup.mrz.label", q.documentNumber),
-        Row("nationality", "generic.nationality", result.countryName),
+        Row("nationality", "generic.nationality", countries.getCountryNameFor(result.nationality)),
         Row("dob", "generic.dob", result.dobFormatted(messages.lang.locale))
       )
   }

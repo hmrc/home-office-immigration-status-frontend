@@ -16,18 +16,19 @@
 
 package views
 
+import config.Countries
 import play.api.i18n.Messages
 import viewmodels.{RowViewModel => Row}
 import models.{MrzSearchFormModel, NinoSearchFormModel, SearchFormModel, StatusCheckResult}
 
 case class StatusNotAvailablePageContext(query: SearchFormModel, result: StatusCheckResult) {
 
-  def notAvailablePersonalData(implicit messages: Messages): Seq[Row] =
+  def notAvailablePersonalData(countries: Countries)(implicit messages: Messages): Seq[Row] =
     query match {
       case q: NinoSearchFormModel =>
         Seq(
           Row("nino", "generic.nino", q.nino.nino),
-          Row("nationality", "generic.nationality", ISO31661Alpha3.getCountryNameFor(result.nationality)),
+          Row("nationality", "generic.nationality", countries.getCountryNameFor(result.nationality)),
           Row("dob", "generic.dob", DateFormat.format(messages.lang.locale)(q.dateOfBirth))
         )
       case q: MrzSearchFormModel =>
@@ -35,7 +36,7 @@ case class StatusNotAvailablePageContext(query: SearchFormModel, result: StatusC
         Seq(
           Row("documentType", "lookup.identity.label", documentTypeText),
           Row("documentNumber", "lookup.mrz.label", q.documentNumber),
-          Row("nationality", "generic.nationality", ISO31661Alpha3.getCountryNameFor(result.nationality)),
+          Row("nationality", "generic.nationality", countries.getCountryNameFor(result.nationality)),
           Row("dob", "generic.dob", DateFormat.format(messages.lang.locale)(q.dateOfBirth))
         )
     }

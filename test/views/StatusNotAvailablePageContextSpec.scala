@@ -16,6 +16,7 @@
 
 package views
 
+import config.Countries
 import models.{MrzSearchFormModel, NinoSearchFormModel, StatusCheckResult}
 import org.mockito.ArgumentMatchers.{any, matches}
 import org.mockito.Mockito.{RETURNS_DEEP_STUBS, mock, reset, when}
@@ -27,9 +28,9 @@ import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.mvc.Call
 import utils.NinoGenerator
 import viewmodels.RowViewModel
+
 import java.time.LocalDate
 import java.util.Locale
-
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.test.Injecting
 
@@ -37,9 +38,11 @@ class StatusNotAvailablePageContextSpec
     extends AnyWordSpecLike with Matchers with OptionValues with BeforeAndAfterEach with GuiceOneAppPerSuite
     with Injecting {
 
-  val realMessages: Messages = inject[MessagesApi].preferred(Seq.empty[Lang])
+  lazy val realMessages: Messages = inject[MessagesApi].preferred(Seq.empty[Lang])
   val mockMessages: Messages = mock(classOf[MessagesImpl], RETURNS_DEEP_STUBS)
   val currentStatusLabelMsg = "current status label msg"
+
+  lazy val countries = inject[Countries]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -57,12 +60,13 @@ class StatusNotAvailablePageContextSpec
 
       Seq(
         ("nino", "generic.nino", query.nino.nino),
-        ("nationality", "generic.nationality", ISO31661Alpha3.getCountryNameFor(result.nationality)),
+        ("nationality", "generic.nationality", countries.getCountryNameFor(result.nationality)),
         ("dob", "generic.dob", DateFormat.format(Locale.UK)(query.dateOfBirth))
       ).foreach {
         case (id, msgKey, data) =>
           s"row is for $id" in {
-            assert(createContext.notAvailablePersonalData(realMessages).contains(RowViewModel(id, msgKey, data)))
+            assert(
+              createContext.notAvailablePersonalData(countries)(realMessages).contains(RowViewModel(id, msgKey, data)))
           }
       }
     }
@@ -77,12 +81,13 @@ class StatusNotAvailablePageContextSpec
       Seq(
         ("documentType", "lookup.identity.label", "Passport"),
         ("documentNumber", "lookup.mrz.label", query.documentNumber),
-        ("nationality", "generic.nationality", ISO31661Alpha3.getCountryNameFor(result.nationality)),
+        ("nationality", "generic.nationality", countries.getCountryNameFor(result.nationality)),
         ("dob", "generic.dob", DateFormat.format(Locale.UK)(query.dateOfBirth))
       ).foreach {
         case (id, msgKey, data) =>
           s"row is for $id" in {
-            assert(createContext.notAvailablePersonalData(realMessages).contains(RowViewModel(id, msgKey, data)))
+            assert(
+              createContext.notAvailablePersonalData(countries)(realMessages).contains(RowViewModel(id, msgKey, data)))
           }
       }
     }

@@ -153,7 +153,7 @@ class NinoSearchFormSpec extends PlaySpec with OptionValues with ScalaCheckDrive
       }
 
       "givenName contains invalid chars" in {
-        forAll(invalidCharString) { name =>
+        forAll(invalidCharString.suchThat(_.length >= 1)) { name =>
           val invalidInput = input(givenName = name)
 
           form.bind(invalidInput).value must not be defined
@@ -178,7 +178,7 @@ class NinoSearchFormSpec extends PlaySpec with OptionValues with ScalaCheckDrive
       }
 
       "familyName contains invalid chars" in {
-        forAll(invalidCharString) { name =>
+        forAll(invalidCharString.suchThat(_.length >= 2)) { name =>
           val invalidInput = input(familyName = name)
 
           form.bind(invalidInput).value must not be defined

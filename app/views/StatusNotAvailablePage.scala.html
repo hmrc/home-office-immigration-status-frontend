@@ -20,6 +20,7 @@
 @import viewmodels.{RowViewModel => Row}
 
 @this(
+    countries: config.Countries,
     govukButton : GovukButton,
     govukWrapper: govuk_wrapper,
     summaryList: components.SummaryList,
@@ -42,7 +43,7 @@
         <li id="item2">@messages("status-not-available.list-item2")</li>
     </ul>
 
-    @summaryList("notAvailablePersonalData", context.notAvailablePersonalData)
+    @summaryList("notAvailablePersonalData", context.notAvailablePersonalData(countries))
 
     @searchAgainButton()
 }
