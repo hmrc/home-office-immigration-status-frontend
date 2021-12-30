@@ -48,12 +48,12 @@ error.dateOfBirth.month.zero='Month must not be a 0'
 error.dateOfBirth.year.zero='Year must not be a 0'
 
 #Nino form
-error.nino.required='Enter National Insurance number in the correct format'
+error.nino.required='Enter a National Insurance number in the correct format'
 error.nino.invalid-format='National Insurance number must only include letters and numbers'
 error.familyName.required='Enter a last name'
 error.familyName.invalid-format='Last name must only include letters, hyphens and numbers 0 to 9'
 error.familyName.length='Last name must be 2 or more characters'
-error.givenName.required='Enter first name'
+error.givenName.required='Enter a first name'
 error.givenName.invalid-format='First name must only include letters, hyphens and numbers 0 to 9'
 
 #MRZ form
