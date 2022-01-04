@@ -188,6 +188,7 @@ internal.error.500.message='Contact the Helpline.'
 
 # Shuttering
 shuttering.title='Sorry, the service is unavailable'
+shuttering.default.message='Try again later.'
 shuttering.message='You will be able to use the service from 10am on Tuesday 4 January 2022.'
 
 # Accessibility
