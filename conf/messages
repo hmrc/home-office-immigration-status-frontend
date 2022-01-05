@@ -28,8 +28,8 @@ error.prefix='Error:'
 error.browser.title.prefix='Error:'
 
 #shared
-error.dateOfBirth.required='Enter a date of birth '
-error.dateOfBirth.invalid-format='Date of birth must only include numbers'
+error.dateOfBirth.required='Enter a date of birth'
+error.dateOfBirth.invalid-format='Enter a real date of birth'
 error.dateOfBirth.past='Date of birth must be in the past'
 error.dateOfBirth.day.invalid='Date of birth must only include numbers'
 error.dateOfBirth.month.invalid='Date of birth must only include numbers'
