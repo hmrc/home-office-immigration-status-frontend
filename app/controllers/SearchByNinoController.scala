@@ -74,9 +74,10 @@ class SearchByNinoController @Inject()(
             //todo move this to the form
             val dobErrorsCollated =
               if (form.errors.count(_.key.contains("dateOfBirth")) > 1) {
+                val required = form.errors.count(_.message.matches(""".*dateOfBirth.*\.required""")) == 3
                 (form.errors.filterNot(_.key.contains("dateOfBirth")) :+ FormError(
                   "dateOfBirth",
-                  "error.dateOfBirth.invalid-format"))
+                  "error.dateOfBirth." + (if (required) "required" else "invalid-format")))
                   .foldLeft(form.discardingErrors)((acc, cur) => acc.withError(cur))
               } else form
 
