@@ -134,7 +134,7 @@ status-found.current.nonEUS.LTR.expired='’s limited leave to remain has ended'
 status-found.current.nonEUS.LTE=' has limited leave to enter'
 status-found.current.nonEUS.LTE.expired='’s limited leave to enter has ended'
 status-found.current.nonEUS.ILR=' has indefinite leave to remain'
-status-found.current.nonEUS.ILR.expired='’s indefinite leave to enter has ended'
+status-found.current.nonEUS.ILR.expired='’s indefinite leave to remain has ended'
 status-found.current.nonEUS.PERMIT=' has a frontier worker permit'
 status-found.current.nonEUS.PERMIT.expired='’s frontier worker permit has ended'
 
