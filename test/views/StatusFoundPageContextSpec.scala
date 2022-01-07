@@ -293,23 +293,6 @@ class StatusFoundPageContextSpec
     }
   }
 
-  "show status label" should {
-    implicit val messages: Messages =
-      MessagesImpl(
-        Lang("en-UK"),
-        new DefaultMessagesApi(
-          Map("en-UK" -> Map("immigration.eus.ltr" -> "foo123", "immigration.eus.ilr" -> "bar456"))))
-    "work for EUS-LTR" in {
-      StatusFoundPageContext.immigrationStatusLabel("EUS", "LTR") shouldBe "foo123"
-    }
-    "work for EUS-ILR" in {
-      StatusFoundPageContext.immigrationStatusLabel("EUS", "ILR") shouldBe "bar456"
-    }
-    "work for unknown" in {
-      StatusFoundPageContext.immigrationStatusLabel("FOO", "BAR") shouldBe "FOO - BAR"
-    }
-  }
-
   "isZambrano" should {
 
     val nonEEACountries = allCountries.countries.filter(c => !EEACountries.countries.contains(c.alpha3))
@@ -362,6 +345,149 @@ class StatusFoundPageContextSpec
         }
       }
     }
+  }
+
+  "immigrationStatusLabel" should {
+    implicit val messages: Messages = realMessages
+
+    def createStatus(productType: String, immigrationStatus: String): ImmigrationStatus = ImmigrationStatus(
+      statusStartDate = LocalDate.now,
+      statusEndDate = None,
+      productType = productType,
+      immigrationStatus = immigrationStatus,
+      noRecourseToPublicFunds = true
+    )
+
+    Seq(
+      ("EUS", "ILR", "EU Settlement Scheme - Settled status"),
+      ("EUS", "LTR", "EU Settlement Scheme - Pre-settled status"),
+      ("STUDY", "LTE", "Student - Limited leave to enter"),
+      ("STUDY", "LTR", "Student - Limited leave to remain"),
+      ("DEPENDANT", "LTE", "Settlement Protection - Limited leave to enter"),
+      ("DEPENDANT", "LTR", "Settlement Protection - Limited leave to remain"),
+      ("WORK", "LTE", "Worker - Limited leave to enter"),
+      ("WORK", "LTR", "Worker - Limited leave to remain"),
+      ("FRONTIER_WORKER", "PERMIT", "Frontier worker - Frontier worker permit"),
+      ("BNO", "LTE", "British National Overseas - Limited leave to enter"),
+      ("BNO", "LTR", "British National Overseas - Limited leave to remain"),
+      ("BNO_LOTR", "LTE", "British National Overseas (leave outside the rules) - Limited leave to enter"),
+      ("BNO_LOTR", "LTR", "British National Overseas (leave outside the rules) - Limited leave to remain"),
+      ("GRADUATE", "LTR", "Graduate - Limited leave to remain"),
+      ("EUS", "COA_IN_TIME_GRANT", "EU Settlement Scheme - Pending EU Settlement Scheme application"),
+      ("EUS", "POST_GRACE_PERIOD_COA_GRANT", "EU Settlement Scheme - Pending EU Settlement Scheme application"),
+      ("SPORTSPERSON", "LTR", "International Sportsperson - Limited leave to remain"),
+      ("SPORTSPERSON", "LTE", "International Sportsperson - Limited leave to enter"),
+      ("SETTLEMENT", "ILR", "British National Overseas or Settlement Protection - Indefinite leave to remain"),
+      ("TEMP_WORKER", "LTR", "Temporary Worker - Limited leave to remain"),
+      ("TEMP_WORKER", "LTE", "Temporary Worker - Limited leave to enter"),
+      ("EUS_EUN_JFM", "ILR", "EU Settlement Scheme (joiner family member) - Settled status"),
+      ("EUS_EUN_JFM", "LTR", "EU Settlement Scheme (joiner family member) - Pre-settled status"),
+      (
+        "EUS_EUN_JFM",
+        "COA_IN_TIME_GRANT",
+        "EU Settlement Scheme (joiner family member) - Pending EU Settlement Scheme application"),
+      ("EUS_TCN_JFM", "ILR", "EU Settlement Scheme (joiner family member) - Settled status"),
+      ("EUS_TCN_JFM", "LTR", "EU Settlement Scheme (joiner family member) - Pre-settled status"),
+      (
+        "EUS_TCN_JFM",
+        "COA_IN_TIME_GRANT",
+        "EU Settlement Scheme (joiner family member) - Pending EU Settlement Scheme application"),
+      ("EUS_TCNBRC_JFM", "ILR", "EU Settlement Scheme (joiner family member) - Settled status"),
+      ("EUS_TCNBRC_JFM", "LTR", "EU Settlement Scheme (joiner family member) - Pre-settled status"),
+      (
+        "EUS_TCNBRC_JFM",
+        "COA_IN_TIME_GRANT",
+        "EU Settlement Scheme (joiner family member) - Pending EU Settlement Scheme application"),
+      ("EUS_JFM", "ILR", "EU Settlement Scheme (joiner family member) - Settled status"),
+      ("EUS_JFM", "LTR", "EU Settlement Scheme (joiner family member) - Pre-settled status"),
+      (
+        "EUS_JFM",
+        "COA_IN_TIME_GRANT",
+        "EU Settlement Scheme (joiner family member) - Pending EU Settlement Scheme application"),
+      ("EUS_FMFW", "ILR", "EU Settlement Scheme (frontier worker family member) - Settled status"),
+      ("EUS_FMFW", "LTR", "EU Settlement Scheme (frontier worker family member) - Pre-settled status"),
+      (
+        "EUS_FMFW",
+        "COA_IN_TIME_GRANT",
+        "EU Settlement Scheme (frontier worker family member) - Pending EU Settlement Scheme application"),
+      ("PROTECTION", "LTR", "Settlement Protection - Limited leave to remain"),
+      ("PROTECTION_ROUTE", "LTR", "Settlement Protection - Limited leave to remain"),
+      ("DEPENDANT", "ILR", "Settlement Protection - Indefinite leave to remain"),
+      (
+        "DEPENDANT_ACRS_PARTNER_LOTR",
+        "ILR",
+        "Afghan Citizens Resettlement Scheme (partner) - Indefinite leave to remain"),
+      ("DEPENDANT_ACRS_PARTNER_LOTR", "LTR", "Afghan Citizens Resettlement Scheme (partner) - Limited leave to remain"),
+      ("DEPENDANT_ACRS_CHILD", "ILR", "Afghan Citizens Resettlement Scheme (child) - Indefinite leave to remain"),
+      ("DEPENDANT_ACRS_CHILD", "LTR", "Afghan Citizens Resettlement Scheme (child) - Limited leave to remain"),
+      ("DEPENDANT_ACRS_CHILD_LOTR", "ILR", "Afghan Citizens Resettlement Scheme (child) - Indefinite leave to remain"),
+      ("DEPENDANT_ACRS_CHILD_LOTR", "LTR", "Afghan Citizens Resettlement Scheme (child) - Limited leave to remain"),
+      ("DEPENDANT_ACRS_OTHER", "ILR", "Afghan Citizens Resettlement Scheme (other) - Indefinite leave to remain"),
+      ("DEPENDANT_ACRS_OTHER", "LTR", "Afghan Citizens Resettlement Scheme (other) - Limited leave to remain"),
+      ("DEPENDANT_ACRS_OTHER_LOTR", "ILR", "Afghan Citizens Resettlement Scheme (other) - Indefinite leave to remain"),
+      ("DEPENDANT_ACRS_OTHER_LOTR", "LTR", "Afghan Citizens Resettlement Scheme (other) - Limited leave to remain"),
+      ("DEPENDANT_AOP_PARTNER", "ILR", "Afghan Operation Pitting (partner) - Indefinite leave to remain"),
+      ("DEPENDANT_AOP_PARTNER", "LTR", "Afghan Operation Pitting (partner) - Limited leave to remain"),
+      ("DEPENDANT_AOP_PARTNER_LOTR", "ILR", "Afghan Operation Pitting (partner) - Indefinite leave to remain"),
+      ("DEPENDANT_AOP_PARTNER_LOTR", "LTR", "Afghan Operation Pitting (partner) - Limited leave to remain"),
+      ("DEPENDANT_AOP_CHILD", "ILR", "Afghan Operation Pitting (child) - Indefinite leave to remain"),
+      ("DEPENDANT_AOP_CHILD", "LTR", "Afghan Operation Pitting (child) - Limited leave to remain"),
+      ("DEPENDANT_AOP_CHILD_LOTR", "ILR", "Afghan Operation Pitting (child) - Indefinite leave to remain"),
+      ("DEPENDANT_AOP_CHILD_LOTR", "LTR", "Afghan Operation Pitting (child) - Limited leave to remain"),
+      ("DEPENDANT_AOP_OTHER", "ILR", "Afghan Operation Pitting (other) - Indefinite leave to remain"),
+      ("DEPENDANT_AOP_OTHER", "LTR", "Afghan Operation Pitting (other) - Limited leave to remain"),
+      ("DEPENDANT_AOP_OTHER_LOTR", "ILR", "Afghan Operation Pitting (other) - Indefinite leave to remain"),
+      ("DEPENDANT_AOP_OTHER_LOTR", "LTR", "Afghan Operation Pitting (other) - Limited leave to remain"),
+      ("SETTLEMENT_ALES", "ILR", "Afghan Locally Engaged Staff - Indefinite leave to remain"),
+      ("SETTLEMENT_ALES_LOTR", "ILR", "Afghan Locally Engaged Staff - Indefinite leave to remain"),
+      ("SETTLEMENT_ACRS", "ILR", "Afghan Citizens Resettlement Scheme - Indefinite leave to remain"),
+      ("SETTLEMENT_ACRS_LOTR", "ILR", "Afghan Citizens Resettlement Scheme - Indefinite leave to remain"),
+      ("RESETTLEMENT_ALES", "LTR", "Afghan Locally Engaged Staff - Limited leave to remain"),
+      ("RESETTLEMENT_ALES_LOTR", "LTR", "Afghan Locally Engaged Staff - Limited leave to remain"),
+      ("RESETTLEMENT_ACRS", "LTR", "Afghan Citizens Resettlement Scheme - Limited leave to remain"),
+      ("RESETTLEMENT_ACRS_LOTR", "LTR", "Afghan Citizens Resettlement Scheme - Limited leave to remain"),
+      ("DEPENDANT_ALES_PARTNER", "ILR", "Afghan Locally Engaged Staff (partner) - Indefinite leave to remain"),
+      ("DEPENDANT_ALES_PARTNER", "LTR", "Afghan Locally Engaged Staff (partner) - Limited leave to remain"),
+      ("DEPENDANT_ALES_PARTNER_LOTR", "ILR", "Afghan Locally Engaged Staff (partner) - Indefinite leave to remain"),
+      ("DEPENDANT_ALES_PARTNER_LOTR", "LTR", "Afghan Locally Engaged Staff (partner) - Limited leave to remain"),
+      ("DEPENDANT_ALES_CHILD", "ILR", "Afghan Locally Engaged Staff (child) - Indefinite leave to remain"),
+      ("DEPENDANT_ALES_CHILD", "LTR", "Afghan Locally Engaged Staff (child) - Limited leave to remain"),
+      ("DEPENDANT_ALES_CHILD_LOTR", "ILR", "Afghan Locally Engaged Staff (child) - Indefinite leave to remain"),
+      ("DEPENDANT_ALES_CHILD_LOTR", "LTR", "Afghan Locally Engaged Staff (child) - Limited leave to remain"),
+      ("DEPENDANT_ALES_OTHER", "ILR", "Afghan Locally Engaged Staff (other) - Indefinite leave to remain"),
+      ("DEPENDANT_ALES_OTHER", "LTR", "Afghan Locally Engaged Staff (other) - Limited leave to remain"),
+      ("DEPENDANT_ALES_OTHER_LOTR", "ILR", "Afghan Locally Engaged Staff (other) - Indefinite leave to remain"),
+      ("DEPENDANT_ALES_OTHER_LOTR", "LTR", "Afghan Locally Engaged Staff (other) - Limited leave to remain"),
+      ("DEPENDANT_ACRS_PARTNER", "ILR", "Afghan Citizens Resettlement Scheme (partner) - Indefinite leave to remain"),
+      ("DEPENDANT_ACRS_PARTNER", "LTR", "Afghan Citizens Resettlement Scheme (partner) - Limited leave to remain")
+    ).foreach {
+      case (product, status, label) =>
+        s"format label for $product - $status" in {
+          val fullStatus = createStatus(product, status)
+          StatusFoundPageContext.immigrationStatusLabel(fullStatus) shouldBe label
+        }
+    }
+
+    "return the product type label where that exists but status doesn't" in {
+      val fullStatus = createStatus("EUS", "LTF")
+      StatusFoundPageContext.immigrationStatusLabel(fullStatus) shouldBe "EU Settlement Scheme - LTF"
+    }
+
+    "return the status label where that exists but product type doesn't" in {
+      val fullStatus = createStatus("NEW", "LTR")
+      StatusFoundPageContext.immigrationStatusLabel(fullStatus) shouldBe "NEW - Limited leave to remain"
+    }
+
+    "return the status label where that exists but product type doesn't (but is EUS)" in {
+      val fullStatus = createStatus("EUS_NEW", "LTR")
+      StatusFoundPageContext.immigrationStatusLabel(fullStatus) shouldBe "EUS_NEW - Pre-settled status"
+    }
+
+    "return the HO codes where neither exist in messages" in {
+      val fullStatus = createStatus("EUS_NEW", "LTF")
+      StatusFoundPageContext.immigrationStatusLabel(fullStatus) shouldBe "EUS_NEW - LTF"
+    }
+
   }
 
 }

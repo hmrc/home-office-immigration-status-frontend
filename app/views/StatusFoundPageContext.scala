@@ -73,11 +73,8 @@ final case class StatusFoundPageContext(query: SearchFormModel, result: StatusCh
         messages(prefix + "noStatus")
     }
 
-  def getImmigrationRoute(productType: String)(implicit messages: Messages) =
-    messages.getOrElse(s"immigration.${productType.toLowerCase}", productType)
-
-  def immigrationRoute(implicit messages: Messages) =
-    mostRecentStatus.map(status => getImmigrationRoute(status.productType))
+  def immigrationRoute(implicit messages: Messages): Option[String] =
+    mostRecentStatus.map(status => StatusFoundPageContext.getImmigrationRouteLabel(status.productType))
 
   val isZambrano: Boolean = mostRecentStatus.exists(_.isEUS) && !EEACountries.countries.contains(result.nationality)
 }
@@ -93,9 +90,18 @@ object StatusFoundPageContext extends Logging {
       }
   }
 
-  def immigrationStatusLabel(productType: String, status: String)(implicit messages: Messages): String =
-    messages.getOrElse(
-      s"immigration.${productType.toLowerCase}.${status.toLowerCase}",
-      s"$productType - $status"
-    )
+  def getImmigrationRouteLabel(productType: String)(implicit messages: Messages): String =
+    messages.getOrElse(s"immigration.${productType.toLowerCase}", productType)
+
+  def getStatusLabel(status: ImmigrationStatus)(implicit messages: Messages): String = {
+    val prefix = if (status.isEUS) "immigration.EUS." else "immigration.nonEUS."
+    messages.getOrElse(s"$prefix${status.immigrationStatus.toLowerCase}", status.immigrationStatus)
+  }
+
+  def immigrationStatusLabel(status: ImmigrationStatus)(implicit messages: Messages): String = {
+    val productString = getImmigrationRouteLabel(status.productType)
+    val statusString = getStatusLabel(status)
+    s"$productString - $statusString"
+  }
+
 }
