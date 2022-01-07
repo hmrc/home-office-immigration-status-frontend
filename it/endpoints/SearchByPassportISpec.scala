@@ -13,7 +13,7 @@ class SearchByPassportISpec extends ISpec with HomeOfficeImmigrationStatusStubs 
       val result = request("/search-by-passport").get().futureValue
 
       result.status shouldBe OK
-      result.body should include(htmlEscapedMessage("lookup.title"))
+      result.body should include(htmlEscapedMessage("lookup.mrz.title"))
       result.headers.get("Cache-Control").map(_.mkString) shouldBe Some("no-cache, no-store, must-revalidate")
     }
   }

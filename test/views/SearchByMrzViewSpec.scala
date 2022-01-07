@@ -52,12 +52,17 @@ class SearchByMrzViewSpec extends ViewSpec {
   "SearchByMrzView" must {
     "have the look up title" in {
       val e: Element = doc.getElementsByTag("h1").first()
-      e.text() mustBe messages("lookup.title")
+      e.text() mustBe messages("lookup.mrz.title")
     }
 
-    "have the alternate search link" in {
-      val e: Element = doc.getElementById("alt-search-by-nino")
-      e.text() mustBe messages("alternate-search.nino-link")
+    "have the search description" in {
+      val e: Element = doc.getElementById("search-description")
+      e.text() mustBe s"${messages("lookup.mrz.desc")}${messages("lookup.mrz.alternate-search")}."
+    }
+
+    "have the alternative search link" in {
+      val e: Element = doc.getElementById("alternate-search")
+      e.text() mustBe messages("lookup.mrz.alternate-search")
       e.attr("href") mustBe controllers.routes.SearchByNinoController.onPageLoad(true).url
     }
 

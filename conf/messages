@@ -71,8 +71,16 @@ app.name='Check immigration status'
 app.hasNoActiveStatus='does not have an active status'
 
 # Lookup page
-lookup.title='Enter all information to search for the customer'
-lookup.title.Error='Error: Enter all information to search for the customer'
+lookup.nino.title='Search by National Insurance number'
+lookup.nino.title.Error='Error: Search by National Insurance number'
+lookup.mrz.title='Search by passport or ID card'
+lookup.mrz.title.Error='Error: Search by passport or ID card'
+
+lookup.nino.desc='Enter all the information to search for the customer by National Insurance number. Or you can '
+lookup.nino.alternate-search='search by passport or ID card'
+lookup.mrz.desc='Enter all the information to search for the customer by passport or ID card. Or you can '
+lookup.mrz.alternate-search='search by National Insurance number'
+
 lookup.nino.label='National Insurance number'
 lookup.identity.label='Identity document type'
 lookup.mrz.label='Identity document number'
