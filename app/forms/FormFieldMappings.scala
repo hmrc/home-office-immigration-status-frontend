@@ -17,38 +17,39 @@
 package forms
 
 import play.api.data.Forms.{of, optional, text, tuple}
-import play.api.data.Mapping
+import play.api.data.{Form, FormError, Mapping}
 import play.api.data.format.Formats._
 import play.api.data.validation._
 import uk.gov.hmrc.domain.Nino
 import forms.helpers.ValidateHelper
 import forms.helpers.ValidateHelper.cond
+
 import java.time.LocalDate
 import scala.util.Try
 
 trait FormFieldMappings extends Constraints {
 
-  def validNino: Constraint[String] =
+  protected def validNino: Constraint[String] =
     ValidateHelper.validateField("error.nino.required", "error.nino.invalid-format")(nino => Nino.isValid(nino))
 
-  val maxNameLen = 64
+  private val maxNameLen = 64
 
-  val normalizedText: Mapping[String] = of[String].transform(_.replaceAll("\\s", ""), identity)
-  val uppercaseNormalizedText: Mapping[String] = normalizedText.transform(_.toUpperCase, identity)
-  val trimmedName: Mapping[String] = of[String].transform[String](_.trim.take(maxNameLen), identity)
+  protected val normalizedText: Mapping[String] = of[String].transform(_.replaceAll("\\s", ""), identity)
+  protected val uppercaseNormalizedText: Mapping[String] = normalizedText.transform(_.toUpperCase, identity)
+  protected val trimmedName: Mapping[String] = of[String].transform[String](_.trim.take(maxNameLen), identity)
 
   val allowedNameCharacters: Set[Char] = Set('-', '\'', ' ')
 
-  def hasAllowedCharacters(fieldName: String): Constraint[String] =
+  private def hasAllowedCharacters(fieldName: String): Constraint[String] =
     cond(s"error.$fieldName.invalid-format")(_.forall(ch =>
       Character.isLetter(ch) || allowedNameCharacters.contains(ch)))
 
-  def validName(fieldName: String, minLenInc: Int): Mapping[String] =
+  protected def validName(fieldName: String, minLenInc: Int): Mapping[String] =
     nonEmptyText(fieldName)
       .verifying(minLength(minLenInc, s"error.$fieldName.length"))
       .verifying(hasAllowedCharacters(fieldName))
 
-  def nonEmptyText(fieldName: String): Mapping[String] =
+  protected def nonEmptyText(fieldName: String): Mapping[String] =
     optional(text)
       .verifying(
         s"error.$fieldName.required",
@@ -72,7 +73,7 @@ trait FormFieldMappings extends Constraints {
 
   def isNotZero(int: Int): Boolean = int != 0
 
-  def dateComponent(field: String, maxValue: Int, minValue: Int = 0): Mapping[Int] =
+  protected def dateComponent(field: String, maxValue: Int, minValue: Int = 0): Mapping[Int] =
     nonEmptyText(s"dateOfBirth.$field")
       .verifying(cond[String](s"error.dateOfBirth.$field.invalid")(isInt))
       .transform[Int](_.toInt, _.toString)
@@ -81,7 +82,7 @@ trait FormFieldMappings extends Constraints {
       .verifying(min(minValue = minValue, errorMessage = s"error.dateOfBirth.$field.min"))
       .verifying(max(maxValue = maxValue, errorMessage = s"error.dateOfBirth.$field.max"))
 
-  def dobFieldsMapping: Mapping[LocalDate] =
+  protected def dobFieldsMapping: Mapping[LocalDate] =
     tuple(
       "day"   -> dateComponent("day", 31),
       "month" -> dateComponent("month", 12),
@@ -89,4 +90,14 @@ trait FormFieldMappings extends Constraints {
     ).verifying(validateIsRealDate)
       .transform(asDate.tupled, asTuple)
       .verifying(validateInThePast)
+
+  def collateDOBErrors[A](form: Form[A]): Form[A] =
+    if (form.errors.count(_.key.contains("dateOfBirth")) > 1) {
+      val required = form.errors.count(_.message.matches(""".*dateOfBirth.*\.required""")) == 3
+      (form.errors.filterNot(_.key.contains("dateOfBirth")) :+ FormError(
+        "dateOfBirth",
+        "error.dateOfBirth." + (if (required) "required" else "invalid-format")))
+        .foldLeft(form.discardingErrors)((acc, cur) => acc.withError(cur))
+    } else form
+
 }
