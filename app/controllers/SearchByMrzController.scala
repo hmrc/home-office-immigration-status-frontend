@@ -76,14 +76,7 @@ class SearchByMrzController @Inject()(
           .bindFromRequest()
           .fold(
             form => {
-              //todo move this to the form
-              val dobErrorsCollated =
-                if (form.errors.count(_.key.contains("dateOfBirth")) > 1) {
-                  (form.errors.filterNot(_.key.contains("dateOfBirth")) :+ FormError(
-                    "dateOfBirth",
-                    "error.dateOfBirth.invalid-format"))
-                    .foldLeft(form.discardingErrors)((acc, cur) => acc.withError(cur))
-                } else form
+              val dobErrorsCollated = formProvider.collateDOBErrors(form)
               Future.successful(BadRequest(view(dobErrorsCollated)))
             },
             query =>

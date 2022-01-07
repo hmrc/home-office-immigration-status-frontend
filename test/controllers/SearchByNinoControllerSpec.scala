@@ -132,15 +132,15 @@ class SearchByNinoControllerSpec extends ControllerSpec {
     }
 
     "return the errored form" when {
-      val form = inject[SearchByNinoForm].apply()
+      val formProvider = inject[SearchByNinoForm]
+      val form = formProvider.apply()
       "the submitted form is empty" in {
         val result = sut.onSubmit(request)
-        val formWithErrors = form.bindFromRequest()(request, implicitly)
+        val formWithErrors = formProvider.collateDOBErrors(form.bindFromRequest()(request, implicitly))
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe fakeView.toString
-        //verify(mockView).apply(refEq(formWithErrors, "mapping"))(is(request), any())
-        verify(mockView).apply(any())(is(request), any())
+        verify(mockView).apply(refEq(formWithErrors, "mapping"))(is(request), any())
         withClue("The session should contain the valid form answers") {
           val updatedSession = await(result).session(request)
           updatedSession.get("query") must not be defined
@@ -158,12 +158,11 @@ class SearchByNinoControllerSpec extends ControllerSpec {
           "nino"              -> "blah"
         )
         val result = sut.onSubmit(requestWithForm)
-        val formWithErrors = form.bindFromRequest()(requestWithForm, implicitly)
+        val formWithErrors = formProvider.collateDOBErrors(form.bindFromRequest()(requestWithForm, implicitly))
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe fakeView.toString
-        //verify(mockView).apply(refEq(formWithErrors, "mapping"))(is(requestWithForm), any())
-        verify(mockView).apply(any())(is(requestWithForm), any())
+        verify(mockView).apply(refEq(formWithErrors, "mapping"))(is(requestWithForm), any())
         withClue("The session should contain the valid form answers") {
           val updatedSession = await(result).session(request)
           updatedSession.get("query") must not be defined
