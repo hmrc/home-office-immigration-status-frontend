@@ -97,7 +97,7 @@ trait FormFieldMappings extends Constraints {
       (form.errors.filterNot(_.key.contains("dateOfBirth")) :+ FormError(
         "dateOfBirth",
         "error.dateOfBirth." + (if (required) "required" else "invalid-format")))
-        .foldLeft(form.discardingErrors)((acc, cur) => acc.withError(cur))
+        .foldLeft(form.discardingErrors)((form, error) => form.withError(error))
     } else form
 
 }
