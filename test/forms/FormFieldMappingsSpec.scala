@@ -20,10 +20,10 @@ import org.scalacheck.Gen
 import org.scalatest.OptionValues
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
-import play.api.data.Mapping
+import play.api.data.{Form, FormError, Forms, Mapping}
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
-import play.api.data.{Form, FormError}
 import play.api.data.Forms.single
+import play.api.data.format.Formats.stringFormat
 import play.api.data.validation.Invalid
 
 class FormFieldMappingsSpec
@@ -34,6 +34,63 @@ class FormFieldMappingsSpec
 
   def form(name: String, min: Int) = Form(single(name -> validateName(name, min)))
   def testFormFill(map: String) = Map("foo" -> map)
+
+  "collateDOBErrors" should {
+    def formWithErrors(errorKeyMessage: (String, String)*) = {
+      val someForm = Form("value" -> Forms.of[String]).discardingErrors
+      errorKeyMessage.foldLeft(someForm)((form, error) => form.withError(error._1, error._2))
+    }
+
+    "group dob errors together" when {
+      "there are 3 required errors" in {
+        val testForm = formWithErrors(
+          ("test.dateOfBirth", "dateOfBirth.pan.required"),
+          ("other.error.dateOfBirth", "dateOfBirth.thing.required"),
+          ("dateOfBirth", "prefix.dateOfBirth.another.required"),
+        )
+        val result = collateDOBErrors(testForm)
+
+        result.errors shouldBe Seq(FormError("dateOfBirth", "error.dateOfBirth.required"))
+      }
+      "there are less than 3 required errors" in {
+        val testForm =
+          formWithErrors(("test.dateOfBirth", "other.required"), ("other.error.dateOfBirth", "autre.required"))
+        val result = collateDOBErrors(testForm)
+
+        result.errors shouldBe Seq(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
+      }
+      "there are 2 mixed errors" in {
+        val testForm =
+          formWithErrors(("test.dateOfBirth", "other.required"), ("other.error.dateOfBirth", "autre.erreur"))
+        val result = collateDOBErrors(testForm)
+
+        result.errors shouldBe Seq(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
+      }
+      "there are 2 other errors" in {
+        val testForm = formWithErrors(("test.dateOfBirth", "other.error"), ("other.error.dateOfBirth", "autre.erreur"))
+        val result = collateDOBErrors(testForm)
+
+        result.errors shouldBe Seq(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
+      }
+    }
+
+    "not change dob errors" when {
+      "there is only one" in {
+        val testForm = formWithErrors(("test.dateOfBirth", "dateOfBirt.pan.required"))
+        val result = collateDOBErrors(testForm)
+
+        result shouldBe testForm
+      }
+    }
+
+    "ignore non dob errors" in {
+      val testForm =
+        formWithErrors(("test.a.different.field", "other.required"), ("error.problem", "other.invalid-format"))
+      val result = collateDOBErrors(testForm)
+
+      result shouldBe testForm
+    }
+  }
 
   "FormFieldMappings" should {
     "checks emptiness" in {
