@@ -245,13 +245,19 @@ class PreviousStatusesComponentSpec extends ViewSpec {
         "COA_IN_TIME_GRANT" in {
           val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("EUS", "COA_IN_TIME_GRANT"))(messages))
           assertRenderedById(doc, "status-previous-0")
-          assertElementHasText(doc, "#status-previous-0", "EU Settlement - Pending EU Settlement Scheme application")
+          assertElementHasText(
+            doc,
+            "#status-previous-0",
+            "EU Settlement Scheme - Pending EU Settlement Scheme application")
         }
         "POST_GRACE_PERIOD_COA_GRANT" in {
           val doc: Document =
             asDocument(sut(singleStatusCustomImmigrationStatus("EUS", "POST_GRACE_PERIOD_COA_GRANT"))(messages))
           assertRenderedById(doc, "status-previous-0")
-          assertElementHasText(doc, "#status-previous-0", "EU Settlement - Pending EU Settlement Scheme application")
+          assertElementHasText(
+            doc,
+            "#status-previous-0",
+            "EU Settlement Scheme - Pending EU Settlement Scheme application")
         }
       }
 
