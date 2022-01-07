@@ -17,7 +17,7 @@
 package views
 
 import forms.SearchByMRZForm
-import models.{MrzSearch, MrzSearchFormModel}
+import models.MrzSearchFormModel
 import org.jsoup.nodes.{Document, Element}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, verify, when}
@@ -27,23 +27,19 @@ import play.api.data.Form
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.Html
 import views.html.SearchByMrzView
-import views.html.components.{AlternateSearchLink, inputDate}
+import views.html.components.inputDate
 import java.util.UUID
 
 class SearchByMrzViewSpec extends ViewSpec {
 
-  val mockAlternateSearch = mock(classOf[AlternateSearchLink])
   val mockDobInput = mock(classOf[inputDate])
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
-      bind[AlternateSearchLink].toInstance(mockAlternateSearch),
       bind[inputDate].toInstance(mockDobInput),
     )
     .build()
 
-  val fakeAlternativeSearch: String = UUID.randomUUID().toString
-  when(mockAlternateSearch.apply(any(), any(), any())(any())).thenReturn(Html(fakeAlternativeSearch))
   val fakeDobInput: String = UUID.randomUUID().toString
   when(mockDobInput.apply(any(), any(), any(), any(), any(), any(), any())(any())).thenReturn(Html(fakeDobInput))
 
@@ -60,12 +56,9 @@ class SearchByMrzViewSpec extends ViewSpec {
     }
 
     "have the alternate search link" in {
-      doc.text() must include(fakeAlternativeSearch)
-      verify(mockAlternateSearch)
-        .apply(
-          "alternate-search.nino-link",
-          controllers.routes.SearchByNinoController.onPageLoad(true).url,
-          "alt-search-by-nino")(messages)
+      val e: Element = doc.getElementById("alt-search-by-nino")
+      e.text() mustBe messages("alternate-search.nino-link")
+      e.attr("href") mustBe controllers.routes.SearchByNinoController.onPageLoad(true).url
     }
 
     "have documentType" in {

@@ -23,7 +23,6 @@
     formHelper: FormWithCSRF,
     identityDocumentType: components.identityDocumentType,
     fieldset: components.fieldset,
-    alternateSearch: components.AlternateSearchLink,
     inputText: components.inputText,
     countrySelect: components.CountrySelect,
     inputDate: components.inputDate,
@@ -41,7 +40,8 @@
 
         <h1 class="govuk-heading-xl" id="mrz-search-title">@messages("lookup.title")</h1>
 
-        @alternateSearch("alternate-search.nino-link", controllers.routes.SearchByNinoController.onPageLoad(true).url, "alt-search-by-nino")
+        <a href="@controllers.routes.SearchByNinoController.onPageLoad(true).url" class="govuk-link" id="alt-search-by-nino">@messages("alternate-search.nino-link")</a>
+        <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 
         @identityDocumentType(form)
 

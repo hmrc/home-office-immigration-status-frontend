@@ -17,7 +17,7 @@
 package views
 
 import forms.SearchByNinoForm
-import models.{NinoSearch, NinoSearchFormModel}
+import models.NinoSearchFormModel
 import org.jsoup.nodes.{Document, Element}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, verify, when}
@@ -27,21 +27,19 @@ import play.api.data.Form
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.Html
 import views.html.SearchByNinoView
-import views.html.components.{AlternateSearchLink, inputDate}
+import views.html.components.inputDate
 import java.util.UUID
 import config.AppConfig
 import services.SessionCacheService
 
 class SearchByNinoViewSpec extends ViewSpec {
 
-  val mockAlternateSearch = mock(classOf[AlternateSearchLink])
   val mockDobInput = mock(classOf[inputDate])
   val mockAppConfig = mock(classOf[AppConfig])
   val mockSessionCacheService = mock(classOf[SessionCacheService])
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
-      bind[AlternateSearchLink].toInstance(mockAlternateSearch),
       bind[inputDate].toInstance(mockDobInput),
       bind[SessionCacheService].toInstance(mockSessionCacheService),
       bind[AppConfig].toInstance(mockAppConfig)
@@ -56,8 +54,6 @@ class SearchByNinoViewSpec extends ViewSpec {
   val form: Form[NinoSearchFormModel] = inject[SearchByNinoForm].apply()
 
   def createDocument(documentSearchEnabled: Boolean): Document = {
-    reset(mockAlternateSearch)
-    when(mockAlternateSearch.apply(any(), any(), any())(any())).thenReturn(Html(fakeAlternativeSearch))
     reset(mockDobInput)
     when(mockDobInput.apply(any(), any(), any(), any(), any(), any(), any())(any()))
       .thenReturn(Html(fakeDobInput))
@@ -76,12 +72,9 @@ class SearchByNinoViewSpec extends ViewSpec {
     }
 
     "have the alternate search link" in {
-      doc.text() must include(fakeAlternativeSearch)
-      verify(mockAlternateSearch)
-        .apply(
-          "alternate-search.mrz-link",
-          controllers.routes.SearchByMrzController.onPageLoad(true).url,
-          "alt-search-by-mrz")(messages)
+      val e: Element = doc.getElementById("alt-search-by-mrz")
+      e.text() mustBe messages("alternate-search.mrz-link")
+      e.attr("href") mustBe controllers.routes.SearchByMrzController.onPageLoad(true).url
     }
 
     "have nino" in {

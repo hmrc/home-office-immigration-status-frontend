@@ -26,7 +26,6 @@
     inputText: components.inputText,
     inputDate: components.inputDate,
     fieldset: components.fieldset,
-    alternateSearch: components.AlternateSearchLink, 
     appConfig: AppConfig
 )
 
@@ -41,7 +40,8 @@
         <h1 class="govuk-heading-xl" id="nino-search-title">@messages("lookup.title")</h1>
 
         @if(appConfig.documentSearchFeatureEnabled) {
-            @alternateSearch("alternate-search.mrz-link", controllers.routes.SearchByMrzController.onPageLoad(true).url, "alt-search-by-mrz")
+            <a href="@controllers.routes.SearchByMrzController.onPageLoad(true).url" class="govuk-link" id="alt-search-by-mrz">@messages("alternate-search.mrz-link")</a>
+            <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
         }
 
         @inputText(
