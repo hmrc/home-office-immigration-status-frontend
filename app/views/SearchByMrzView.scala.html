@@ -41,7 +41,7 @@
         <h1 class="govuk-heading-xl" id="mrz-search-title">@messages("lookup.title")</h1>
 
         <a href="@controllers.routes.SearchByNinoController.onPageLoad(true).url" class="govuk-link" id="alt-search-by-nino">@messages("alternate-search.nino-link")</a>
-        <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+        <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible" aria-hidden="true">
 
         @identityDocumentType(form)
 

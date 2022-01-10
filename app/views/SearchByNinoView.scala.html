@@ -41,7 +41,7 @@
 
         @if(appConfig.documentSearchFeatureEnabled) {
             <a href="@controllers.routes.SearchByMrzController.onPageLoad(true).url" class="govuk-link" id="alt-search-by-mrz">@messages("alternate-search.mrz-link")</a>
-            <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+            <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible" aria-hidden="true">
         }
 
         @inputText(
