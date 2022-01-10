@@ -53,8 +53,21 @@
 <p class="govuk-body"><a href="https://mcmw.abilitynet.org.uk/">AbilityNet</a> has advice on making your device easier to use if you have a disability.</p>
 
 <h2 class="govuk-heading-m">How accessible the service is</h2>
-<p class="govuk-body">This service is <span class="govuk-body govuk-!-font-weight-bold">fully compliant</span> with the <a href="https://www.w3.org/TR/WCAG21/" class="govuk-link">Web Content Accessibility Guidelines version 2.1 AA standard</a>.</p>
-<p class="govuk-body">There are no known accessibility issues within this service.</p>
+<p class="govuk-body">This service is <span class="govuk-body govuk-!-font-weight-bold">partially compliant</span> with the <a href="https://www.w3.org/TR/WCAG21/" class="govuk-link">Web Content Accessibility Guidelines version 2.1 AA standard</a>.</p>
+
+<h2 class="govuk-heading-m">Accessibility problems:</h2>
+<ul class="govuk-list govuk-list--bullet">
+    <li>The page title and heading does not change when switching between the 2 different "search by" pages, so the user has to check the page to see if the form element have changed to know they are on the correct screen.</li>
+    <li>Keyboard focus does not move to the error summary. That will increase the time for keyboard users to reach the error links and for screen reader users to identify the error.</li>
+    <li>Missing error styling will make it more difficult to know which date field needs to be changed.</li>
+    <li>Speech recognition software users and people with motor impairments who rely on being able to paste information, can find it difficult to enter dates as the number of characters is restricted.</li>
+    <li>It is hard for screen reader users to confidently know how questions are grouped together.</li>
+    <li>Missing third party libraries will mean that the ‘enter the customer’s details’ page will not display correctly on different browsers.</li>
+    <li>When users are taken to ‘enter the customer’s details, the keyboard focus is placed on the field that users want to change on the ‘match has not been found’ page. Focus placement that is not predictable can confuse and disorient screen reader and screen magnification users.</li>
+    <li>People who rely on high contrast mode on Windows machines will not be able to identify the Government logos on the top and bottom of the pages.</li>
+    <li>For people who rely on screen magnification on iOS devices the HMRC logo is clipped and not readable fully.</li>
+    <li>Missing headings for separate sections of content can create problems with its understanding and the navigation on the page.</li>
+</ul>
 
 <h2 class="govuk-heading-m">Reporting accessibility problems</h2>
 <p class="govuk-body">We are always looking to improve the accessibility of this service. If you find any problems that are not listed on this page or think we are not meeting accessibility requirements, <a href="mailto:team-hoss2-aaaadxh2vg7pg2qf4idj7rmi2e@@hmrcdigital.slack.com" class="govuk-link">report the accessibility problem</a>. </p>
@@ -72,43 +85,38 @@
 
 <h2 class="govuk-heading-m">Technical information about this service's accessibility</h2>
 <p class="govuk-body">HMRC is committed to making this service accessible, in accordance with the Public Sector Bodies (Websites and Mobile Applications) (No. 2) Accessibility Regulations 2018.</p>
-<p class="govuk-body">This app is fully compliant with the <a href="https://www.w3.org/TR/WCAG21/" class="govuk-link">Web Content Accessibility Guidelines version 2.1 AA standard</a>.</p>
+<p class="govuk-body">This app is <span class="govuk-body govuk-!-font-weight-bold">partially compliant</span> with the <a href="https://www.w3.org/TR/WCAG21/" class="govuk-link">Web Content Accessibility Guidelines version 2.1 AA standard</a>.</p>
 
 <h2 class="govuk-heading-m">How we tested this service</h2>
 <p class="govuk-body">The service was last tested for compliance with WCAG 2.1 AA by the CDIO M&amp;WPS Accessibility Testing team on 17 November 2021.</p>
 <p class="govuk-body">The CDIO M&amp;WPS Accessibility Testing incorporates feedback from disabled users.</p>
-<p class="govuk-body">This statement was prepared on 17 November 2021. It was last updated on 23 November 2021.</p>
+<p class="govuk-body">This statement was prepared on 17 November 2021. It was last updated on 10 January 2022.</p>
 
-<h2 class="govuk-heading-m">Usability observations and non-compliance with GOV.UK Design system</h2>
-<p class="govuk-body">The following are usability and instances of non-compliance with the GOV.UK Design system that we noticed.  Although these do not violate the WCAG 2.1 guidelines we want our services to be as accessible and as simple to use for everyone as possible.</p>
-<p class="govuk-body">These issues have been prioritised in order of most problematic and causing annoyance to recommendations for making a users experience easier. As a minimum you should aim to fix the priority level 1 issues.</p>
+<h2 class="govuk-heading-m">Areas which fail:</h2>
 
-<ol class="govuk-list govuk-list--number govuk-list--spaced">
-    <li>Issue: Error summary not focussed on page load [fix priority level 1]<br>
-        Audit description of issue and how to resolve: <a href="https://github.com/hmrc/accessibility-audits-internal/issues/360" class="govuk-link">#360</a></li>
+<h3 class="govuk-heading-s">WCAG 2.1 violations:</h3>
+<ol class="govuk-list">
+    <li><span class="govuk-body govuk-!-font-weight-bold">Issue:</span> Page title repeated between search pages (A)</li>
+    <li><span class="govuk-body govuk-!-font-weight-bold">WCAG 2.1 violation:</span> <a href="https://www.w3.org/WAI/WCAG21/Understanding/page-titled.html" class="govuk-link">Understanding Success Criterion 2.4.2 Page titled</a></li>
+    <li><span class="govuk-body govuk-!-font-weight-bold">Page:</span> Enter all information to search for the customer</li>
+    <li><span class="govuk-body govuk-!-font-weight-bold">URL 1:</span> <a href="https://admin.staging.tax.service.gov.uk/check-immigration-status/search-by-nino" class="govuk-link">https://admin.staging.tax.service.gov.uk/check-immigration-status/search-by-nino</a></li>
+    <li><span class="govuk-body govuk-!-font-weight-bold">URL 2:</span> <a href="https://admin.staging.tax.service.gov.uk/check-immigration-status/search-by-passport?clearForm=true" class="govuk-link">https://admin.staging.tax.service.gov.uk/check-immigration-status/search-by-passport?clearForm=true</a></li>
+    <li><span class="govuk-body govuk-!-font-weight-bold">Journey/Step:</span> New J1 / S1</li>
+    <li><span class="govuk-body govuk-!-font-weight-bold">Description:</span> The page title and heading does not change when switching between the 2 different "search by" pages, so the user has to check the page to see if the form element have changed to know they are on the correct screen.</li>
+    <li><span class="govuk-body govuk-!-font-weight-bold">Resolve:</span> Ensure pages which link from each other do not have the same page title and h1.</li>
+    <li>This issue will be resolved by 18/02/2021.</li>
+</ol>
 
-    <li>Issue: Date field error state [fix priority level 1]<br>
-        Audit description of issue and how to resolve: <a href="https://github.com/hmrc/accessibility-audits-internal/issues/361" class="govuk-link">#361</a></li>
 
-    <li>Issue: Use of maxlength attribute on date fields [fix priority level 1]<br>
-        Audit description of issue and how to resolve: <a href="https://github.com/hmrc/accessibility-audits-internal/issues/363" class="govuk-link">#363</a></li>
-
-    <li>Issue: Nested fieldsets [fix priority level 1]<br>
-        Audit description of issue and how to resolve: <a href="https://github.com/hmrc/accessibility-audits-internal/issues/367" class="govuk-link">#367</a></li>
-
-    <li>Issue: Javascript error in console [fix priority level 2]<br>
-        Audit description of issue and how to resolve: <a href="https://github.com/hmrc/accessibility-audits-internal/issues/359" class="govuk-link">#359</a></li>
-
-    <li>Issue: Autofocus of form fields when changing details [fix priority level 2]<br>
-        Audit description of issue and how to resolve: <a href="https://github.com/hmrc/accessibility-audits-internal/issues/364" class="govuk-link">#364</a></li>
-
-    <li>Issue: Logos in Windows High Contrast Mode [fix priority level 2]<br>
-        Audit description of issue and how to resolve: <a href="https://github.com/hmrc/accessibility-audits-internal/issues/365" class="govuk-link">#365</a></li>
-
-    <li>Issue: Logo overflowing on iOS large text mode [fix priority level 2]<br>
-        Audit description of issue and how to resolve: <a href="https://github.com/hmrc/accessibility-audits-internal/issues/366" class="govuk-link">#366</a></li>
-
-    <li>Issue: Multiple definition lists on same page [fix priority level 3]<br>
-        Audit description of issue and how to resolve: <a href="https://github.com/hmrc/accessibility-audits-internal/issues/369" class="govuk-link">#369</a></li>
+<h3 class="govuk-heading-s">Milestones:</h3>
+<ol class="govuk-list govuk-list--bullet">
+    <li>Keyboard focus is not moved to error summary. Date: 10 January 2021</li>
+    <li>Missing error styling on the date fields. Date: 10 January 2021</li>
+    <li>Date input fields restricting character amount users able to enter. Date: 10 January 2021</li>
+    <li>Fieldset is nested inside another. Date: 10 January 2021</li>
+    <li>Two separate sections on the page, that is structured in a similar way missing headings to help users to identify the context of the page. Date: 10 January 2021</li>
+    <li>Keyboard focus placed on input field correlated to "Change" button on "A match has not been found" page. Date: TBC</li>
+    <li>Government logos invisible for high contrast users on Windows machines. Date: TBC</li>
+    <li>HMRC logo overflows on 200% page zoom on iOS devices. Date: TBC</li>
 </ol>
 }
