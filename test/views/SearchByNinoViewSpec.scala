@@ -46,7 +46,6 @@ class SearchByNinoViewSpec extends ViewSpec {
     )
     .build()
 
-  val fakeAlternativeSearch: String = UUID.randomUUID().toString
   val fakeDobInput: String = UUID.randomUUID().toString
 
   lazy val sut: SearchByNinoView = inject[SearchByNinoView]
@@ -68,12 +67,17 @@ class SearchByNinoViewSpec extends ViewSpec {
 
     "have the look up title" in {
       val e: Element = doc.getElementsByTag("h1").first()
-      e.text() mustBe messages("lookup.title")
+      e.text() mustBe messages("lookup.nino.title")
     }
 
-    "have the alternate search link" in {
-      val e: Element = doc.getElementById("alt-search-by-mrz")
-      e.text() mustBe messages("alternate-search.mrz-link")
+    "have the search description" in {
+      val e: Element = doc.getElementById("search-description")
+      e.text() mustBe s"${messages("lookup.nino.desc")}${messages("lookup.nino.alternate-search")}."
+    }
+
+    "have the alternative search link" in {
+      val e: Element = doc.getElementById("alternate-search")
+      e.text() mustBe messages("lookup.nino.alternate-search")
       e.attr("href") mustBe controllers.routes.SearchByMrzController.onPageLoad(true).url
     }
 
@@ -111,11 +115,11 @@ class SearchByNinoViewSpec extends ViewSpec {
 
     "have the look up title" in {
       val e: Element = doc.getElementsByTag("h1").first()
-      e.text() mustBe messages("lookup.title")
+      e.text() mustBe messages("lookup.nino.title")
     }
 
     "NOT have the alternate search link" in {
-      doc.text() must not include (fakeAlternativeSearch)
+      doc.text() must not include (messages("lookup.nino.desc"))
     }
 
     "have nino" in {

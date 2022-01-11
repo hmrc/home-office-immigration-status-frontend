@@ -27,21 +27,21 @@
     countrySelect: components.CountrySelect,
     inputDate: components.inputDate,
     govukButton : GovukButton,
+    lookupDescription: components.LookupDescription,
     errorSummary: components.errorSummary
 )
 
 @(form: Form[MrzSearchFormModel])(implicit request: Request[_], messages: Messages)
 
-@govukWrapper(title = if(form.hasErrors) messages("lookup.title.Error") else messages("lookup.title")) {
+@govukWrapper(title = if(form.hasErrors) messages("lookup.mrz.title.Error") else messages("lookup.mrz.title")) {
 
     @formHelper(controllers.routes.SearchByMrzController.onSubmit) {
 
         @errorSummary(FormHelper.updateDateOfBirthErrors(form.errors))
 
-        <h1 class="govuk-heading-xl" id="mrz-search-title">@messages("lookup.title")</h1>
+        <h1 class="govuk-heading-xl" id="mrz-search-title">@messages("lookup.mrz.title")</h1>
 
-        <a href="@controllers.routes.SearchByNinoController.onPageLoad(true).url" class="govuk-link" id="alt-search-by-nino">@messages("alternate-search.nino-link")</a>
-        <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible" aria-hidden="true">
+        @lookupDescription("lookup.mrz.desc", "lookup.mrz.alternate-search", controllers.routes.SearchByNinoController.onPageLoad(true).url)
 
         @identityDocumentType(form)
 
