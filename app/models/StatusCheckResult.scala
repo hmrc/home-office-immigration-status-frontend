@@ -28,7 +28,6 @@ case class StatusCheckResult(
   nationality: String, // (ICAO 3 letter acronym - ISO 3166-1)
   statuses: List[ImmigrationStatus]
 ) {
-  //todo seperate these to view model?
   def dobFormatted(locale: Locale): String = DateFormat.format(locale)(dateOfBirth)
   val statusesSortedByDate = statuses.sortBy(f = _.statusStartDate.toEpochDay * -1)
   val mostRecentStatus: Option[ImmigrationStatus] = statusesSortedByDate.headOption

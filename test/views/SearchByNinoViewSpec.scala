@@ -57,7 +57,6 @@ class SearchByNinoViewSpec extends ViewSpec {
     when(mockDobInput.apply(any(), any(), any(), any(), any(), any(), any())(any()))
       .thenReturn(Html(fakeDobInput))
     reset(mockAppConfig)
-    when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(documentSearchEnabled)
 
     asDocument(sut(form)(request, messages))
   }
@@ -110,44 +109,4 @@ class SearchByNinoViewSpec extends ViewSpec {
     }
   }
 
-  "With the document search disabled, the view" must {
-    lazy val doc = createDocument(false)
-
-    "have the look up title" in {
-      val e: Element = doc.getElementsByTag("h1").first()
-      e.text() mustBe messages("lookup.nino.title")
-    }
-
-    "NOT have the alternate search link" in {
-      doc.text() must not include (messages("lookup.nino.desc"))
-    }
-
-    "have nino" in {
-      assertRenderedById(doc, "nino")
-    }
-
-    "have givenName" in {
-      assertRenderedById(doc, "givenName")
-    }
-
-    "have familyName" in {
-      assertRenderedById(doc, "familyName")
-    }
-
-    "have the dob input" in {
-      doc.text() must include(fakeDobInput)
-      verify(mockDobInput)
-        .apply(
-          form,
-          id = "dateOfBirth",
-          legendClasses = "govuk-label",
-          legendContent = messages("lookup.dateOfBirth.label"),
-          hintMessage = Some(messages("lookup.dateOfBirth.hint"))
-        )(messages)
-    }
-
-    "have the search button" in {
-      assertRenderedById(doc, "search-button")
-    }
-  }
 }

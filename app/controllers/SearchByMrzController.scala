@@ -26,7 +26,6 @@ import services.SessionCacheService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.SearchByMrzView
 import errors.ErrorHandler
-import play.api.data.FormError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,14 +43,10 @@ class SearchByMrzController @Inject()(
 
   def onPageLoad(clearForm: Boolean): Action[AnyContent] =
     access.async { implicit request =>
-      if (appConfig.documentSearchFeatureEnabled) {
-        if (clearForm) {
-          clearStoredRequestAndShowEmptyForm
-        } else {
-          composeFormWithStoredRequest
-        }
+      if (clearForm) {
+        clearStoredRequestAndShowEmptyForm
       } else {
-        Future.successful(NotFound(errorHandler.notFoundTemplate))
+        composeFormWithStoredRequest
       }
     }
 
@@ -71,21 +66,17 @@ class SearchByMrzController @Inject()(
 
   val onSubmit: Action[AnyContent] =
     access.async { implicit request =>
-      if (appConfig.documentSearchFeatureEnabled) {
-        formProvider()
-          .bindFromRequest()
-          .fold(
-            form => {
-              val dobErrorsCollated = formProvider.collateDOBErrors(form)
-              Future.successful(BadRequest(view(dobErrorsCollated)))
-            },
-            query =>
-              for {
-                _ <- sessionCacheService.set(query)
-              } yield Redirect(routes.StatusResultController.onPageLoad)
-          )
-      } else {
-        Future.successful(NotFound(errorHandler.notFoundTemplate))
-      }
+      formProvider()
+        .bindFromRequest()
+        .fold(
+          form => {
+            val dobErrorsCollated = formProvider.collateDOBErrors(form)
+            Future.successful(BadRequest(view(dobErrorsCollated)))
+          },
+          query =>
+            for {
+              _ <- sessionCacheService.set(query)
+            } yield Redirect(routes.StatusResultController.onPageLoad)
+        )
     }
 }

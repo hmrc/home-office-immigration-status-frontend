@@ -46,21 +46,17 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
   val ninSearchFormModel = NinoSearchFormModel(nino, "Pan", "", LocalDate.now())
   val mrzSearchFormModel = MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
 
-  when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(false)
-  val DocWithoutFeature: Document = asDocument(sut(ninSearchFormModel)(request, messages))
-
-  when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(true)
   val NinoDocWithFeature: Document = asDocument(sut(ninSearchFormModel)(request, messages))
   val MrzDocWithFeature: Document = asDocument(sut(mrzSearchFormModel)(request, messages))
 
   "MultipleMatchesFoundPage" must {
     "have a status conflict title" in {
-      val e: Element = DocWithoutFeature.getElementById("status-check-failure-conflict-title")
+      val e: Element = MrzDocWithFeature.getElementById("status-check-failure-conflict-title")
       e.text() mustBe messages("status-check-failure-conflict.title")
     }
 
     "have personal details heading" in {
-      val e: Element = DocWithoutFeature.getElementById("personal-details")
+      val e: Element = MrzDocWithFeature.getElementById("personal-details")
       e.text() mustBe messages("status-check-failure.heading2CustomerDetails")
     }
 
@@ -76,20 +72,16 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
       e.text() mustBe messages("status-check-failure-conflict.nino-link")
     }
 
-    "mrz and nino alt link do not show when feature disabled" in {
-      assertNotRenderedById(DocWithoutFeature, "alternate-search")
-    }
-
     "have the show and multiple label" in {
-      assertRenderedById(DocWithoutFeature, "multiplelabel")
+      assertRenderedById(MrzDocWithFeature, "multiplelabel")
     }
 
     "have the show and change query section" in {
-      assertRenderedById(DocWithoutFeature, "inputted-data")
+      assertRenderedById(MrzDocWithFeature, "inputted-data")
     }
 
     "have the search again button" in {
-      assertRenderedByCssSelector(DocWithoutFeature, ".govuk-button")
+      assertRenderedByCssSelector(MrzDocWithFeature, ".govuk-button")
     }
   }
 }
