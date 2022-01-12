@@ -293,23 +293,6 @@ class StatusFoundPageContextSpec
     }
   }
 
-  "show status label" should {
-    implicit val messages: Messages =
-      MessagesImpl(
-        Lang("en-UK"),
-        new DefaultMessagesApi(
-          Map("en-UK" -> Map("immigration.eus.ltr" -> "foo123", "immigration.eus.ilr" -> "bar456"))))
-    "work for EUS-LTR" in {
-      StatusFoundPageContext.immigrationStatusLabel("EUS", "LTR") shouldBe "foo123"
-    }
-    "work for EUS-ILR" in {
-      StatusFoundPageContext.immigrationStatusLabel("EUS", "ILR") shouldBe "bar456"
-    }
-    "work for unknown" in {
-      StatusFoundPageContext.immigrationStatusLabel("FOO", "BAR") shouldBe "FOO - BAR"
-    }
-  }
-
   "isZambrano" should {
 
     val nonEEACountries = allCountries.countries.filter(c => !EEACountries.countries.contains(c.alpha3))
@@ -362,6 +345,56 @@ class StatusFoundPageContextSpec
         }
       }
     }
+  }
+
+  "immigrationStatusLabel" should {
+    implicit val messages: Messages = realMessages
+
+    def createStatus(productType: String, immigrationStatus: String): ImmigrationStatus = ImmigrationStatus(
+      statusStartDate = LocalDate.now,
+      statusEndDate = None,
+      productType = productType,
+      immigrationStatus = immigrationStatus,
+      noRecourseToPublicFunds = true
+    )
+
+    Seq(
+      ("EUS", "ILR", "EU Settlement Scheme - Settled status"),
+      ("EUS", "LTR", "EU Settlement Scheme - Pre-settled status"),
+      ("EUS", "COA_IN_TIME_GRANT", "EU Settlement Scheme - Pending EU Settlement Scheme application"),
+      ("EUS", "POST_GRACE_PERIOD_COA_GRANT", "EU Settlement Scheme - Pending EU Settlement Scheme application"),
+      ("STUDY", "LTE", "Student - Limited leave to enter"),
+      ("STUDY", "LTR", "Student - Limited leave to remain"),
+      ("FRONTIER_WORKER", "PERMIT", "Frontier worker - Frontier worker permit"),
+      ("SETTLEMENT", "ILR", "British National Overseas or Settlement Protection - Indefinite leave to remain")
+    ).foreach {
+      case (product, status, label) =>
+        s"format label for $product - $status" in {
+          val fullStatus = createStatus(product, status)
+          StatusFoundPageContext.immigrationStatusLabel(fullStatus) shouldBe label
+        }
+    }
+
+    "return the product type label where that exists but status doesn't" in {
+      val fullStatus = createStatus("EUS", "LTF")
+      StatusFoundPageContext.immigrationStatusLabel(fullStatus) shouldBe "EU Settlement Scheme - LTF"
+    }
+
+    "return the status label where that exists but product type doesn't" in {
+      val fullStatus = createStatus("NEW", "LTR")
+      StatusFoundPageContext.immigrationStatusLabel(fullStatus) shouldBe "NEW - Limited leave to remain"
+    }
+
+    "return the status label where that exists but product type doesn't (but is EUS)" in {
+      val fullStatus = createStatus("EUS_NEW", "LTR")
+      StatusFoundPageContext.immigrationStatusLabel(fullStatus) shouldBe "EUS_NEW - Pre-settled status"
+    }
+
+    "return the HO codes where neither exist in messages" in {
+      val fullStatus = createStatus("EUS_NEW", "LTF")
+      StatusFoundPageContext.immigrationStatusLabel(fullStatus) shouldBe "EUS_NEW - LTF"
+    }
+
   }
 
 }
