@@ -22,8 +22,8 @@
 
 @if(isNinoSearch){
  @alternateSearch(
-  "status-check-failure-conflict.mrz-link", controllers.routes.SearchByMrzController.onPageLoad(true).url, "status-check-failure-conflict.mrz")
+  "status-check-failure-conflict.mrz-link", controllers.routes.SearchByMrzController.onPageLoad(true).url, "alt-search-by-mrz")
 } else {
  @alternateSearch(
-  "status-check-failure-conflict.nino-link", controllers.routes.SearchByNinoController.onPageLoad(true).url, "status-check-failure-conflict.nino")
+  "status-check-failure-conflict.nino-link", controllers.routes.SearchByNinoController.onPageLoad(true).url, "alt-search-by-nino")
 }
