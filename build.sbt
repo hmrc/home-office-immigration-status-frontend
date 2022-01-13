@@ -42,7 +42,7 @@ lazy val root = (project in file("."))
     Concat.groups := Seq(
       "javascripts/immigrationstatus-app.js" ->
         group(Seq(
-          "javascripts/jquery.min.js",
+          "javascripts/jquery-3.6.0.min.js",
           "javascripts/libraries/location-autocomplete.min.js",
           "javascripts/autocomplete.js",
           "javascripts/ga-events.js"
