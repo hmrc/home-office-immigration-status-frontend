@@ -61,7 +61,7 @@ class SearchByMrzViewSpec extends ViewSpec {
     }
 
     "have the alternative search link" in {
-      val e: Element = doc.getElementById("alternate-search")
+      val e: Element = doc.getElementById("alt-search-by-nino")
       e.text() mustBe messages("lookup.mrz.alternate-search")
       e.attr("href") mustBe controllers.routes.SearchByNinoController.onPageLoad(true).url
     }

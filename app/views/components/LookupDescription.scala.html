@@ -16,8 +16,8 @@
 
 @this()
 
-@(message: String, linkText:String, url: String)(implicit messages: Messages)
+@(message: String, linkText:String, url: String, id: String)(implicit messages: Messages)
 
-<p id="search-description" class="govuk-body-m"> @messages(message) <a href="@url" id="alternate-search" class="govuk-link" >@messages(linkText)</a>.</p>
+<p id="search-description" class="govuk-body-m"> @messages(message) <a href="@url" id="@id" class="govuk-link" >@messages(linkText)</a>.</p>
 
 <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible" aria-hidden="true">
