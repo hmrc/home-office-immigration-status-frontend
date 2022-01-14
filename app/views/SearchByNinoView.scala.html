@@ -40,7 +40,7 @@
 
         <h1 class="govuk-heading-xl" id="nino-search-title">@messages("lookup.nino.title")</h1>
 
-        @lookupDescription("lookup.nino.desc", "lookup.nino.alternate-search", controllers.routes.SearchByMrzController.onPageLoad(true).url)
+        @lookupDescription("lookup.nino.desc", "lookup.nino.alternate-search", controllers.routes.SearchByMrzController.onPageLoad(true).url, "alt-search-by-mrz")
 
         @inputText(
             form,

@@ -41,7 +41,7 @@
 
         <h1 class="govuk-heading-xl" id="mrz-search-title">@messages("lookup.mrz.title")</h1>
 
-        @lookupDescription("lookup.mrz.desc", "lookup.mrz.alternate-search", controllers.routes.SearchByNinoController.onPageLoad(true).url)
+        @lookupDescription("lookup.mrz.desc", "lookup.mrz.alternate-search", controllers.routes.SearchByNinoController.onPageLoad(true).url, "alt-search-by-nino")
 
         @identityDocumentType(form)
 

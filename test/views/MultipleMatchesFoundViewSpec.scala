@@ -62,13 +62,13 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
 
     "nino doc has mrz alt link" in {
       assertRenderedById(NinoDocWithFeature, "alternate-search")
-      val e: Element = NinoDocWithFeature.getElementById("status-check-failure-conflict.mrz")
+      val e: Element = NinoDocWithFeature.getElementById("alt-search-by-mrz")
       e.text() mustBe messages("status-check-failure-conflict.mrz-link")
     }
 
     "mrz doc has nino alt link" in {
       assertRenderedById(MrzDocWithFeature, "alternate-search")
-      val e: Element = MrzDocWithFeature.getElementById("status-check-failure-conflict.nino")
+      val e: Element = MrzDocWithFeature.getElementById("alt-search-by-nino")
       e.text() mustBe messages("status-check-failure-conflict.nino-link")
     }
 
