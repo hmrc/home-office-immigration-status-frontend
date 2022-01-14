@@ -170,12 +170,18 @@ class PreviousStatusesComponentSpec extends ViewSpec {
         "LTE" in {
           val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("DEPENDANT", "LTE"))(messages))
           assertRenderedById(doc, "status-previous-0")
-          assertElementHasText(doc, "#status-previous-0", "Settlement Protection - Limited leave to enter")
+          assertElementHasText(
+            doc,
+            "#status-previous-0",
+            "Dependants of a person with immigration permission - Limited leave to enter")
         }
         "LTR" in {
           val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("DEPENDANT", "LTR"))(messages))
           assertRenderedById(doc, "status-previous-0")
-          assertElementHasText(doc, "#status-previous-0", "Settlement Protection - Limited leave to remain")
+          assertElementHasText(
+            doc,
+            "#status-previous-0",
+            "Dependants of a person with immigration permission - Limited leave to remain")
         }
       }
 
@@ -318,7 +324,10 @@ class PreviousStatusesComponentSpec extends ViewSpec {
         "ILR" in {
           val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("DEPENDANT", "ILR"))(messages))
           assertRenderedById(doc, "status-previous-0")
-          assertElementHasText(doc, "#status-previous-0", "Settlement Protection - Indefinite leave to remain")
+          assertElementHasText(
+            doc,
+            "#status-previous-0",
+            "Dependants of a person with immigration permission - Indefinite leave to remain")
         }
       }
 
