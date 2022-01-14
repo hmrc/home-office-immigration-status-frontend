@@ -46,33 +46,29 @@ class StatusCheckFailureViewSpec extends ViewSpec {
   val ninSearchFormModel = NinoSearchFormModel(nino, "Pan", "", LocalDate.now())
   val mrzSearchFormModel = MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
 
-  when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(false)
-  val DocWithoutFeature: Document = asDocument(sut(ninSearchFormModel)(request, messages))
-
-  when(mockAppConfig.documentSearchFeatureEnabled).thenReturn(true)
   val NinoDocWithFeature: Document = asDocument(sut(ninSearchFormModel)(request, messages))
   val MrzDocWithFeature: Document = asDocument(sut(mrzSearchFormModel)(request, messages))
 
   "StatusCheckFailurePage" must {
     "have a status conflict title" in {
-      val e: Element = DocWithoutFeature.getElementById("status-check-failure-title")
+      val e: Element = NinoDocWithFeature.getElementById("status-check-failure-title")
       e.text() mustBe messages("status-check-failure.title")
     }
 
     "have paragraph text" in {
-      DocWithoutFeature.select(".govuk-body").text() mustBe messages("status-check-failure.listParagraph")
+      NinoDocWithFeature.select(".govuk-body").text() mustBe messages("status-check-failure.listParagraph")
     }
 
     "have the bullet points" when {
       List(1, 2).foreach { n =>
         s"is bullet point number $n" in {
-          DocWithoutFeature.getElementById(s"item$n").text() mustBe messages(s"status-check-failure.list-item$n")
+          NinoDocWithFeature.getElementById(s"item$n").text() mustBe messages(s"status-check-failure.list-item$n")
         }
       }
     }
 
     "have personal details heading" in {
-      val e: Element = DocWithoutFeature.getElementById("personal-details")
+      val e: Element = NinoDocWithFeature.getElementById("personal-details")
       e.text() mustBe messages("status-check-failure.heading2CustomerDetails")
     }
 
@@ -88,12 +84,8 @@ class StatusCheckFailureViewSpec extends ViewSpec {
       e.text() mustBe messages("status-check-failure-conflict.nino-link")
     }
 
-    "mrz and nino alt link do not show when feature disabled" in {
-      assertNotRenderedById(DocWithoutFeature, "alternate-search")
-    }
-
     "have the search again button" in {
-      assertRenderedByCssSelector(DocWithoutFeature, ".govuk-button")
+      assertRenderedByCssSelector(NinoDocWithFeature, ".govuk-button")
     }
   }
 }

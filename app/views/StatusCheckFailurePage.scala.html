@@ -38,9 +38,7 @@
         <li id="item2">@messages("status-check-failure.list-item2")</li>
     </ul>
 
-    @if(appConfig.documentSearchFeatureEnabled) {
-        @alternateText(query.isInstanceOf[NinoSearchFormModel])
-    }
+    @alternateText(query.isInstanceOf[NinoSearchFormModel])
 
     <h2 class="govuk-heading-m" id="personal-details">@messages("status-check-failure.heading2CustomerDetails")</h2>
 
