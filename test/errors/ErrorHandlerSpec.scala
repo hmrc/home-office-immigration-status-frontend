@@ -18,16 +18,16 @@ package controllers
 
 import play.api.http.Status._
 import play.api.test.Helpers.{contentAsString, status}
-import views.html.{AccessibilityStatementPage, ExternalErrorPage, InternalErrorPage}
+import views.html.{ExternalErrorPage, error_template}
 import errors.ErrorHandler
 
 import scala.concurrent.Future
-import play.api.i18n.{Lang, Messages, MessagesApi}
 
 class ErrorHandlerSpec extends ControllerSpec {
 
   lazy val sut = inject[ErrorHandler]
   lazy val errorPage = inject[ExternalErrorPage]
+  lazy val errorTemplate = inject[error_template]
 
   "resolveError" must {
     "show the InternalServerError for an unexpected error" in {
@@ -36,6 +36,17 @@ class ErrorHandlerSpec extends ControllerSpec {
 
       status(result) mustBe INTERNAL_SERVER_ERROR
       contentAsString(result) mustEqual errorPage()(request, messages).toString
+    }
+  }
+
+  "standardErrorTemplate" must {
+    "return the error_template" in {
+      sut.standardErrorTemplate("pageTitle", "heading", "message") mustEqual errorTemplate(
+        "pageTitle",
+        "heading",
+        "message",
+        None)(request, messages)
+
     }
   }
 }

@@ -25,7 +25,7 @@ import config.Countries.ISOCountry
 @Singleton
 class Countries @Inject()(environment: Environment) {
 
-  private def alpha2ToHmrcName: Map[String, String] = {
+  private[config] def alpha2ToHmrcName: Map[String, String] = {
     val file = "location-autocomplete-canonical-list.json"
     environment
       .resourceAsStream(file)
@@ -45,7 +45,7 @@ class Countries @Inject()(environment: Environment) {
       .getOrElse(throw new ConfigException.BadValue(file, "Alpha2 to Name map cannot be constructed."))
   }
 
-  private def iso3166CountryCodes: Seq[ISOCountry] = {
+  private[config] def iso3166CountryCodes: Seq[ISOCountry] = {
     val file = "ISO_3166-alpha3-alpha2-numeric.json"
     environment
       .resourceAsStream(file)
@@ -78,8 +78,8 @@ class Countries @Inject()(environment: Environment) {
 }
 
 object Countries {
-  private case class ISOCountry(name: String, alpha2: String, alpha3: String, numeric: String)
-  private object ISOCountry {
+  private[config] case class ISOCountry(name: String, alpha2: String, alpha3: String, numeric: String)
+  private[config] object ISOCountry {
     implicit val reads: Reads[ISOCountry] = Json.reads[ISOCountry]
   }
 }

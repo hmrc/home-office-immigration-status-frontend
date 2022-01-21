@@ -32,11 +32,8 @@ trait FormFieldMappings extends Constraints {
   protected def validNino: Constraint[String] =
     ValidateHelper.validateField("error.nino.required", "error.nino.invalid-format")(nino => Nino.isValid(nino))
 
-  private val maxNameLen = 64
-
   protected val normalizedText: Mapping[String] = of[String].transform(_.replaceAll("\\s", ""), identity)
   protected val uppercaseNormalizedText: Mapping[String] = normalizedText.transform(_.toUpperCase, identity)
-  protected val trimmedName: Mapping[String] = of[String].transform[String](_.trim.take(maxNameLen), identity)
 
   val allowedNameCharacters: Set[Char] = Set('-', '\'', ' ')
 

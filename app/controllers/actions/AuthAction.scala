@@ -49,9 +49,7 @@ class AuthActionImpl @Inject()(
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    val authPredicate =
-      if (appConfig.authorisedStrideGroup == "ANY") AuthProviders(PrivilegedApplication)
-      else Enrolment(appConfig.authorisedStrideGroup) and AuthProviders(PrivilegedApplication)
+    val authPredicate = getPredicate
 
     authorised(authPredicate)
       .retrieve(credentials and allEnrolments) {
@@ -72,6 +70,10 @@ class AuthActionImpl @Inject()(
       val continueUrl = CallOps.localFriendlyUrl(env, config)(request.uri, request.host)
       toStrideLogin(continueUrl)
   }
+
+  def getPredicate =
+    if (appConfig.authorisedStrideGroup == "ANY") AuthProviders(PrivilegedApplication)
+    else Enrolment(appConfig.authorisedStrideGroup) and AuthProviders(PrivilegedApplication)
 
 }
 
