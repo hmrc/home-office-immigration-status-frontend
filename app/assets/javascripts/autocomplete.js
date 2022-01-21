@@ -35,6 +35,7 @@ $(document).ready(function() {
     if (document.querySelectorAll('select[data-all-countries]').length > 0) {
         var selectDescribedByValues = $('select[data-all-countries]').attr('aria-describedby');
         $(".autocomplete__wrapper #value").attr('aria-describedby', selectDescribedByValues);
+        $("select#nationality-select").attr('aria-label', "Country of Nationality select");
     }
 
     if (document.querySelectorAll('select[data-non-uk-countries]').length > 0) {
