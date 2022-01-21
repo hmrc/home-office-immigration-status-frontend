@@ -30,6 +30,8 @@ import views.html.SearchByMrzView
 import views.html.components.inputDate
 import java.util.UUID
 
+import play.api.libs.json.JsNull
+
 class SearchByMrzViewSpec extends ViewSpec {
 
   val mockDobInput = mock(classOf[inputDate])
@@ -98,6 +100,15 @@ class SearchByMrzViewSpec extends ViewSpec {
 
     "have the search button" in {
       assertRenderedById(doc, "search-button")
+    }
+  }
+
+  val formWithErrors: Form[MrzSearchFormModel] = inject[SearchByMRZForm].apply().bind(JsNull, 200)
+  lazy val docWithErrors: Document = asDocument(sut(formWithErrors)(request, messages))
+
+  "SearchByMrzView with an error" must {
+    "display the error summary" in {
+      assertRenderedById(docWithErrors, "error-summary-title")
     }
   }
 }

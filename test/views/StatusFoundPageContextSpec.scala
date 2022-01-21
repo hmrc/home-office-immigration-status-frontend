@@ -397,4 +397,12 @@ class StatusFoundPageContextSpec
 
   }
 
+  "RichMessages.getOrElse" should {
+
+    "return the message if it exists" in {}
+
+    "return the default if the message key does not exist" in {}
+
+  }
+
 }

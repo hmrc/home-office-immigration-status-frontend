@@ -60,20 +60,4 @@ object RowWithActionViewModel {
       changeMessageKey,
       spanMessageKey)
 
-  def apply(
-    id: String,
-    messageKey: String,
-    data: String,
-    actionId: String,
-    fieldId: String,
-    formModel: SearchFormModel,
-  ): RowWithActionViewModel =
-    new RowWithActionViewModel(
-      id,
-      messageKey,
-      data,
-      changeInputUrl(fieldId, formModel),
-      actionId,
-      changeMessageKey,
-      messageKey)
 }
