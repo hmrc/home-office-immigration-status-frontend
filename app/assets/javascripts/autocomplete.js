@@ -79,4 +79,13 @@ $(document).ready(function() {
         }
     })
 
+
+    //======================================================
+    // Fix the loss of focus when nationality autocomplete JS runs
+    //======================================================
+
+    if (window.location.hash == '#nationality') {
+        document.getElementById("nationality").focus();
+    }
+
 });
