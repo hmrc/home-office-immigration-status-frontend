@@ -72,6 +72,15 @@ class NinoSearchFormSpec extends PlaySpec with OptionValues with ScalaCheckDrive
     .suchThat(_.exists(c => !c.isLetter && !formProvider.allowedNameCharacters.contains(c)))
     .suchThat(_.trim.nonEmpty)
 
+  val invalidNinoCharString: Gen[String] = Gen.asciiPrintableStr
+    .suchThat(_.trim.nonEmpty)
+    .suchThat(_.exists(c => !c.isLetterOrDigit))
+    .suchThat(_.trim.nonEmpty)
+
+  val invalidNinoFormat: Gen[String] = Gen.alphaNumStr
+    .suchThat(_.trim.nonEmpty)
+    .suchThat(!Nino.isValid(_))
+
   "form" must {
     "bind" when {
       "inputs are valid" in {
@@ -193,8 +202,18 @@ class NinoSearchFormSpec extends PlaySpec with OptionValues with ScalaCheckDrive
         form.bind(invalidInput).value must not be defined
         form.bind(invalidInput).errors mustBe List(FormError("nino", List("error.nino.required")))
       }
-      "nino is invalid" in {
-        forAll(invalidCharString) { nino =>
+
+      "nino contains invalid characters" in {
+        forAll(invalidNinoCharString) { nino =>
+          val invalidInput = input(nino = nino)
+
+          form.bind(invalidInput).value must not be defined
+          form.bind(invalidInput).errors mustBe List(FormError("nino", List("error.nino.invalid-characters")))
+        }
+      }
+
+      "nino does not match the correct format" in {
+        forAll(invalidNinoFormat) { nino =>
           val invalidInput = input(nino = nino)
 
           form.bind(invalidInput).value must not be defined

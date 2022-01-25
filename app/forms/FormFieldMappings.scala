@@ -29,19 +29,23 @@ import scala.util.Try
 
 trait FormFieldMappings extends Constraints {
 
-  protected val validNino: Mapping[Nino] = uppercaseNormalizedText
-    .verifying(containsOnlyNumbersAndLetters)
-    .verifying(isValidNino)
-    .transform(Nino.apply, (n: Nino) => n.nino)
+  protected def validNino: Mapping[Nino] =
+    nonEmptyText("nino")
+      .verifying(containsOnlyNumbersAndLetters)
+      .transform[String](normaliseText, identity)
+      .verifying(isValidNino)
+      .transform(Nino.apply, (n: Nino) => n.nino)
 
   protected def isValidNino: Constraint[String] =
-    ValidateHelper.validateField("error.nino.required", "error.nino.invalid-format")(nino => Nino.isValid(nino))
+    cond("error.nino.invalid-format")(nino => Nino.isValid(nino))
 
   private def containsOnlyNumbersAndLetters: Constraint[String] =
     cond("error.nino.invalid-characters")(_.forall(Character.isLetterOrDigit))
 
-  protected val normalizedText: Mapping[String] = of[String].transform(_.replaceAll("\\s", ""), identity)
+  protected val normalizedText: Mapping[String] = of[String].transform(normaliseText, identity)
   protected val uppercaseNormalizedText: Mapping[String] = normalizedText.transform(_.toUpperCase, identity)
+
+  protected val normaliseText: String => String = str => str.replaceAll("\\s", "")
 
   val allowedNameCharacters: Set[Char] = Set('-', '\'', ' ')
 
