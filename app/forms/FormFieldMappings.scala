@@ -31,8 +31,9 @@ trait FormFieldMappings extends Constraints {
 
   protected def validNino: Mapping[Nino] =
     nonEmptyText("nino")
-      .verifying(containsOnlyNumbersAndLetters)
       .transform[String](normaliseText, identity)
+      .verifying(containsOnlyNumbersAndLetters)
+      .transform[String](identity, identity)
       .verifying(isValidNino)
       .transform(Nino.apply, (n: Nino) => n.nino)
 

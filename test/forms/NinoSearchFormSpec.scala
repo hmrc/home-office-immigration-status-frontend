@@ -104,6 +104,21 @@ class NinoSearchFormSpec extends PlaySpec with OptionValues with ScalaCheckDrive
         }
       }
 
+      "nino has spaces" in {
+        val ninoWithSpaces = testNino.nino.toList match {
+          case c1 :: c2 :: c3 :: c4 :: c5 :: c6 :: c7 :: c8 :: c9 :: Nil => s"$c1$c2 $c3$c4 $c5$c6 $c7$c8 $c9"
+          case _ => testNino.nino
+        }
+
+        val validInput = input(nino=ninoWithSpaces)
+
+        val out = NinoSearchFormModel(testNino, "first", "last", yesterday)
+
+        val bound = form.bind(validInput)
+        bound.errors mustBe Nil
+        bound.value mustBe Some(out)
+      }
+
     }
 
     "fail to bind" when {
