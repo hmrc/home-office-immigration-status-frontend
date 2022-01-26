@@ -33,7 +33,7 @@ trait FormFieldMappings extends Constraints {
     nonEmptyText("nino")
       .transform[String](normaliseText, identity)
       .verifying(containsOnlyNumbersAndLetters)
-      .transform[String](identity, identity)
+      .transform[String](_.toUpperCase, identity)
       .verifying(isValidNino)
       .transform(Nino.apply, (n: Nino) => n.nino)
 
@@ -42,9 +42,6 @@ trait FormFieldMappings extends Constraints {
 
   private def containsOnlyNumbersAndLetters: Constraint[String] =
     cond("error.nino.invalid-characters")(_.forall(Character.isLetterOrDigit))
-
-  protected val normalizedText: Mapping[String] = of[String].transform(normaliseText, identity)
-  protected val uppercaseNormalizedText: Mapping[String] = normalizedText.transform(_.toUpperCase, identity)
 
   protected val normaliseText: String => String = str => str.replaceAll("\\s", "")
 
