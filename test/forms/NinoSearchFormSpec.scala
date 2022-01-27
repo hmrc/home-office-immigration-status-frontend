@@ -72,6 +72,15 @@ class NinoSearchFormSpec extends PlaySpec with OptionValues with ScalaCheckDrive
     .suchThat(_.exists(c => !c.isLetter && !formProvider.allowedNameCharacters.contains(c)))
     .suchThat(_.trim.nonEmpty)
 
+  val invalidNinoCharString: Gen[String] = Gen.asciiPrintableStr
+    .suchThat(_.trim.nonEmpty)
+    .suchThat(_.exists(c => !c.isLetterOrDigit))
+    .suchThat(_.trim.nonEmpty)
+
+  val invalidNinoFormat: Gen[String] = Gen.alphaNumStr
+    .suchThat(_.trim.nonEmpty)
+    .suchThat(!Nino.isValid(_))
+
   "form" must {
     "bind" when {
       "inputs are valid" in {
@@ -93,6 +102,33 @@ class NinoSearchFormSpec extends PlaySpec with OptionValues with ScalaCheckDrive
           bound.value mustBe Some(out)
           bound.errors mustBe Nil
         }
+      }
+
+      "nino has spaces" in {
+        val ninoWithSpaces = testNino.nino.toList match {
+          case c1 :: c2 :: c3 :: c4 :: c5 :: c6 :: c7 :: c8 :: c9 :: Nil => s"$c1$c2 $c3$c4 $c5$c6 $c7$c8 $c9"
+          case _                                                         => testNino.nino
+        }
+
+        val validInput = input(nino = ninoWithSpaces)
+
+        val out = NinoSearchFormModel(testNino, "first", "last", yesterday)
+
+        val bound = form.bind(validInput)
+        bound.errors mustBe Nil
+        bound.value mustBe Some(out)
+      }
+
+      "nino is lowercase" in {
+        val lowercaseNino = testNino.nino.toLowerCase
+
+        val validInput = input(nino = lowercaseNino)
+
+        val out = NinoSearchFormModel(testNino, "first", "last", yesterday)
+
+        val bound = form.bind(validInput)
+        bound.errors mustBe Nil
+        bound.value mustBe Some(out)
       }
 
     }
@@ -193,8 +229,18 @@ class NinoSearchFormSpec extends PlaySpec with OptionValues with ScalaCheckDrive
         form.bind(invalidInput).value must not be defined
         form.bind(invalidInput).errors mustBe List(FormError("nino", List("error.nino.required")))
       }
-      "nino is invalid" in {
-        forAll(invalidCharString) { nino =>
+
+      "nino contains invalid characters" in {
+        forAll(invalidNinoCharString) { nino =>
+          val invalidInput = input(nino = nino)
+
+          form.bind(invalidInput).value must not be defined
+          form.bind(invalidInput).errors mustBe List(FormError("nino", List("error.nino.invalid-characters")))
+        }
+      }
+
+      "nino does not match the correct format" in {
+        forAll(invalidNinoFormat) { nino =>
           val invalidInput = input(nino = nino)
 
           form.bind(invalidInput).value must not be defined

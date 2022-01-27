@@ -28,9 +28,7 @@ class SearchByNinoForm extends FormFieldMappings {
 
   def apply(): Form[NinoSearchFormModel] = Form[NinoSearchFormModel] {
     mapping(
-      "nino" -> uppercaseNormalizedText
-        .verifying(validNino)
-        .transform(Nino.apply, (n: Nino) => n.nino),
+      "nino"        -> validNino,
       "givenName"   -> validName("givenName", 1),
       "familyName"  -> validName("familyName", 2),
       "dateOfBirth" -> dobFieldsMapping
