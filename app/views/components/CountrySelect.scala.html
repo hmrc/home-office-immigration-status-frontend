@@ -32,7 +32,7 @@
     errorMessage = errors,
     label = Label(content = Text(messages("lookup.nationality.label"))),
     hint = Some(Hint(content = Text(messages("lookup.nationality.hint")))),
-    items = Seq(SelectItem(value = Some(" "), text = "")) ++
+    items = Seq(SelectItem(value = Some(" "), text = "", attributes = Map("label" -> " "))) ++
         countries.countries.map(country =>
             SelectItem(
                 value = Some(country.alpha3),
