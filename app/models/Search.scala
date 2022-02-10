@@ -69,10 +69,10 @@ object MrzSearch {
   val BiometricResidencyPermit = "BRP"
 
   def documentTypeToMessageKey(documentType: String)(implicit messages: Messages): String = documentType match {
-    case "PASSPORT" => messages("lookup.passport")
-    case "NAT"      => messages("lookup.euni")
-    case "BRC"      => messages("lookup.res.card")
-    case "BRP"      => messages("lookup.res.permit")
-    case docType    => docType
+    case Passport                     => messages("lookup.passport")
+    case EuropeanNationalIdentityCard => messages("lookup.euni")
+    case BiometricResidencyCard       => messages("lookup.res.card")
+    case BiometricResidencyPermit     => messages("lookup.res.permit")
+    case docType                      => docType
   }
 }
