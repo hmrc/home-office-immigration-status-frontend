@@ -18,7 +18,6 @@ package filters
 
 import javax.inject.Inject
 import akka.stream.Materializer
-import play.api.http.{DefaultHttpFilters, EnabledFilters}
 import play.api.mvc._
 import config.AppConfig
 

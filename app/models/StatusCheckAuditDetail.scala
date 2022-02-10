@@ -16,7 +16,7 @@
 
 package models
 
-import play.api.libs.json.{Format, Json, Writes}
+import play.api.libs.json.{Json, Writes}
 
 case class StatusCheckAuditDetail(statusCode: Int, search: Search, response: StatusCheckResponse)
 

@@ -58,7 +58,7 @@ class AuthActionImpl @Inject()(
           Logger(getClass).info(s"User $authProviderId has been authorized with $userRoles")
           block(request)
 
-        case None ~ enrollments =>
+        case None ~ _ =>
           Future.successful(Forbidden)
       }
       .recover(handleFailure(request))

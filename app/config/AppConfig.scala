@@ -16,12 +16,12 @@
 
 package config
 
-import play.api.Configuration
+import play.api.{Configuration, Environment, Mode}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import com.google.inject.{ImplementedBy, Inject, Singleton}
+import com.google.inject.{Inject, Singleton}
 
 @Singleton
-class AppConfig @Inject()(servicesConfig: ServicesConfig, val configuration: Configuration) {
+class AppConfig @Inject()(servicesConfig: ServicesConfig, val configuration: Configuration, env: Environment) {
 
   val appName: String = servicesConfig.getString("appName")
   val shuttered: Boolean = configuration.getOptional[Boolean]("isShuttered").getOrElse(false)
@@ -34,4 +34,8 @@ class AppConfig @Inject()(servicesConfig: ServicesConfig, val configuration: Con
   val helpdeskUrl: String = configuration.get[String]("it.helpdesk.url")
   val httpHeaderCacheControl: String = configuration.get[String]("httpHeaders.cacheControl")
   val mongoEncryptionKey = configuration.get[String]("mongodb.encryption.key")
+
+  val isDevEnv =
+    if (env.mode.equals(Mode.Test)) false
+    else configuration.get[String]("run.mode").forall(Mode.Dev.toString.equals)
 }

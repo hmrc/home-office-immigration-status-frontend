@@ -18,10 +18,8 @@ package forms
 
 import play.api.data.Forms.{of, optional, text, tuple}
 import play.api.data.{Form, FormError, Mapping}
-import play.api.data.format.Formats._
 import play.api.data.validation._
 import uk.gov.hmrc.domain.Nino
-import forms.helpers.ValidateHelper
 import forms.helpers.ValidateHelper.cond
 
 import java.time.LocalDate

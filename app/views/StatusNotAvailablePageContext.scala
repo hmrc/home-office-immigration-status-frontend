@@ -19,7 +19,7 @@ package views
 import config.Countries
 import play.api.i18n.Messages
 import viewmodels.{RowViewModel => Row}
-import models.{MrzSearchFormModel, NinoSearchFormModel, SearchFormModel, StatusCheckResult}
+import models.{MrzSearch, MrzSearchFormModel, NinoSearchFormModel, SearchFormModel, StatusCheckResult}
 
 case class StatusNotAvailablePageContext(query: SearchFormModel, result: StatusCheckResult) {
 
@@ -32,7 +32,7 @@ case class StatusNotAvailablePageContext(query: SearchFormModel, result: StatusC
           Row("dob", "generic.dob", DateFormat.format(messages.lang.locale)(q.dateOfBirth))
         )
       case q: MrzSearchFormModel =>
-        val documentTypeText = StatusNotAvailablePageContext.documentTypeToMessageKey(q.documentType)
+        val documentTypeText = MrzSearch.documentTypeToMessageKey(q.documentType)
         Seq(
           Row("documentType", "lookup.identity.label", documentTypeText),
           Row("documentNumber", "lookup.mrz.label", q.documentNumber),
@@ -41,14 +41,4 @@ case class StatusNotAvailablePageContext(query: SearchFormModel, result: StatusC
         )
     }
 
-}
-
-object StatusNotAvailablePageContext {
-  def documentTypeToMessageKey(documentType: String)(implicit messages: Messages): String = documentType match {
-    case "PASSPORT" => messages("lookup.passport")
-    case "NAT"      => messages("lookup.euni")
-    case "BRC"      => messages("lookup.res.card")
-    case "BRP"      => messages("lookup.res.permit")
-    case docType    => docType
-  }
 }

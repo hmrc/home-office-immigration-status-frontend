@@ -16,10 +16,9 @@
 
 package repositories
 
-import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
 
-import com.google.inject.{ImplementedBy, Inject, Singleton}
+import com.google.inject.{Inject, Singleton}
 import config.AppConfig
 import models.FormQueryModel
 import org.mongodb.scala.MongoCollection

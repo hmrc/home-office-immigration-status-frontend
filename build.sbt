@@ -7,7 +7,7 @@ lazy val scoverageSettings = {
     // Semicolon-separated list of regexes matching classes to exclude
     ScoverageKeys.coverageExcludedPackages := "<empty>;.*BuildInfo;.*Routes;.*RoutesPrefix;.*Filters?;MicroserviceAuditConnector;" +
       "Module;GraphiteStartUp;Reverse.*",
-    ScoverageKeys.coverageMinimum := 80.00,
+    ScoverageKeys.coverageMinimum := 90.00,
     ScoverageKeys.coverageFailOnMinimum := false,
     ScoverageKeys.coverageHighlighting := true,
     parallelExecution in Test := false

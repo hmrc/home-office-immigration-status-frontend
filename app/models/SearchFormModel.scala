@@ -20,8 +20,6 @@ import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.domain.Nino
 import java.time.{LocalDate, ZoneId}
 
-import play.api.i18n.Messages
-
 sealed trait SearchFormModel {
   def toSearch(timeRangeInMonths: Int): Search
 }
@@ -71,13 +69,5 @@ object MrzSearchFormModel {
     val startDate = LocalDate.now(ZoneId.of("UTC")).minusMonths(timeRangeInMonths)
     val endDate = LocalDate.now(ZoneId.of("UTC"))
     StatusCheckRange(Some(startDate), Some(endDate))
-  }
-
-  def documentTypeToMessageKey(documentType: String)(implicit messages: Messages): String = documentType match {
-    case "PASSPORT" => messages("lookup.passport")
-    case "NAT"      => messages("lookup.euni")
-    case "BRC"      => messages("lookup.res.card")
-    case "BRP"      => messages("lookup.res.permit")
-    case docType    => docType
   }
 }

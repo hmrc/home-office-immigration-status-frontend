@@ -20,10 +20,10 @@ import com.google.inject.Inject
 import config.Countries
 import forms.SearchByMRZForm._
 import models.MrzSearchFormModel
-import play.api.data.{Form, FormError}
+import play.api.data.Form
 import play.api.data.Forms.mapping
-
 import javax.inject.Singleton
+import models.MrzSearch.{BiometricResidencyCard, BiometricResidencyPermit, EuropeanNationalIdentityCard, Passport}
 
 @Singleton
 class SearchByMRZForm @Inject()(countries: Countries) extends FormFieldMappings {
@@ -50,6 +50,7 @@ class SearchByMRZForm @Inject()(countries: Countries) extends FormFieldMappings 
 }
 
 object SearchByMRZForm {
-  final val AllowedDocumentTypes = Seq("PASSPORT", "NAT", "BRC", "BRP")
+  final val AllowedDocumentTypes =
+    Seq(Passport, EuropeanNationalIdentityCard, BiometricResidencyCard, BiometricResidencyPermit)
   final val DocumentNumberMaxLength = 30
 }

@@ -21,11 +21,11 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.MessagesApi
 import play.api.test.Injecting
 
-class SearchFormModelSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
+class MrzSearchSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
 
   lazy implicit val messages = inject[MessagesApi].preferred(Seq.empty)
 
-  "MrzSearchFormModel.documentTypeToMessageKey" should {
+  "MrzSearch.documentTypeToMessageKey" should {
     "return the relevant message" when {
 
       Seq(
@@ -37,7 +37,7 @@ class SearchFormModelSpec extends PlaySpec with GuiceOneAppPerSuite with Injecti
       ).foreach {
         case (docType, message) =>
           s"doc type is $docType" in {
-            MrzSearchFormModel.documentTypeToMessageKey(docType) mustEqual message
+            MrzSearch.documentTypeToMessageKey(docType) mustEqual message
           }
       }
     }
