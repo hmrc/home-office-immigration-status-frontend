@@ -36,11 +36,10 @@ class AuthActionSpec extends ControllerSpec with AuthRedirects {
   lazy val parser: BodyParsers.Default = inject[BodyParsers.Default]
   val mockAppConfig = mock(classOf[AppConfig])
 
-  lazy val sut = new AuthActionImpl(env, connector, mockAppConfig, parser)
+  lazy val sut = new AuthActionImpl(env, connector, mockAppConfig, parser, config)
 
   override protected def beforeEach(): Unit = {
     reset(mockAppConfig)
-    when(mockAppConfig.configuration).thenReturn(appConfig.configuration)
     super.beforeEach()
   }
 

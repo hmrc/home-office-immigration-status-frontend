@@ -17,10 +17,9 @@
 package controllers.actions
 
 import com.google.inject.{ImplementedBy, Inject}
-import play.api.Logger
+import play.api.{Configuration, Environment, Logger}
 import play.api.mvc.Results.Forbidden
 import play.api.mvc._
-import play.api.Environment
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Credentials
@@ -38,11 +37,10 @@ class AuthActionImpl @Inject()(
   val env: Environment,
   override val authConnector: AuthConnector,
   appConfig: AppConfig,
-  val parser: BodyParsers.Default
+  val parser: BodyParsers.Default,
+  val config: Configuration
 )(implicit val executionContext: ExecutionContext)
     extends AuthAction with AuthorisedFunctions with AuthRedirects {
-
-  val config = appConfig.configuration
 
   override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] = {
 
