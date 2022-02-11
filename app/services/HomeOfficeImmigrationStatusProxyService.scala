@@ -19,10 +19,10 @@ package services
 import java.util.UUID
 
 import javax.inject.{Inject, Singleton}
-import models.{MrzSearch, NinoSearch, Search, SearchFormModel, StatusCheckError, StatusCheckResponse, StatusCheckResponseWithStatus, StatusCheckSuccessfulResponse}
+import models.{MrzSearch, NinoSearch, Search, SearchFormModel, StatusCheckResponseWithStatus}
 import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
-import connectors.HomeOfficeImmigrationStatusProxyConnector
+import connectors.{Constants, HomeOfficeImmigrationStatusProxyConnector}
 import config.AppConfig
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,8 +32,6 @@ class HomeOfficeImmigrationStatusProxyService @Inject()(
   connector: HomeOfficeImmigrationStatusProxyConnector,
   auditService: AuditService) {
 
-  private val HEADER_X_CORRELATION_ID = "X-Correlation-Id"
-
   def search(query: SearchFormModel)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext,
@@ -41,7 +39,7 @@ class HomeOfficeImmigrationStatusProxyService @Inject()(
     appConfig: AppConfig): Future[StatusCheckResponseWithStatus] = {
 
     val correlationId: String = UUID.randomUUID().toString
-    val headerCarrier = hc.withExtraHeaders(HEADER_X_CORRELATION_ID -> correlationId)
+    val headerCarrier = hc.withExtraHeaders(Constants.HEADER_X_CORRELATION_ID -> correlationId)
     val searchFromRequest = query.toSearch(appConfig.defaultQueryTimeRangeInMonths)
 
     sendRequestAuditingResults(searchFromRequest) {

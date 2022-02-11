@@ -16,7 +16,7 @@
 
 package views
 
-import models.{EEACountries, ImmigrationStatus, MrzSearchFormModel, NinoSearchFormModel, StatusCheckResult}
+import models.{EEACountries, ImmigrationStatus, MrzSearch, MrzSearchFormModel, NinoSearchFormModel, StatusCheckResult}
 import org.mockito.ArgumentMatchers.{any, matches}
 import org.mockito.Mockito._
 import org.scalatest.matchers.should.Matchers
@@ -258,7 +258,7 @@ class StatusFoundPageContextSpec
         (
           "documentType",
           "lookup.identity.label",
-          MrzSearchFormModel.documentTypeToMessageKey(mrzQuery.documentType)(realMessages)),
+          MrzSearch.documentTypeToMessageKey(mrzQuery.documentType)(realMessages)),
         ("documentNumber", "lookup.mrz.label", mrzQuery.documentNumber),
         ("nationality", "generic.nationality", countries.getCountryNameFor(mrzContext.result.nationality)),
         ("dob", "generic.dob", mrzContext.result.dobFormatted(realMessages.lang.locale))

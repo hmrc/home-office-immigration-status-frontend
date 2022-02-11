@@ -20,7 +20,7 @@ import config.Countries
 import play.api.i18n.Messages
 import viewmodels.{RowViewModel => Row}
 import views.StatusFoundPageContext.RichMessages
-import models.{EEACountries, ImmigrationStatus, MrzSearchFormModel, NinoSearchFormModel, SearchFormModel, StatusCheckResult}
+import models.{EEACountries, ImmigrationStatus, MrzSearch, MrzSearchFormModel, NinoSearchFormModel, SearchFormModel, StatusCheckResult}
 import play.api.{Logger, Logging}
 
 final case class StatusFoundPageContext(query: SearchFormModel, result: StatusCheckResult) {
@@ -49,7 +49,7 @@ final case class StatusFoundPageContext(query: SearchFormModel, result: StatusCh
         Row("dob", "generic.dob", result.dobFormatted(messages.lang.locale))
       )
     case q: MrzSearchFormModel =>
-      val documentTypeText = MrzSearchFormModel.documentTypeToMessageKey(q.documentType)
+      val documentTypeText = MrzSearch.documentTypeToMessageKey(q.documentType)
       Seq(
         Row("documentType", "lookup.identity.label", documentTypeText),
         Row("documentNumber", "lookup.mrz.label", q.documentNumber),

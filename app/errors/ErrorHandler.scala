@@ -18,11 +18,11 @@ package errors
 
 import com.google.inject.name.Named
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND}
-import play.api.i18n.{Messages, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.Results._
 import play.api.mvc.{Request, RequestHeader, Result}
 import play.api.{Configuration, Environment, Mode}
-import play.twirl.api.{Html, HtmlFormat}
+import play.twirl.api.Html
 import uk.gov.hmrc.auth.core.{InsufficientEnrolments, NoActiveSession}
 import config.AppConfig
 import views.html.{ExternalErrorPage, ShutteringPage, error_template}
@@ -44,13 +44,10 @@ class ErrorHandler @Inject()(
   externalErrorPage: ExternalErrorPage,
   errorTemplate: error_template,
   shutteringPage: ShutteringPage,
-  @Named("appName") val appName: String
-)(implicit val config: Configuration, ec: ExecutionContext, appConfig: AppConfig)
+  @Named("appName") val appName: String,
+  appConfig: AppConfig,
+  val config: Configuration)(implicit ec: ExecutionContext)
     extends FrontendErrorHandler with AuthRedirects with ErrorAuditing with Logging {
-
-  private val isDevEnv =
-    if (env.mode.equals(Mode.Test)) false
-    else config.get[String]("run.mode").forall(Mode.Dev.toString.equals)
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
     auditClientError(request, statusCode, message)
@@ -64,7 +61,8 @@ class ErrorHandler @Inject()(
     auditServerError(request, exception)
     implicit val r: Request[String] = Request(request, "")
     exception match {
-      case _: NoActiveSession        => toGGLogin(if (isDevEnv) s"http://${request.host}${request.uri}" else s"${request.uri}")
+      case _: NoActiveSession =>
+        toGGLogin(if (appConfig.isDevEnv) s"http://${request.host}${request.uri}" else s"${request.uri}")
       case _: InsufficientEnrolments => Forbidden
       case e =>
         logger.error(e.getMessage, e)

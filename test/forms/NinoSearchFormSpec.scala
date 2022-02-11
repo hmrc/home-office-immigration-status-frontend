@@ -74,7 +74,7 @@ class NinoSearchFormSpec extends PlaySpec with OptionValues with ScalaCheckDrive
 
   val invalidNinoCharString: Gen[String] = Gen.asciiPrintableStr
     .suchThat(_.trim.nonEmpty)
-    .suchThat(_.exists(c => !c.isLetterOrDigit))
+    .suchThat(_.exists(c => !c.isLetterOrDigit && !c.isWhitespace))
     .suchThat(_.trim.nonEmpty)
 
   val invalidNinoFormat: Gen[String] = Gen.alphaNumStr

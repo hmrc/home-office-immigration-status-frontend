@@ -17,17 +17,14 @@
 package connectors
 
 import java.net.URL
-import java.util.UUID
 
 import javax.inject.{Inject, Singleton}
 import com.codahale.metrics.MetricRegistry
 import com.kenshoo.play.metrics.Metrics
-import play.api.libs.json.{Json, Writes}
 import uk.gov.hmrc.agent.kenshoo.monitoring.HttpAPIMonitor
-import models.{MrzSearch, NinoSearch, StatusCheckError, StatusCheckResponse, StatusCheckResponseWithStatus, StatusCheckSuccessfulResponse}
+import models.{MrzSearch, NinoSearch, StatusCheckResponseWithStatus}
 import config.AppConfig
 import uk.gov.hmrc.http._
-import uk.gov.hmrc.http.HttpReads.Implicits._
 import play.api.Logging
 import connectors.StatusCheckResponseHttpParser._
 

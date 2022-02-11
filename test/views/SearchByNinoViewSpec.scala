@@ -52,7 +52,7 @@ class SearchByNinoViewSpec extends ViewSpec {
 
   val form: Form[NinoSearchFormModel] = inject[SearchByNinoForm].apply()
 
-  def createDocument(documentSearchEnabled: Boolean): Document = {
+  def createDocument: Document = {
     reset(mockDobInput)
     when(mockDobInput.apply(any(), any(), any(), any(), any(), any(), any())(any()))
       .thenReturn(Html(fakeDobInput))
@@ -62,7 +62,7 @@ class SearchByNinoViewSpec extends ViewSpec {
   }
 
   "With the document search enabled, the view" must {
-    lazy val doc = createDocument(true)
+    lazy val doc = createDocument
 
     "have the look up title" in {
       val e: Element = doc.getElementsByTag("h1").first()

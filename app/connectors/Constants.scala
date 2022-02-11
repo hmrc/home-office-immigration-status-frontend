@@ -14,23 +14,8 @@
  * limitations under the License.
  */
 
-package forms
+package connectors
 
-import models.NinoSearchFormModel
-import play.api.data.Form
-import play.api.data.Forms._
-
-import javax.inject.Singleton
-
-@Singleton
-class SearchByNinoForm extends FormFieldMappings {
-
-  def apply(): Form[NinoSearchFormModel] = Form[NinoSearchFormModel] {
-    mapping(
-      "nino"        -> validNino,
-      "givenName"   -> validName("givenName", 1),
-      "familyName"  -> validName("familyName", 2),
-      "dateOfBirth" -> dobFieldsMapping
-    )(NinoSearchFormModel.apply)(NinoSearchFormModel.unapply)
-  }
+object Constants {
+  val HEADER_X_CORRELATION_ID = "X-Correlation-Id"
 }

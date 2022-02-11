@@ -17,8 +17,6 @@
 package models
 
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.domain.Nino
-import java.time.{LocalDate, ZoneId}
 import crypto.EncryptedValue
 
 sealed trait EncryptedSearchFormModel

@@ -16,22 +16,27 @@
 
 package config
 
-import play.api.Configuration
+import play.api.{Configuration, Environment, Mode}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import com.google.inject.{ImplementedBy, Inject, Singleton}
+import com.google.inject.{Inject, Singleton}
 
 @Singleton
-class AppConfig @Inject()(servicesConfig: ServicesConfig, val configuration: Configuration) {
+class AppConfig @Inject()(servicesConfig: ServicesConfig, configuration: Configuration, env: Environment) {
 
   val appName: String = servicesConfig.getString("appName")
-  val shuttered: Boolean = configuration.getOptional[Boolean]("isShuttered").getOrElse(false)
+  val shuttered: Boolean = servicesConfig.getBoolean("isShuttered")
   val authBaseUrl: String = servicesConfig.baseUrl("auth")
   val homeOfficeImmigrationStatusProxyBaseUrl: String = servicesConfig.baseUrl("home-office-immigration-status-proxy")
   val mongoSessionExpiration: Int = servicesConfig.getInt("mongodb.ttl.seconds")
   val authorisedStrideGroup: String = servicesConfig.getString("authorisedStrideGroup")
   val defaultQueryTimeRangeInMonths: Int = servicesConfig.getInt("defaultQueryTimeRangeInMonths")
   val gtmId: String = servicesConfig.getString("google-tag-manager.id")
-  val helpdeskUrl: String = configuration.get[String]("it.helpdesk.url")
-  val httpHeaderCacheControl: String = configuration.get[String]("httpHeaders.cacheControl")
-  val mongoEncryptionKey = configuration.get[String]("mongodb.encryption.key")
+  val helpdeskUrl: String = servicesConfig.getString("it.helpdesk.url")
+  val httpHeaderCacheControl: String = servicesConfig.getString("httpHeaders.cacheControl")
+  val mongoEncryptionKey = servicesConfig.getString("mongodb.encryption.key")
+
+  val isDevEnv =
+    if (env.mode.equals(Mode.Test)) false
+    else configuration.getOptional[String]("run.mode").forall(Mode.Dev.toString.equals)
+
 }

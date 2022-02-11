@@ -93,22 +93,4 @@ class StatusNotAvailablePageContextSpec
     }
   }
 
-  "documentTypeToMessageKey" should {
-    "populate the document type correctly" when {
-
-      Seq(
-        ("PASSPORT", realMessages("lookup.passport")),
-        ("NAT", realMessages("lookup.euni")),
-        ("BRC", realMessages("lookup.res.card")),
-        ("BRP", realMessages("lookup.res.permit"))
-      ).foreach {
-        case (docType, text) =>
-          s"documentType is set to $docType" in {
-            StatusNotAvailablePageContext.documentTypeToMessageKey(docType)(realMessages) mustEqual text
-          }
-      }
-
-    }
-  }
-
 }

@@ -18,11 +18,9 @@ package controllers
 
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
-import config.AppConfig
 import controllers.actions.AccessAction
 import forms.SearchByNinoForm
 import models.NinoSearchFormModel
-import play.api.data.FormError
 import views.html._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import services.SessionCacheService
@@ -38,7 +36,7 @@ class SearchByNinoController @Inject()(
   formProvider: SearchByNinoForm,
   searchByNinoView: SearchByNinoView,
   sessionCacheService: SessionCacheService
-)(implicit val appConfig: AppConfig, ec: ExecutionContext)
+)(implicit ec: ExecutionContext)
     extends FrontendController(controllerComponents) with I18nSupport {
 
   def onPageLoad(clearForm: Boolean): Action[AnyContent] =

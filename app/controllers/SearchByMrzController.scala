@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.AppConfig
 import controllers.actions.AccessAction
 import forms.SearchByMRZForm
 import models.MrzSearchFormModel
@@ -25,7 +24,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, 
 import services.SessionCacheService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.SearchByMrzView
-import errors.ErrorHandler
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,9 +34,8 @@ class SearchByMrzController @Inject()(
   view: SearchByMrzView,
   sessionCacheService: SessionCacheService,
   formProvider: SearchByMRZForm,
-  cc: MessagesControllerComponents,
-  errorHandler: ErrorHandler
-)(implicit val appConfig: AppConfig, ec: ExecutionContext)
+  cc: MessagesControllerComponents
+)(implicit ec: ExecutionContext)
     extends FrontendController(cc) with I18nSupport {
 
   def onPageLoad(clearForm: Boolean): Action[AnyContent] =

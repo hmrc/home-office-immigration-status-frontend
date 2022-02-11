@@ -25,7 +25,6 @@ import config.AppConfig
 
 import scala.concurrent.{ExecutionContext, Future}
 import java.time.LocalDateTime
-import play.api.libs.json.Json
 import play.api.Logging
 
 @Singleton
