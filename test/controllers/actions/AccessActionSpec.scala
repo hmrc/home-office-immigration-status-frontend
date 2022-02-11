@@ -23,6 +23,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Results.Ok
 import play.api.mvc.{ActionFunction, Request, Result}
+import repositories.SessionCacheRepository
 
 import scala.concurrent.Future
 
@@ -39,7 +40,8 @@ class AccessActionSpec extends ControllerSpec {
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
       bind[AuthAction].toInstance(mockAuthAction),
-      bind[ShutterAction].toInstance(mockShutterAction)
+      bind[ShutterAction].toInstance(mockShutterAction),
+      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
     )
     .build()
 

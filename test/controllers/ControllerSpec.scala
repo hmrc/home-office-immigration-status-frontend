@@ -29,6 +29,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.{FakeRequest, Injecting}
+import repositories.SessionCacheRepository
 import services.SessionCacheService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -42,6 +43,7 @@ trait ControllerSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting wi
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
       bind[AccessAction].to[FakeAccessAction],
+      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository),
       bind[SessionCacheService].toInstance(mockSessionCacheService)
     )
     .build()
@@ -52,6 +54,7 @@ trait ControllerSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting wi
   lazy val messages: Messages = inject[MessagesApi].preferred(Seq.empty)
   lazy val appConfig: AppConfig = inject[AppConfig]
   implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+  val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
   val mockSessionCacheService: SessionCacheService = mock(classOf[SessionCacheService])
   implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
 }

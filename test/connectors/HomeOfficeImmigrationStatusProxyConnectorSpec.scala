@@ -21,6 +21,7 @@ import org.mockito.Mockito._
 import utils.NinoGenerator
 import java.time.{LocalDate, ZoneId}
 import java.net.URL
+
 import models._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
@@ -33,13 +34,13 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import config.AppConfig
 import uk.gov.hmrc.http._
+
 import scala.concurrent.{ExecutionContext, Future}
 import play.api.libs.json.Writes
-import services.SessionCacheService
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.mvc.AnyContentAsEmpty
-import scala.util.Try
-import org.mockito.internal.util.reflection.Whitebox
+import repositories.SessionCacheRepository
 
 class HomeOfficeImmigrationStatusProxyConnectorSpec
     extends PlaySpec with GuiceOneAppPerSuite with Injecting with BeforeAndAfterEach {
@@ -47,21 +48,21 @@ class HomeOfficeImmigrationStatusProxyConnectorSpec
   val mockAppConfig = mock(classOf[AppConfig])
   when(mockAppConfig.homeOfficeImmigrationStatusProxyBaseUrl).thenReturn("http://localhost:1234")
   val mockHttpClient = mock(classOf[HttpClient])
-  val mockSessionCacheService: SessionCacheService = mock(classOf[SessionCacheService])
+  val mockSessionCacheService: SessionCacheRepository = mock(classOf[SessionCacheRepository])
+
+  override implicit lazy val app: Application = new GuiceApplicationBuilder()
+    .overrides(
+      bind[HttpClient].toInstance(mockHttpClient),
+      bind[AppConfig].toInstance(mockAppConfig),
+      bind[SessionCacheRepository].toInstance(mockSessionCacheService)
+    )
+    .build()
 
   override def beforeEach(): Unit = {
     reset(mockHttpClient)
     reset(mockAppConfig)
     super.beforeEach()
   }
-
-  override implicit lazy val app: Application = new GuiceApplicationBuilder()
-    .overrides(
-      bind[HttpClient].toInstance(mockHttpClient),
-      bind[AppConfig].toInstance(mockAppConfig),
-      bind[SessionCacheService].toInstance(mockSessionCacheService)
-    )
-    .build()
 
   implicit val fakeReq: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
   implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(fakeReq)

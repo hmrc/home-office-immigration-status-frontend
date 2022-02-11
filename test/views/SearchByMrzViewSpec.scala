@@ -31,6 +31,7 @@ import views.html.components.inputDate
 import java.util.UUID
 
 import play.api.libs.json.JsNull
+import repositories.SessionCacheRepository
 
 class SearchByMrzViewSpec extends ViewSpec {
 
@@ -39,6 +40,7 @@ class SearchByMrzViewSpec extends ViewSpec {
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
       bind[inputDate].toInstance(mockDobInput),
+      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
     )
     .build()
 

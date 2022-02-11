@@ -19,8 +19,8 @@ package controllers
 import controllers.actions.AccessAction
 import forms.SearchByNinoForm
 import models.{FormQueryModel, NinoSearchFormModel}
-
 import java.time.LocalDate
+
 import org.mockito.ArgumentMatchers.{any, refEq, eq => is}
 import org.mockito.Mockito._
 import play.api.Application
@@ -30,6 +30,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
+import repositories.SessionCacheRepository
 import services.SessionCacheService
 import utils.NinoGenerator.generateNino
 import views.html.SearchByNinoView
@@ -42,6 +43,7 @@ class SearchByNinoControllerSpec extends ControllerSpec {
     .overrides(
       bind[AccessAction].to[FakeAccessAction],
       bind[SearchByNinoView].toInstance(mockView),
+      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository),
       bind[SessionCacheService].toInstance(mockSessionCacheService)
     )
     .build()

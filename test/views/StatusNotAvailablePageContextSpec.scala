@@ -25,18 +25,29 @@ import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
-import play.api.mvc.Call
 import utils.NinoGenerator
 import viewmodels.RowViewModel
-
 import java.time.LocalDate
 import java.util.Locale
+
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import play.api.Application
+import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Injecting
+import repositories.SessionCacheRepository
 
 class StatusNotAvailablePageContextSpec
     extends AnyWordSpecLike with Matchers with OptionValues with BeforeAndAfterEach with GuiceOneAppPerSuite
     with Injecting {
+
+  val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
+
+  override implicit lazy val app: Application = new GuiceApplicationBuilder()
+    .overrides(
+      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
+    )
+    .build()
 
   lazy val realMessages: Messages = inject[MessagesApi].preferred(Seq.empty[Lang])
   val mockMessages: Messages = mock(classOf[MessagesImpl], RETURNS_DEEP_STUBS)

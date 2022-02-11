@@ -30,6 +30,9 @@ import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.{Filters, FindOneAndReplaceOptions}
 import org.mongodb.scala.result.DeleteResult
 import org.scalatest.BeforeAndAfterEach
+import play.api.Application
+import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import utils.NinoGenerator
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -37,6 +40,14 @@ import scala.concurrent.Future
 
 class SearchableWithMongoCollectionSpec
     extends PlaySpec with GuiceOneAppPerSuite with Injecting with BeforeAndAfterEach {
+
+  override implicit lazy val app: Application = new GuiceApplicationBuilder()
+    .overrides(
+      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
+    )
+    .build()
+
+  val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
 
   val mockFindObs = mock(classOf[FindObservable[FormQueryModel]])
   val mockSingleObs = mock(classOf[SingleObservable[Seq[FormQueryModel]]])

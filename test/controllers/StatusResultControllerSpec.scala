@@ -29,10 +29,9 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import services.SessionCacheService
-import uk.gov.hmrc.domain.Nino
 import views.html.{ExternalErrorPage, MultipleMatchesFoundPage, StatusCheckFailurePage, StatusFoundPage, StatusNotAvailablePage}
 import views.{StatusFoundPageContext, StatusNotAvailablePageContext}
-import models.StatusCheckError._
+import repositories.SessionCacheRepository
 import utils.NinoGenerator.generateNino
 
 import scala.concurrent.Future
@@ -45,6 +44,7 @@ class StatusResultControllerSpec extends ControllerSpec {
     .overrides(
       bind[AccessAction].to[FakeAccessAction],
       bind[HomeOfficeImmigrationStatusProxyService].toInstance(mockProxyService),
+      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository),
       bind[SessionCacheService].toInstance(mockSessionCacheService)
     )
     .build()

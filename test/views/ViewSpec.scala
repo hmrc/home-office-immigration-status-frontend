@@ -19,15 +19,28 @@ package views
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import org.mockito.Mockito.mock
 import org.scalatest.Assertion
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.Application
 import play.api.i18n.{Lang, Messages, MessagesApi}
+import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.Html
+import repositories.SessionCacheRepository
 
 trait ViewSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
+
+  override implicit lazy val app: Application = new GuiceApplicationBuilder()
+    .overrides(
+      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
+    )
+    .build()
+
+  val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
 
   lazy val messages: Messages = inject[MessagesApi].preferred(Seq.empty[Lang])
   val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
