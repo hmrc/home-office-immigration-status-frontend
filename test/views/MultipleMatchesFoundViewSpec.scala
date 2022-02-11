@@ -18,12 +18,14 @@ package views
 
 import models.{MrzSearchFormModel, NinoSearchFormModel}
 import java.time.LocalDate
+
 import config.AppConfig
 import org.jsoup.nodes.{Document, Element}
 import org.mockito.Mockito.{mock, when}
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
+import repositories.SessionCacheRepository
 import services.SessionCacheService
 import utils.NinoGenerator
 import views.html.MultipleMatchesFoundPage
@@ -31,12 +33,11 @@ import views.html.MultipleMatchesFoundPage
 class MultipleMatchesFoundViewSpec extends ViewSpec {
 
   implicit val mockAppConfig: AppConfig = mock(classOf[AppConfig])
-  val mockSessionCacheService: SessionCacheService = mock(classOf[SessionCacheService])
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
       bind[AppConfig].toInstance(mockAppConfig),
-      bind[SessionCacheService].toInstance(mockSessionCacheService)
+      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
     )
     .build()
 

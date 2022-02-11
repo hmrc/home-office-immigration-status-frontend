@@ -17,27 +17,19 @@
 package controllers.actions
 
 import org.mockito.Mockito.{mock, reset, verify, when}
-import scala.concurrent.ExecutionContext.Implicits.global
-import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.play.PlaySpec
+
 import config.AppConfig
 import play.api.mvc.{Request, RequestHeader, Result}
-import play.api.mvc._
-import play.api.test.FakeRequest
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc.Results._
-import scala.concurrent.duration._
-import scala.concurrent.{Await, Future}
+
 import scala.language.postfixOps
-import play.api.i18n.Messages
-import play.api.i18n.{Lang, Messages, MessagesApi}
 import views.html.ShutteringPage
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.Application
-import services.SessionCacheService
 import play.api.test.Helpers.contentAsString
 import controllers.ControllerSpec
+import repositories.SessionCacheRepository
 
 import scala.concurrent.Future
 
@@ -48,7 +40,7 @@ class ShutterActionSpec extends ControllerSpec {
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
       bind[AppConfig].toInstance(mockAppConfig),
-      bind[SessionCacheService].toInstance(mockSessionCacheService)
+      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
     )
     .build()
 

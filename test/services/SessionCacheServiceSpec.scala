@@ -22,17 +22,19 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.play.PlaySpec
-import play.api.libs.json.Json
 import repositories.SessionCacheRepository
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import utils.NinoGenerator
-import crypto.{FormModelEncrypter, SecureGCMCipher, TestGCMCipher}
+import crypto.{FormModelEncrypter, TestGCMCipher}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.test.Injecting
 import config.AppConfig
-
 import java.time.{LocalDate, LocalDateTime}
+
+import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
@@ -40,6 +42,14 @@ import scala.language.postfixOps
 
 class SessionCacheServiceSpec
     extends PlaySpec with GuiceOneAppPerSuite with Injecting with BeforeAndAfterEach with ScalaFutures {
+
+  override implicit lazy val app: Application = new GuiceApplicationBuilder()
+    .overrides(
+      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
+    )
+    .build()
+
+  val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
 
   val now = LocalDateTime.now
   val mockRepo = mock(classOf[SessionCacheRepository])

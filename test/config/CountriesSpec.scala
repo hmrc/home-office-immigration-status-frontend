@@ -22,10 +22,21 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.Environment
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.{Application, Environment}
 import play.api.test.Injecting
+import play.api.inject.bind
+import repositories.SessionCacheRepository
 
 class CountriesSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with BeforeAndAfterEach {
+
+  val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
+
+  override implicit lazy val app: Application = new GuiceApplicationBuilder()
+    .overrides(
+      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
+    )
+    .build()
 
   val mockEnv = mock(classOf[Environment])
   lazy val env: Environment = inject[Environment]

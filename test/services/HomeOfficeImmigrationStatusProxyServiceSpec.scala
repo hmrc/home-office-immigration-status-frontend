@@ -27,9 +27,11 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import uk.gov.hmrc.domain.Nino
 import utils.NinoGenerator
-
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+
+import repositories.SessionCacheRepository
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -49,7 +51,8 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
       bind[AuditService].toInstance(mockAuditService),
-      bind[HomeOfficeImmigrationStatusProxyConnector].toInstance(mockConnector)
+      bind[HomeOfficeImmigrationStatusProxyConnector].toInstance(mockConnector),
+      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
     )
     .build()
 

@@ -29,19 +29,19 @@ import play.twirl.api.Html
 import views.html.SearchByNinoView
 import views.html.components.inputDate
 import java.util.UUID
+
 import config.AppConfig
-import services.SessionCacheService
+import repositories.SessionCacheRepository
 
 class SearchByNinoViewSpec extends ViewSpec {
 
   val mockDobInput = mock(classOf[inputDate])
   val mockAppConfig = mock(classOf[AppConfig])
-  val mockSessionCacheService = mock(classOf[SessionCacheService])
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
       bind[inputDate].toInstance(mockDobInput),
-      bind[SessionCacheService].toInstance(mockSessionCacheService),
+      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository),
       bind[AppConfig].toInstance(mockAppConfig)
     )
     .build()

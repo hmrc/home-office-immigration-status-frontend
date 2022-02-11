@@ -18,11 +18,13 @@ package views
 
 import models.{NinoSearchFormModel, StatusCheckResult}
 import java.time.LocalDate
+
 import org.jsoup.nodes.{Document, Element}
 import org.mockito.Mockito.mock
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
+import repositories.SessionCacheRepository
 import utils.NinoGenerator.generateNino
 import views.html.StatusNotAvailablePage
 import views.html.components.{SearchAgainButton, ShowChangeQuery}
@@ -33,7 +35,8 @@ class StatusNotAvailableViewSpec extends ViewSpec {
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
-      bind[ShowChangeQuery].toInstance(mockShowChangeQuery)
+      bind[ShowChangeQuery].toInstance(mockShowChangeQuery),
+      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
     )
     .build()
 

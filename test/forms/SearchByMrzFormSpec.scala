@@ -26,10 +26,23 @@ import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.data.{Form, FormError}
 import play.api.test.Injecting
 import utils.NinoGenerator
-
 import java.time.LocalDate
 
+import play.api.inject.bind
+import org.mockito.Mockito.mock
+import play.api.Application
+import play.api.inject.guice.GuiceApplicationBuilder
+import repositories.SessionCacheRepository
+
 class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with ScalaCheckDrivenPropertyChecks {
+
+  override implicit lazy val app: Application = new GuiceApplicationBuilder()
+    .overrides(
+      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
+    )
+    .build()
+
+  val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
 
   implicit def noShrink[T]: Shrink[T] = Shrink.shrinkAny
 
