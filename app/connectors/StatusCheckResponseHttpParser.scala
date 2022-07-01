@@ -34,16 +34,14 @@ object StatusCheckResponseHttpParser extends Logging {
         case OK =>
           Try(response.json.as[StatusCheckSuccessfulResponse]) match {
             case Success(res) =>
-              logger.info(s"Successful request with response ${response.body}")
               StatusCheckResponseWithStatus(OK, res)
             case Failure(e) =>
-              logger.error(s"Invalid json returned in ${response.body}", e)
+              logger.error(s"Invalid json returned in response", e)
               StatusCheckResponseWithStatus(
                 INTERNAL_SERVER_ERROR,
                 StatusCheckErrorResponse(correlationId, StatusCheckError(UNKNOWN_ERROR)))
           }
         case status =>
-          logger.error(s"A $status response was returned with body ${response.body}")
           Try(response.json.as[StatusCheckErrorResponse]) match {
             case Success(res) =>
               StatusCheckResponseWithStatus(status, res)
