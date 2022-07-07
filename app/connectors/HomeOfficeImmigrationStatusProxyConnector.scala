@@ -16,18 +16,18 @@
 
 package connectors
 
-import java.net.URL
-
-import javax.inject.{Inject, Singleton}
 import com.codahale.metrics.MetricRegistry
 import com.kenshoo.play.metrics.Metrics
-import uk.gov.hmrc.agent.kenshoo.monitoring.HttpAPIMonitor
-import models.{MrzSearch, NinoSearch, StatusCheckResponseWithStatus}
 import config.AppConfig
-import uk.gov.hmrc.http._
-import play.api.Logging
 import connectors.StatusCheckResponseHttpParser._
+import models.{MrzSearch, NinoSearch, StatusCheckResponseWithStatus}
+import play.api.Logging
+import uk.gov.hmrc.agent.kenshoo.monitoring.HttpAPIMonitor
+import uk.gov.hmrc.http._
 
+import java.net.URL
+import java.util.UUID.randomUUID
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -40,20 +40,43 @@ class HomeOfficeImmigrationStatusProxyConnector @Inject()(appConfig: AppConfig, 
 
   override val kenshooRegistry: MetricRegistry = metrics.defaultRegistry
 
-  def statusPublicFundsByNino(
-    request: NinoSearch)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[StatusCheckResponseWithStatus] =
+  private[connectors] def generateNewUUID: String = randomUUID.toString
+
+  private[connectors] def correlationId(hc: HeaderCarrier): String = {
+    val CorrelationIdPattern = """.*([A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}).*""".r
+    hc.requestId match {
+      case Some(requestId) =>
+        requestId.value match {
+          case CorrelationIdPattern(prefix) => prefix + "-" + generateNewUUID.substring(24)
+          case _                            => generateNewUUID
+        }
+      case _ => generateNewUUID
+    }
+  }
+
+  def statusPublicFundsByNino(request: NinoSearch)(
+    implicit headerCarrier: HeaderCarrier,
+    ec: ExecutionContext): Future[StatusCheckResponseWithStatus] =
     monitor("ConsumedAPI-home-office-immigration-status-proxy-status-by-nino-POST") {
-      http
-        .POST[NinoSearch, StatusCheckResponseWithStatus](
-          new URL(baseUrl + publicFundsByNinoPath).toExternalForm,
-          request)
+      implicit val hc: HeaderCarrier =
+        headerCarrier.withExtraHeaders("CorrelationId" -> correlationId(headerCarrier))
+      doPostByNino(request)(hc, ec)
     }
 
-  def statusPublicFundsByMrz(
-    request: MrzSearch)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[StatusCheckResponseWithStatus] =
+  private def doPostByNino(
+    request: NinoSearch)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[StatusCheckResponseWithStatus] =
+    http
+      .POST[NinoSearch, StatusCheckResponseWithStatus](new URL(baseUrl + publicFundsByNinoPath).toExternalForm, request)
+
+  def statusPublicFundsByMrz(request: MrzSearch)(
+    implicit headerCarrier: HeaderCarrier,
+    ec: ExecutionContext): Future[StatusCheckResponseWithStatus] =
     monitor("ConsumedAPI-home-office-immigration-status-proxy-status-by-mrz-POST") {
-      http
-        .POST[MrzSearch, StatusCheckResponseWithStatus](new URL(baseUrl + publicFundsByMrzPath).toExternalForm, request)
+      implicit val hc: HeaderCarrier = headerCarrier.withExtraHeaders("CorrelationId" -> correlationId(headerCarrier))
+      doPostByMrz(request)(hc, ec)
     }
 
+  private def doPostByMrz(
+    request: MrzSearch)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[StatusCheckResponseWithStatus] =
+    http.POST[MrzSearch, StatusCheckResponseWithStatus](new URL(baseUrl + publicFundsByMrzPath).toExternalForm, request)
 }
