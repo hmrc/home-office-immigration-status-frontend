@@ -11,7 +11,7 @@ object AppDependencies {
     "uk.gov.hmrc"       %% "play-partials"                    % "8.2.0-play-28",
     "uk.gov.hmrc"       %% "agent-kenshoo-monitoring"         % "4.8.0-play-28",
     "uk.gov.hmrc"       %% "domain"                           % "7.0.0-play-28",
-    "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28"               % "0.59.0",
+    "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28"               % "0.63.0",
     "uk.gov.hmrc"       %% "json-encryption"                  % "4.11.0-play-28",
      compilerPlugin("com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.full),
     "com.github.ghik" % "silencer-lib" % silencerVersion % Provided cross CrossVersion.full
