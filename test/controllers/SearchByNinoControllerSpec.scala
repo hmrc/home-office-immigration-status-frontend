@@ -117,7 +117,7 @@ class SearchByNinoControllerSpec extends ControllerSpec {
         when(mockSessionCacheService.set(any(), any())(any(), any())).thenReturn(Future.unit)
         val validDob = LocalDate.now().minusDays(1)
         val query = NinoSearchFormModel(generateNino, "pan", "peter", validDob)
-        val requestWithForm = request.withFormUrlEncodedBody(
+        val requestWithForm = fakePostRequest.withFormUrlEncodedBody(
           "dateOfBirth.year"  -> validDob.getYear.toString,
           "dateOfBirth.month" -> validDob.getMonthValue.toString,
           "dateOfBirth.day"   -> validDob.getDayOfMonth.toString,
@@ -151,7 +151,7 @@ class SearchByNinoControllerSpec extends ControllerSpec {
       }
 
       "the form has errors" in {
-        val requestWithForm = request.withFormUrlEncodedBody(
+        val requestWithForm = fakePostRequest.withFormUrlEncodedBody(
           "dateOfBirth.year"  -> "blah",
           "dateOfBirth.month" -> "blah",
           "dateOfBirth.day"   -> "blah",
@@ -176,7 +176,7 @@ class SearchByNinoControllerSpec extends ControllerSpec {
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.failed(new Exception("Something happened")))
         val validDob = LocalDate.now().minusDays(1)
         val query = NinoSearchFormModel(generateNino, "pan", "peter", validDob)
-        val requestWithForm = request.withFormUrlEncodedBody(
+        val requestWithForm = fakePostRequest.withFormUrlEncodedBody(
           "dateOfBirth.year"  -> validDob.getYear.toString,
           "dateOfBirth.month" -> validDob.getMonthValue.toString,
           "dateOfBirth.day"   -> validDob.getDayOfMonth.toString,

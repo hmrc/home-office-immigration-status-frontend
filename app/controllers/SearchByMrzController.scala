@@ -20,7 +20,7 @@ import controllers.actions.AccessAction
 import forms.SearchByMRZForm
 import models.MrzSearchFormModel
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
+import play.api.mvc._
 import services.SessionCacheService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.SearchByMrzView

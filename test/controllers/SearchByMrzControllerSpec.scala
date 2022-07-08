@@ -31,6 +31,7 @@ import play.twirl.api.HtmlFormat
 import services.SessionCacheService
 import views.html.SearchByMrzView
 import config.AppConfig
+import play.api.test.FakeRequest
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -115,7 +116,8 @@ class SearchByMrzControllerSpec extends ControllerSpec {
         when(mockSessionCacheService.set(any(), any())(any(), any())).thenReturn(Future.unit)
         val validDob = LocalDate.now().minusDays(1)
         val query = MrzSearchFormModel("PASSPORT", "1234567890", validDob, "AFG")
-        val requestWithForm = request.withFormUrlEncodedBody(
+
+        val requestWithForm = fakePostRequest.withFormUrlEncodedBody(
           "dateOfBirth.year"  -> validDob.getYear.toString,
           "dateOfBirth.month" -> validDob.getMonthValue.toString,
           "dateOfBirth.day"   -> validDob.getDayOfMonth.toString,
@@ -149,7 +151,7 @@ class SearchByMrzControllerSpec extends ControllerSpec {
       }
 
       "the form has errors" in {
-        val requestWithForm = request.withFormUrlEncodedBody(
+        val requestWithForm = fakePostRequest.withFormUrlEncodedBody(
           "dateOfBirth.year"  -> "blah",
           "dateOfBirth.month" -> "blah",
           "dateOfBirth.day"   -> "blah",
@@ -174,7 +176,7 @@ class SearchByMrzControllerSpec extends ControllerSpec {
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.failed(new Exception("Something happened")))
         val validDob = LocalDate.now().minusDays(1)
         val query = MrzSearchFormModel("PASSPORT", "1234567890", validDob, "AFG")
-        val requestWithForm = request.withFormUrlEncodedBody(
+        val requestWithForm = fakePostRequest.withFormUrlEncodedBody(
           "dateOfBirth.year"  -> validDob.getYear.toString,
           "dateOfBirth.month" -> validDob.getMonthValue.toString,
           "dateOfBirth.day"   -> validDob.getDayOfMonth.toString,
