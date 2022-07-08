@@ -7,10 +7,10 @@ lazy val scoverageSettings = {
     // Semicolon-separated list of regexes matching classes to exclude
     ScoverageKeys.coverageExcludedPackages := "<empty>;.*BuildInfo;.*Routes;.*RoutesPrefix;.*Filters?;MicroserviceAuditConnector;" +
       "Module;GraphiteStartUp;Reverse.*",
-    ScoverageKeys.coverageMinimum := 90.00,
+    ScoverageKeys.coverageMinimumStmtTotal := 90.00,
     ScoverageKeys.coverageFailOnMinimum := false,
     ScoverageKeys.coverageHighlighting := true,
-    parallelExecution in Test := false
+    Test / parallelExecution := false
   )
 }
 
@@ -18,7 +18,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "home-office-immigration-status-frontend",
     organization := "uk.gov.hmrc",
-    scalaVersion := "2.12.12",
+    scalaVersion := "2.12.15",
     PlayKeys.playDefaultPort := 10210,
     TwirlKeys.templateImports ++= Seq(
       "play.twirl.api.HtmlFormat",
@@ -35,9 +35,9 @@ lazy val root = (project in file("."))
     dependencyOverrides ++= AppDependencies.jettyOverrides,
     publishingSettings,
     scoverageSettings,
-    unmanagedResourceDirectories in Compile += baseDirectory.value / "resources",
-    scalafmtOnCompile in Compile := true,
-    scalafmtOnCompile in Test := true,
+    Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
+    Compile / scalafmtOnCompile := true,
+    Test / scalafmtOnCompile := true,
     majorVersion := 0,
     Concat.groups := Seq(
       "javascripts/immigrationstatus-app.js" ->
@@ -48,16 +48,16 @@ lazy val root = (project in file("."))
           "javascripts/ga-events.js"
         ))
     ),
-    pipelineStages in Assets := Seq(concat)
+    Assets / pipelineStages := Seq(concat)
   )
   .configs(IntegrationTest)
   .settings(
-    Keys.fork in IntegrationTest := false,
+    IntegrationTest / Keys.fork := false,
     Defaults.itSettings,
-    unmanagedSourceDirectories in IntegrationTest += baseDirectory(_ / "it").value,
-    parallelExecution in IntegrationTest := false,
-    testGrouping in IntegrationTest := oneForkedJvmPerTest((definedTests in IntegrationTest).value),
-    scalafmtOnCompile in IntegrationTest := true
+    IntegrationTest / unmanagedSourceDirectories += baseDirectory(_ / "it").value,
+    IntegrationTest / parallelExecution := false,
+    IntegrationTest / testGrouping := oneForkedJvmPerTest((IntegrationTest / definedTests).value),
+    IntegrationTest / scalafmtOnCompile := true
   )
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .enablePlugins(PlayScala, SbtDistributablesPlugin)

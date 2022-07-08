@@ -1,26 +1,19 @@
 package support
 
-import models.{FormQueryModel, NinoSearchFormModel}
-import play.api.libs.json.Json
-import play.api.libs.ws.{WSClient, WSRequest}
-import play.api.mvc.{CookieHeaderEncoding, SessionCookieBaker}
-import repositories.SessionCacheRepository
 import crypto.FormModelEncrypter
+import mocks.MockSessionCookie
+import models.{FormQueryModel, NinoSearchFormModel}
+import play.api.libs.ws.{WSClient, WSRequest, WSResponse}
+import play.api.test.Helpers.LOCATION
+import repositories.SessionCacheRepository
 
-import java.time.LocalDateTime
 import scala.concurrent.ExecutionContext.Implicits.global
 
-trait ISpec extends BaseISpec {
-
-  lazy val sessionCookieBaker: SessionCookieBaker = inject[SessionCookieBaker]
-  lazy val cookieHeaderEncoding: CookieHeaderEncoding = inject[CookieHeaderEncoding]
-
-  lazy val wsClient: WSClient = app.injector.instanceOf[WSClient]
-
+trait ISpec extends BaseISpec with MockSessionCookie {
   val baseUrl: String = s"http://localhost:$port/check-immigration-status"
 
+  lazy val wsClient: WSClient = app.injector.instanceOf[WSClient]
   lazy val cacheRepo = inject[SessionCacheRepository]
-
   lazy val formModelEncrypter = inject[FormModelEncrypter]
 
   def setFormQuery(formModel: NinoSearchFormModel, sessionId: String) = {
@@ -35,5 +28,14 @@ trait ISpec extends BaseISpec {
       .withHttpHeaders(
         "X-Session-ID" -> sessionId
       )
+
+  def requestWithSession(path: String, sessionId: String): WSRequest = {
+    request(path, sessionId)
+      .withCookies(mockSessionCookie(sessionId))
+      .withFollowRedirects(false)
+  }
+
+  def extractHeaderLocation(wsResponse: WSResponse): Option[String] =
+    wsResponse.headers.get(LOCATION).map(_.head)
 
 }
