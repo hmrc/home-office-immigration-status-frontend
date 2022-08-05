@@ -28,8 +28,7 @@ lazy val root = (project in file("."))
     ),
     resolvers ++= Seq(
       Resolver.jcenterRepo,
-      Resolver.typesafeRepo("releases"),
-      "hmrc-releases" at "https://artefacts.tax.service.gov.uk/artifactory/hmrc-releases/"
+      Resolver.typesafeRepo("releases")
     ),
     libraryDependencies ++= AppDependencies(),
     dependencyOverrides ++= AppDependencies.jettyOverrides,
