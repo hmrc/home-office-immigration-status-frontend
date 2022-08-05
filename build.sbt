@@ -26,10 +26,9 @@ lazy val root = (project in file("."))
       "uk.gov.hmrc.hmrcfrontend.views.html.components._",
       "uk.gov.hmrc.hmrcfrontend.views.html.helpers._"
     ),
-    resolvers := Seq(
+    resolvers ++= Seq(
       Resolver.jcenterRepo,
-      Resolver.typesafeRepo("releases"),
-      "hmrc-releases" at "https://artefacts.tax.service.gov.uk/artifactory/hmrc-releases/"
+      Resolver.typesafeRepo("releases")
     ),
     libraryDependencies ++= AppDependencies(),
     dependencyOverrides ++= AppDependencies.jettyOverrides,
