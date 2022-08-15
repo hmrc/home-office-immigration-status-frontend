@@ -29,17 +29,17 @@ import collection.JavaConverters._
 
 class CountrySelectSpec extends ViewSpec {
 
-  val sut: CountrySelect = inject[CountrySelect]
+  val sut: CountrySelect   = inject[CountrySelect]
   val countries: Countries = inject[Countries]
 
   val testForm: Form[String] = Form[String] {
     mapping("documentType" -> Forms.of[String])(identity)(Some.apply)
   }
 
-  val emptyForm = testForm.bind(Map.empty[String, String])
+  val emptyForm  = testForm.bind(Map.empty[String, String])
   val filledForm = testForm.bind(Map("nationality" -> "GBR"))
 
-  val doc: Document = asDocument(sut(emptyForm)(messages))
+  val doc: Document          = asDocument(sut(emptyForm)(messages))
   val countrySelect: Element = doc.getElementById("nationality")
 
   "form group" must {
@@ -69,21 +69,21 @@ class CountrySelectSpec extends ViewSpec {
     }
 
     "have an item for each country" in {
-      val options = doc.select("option")
-      val optionTuples = options.asScala.toList.map(option => (option.attr("value"), option.text()))
+      val options             = doc.select("option")
+      val optionTuples        = options.asScala.toList.map(option => (option.attr("value"), option.text()))
       val countryConfigTuples = countries.countries.map(country => country.alpha3 -> country.name) :+ " " -> ""
       optionTuples must contain theSameElementsAs countryConfigTuples
     }
 
     "have the selected item set when it's passed in" in {
       val doc: Document = asDocument(sut(filledForm)(messages))
-      val options = doc.select("option[selected]").asScala.toList
+      val options       = doc.select("option[selected]").asScala.toList
       options.map(_.text()) must contain theSameElementsAs List("United Kingdom")
     }
 
     "have no selected item set when it's not passed in" in {
       val doc: Document = asDocument(sut(emptyForm)(messages))
-      val options = doc.select("option[selected]").asScala.toList
+      val options       = doc.select("option[selected]").asScala.toList
       options.map(_.text()) must contain theSameElementsAs Nil
     }
   }

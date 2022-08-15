@@ -31,7 +31,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class StatusResultController @Inject()(
+class StatusResultController @Inject() (
   access: AccessAction,
   override val messagesApi: MessagesApi,
   homeOfficeService: HomeOfficeImmigrationStatusProxyService,
@@ -41,9 +41,11 @@ class StatusResultController @Inject()(
   statusNotAvailablePage: StatusNotAvailablePage,
   multipleMatchesFoundPage: MultipleMatchesFoundPage,
   sessionCacheService: SessionCacheService,
-  externalErrorPage: ExternalErrorPage,
+  externalErrorPage: ExternalErrorPage
 )(implicit val appConfig: AppConfig, ec: ExecutionContext)
-    extends FrontendController(controllerComponents) with I18nSupport with Logging {
+    extends FrontendController(controllerComponents)
+    with I18nSupport
+    with Logging {
 
   val onPageLoad: Action[AnyContent] =
     access.async { implicit request =>
@@ -55,8 +57,9 @@ class StatusResultController @Inject()(
       }
     }
 
-  private def handleResult(query: SearchFormModel, response: StatusCheckResponseWithStatus)(
-    implicit request: Request[AnyContent]): Result =
+  private def handleResult(query: SearchFormModel, response: StatusCheckResponseWithStatus)(implicit
+    request: Request[AnyContent]
+  ): Result =
     response match {
       case StatusCheckResponseWithStatus(_, success: StatusCheckSuccessfulResponse) =>
         displaySuccessfulResult(query, success)
@@ -70,8 +73,9 @@ class StatusResultController @Inject()(
       case _         => InternalServerError(externalErrorPage())
     }
 
-  private def displaySuccessfulResult(query: SearchFormModel, response: StatusCheckSuccessfulResponse)(
-    implicit request: Request[AnyContent]): Result =
+  private def displaySuccessfulResult(query: SearchFormModel, response: StatusCheckSuccessfulResponse)(implicit
+    request: Request[AnyContent]
+  ): Result =
     response.result.statuses match {
       case Nil =>
         logger.info(s"Match found with no statuses - CorrelationId: ${response.correlationId}")

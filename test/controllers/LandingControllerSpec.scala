@@ -36,9 +36,9 @@ class LandingControllerSpec extends ControllerSpec {
     super.beforeEach
   }
 
-  val nino = NinoGenerator.generateNino
+  val nino                = NinoGenerator.generateNino
   val ninoSearchFormModel = NinoSearchFormModel(nino, "Pan", "", LocalDate.now())
-  val mrzSearchFormModel = MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
+  val mrzSearchFormModel  = MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
 
   "onPageLoad" must {
 

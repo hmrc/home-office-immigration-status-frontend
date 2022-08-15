@@ -26,12 +26,13 @@ import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class AuditServiceImpl @Inject()(val auditConnector: AuditConnector) extends AuditService {
+class AuditServiceImpl @Inject() (val auditConnector: AuditConnector) extends AuditService {
 
-  def auditStatusCheckEvent(search: Search, result: StatusCheckResponseWithStatus)(
-    implicit hc: HeaderCarrier,
+  def auditStatusCheckEvent(search: Search, result: StatusCheckResponseWithStatus)(implicit
+    hc: HeaderCarrier,
     request: Request[Any],
-    ec: ExecutionContext): Unit = {
+    ec: ExecutionContext
+  ): Unit = {
 
     val AUDIT_TYPE = "StatusCheckRequest"
 
@@ -43,8 +44,9 @@ class AuditServiceImpl @Inject()(val auditConnector: AuditConnector) extends Aud
 
 @ImplementedBy(classOf[AuditServiceImpl])
 trait AuditService {
-  def auditStatusCheckEvent(search: Search, result: StatusCheckResponseWithStatus)(
-    implicit hc: HeaderCarrier,
+  def auditStatusCheckEvent(search: Search, result: StatusCheckResponseWithStatus)(implicit
+    hc: HeaderCarrier,
     request: Request[Any],
-    ec: ExecutionContext): Unit
+    ec: ExecutionContext
+  ): Unit
 }

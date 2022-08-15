@@ -39,7 +39,8 @@ object StatusCheckResponseHttpParser extends Logging {
               logger.error(s"Invalid json returned in response", e)
               StatusCheckResponseWithStatus(
                 INTERNAL_SERVER_ERROR,
-                StatusCheckErrorResponse(correlationId, StatusCheckError(UNKNOWN_ERROR)))
+                StatusCheckErrorResponse(correlationId, StatusCheckError(UNKNOWN_ERROR))
+              )
           }
         case status =>
           Try(response.json.as[StatusCheckErrorResponse]) match {
@@ -48,7 +49,8 @@ object StatusCheckResponseHttpParser extends Logging {
             case Failure(_) =>
               StatusCheckResponseWithStatus(
                 status,
-                StatusCheckErrorResponse(correlationId, StatusCheckError(UNKNOWN_ERROR)))
+                StatusCheckErrorResponse(correlationId, StatusCheckError(UNKNOWN_ERROR))
+              )
           }
       }
     }

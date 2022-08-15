@@ -38,7 +38,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
     )
 
   "StatusFoundPageView" must {
-    val context = buildContext()
+    val context       = buildContext()
     val doc: Document = asDocument(sut(context)(request, messages))
 
     "have a status found title" in {
@@ -76,10 +76,9 @@ class StatusFoundPageViewSpec extends ViewSpec {
         "nino",
         "nationality",
         "dob"
-      ).zipWithIndex.foreach {
-        case (id, index) =>
-          val row: Element = doc.select(s".govuk-summary-list__row").get(index)
-          row.select("dd").attr("id") mustBe id
+      ).zipWithIndex.foreach { case (id, index) =>
+        val row: Element = doc.select(s".govuk-summary-list__row").get(index)
+        row.select("dd").attr("id") mustBe id
       }
     }
 
@@ -90,7 +89,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
     }
 
     "have the history section" when {
-      val context = buildContext(statuses = List(ValidStatus, ValidStatus))
+      val context       = buildContext(statuses = List(ValidStatus, ValidStatus))
       val doc: Document = asDocument(sut(context)(request, messages))
       "there is previous statuses" in {
         assertRenderedById(doc, "previousStatuses")

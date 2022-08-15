@@ -27,13 +27,17 @@ import play.api.data.format.Formats.stringFormat
 import play.api.data.validation.Invalid
 
 class FormFieldMappingsSpec
-    extends AnyWordSpecLike with Matchers with OptionValues with FormFieldMappings with ScalaCheckDrivenPropertyChecks {
+    extends AnyWordSpecLike
+    with Matchers
+    with OptionValues
+    with FormFieldMappings
+    with ScalaCheckDrivenPropertyChecks {
 
   def validateName(errorName: String, len: Int): Mapping[String] = validName(fieldName = errorName, minLenInc = len)
-  val invalid: Invalid = Invalid("error.bar.invalid-format")
+  val invalid: Invalid                                           = Invalid("error.bar.invalid-format")
 
   def form(name: String, min: Int) = Form(single(name -> validateName(name, min)))
-  def testFormFill(map: String) = Map("foo" -> map)
+  def testFormFill(map: String)    = Map("foo" -> map)
 
   "collateDOBErrors" should {
     def formWithErrors(errorKeyMessage: (String, String)*) = {
@@ -46,7 +50,7 @@ class FormFieldMappingsSpec
         val testForm = formWithErrors(
           ("test.dateOfBirth", "dateOfBirth.pan.required"),
           ("other.error.dateOfBirth", "dateOfBirth.thing.required"),
-          ("dateOfBirth", "prefix.dateOfBirth.another.required"),
+          ("dateOfBirth", "prefix.dateOfBirth.another.required")
         )
         val result = collateDOBErrors(testForm)
 
@@ -68,7 +72,7 @@ class FormFieldMappingsSpec
       }
       "there are 2 other errors" in {
         val testForm = formWithErrors(("test.dateOfBirth", "other.error"), ("other.error.dateOfBirth", "autre.erreur"))
-        val result = collateDOBErrors(testForm)
+        val result   = collateDOBErrors(testForm)
 
         result.errors shouldBe Seq(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
       }
@@ -77,7 +81,7 @@ class FormFieldMappingsSpec
     "not change dob errors" when {
       "there is only one" in {
         val testForm = formWithErrors(("test.dateOfBirth", "dateOfBirt.pan.required"))
-        val result = collateDOBErrors(testForm)
+        val result   = collateDOBErrors(testForm)
 
         result shouldBe testForm
       }
@@ -101,17 +105,19 @@ class FormFieldMappingsSpec
       form("foo", 2).bind(testFormFill("")).errors shouldBe List(FormError("foo", List("error.foo.required"), Seq()))
       form("foo", 1).bind(testFormFill("")).errors shouldBe List(FormError("foo", List("error.foo.required"), Seq()))
 
-      form("1", 2).bind(testFormFill("")).errors shouldBe List(FormError("1", List("error.1.required"), Seq()))
-      form("1", 1).bind(testFormFill("")).errors shouldBe List(FormError("1", List("error.1.required"), Seq()))
+      form("1", 2).bind(testFormFill("")).errors  shouldBe List(FormError("1", List("error.1.required"), Seq()))
+      form("1", 1).bind(testFormFill("")).errors  shouldBe List(FormError("1", List("error.1.required"), Seq()))
       form("a1", 2).bind(testFormFill("")).errors shouldBe List(FormError("a1", List("error.a1.required"), Seq()))
       form("a1", 1).bind(testFormFill("")).errors shouldBe List(FormError("a1", List("error.a1.required"), Seq()))
       form("1a", 2).bind(testFormFill("")).errors shouldBe List(FormError("1a", List("error.1a.required"), Seq()))
       form("1a", 1).bind(testFormFill("")).errors shouldBe List(FormError("1a", List("error.1a.required"), Seq()))
 
       form("Artur", 2).bind(testFormFill("")).errors shouldBe List(
-        FormError("Artur", List("error.Artur.required"), Seq()))
+        FormError("Artur", List("error.Artur.required"), Seq())
+      )
       form("ĄĘÓŚŻĆŁąęółśćńżźāēīūčģķļņšž", 2).bind(testFormFill("")).errors shouldBe List(
-        FormError("ĄĘÓŚŻĆŁąęółśćńżźāēīūčģķļņšž", List("error.ĄĘÓŚŻĆŁąęółśćńżźāēīūčģķļņšž.required"), Seq()))
+        FormError("ĄĘÓŚŻĆŁąęółśćńżźāēīūčģķļņšž", List("error.ĄĘÓŚŻĆŁąęółśćńżźāēīūčģķļņšž.required"), Seq())
+      )
 
     }
 
@@ -139,43 +145,51 @@ class FormFieldMappingsSpec
 
     "dateComponent" should {
 
-      def form(max: Int, min: Int) = Form(single("myField" -> dateComponent("myField", max, min)))
+      def form(max: Int, min: Int)  = Form(single("myField" -> dateComponent("myField", max, min)))
       def testFormFill(day: String) = Map("myField" -> day)
 
       "checks emptiness" in {
         form(10, 0).bind(testFormFill("")).errors shouldBe List(
-          FormError("myField", List("error.dateOfBirth.myField.required")))
+          FormError("myField", List("error.dateOfBirth.myField.required"))
+        )
       }
 
       "check that the string is an int" in {
         forAll(Gen.alphaStr.suchThat(_.length > 0))(str =>
           form(10, 0).bind(testFormFill(str)).errors shouldBe List(
-            FormError("myField", List("error.dateOfBirth.myField.invalid"))))
+            FormError("myField", List("error.dateOfBirth.myField.invalid"))
+          )
+        )
       }
 
       "check that the string is not zero" in {
         form(10, 0).bind(testFormFill("0")).errors shouldBe List(
-          FormError("myField", List("error.dateOfBirth.myField.zero")))
+          FormError("myField", List("error.dateOfBirth.myField.zero"))
+        )
       }
 
       "check that the string meets a minimum value" in {
         form(10, 2).bind(testFormFill("1")).errors shouldBe List(
-          FormError("myField", List("error.dateOfBirth.myField.min"), Seq(2)))
+          FormError("myField", List("error.dateOfBirth.myField.min"), Seq(2))
+        )
       }
 
       "check that the string is a minimum value for 4 digits" in {
         form(2000, 1000).bind(testFormFill("999")).errors shouldBe List(
-          FormError("myField", List("error.dateOfBirth.myField.min"), Seq(1000)))
+          FormError("myField", List("error.dateOfBirth.myField.min"), Seq(1000))
+        )
       }
 
       "check that the string meets a maximum value" in {
         form(10, 2).bind(testFormFill("11")).errors shouldBe List(
-          FormError("myField", List("error.dateOfBirth.myField.max"), Seq(10)))
+          FormError("myField", List("error.dateOfBirth.myField.max"), Seq(10))
+        )
       }
 
       "check that the string is a maximum value for 4 digits" in {
         form(2000, 1000).bind(testFormFill("2001")).errors shouldBe List(
-          FormError("myField", List("error.dateOfBirth.myField.max"), Seq(2000)))
+          FormError("myField", List("error.dateOfBirth.myField.max"), Seq(2000))
+        )
       }
 
       "not return an error where the field is valid" in {

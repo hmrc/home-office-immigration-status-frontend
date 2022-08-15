@@ -31,12 +31,13 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class HomeOfficeImmigrationStatusProxyConnector @Inject()(appConfig: AppConfig, http: HttpClient, metrics: Metrics)
-    extends HttpAPIMonitor with Logging {
+class HomeOfficeImmigrationStatusProxyConnector @Inject() (appConfig: AppConfig, http: HttpClient, metrics: Metrics)
+    extends HttpAPIMonitor
+    with Logging {
 
-  private val baseUrl: String = appConfig.homeOfficeImmigrationStatusProxyBaseUrl
+  private val baseUrl: String       = appConfig.homeOfficeImmigrationStatusProxyBaseUrl
   private val publicFundsByNinoPath = "/v1/status/public-funds/nino"
-  private val publicFundsByMrzPath = "/v1/status/public-funds/mrz"
+  private val publicFundsByMrzPath  = "/v1/status/public-funds/mrz"
 
   override val kenshooRegistry: MetricRegistry = metrics.defaultRegistry
 
@@ -54,9 +55,9 @@ class HomeOfficeImmigrationStatusProxyConnector @Inject()(appConfig: AppConfig, 
     }
   }
 
-  def statusPublicFundsByNino(request: NinoSearch)(
-    implicit headerCarrier: HeaderCarrier,
-    ec: ExecutionContext): Future[StatusCheckResponseWithStatus] =
+  def statusPublicFundsByNino(
+    request: NinoSearch
+  )(implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[StatusCheckResponseWithStatus] =
     monitor("ConsumedAPI-home-office-immigration-status-proxy-status-by-nino-POST") {
       implicit val hc: HeaderCarrier =
         headerCarrier.withExtraHeaders("CorrelationId" -> correlationId(headerCarrier))
@@ -64,19 +65,21 @@ class HomeOfficeImmigrationStatusProxyConnector @Inject()(appConfig: AppConfig, 
     }
 
   private def doPostByNino(
-    request: NinoSearch)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[StatusCheckResponseWithStatus] =
+    request: NinoSearch
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[StatusCheckResponseWithStatus] =
     http
       .POST[NinoSearch, StatusCheckResponseWithStatus](new URL(baseUrl + publicFundsByNinoPath).toExternalForm, request)
 
-  def statusPublicFundsByMrz(request: MrzSearch)(
-    implicit headerCarrier: HeaderCarrier,
-    ec: ExecutionContext): Future[StatusCheckResponseWithStatus] =
+  def statusPublicFundsByMrz(
+    request: MrzSearch
+  )(implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[StatusCheckResponseWithStatus] =
     monitor("ConsumedAPI-home-office-immigration-status-proxy-status-by-mrz-POST") {
       implicit val hc: HeaderCarrier = headerCarrier.withExtraHeaders("CorrelationId" -> correlationId(headerCarrier))
       doPostByMrz(request)(hc, ec)
     }
 
   private def doPostByMrz(
-    request: MrzSearch)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[StatusCheckResponseWithStatus] =
+    request: MrzSearch
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[StatusCheckResponseWithStatus] =
     http.POST[MrzSearch, StatusCheckResponseWithStatus](new URL(baseUrl + publicFundsByMrzPath).toExternalForm, request)
 }

@@ -13,8 +13,8 @@ class SearchByNinoISpec extends ISpec with HomeOfficeImmigrationStatusStubs with
 
       val result = requestWithSession("/search-by-nino", "session-searchByNinoGet").get().futureValue
 
-      result.status shouldBe OK
-      result.body should include(htmlEscapedMessage("lookup.nino.title"))
+      result.status                                       shouldBe OK
+      result.body                                           should include(htmlEscapedMessage("lookup.nino.title"))
       result.headers.get("Cache-Control").map(_.mkString) shouldBe Some("no-cache, no-store, must-revalidate")
     }
   }
@@ -30,11 +30,12 @@ class SearchByNinoISpec extends ISpec with HomeOfficeImmigrationStatusStubs with
         "dateOfBirth.day"   -> "31",
         "familyName"        -> "Jane",
         "givenName"         -> "Doe",
-        "nino"              -> nino.nino)
+        "nino"              -> nino.nino
+      )
 
       val result = requestWithSession("/search-by-nino", "nino-searchByPost").post(payload).futureValue
 
-      result.status shouldBe SEE_OTHER
+      result.status                 shouldBe SEE_OTHER
       extractHeaderLocation(result) shouldBe Some(controllers.routes.StatusResultController.onPageLoad.url)
     }
   }

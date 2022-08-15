@@ -38,7 +38,7 @@ class CountriesSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting wit
     )
     .build()
 
-  val mockEnv = mock(classOf[Environment])
+  val mockEnv               = mock(classOf[Environment])
   lazy val env: Environment = inject[Environment]
 
   override protected def beforeEach(): Unit = {

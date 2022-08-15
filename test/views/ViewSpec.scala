@@ -42,7 +42,7 @@ trait ViewSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
 
   val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
 
-  lazy val messages: Messages = inject[MessagesApi].preferred(Seq.empty[Lang])
+  lazy val messages: Messages                      = inject[MessagesApi].preferred(Seq.empty[Lang])
   val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
 
   def asDocument(html: Html): Document = Jsoup.parse(html.toString())
@@ -96,7 +96,8 @@ trait ViewSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
     id: String,
     actionText: String,
     actionUrl: String,
-    rowWidth: String): Assertion = {
+    rowWidth: String
+  ): Assertion = {
     assertCustomWidthRow(e, key, value, id, rowWidth)
     val actionElement = e.select("dd:nth-of-type(2)")
     assert(actionElement.hasClass(s"govuk-summary-list__actions govuk-!-width-one-third"))

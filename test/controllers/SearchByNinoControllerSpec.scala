@@ -60,8 +60,8 @@ class SearchByNinoControllerSpec extends ControllerSpec {
   }
 
   "onPageLoad" must {
-    val query = NinoSearchFormModel(generateNino, "pan", "peter", LocalDate.now())
-    val emptyForm = inject[SearchByNinoForm].apply()
+    val query      = NinoSearchFormModel(generateNino, "pan", "peter", LocalDate.now())
+    val emptyForm  = inject[SearchByNinoForm].apply()
     val prePopForm = emptyForm.fill(query)
 
     "display the check by nino form view" when {
@@ -116,7 +116,7 @@ class SearchByNinoControllerSpec extends ControllerSpec {
       "form binds correct data" in {
         when(mockSessionCacheService.set(any(), any())(any(), any())).thenReturn(Future.unit)
         val validDob = LocalDate.now().minusDays(1)
-        val query = NinoSearchFormModel(generateNino, "pan", "peter", validDob)
+        val query    = NinoSearchFormModel(generateNino, "pan", "peter", validDob)
         val requestWithForm = fakePostRequest.withFormUrlEncodedBody(
           "dateOfBirth.year"  -> validDob.getYear.toString,
           "dateOfBirth.month" -> validDob.getMonthValue.toString,
@@ -135,9 +135,9 @@ class SearchByNinoControllerSpec extends ControllerSpec {
 
     "return the errored form" when {
       val formProvider = inject[SearchByNinoForm]
-      val form = formProvider.apply()
+      val form         = formProvider.apply()
       "the submitted form is empty" in {
-        val result = sut.onSubmit(request)
+        val result         = sut.onSubmit(request)
         val formWithErrors = formProvider.collateDOBErrors(form.bindFromRequest()(request, implicitly))
 
         status(result) mustBe BAD_REQUEST
@@ -159,7 +159,7 @@ class SearchByNinoControllerSpec extends ControllerSpec {
           "givenName"         -> "blah",
           "nino"              -> "blah"
         )
-        val result = sut.onSubmit(requestWithForm)
+        val result         = sut.onSubmit(requestWithForm)
         val formWithErrors = formProvider.collateDOBErrors(form.bindFromRequest()(requestWithForm, implicitly))
 
         status(result) mustBe BAD_REQUEST
@@ -175,7 +175,7 @@ class SearchByNinoControllerSpec extends ControllerSpec {
       "the session cache returns a failure" in {
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.failed(new Exception("Something happened")))
         val validDob = LocalDate.now().minusDays(1)
-        val query = NinoSearchFormModel(generateNino, "pan", "peter", validDob)
+        val query    = NinoSearchFormModel(generateNino, "pan", "peter", validDob)
         val requestWithForm = fakePostRequest.withFormUrlEncodedBody(
           "dateOfBirth.year"  -> validDob.getYear.toString,
           "dateOfBirth.month" -> validDob.getMonthValue.toString,

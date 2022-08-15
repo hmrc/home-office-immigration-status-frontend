@@ -26,7 +26,7 @@ import javax.inject.Singleton
 import models.MrzSearch.{BiometricResidencyCard, BiometricResidencyPermit, EuropeanNationalIdentityCard, Passport}
 
 @Singleton
-class SearchByMRZForm @Inject()(countries: Countries) extends FormFieldMappings {
+class SearchByMRZForm @Inject() (countries: Countries) extends FormFieldMappings {
 
   private val allowedCountries = countries.countries.map(_.alpha3)
 
@@ -40,7 +40,8 @@ class SearchByMRZForm @Inject()(countries: Countries) extends FormFieldMappings 
         .verifying("error.documentNumber.length", dn => dn.length <= DocumentNumberMaxLength)
         .verifying(
           "error.documentNumber.invalid-characters",
-          dn => dn.forall(c => c.isDigit || c.isLetter || c == '-')),
+          dn => dn.forall(c => c.isDigit || c.isLetter || c == '-')
+        ),
       "dateOfBirth" -> dobFieldsMapping,
       "nationality" -> nonEmptyText("nationality")
         .transform[String](_.toUpperCase, identity)

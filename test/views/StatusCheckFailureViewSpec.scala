@@ -42,12 +42,12 @@ class StatusCheckFailureViewSpec extends ViewSpec {
 
   lazy val sut: StatusCheckFailurePage = inject[StatusCheckFailurePage]
 
-  val nino = NinoGenerator.generateNino
+  val nino               = NinoGenerator.generateNino
   val ninSearchFormModel = NinoSearchFormModel(nino, "Pan", "", LocalDate.now())
   val mrzSearchFormModel = MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
 
   val NinoDocWithFeature: Document = asDocument(sut(ninSearchFormModel)(request, messages))
-  val MrzDocWithFeature: Document = asDocument(sut(mrzSearchFormModel)(request, messages))
+  val MrzDocWithFeature: Document  = asDocument(sut(mrzSearchFormModel)(request, messages))
 
   "StatusCheckFailurePage" must {
     "have a status conflict title" in {

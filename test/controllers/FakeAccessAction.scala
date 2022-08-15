@@ -23,7 +23,7 @@ import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class FakeAccessAction @Inject()(implicit materializer: Materializer) extends AccessAction {
+class FakeAccessAction @Inject() (implicit materializer: Materializer) extends AccessAction {
   override def parser: BodyParser[AnyContent] = new BodyParsers.Default()
 
   override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] =

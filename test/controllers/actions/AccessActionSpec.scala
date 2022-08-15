@@ -30,7 +30,7 @@ import scala.concurrent.Future
 class AccessActionSpec extends ControllerSpec {
 
   val mockShutterAction: ShutterAction = mock(classOf[ShutterAction])
-  val mockAuthAction: AuthAction = mock(classOf[AuthAction])
+  val mockAuthAction: AuthAction       = mock(classOf[AuthAction])
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -45,7 +45,7 @@ class AccessActionSpec extends ControllerSpec {
     )
     .build()
 
-  val expected = Ok("Invoked")
+  val expected                                = Ok("Invoked")
   val testBlock: Request[_] => Future[Result] = _ => Future.successful(expected)
 
   "invokeBlock" must {

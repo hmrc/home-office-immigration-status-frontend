@@ -38,7 +38,7 @@ class GovukWrapperViewSpec extends ViewSpec {
 
   lazy val sut = inject[MultipleMatchesFoundPage]
 
-  val query = NinoSearchFormModel(NinoGenerator.generateNino, "Pan", "", LocalDate.now())
+  val query              = NinoSearchFormModel(NinoGenerator.generateNino, "Pan", "", LocalDate.now())
   lazy val doc: Document = asDocument(sut(query)(request, messages))
 
   "govuk_wrapper" must {

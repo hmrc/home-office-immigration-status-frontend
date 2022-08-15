@@ -26,7 +26,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 class AppConfigSpec extends PlaySpec {
 
-  val mockFile: File = mock(classOf[File])
+  val mockFile: File               = mock(classOf[File])
   val mockClassLoader: ClassLoader = mock(classOf[ClassLoader])
 
   def config(runMode: Option[String]): Configuration = {
@@ -47,14 +47,15 @@ class AppConfigSpec extends PlaySpec {
            |httpHeaders.cacheControl="Cache"
            |mongodb.encryption.key="Key123"
       """.stripMargin
-      ))
+      )
+    )
     runMode match {
       case Some(mode) => Configuration(ConfigFactory.parseString(s"""run.mode = "$mode" """)).withFallback(config)
       case _          => config
     }
   }
 
-  val devEnv: Environment = Environment(mockFile, mockClassLoader, Mode.Dev)
+  val devEnv: Environment  = Environment(mockFile, mockClassLoader, Mode.Dev)
   val testEnv: Environment = Environment(mockFile, mockClassLoader, Mode.Test)
   val prodEnv: Environment = Environment(mockFile, mockClassLoader, Mode.Prod)
 
@@ -62,22 +63,22 @@ class AppConfigSpec extends PlaySpec {
     "return isDevEnv as false" when {
 
       "env.Mode is set to test and run mode in config is test" in {
-        val configuration = config(Some("Test"))
-        val servicesConfig = new ServicesConfig(configuration)
+        val configuration       = config(Some("Test"))
+        val servicesConfig      = new ServicesConfig(configuration)
         lazy val sut: AppConfig = new AppConfig(servicesConfig, configuration, testEnv)
         sut.isDevEnv mustEqual false
       }
 
       "env.Mode is set to test and run mode in config is not test" in {
-        val configuration = config(Some("Dev"))
-        val servicesConfig = new ServicesConfig(configuration)
+        val configuration       = config(Some("Dev"))
+        val servicesConfig      = new ServicesConfig(configuration)
         lazy val sut: AppConfig = new AppConfig(servicesConfig, configuration, testEnv)
         sut.isDevEnv mustEqual false
       }
 
       "env.Mode is not set to test and run mode in config is not Dev" in {
-        val configuration = config(Some("Test"))
-        val servicesConfig = new ServicesConfig(configuration)
+        val configuration       = config(Some("Test"))
+        val servicesConfig      = new ServicesConfig(configuration)
         lazy val sut: AppConfig = new AppConfig(servicesConfig, configuration, devEnv)
         sut.isDevEnv mustEqual false
       }
@@ -87,15 +88,15 @@ class AppConfigSpec extends PlaySpec {
     "return isDevEnv as true" when {
 
       "env.Mode is not set to test and run mode in config is dev" in {
-        val configuration = config(Some("Dev"))
-        val servicesConfig = new ServicesConfig(configuration)
+        val configuration       = config(Some("Dev"))
+        val servicesConfig      = new ServicesConfig(configuration)
         lazy val sut: AppConfig = new AppConfig(servicesConfig, configuration, devEnv)
         sut.isDevEnv mustEqual true
       }
 
       "env.Mode is not set to test and run mode in config is not set" in {
-        val configuration = config(None)
-        val servicesConfig = new ServicesConfig(configuration)
+        val configuration       = config(None)
+        val servicesConfig      = new ServicesConfig(configuration)
         lazy val sut: AppConfig = new AppConfig(servicesConfig, configuration, prodEnv)
         sut.isDevEnv mustEqual true
       }

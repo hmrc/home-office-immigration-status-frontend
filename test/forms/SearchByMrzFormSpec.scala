@@ -46,14 +46,14 @@ class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecti
 
   implicit def noShrink[T]: Shrink[T] = Shrink.shrinkAny
 
-  lazy val formProvider: SearchByMRZForm = inject[SearchByMRZForm]
-  lazy val countriesValues = inject[Countries].countries.map(_.alpha3)
+  lazy val formProvider: SearchByMRZForm  = inject[SearchByMRZForm]
+  lazy val countriesValues                = inject[Countries].countries.map(_.alpha3)
   lazy val form: Form[MrzSearchFormModel] = formProvider()
 
-  val now: LocalDate = LocalDate.now()
-  val tomorrow: LocalDate = now.plusDays(1)
+  val now: LocalDate       = LocalDate.now()
+  val tomorrow: LocalDate  = now.plusDays(1)
   val yesterday: LocalDate = now.minusDays(1)
-  val testNino = NinoGenerator.generateNino
+  val testNino             = NinoGenerator.generateNino
 
   def input(
     dateOfBirth: LocalDate = yesterday,
@@ -93,10 +93,11 @@ class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecti
         val validGen = for {
           docType <- Gen.oneOf(SearchByMRZForm.AllowedDocumentTypes)
           docNum <- Gen
-                     .listOfN(
-                       SearchByMRZForm.DocumentNumberMaxLength,
-                       Gen.frequency((9, Gen.alphaNumChar), (1, Gen.const('-'))))
-                     .map(_.mkString.toUpperCase)
+                      .listOfN(
+                        SearchByMRZForm.DocumentNumberMaxLength,
+                        Gen.frequency((9, Gen.alphaNumChar), (1, Gen.const('-')))
+                      )
+                      .map(_.mkString.toUpperCase)
           nat <- Gen.oneOf(countriesValues)
         } yield MrzSearchFormModel(docType, docNum, yesterday, nat)
 
@@ -105,7 +106,8 @@ class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecti
             input(
               nationality = out.nationality,
               documentType = out.documentType,
-              documentNumber = out.documentNumber.toLowerCase)
+              documentNumber = out.documentNumber.toLowerCase
+            )
 
           val bound = form.bind(validInput)
           bound.errors mustBe Nil
@@ -116,8 +118,8 @@ class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecti
       "nationality and doc type are lower case" in {
 
         val validInput = input(nationality = "afg", documentType = "passport")
-        val out = MrzSearchFormModel("PASSPORT", "DOCNUMBER", yesterday, "AFG")
-        val bound = form.bind(validInput)
+        val out        = MrzSearchFormModel("PASSPORT", "DOCNUMBER", yesterday, "AFG")
+        val bound      = form.bind(validInput)
 
         bound.errors mustBe Nil
         bound.value mustBe Some(out)
@@ -125,8 +127,8 @@ class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecti
 
       "DocumentNumber contains spaces and spaces are removed" in {
         val validInput = input(documentNumber = "111 222 333")
-        val out = MrzSearchFormModel("PASSPORT", "111222333", yesterday, "AFG")
-        val bound = form.bind(validInput)
+        val out        = MrzSearchFormModel("PASSPORT", "111222333", yesterday, "AFG")
+        val bound      = form.bind(validInput)
 
         bound.errors mustBe Nil
         bound.value mustBe Some(out)
@@ -148,7 +150,8 @@ class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecti
 
       form.bind(invalidInput).value must not be defined
       form.bind(invalidInput).errors mustBe List(
-        FormError("dateOfBirth.month", List("error.dateOfBirth.month.required")))
+        FormError("dateOfBirth.month", List("error.dateOfBirth.month.required"))
+      )
     }
 
     "dob year is invalid" in {
@@ -258,7 +261,8 @@ class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecti
 
         form.bind(invalidInput).value must not be defined
         form.bind(invalidInput).errors mustBe List(
-          FormError("documentNumber", List("error.documentNumber.invalid-characters")))
+          FormError("documentNumber", List("error.documentNumber.invalid-characters"))
+        )
       }
     }
   }

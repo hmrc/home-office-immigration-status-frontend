@@ -11,7 +11,7 @@ class RootISpec extends ISpec {
       givenAuthorisedForStride("TBC", "StrideUserId")
 
       val result: WSResponse = requestWithSession("/", "session-root").get().futureValue
-      result.status shouldBe SEE_OTHER
+      result.status                 shouldBe SEE_OTHER
       extractHeaderLocation(result) shouldBe Some(controllers.routes.SearchByNinoController.onPageLoad().url)
     }
   }

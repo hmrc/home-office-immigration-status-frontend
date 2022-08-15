@@ -42,7 +42,7 @@ class StatusNotAvailableViewSpec extends ViewSpec {
 
   lazy val sut: StatusNotAvailablePage = inject[StatusNotAvailablePage]
 
-  val nino = NinoSearchFormModel(generateNino, "Applicant", "", LocalDate.now())
+  val nino   = NinoSearchFormModel(generateNino, "Applicant", "", LocalDate.now())
   val result = StatusCheckResult("Full name", LocalDate.now(), "JPN", Nil)
 
   val query = StatusNotAvailablePageContext(nino, result)
@@ -64,7 +64,8 @@ class StatusNotAvailableViewSpec extends ViewSpec {
         doc,
         "#not-available-list",
         messages("status-not-available.list-item1") + " "
-          + messages("status-not-available.list-item2"))
+          + messages("status-not-available.list-item2")
+      )
     }
 
     "have the summary list" in {

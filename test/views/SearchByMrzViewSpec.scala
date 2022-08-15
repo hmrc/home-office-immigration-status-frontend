@@ -77,7 +77,8 @@ class SearchByMrzViewSpec extends ViewSpec {
     "have the identity component contains options" in {
       val e: Element = doc.getElementById("documentType")
       e.text() mustBe messages(
-        "Passport European National Identity Card Biometric Residence Card Biometric Residence Permit")
+        "Passport European National Identity Card Biometric Residence Card Biometric Residence Permit"
+      )
     }
 
     "have documentNumber" in {
@@ -106,7 +107,7 @@ class SearchByMrzViewSpec extends ViewSpec {
   }
 
   val formWithErrors: Form[MrzSearchFormModel] = inject[SearchByMRZForm].apply().bind(JsNull, 200)
-  lazy val docWithErrors: Document = asDocument(sut(formWithErrors)(request, messages))
+  lazy val docWithErrors: Document             = asDocument(sut(formWithErrors)(request, messages))
 
   "SearchByMrzView with an error" must {
     "display the error summary" in {

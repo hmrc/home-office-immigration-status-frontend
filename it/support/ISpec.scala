@@ -13,11 +13,12 @@ trait ISpec extends BaseISpec with MockSessionCookie {
   val baseUrl: String = s"http://localhost:$port/check-immigration-status"
 
   lazy val wsClient: WSClient = app.injector.instanceOf[WSClient]
-  lazy val cacheRepo = inject[SessionCacheRepository]
+  lazy val cacheRepo          = inject[SessionCacheRepository]
   lazy val formModelEncrypter = inject[FormModelEncrypter]
 
   def setFormQuery(formModel: NinoSearchFormModel, sessionId: String) = {
-    val encryptedFormModel = formModelEncrypter.encryptSearchFormModel(formModel, sessionId, "VqmXp7yigDFxbCUdDdNZVIvbW6RgPNJsliv6swQNCL8=")
+    val encryptedFormModel =
+      formModelEncrypter.encryptSearchFormModel(formModel, sessionId, "VqmXp7yigDFxbCUdDdNZVIvbW6RgPNJsliv6swQNCL8=")
     val formQueryModel = FormQueryModel(sessionId, encryptedFormModel)
     cacheRepo.set(formQueryModel).map(_ => ())
   }
@@ -29,11 +30,10 @@ trait ISpec extends BaseISpec with MockSessionCookie {
         "X-Session-ID" -> sessionId
       )
 
-  def requestWithSession(path: String, sessionId: String): WSRequest = {
+  def requestWithSession(path: String, sessionId: String): WSRequest =
     request(path, sessionId)
       .withCookies(mockSessionCookie(sessionId))
       .withFollowRedirects(false)
-  }
 
   def extractHeaderLocation(wsResponse: WSResponse): Option[String] =
     wsResponse.headers.get(LOCATION).map(_.head)

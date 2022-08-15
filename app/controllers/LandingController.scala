@@ -25,7 +25,7 @@ import models.{MrzSearchFormModel, NinoSearchFormModel}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class LandingController @Inject()(
+class LandingController @Inject() (
   access: AccessAction,
   controllerComponents: MessagesControllerComponents,
   sessionCacheService: SessionCacheService

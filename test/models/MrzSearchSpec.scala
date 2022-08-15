@@ -47,11 +47,10 @@ class MrzSearchSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
         ("BRC", messages("lookup.res.card")),
         ("BRP", messages("lookup.res.permit")),
         ("OTHER", "OTHER")
-      ).foreach {
-        case (docType, message) =>
-          s"doc type is $docType" in {
-            MrzSearch.documentTypeToMessageKey(docType) mustEqual message
-          }
+      ).foreach { case (docType, message) =>
+        s"doc type is $docType" in {
+          MrzSearch.documentTypeToMessageKey(docType) mustEqual message
+        }
       }
     }
   }

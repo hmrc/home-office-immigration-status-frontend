@@ -50,7 +50,8 @@ object RowWithActionViewModel {
     actionId: String,
     fieldId: String,
     spanMessageKey: String,
-    formModel: SearchFormModel): RowWithActionViewModel =
+    formModel: SearchFormModel
+  ): RowWithActionViewModel =
     new RowWithActionViewModel(
       id,
       messageKey,
@@ -58,6 +59,7 @@ object RowWithActionViewModel {
       changeInputUrl(fieldId, formModel),
       actionId,
       changeMessageKey,
-      spanMessageKey)
+      spanMessageKey
+    )
 
 }

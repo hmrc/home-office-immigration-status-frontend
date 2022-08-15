@@ -28,10 +28,10 @@ case class StatusCheckResult(
   nationality: String, // (ICAO 3 letter acronym - ISO 3166-1)
   statuses: List[ImmigrationStatus]
 ) {
-  def dobFormatted(locale: Locale): String = DateFormat.format(locale)(dateOfBirth)
-  val statusesSortedByDate = statuses.sortBy(f = _.statusStartDate.toEpochDay * -1)
+  def dobFormatted(locale: Locale): String        = DateFormat.format(locale)(dateOfBirth)
+  val statusesSortedByDate                        = statuses.sortBy(f = _.statusStartDate.toEpochDay * -1)
   val mostRecentStatus: Option[ImmigrationStatus] = statusesSortedByDate.headOption
-  val previousStatuses: Seq[ImmigrationStatus] = statusesSortedByDate.drop(1)
+  val previousStatuses: Seq[ImmigrationStatus]    = statusesSortedByDate.drop(1)
 }
 
 object StatusCheckResult {
@@ -47,6 +47,7 @@ object StatusCheckResult {
           "previousStatuses" -> models.previousStatuses
         )
         .fields
-        .filterNot(_._2 == JsNull))
+        .filterNot(_._2 == JsNull)
+    )
   }
 }

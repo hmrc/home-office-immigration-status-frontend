@@ -24,7 +24,7 @@ import config.AppConfig
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 
-class HttpFilter @Inject()(implicit val mat: Materializer, ec: ExecutionContext, appConfig: AppConfig) extends Filter {
+class HttpFilter @Inject() (implicit val mat: Materializer, ec: ExecutionContext, appConfig: AppConfig) extends Filter {
   def apply(nextFilter: RequestHeader => Future[Result])(requestHeader: RequestHeader): Future[Result] =
     nextFilter(requestHeader).map { result =>
       result.withHeaders("Cache-Control" -> appConfig.httpHeaderCacheControl)

@@ -27,13 +27,13 @@ class ShowChangeQuerySpec extends ViewSpec {
 
   val sut = inject[ShowChangeQuery]
 
-  val nino = NinoGenerator.generateNino
+  val nino  = NinoGenerator.generateNino
   val query = NinoSearchFormModel(nino, "Pan", "", LocalDate.now())
 
   val dateOfBirth = LocalDate.now().minusYears(1)
-  val mrzQuery = MrzSearchFormModel("documentType", "documentNumber", dateOfBirth, "nationality")
+  val mrzQuery    = MrzSearchFormModel("documentType", "documentNumber", dateOfBirth, "nationality")
 
-  val doc = asDocument(sut(query)(messages))
+  val doc    = asDocument(sut(query)(messages))
   val mrzDoc = asDocument(sut(mrzQuery)(messages))
 
   "showChangeQuery" must {
@@ -47,19 +47,19 @@ class ShowChangeQuerySpec extends ViewSpec {
           "generic.dob",
           "dob",
           "dateOfBirth.day",
-          "generic.dob.lowercase")
-      ).zipWithIndex.foreach {
-        case ((data, msgKey, id, fieldId, actionText), index) =>
-          val row = doc.select(s"#inputted-data > .govuk-summary-list__row:nth-child(${index + 1})")
-          assertOneThirdRowWithAction(
-            row,
-            messages(msgKey),
-            data,
-            id,
-            s"${messages("generic.change")} ${messages(actionText)}",
-            routes.SearchByNinoController.onPageLoad(false).url + "#" + fieldId,
-            "half"
-          )
+          "generic.dob.lowercase"
+        )
+      ).zipWithIndex.foreach { case ((data, msgKey, id, fieldId, actionText), index) =>
+        val row = doc.select(s"#inputted-data > .govuk-summary-list__row:nth-child(${index + 1})")
+        assertOneThirdRowWithAction(
+          row,
+          messages(msgKey),
+          data,
+          id,
+          s"${messages("generic.change")} ${messages(actionText)}",
+          routes.SearchByNinoController.onPageLoad(false).url + "#" + fieldId,
+          "half"
+        )
       }
     }
 
@@ -73,19 +73,19 @@ class ShowChangeQuerySpec extends ViewSpec {
           "generic.dob",
           "dob",
           "dateOfBirth.day",
-          "generic.dob.lowercase")
-      ).zipWithIndex.foreach {
-        case ((data, msgKey, id, fieldId, actionText), index) =>
-          val row = mrzDoc.select(s"#inputted-data > .govuk-summary-list__row:nth-child(${index + 1})")
-          assertOneThirdRowWithAction(
-            row,
-            messages(msgKey),
-            data,
-            id,
-            s"${messages("generic.change")} ${messages(actionText)}",
-            routes.SearchByMrzController.onPageLoad(false).url + "#" + fieldId,
-            "half"
-          )
+          "generic.dob.lowercase"
+        )
+      ).zipWithIndex.foreach { case ((data, msgKey, id, fieldId, actionText), index) =>
+        val row = mrzDoc.select(s"#inputted-data > .govuk-summary-list__row:nth-child(${index + 1})")
+        assertOneThirdRowWithAction(
+          row,
+          messages(msgKey),
+          data,
+          id,
+          s"${messages("generic.change")} ${messages(actionText)}",
+          routes.SearchByMrzController.onPageLoad(false).url + "#" + fieldId,
+          "half"
+        )
       }
     }
   }

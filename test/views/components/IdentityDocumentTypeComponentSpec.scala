@@ -36,7 +36,7 @@ class IdentityDocumentTypeComponentSpec extends ViewSpec {
   "apply" must {
     val emptyForm = testForm.bind(Map.empty[String, String])
     "have all 4 options, in the correct order" in {
-      val doc = asDocument(sut(emptyForm)(messages))
+      val doc     = asDocument(sut(emptyForm)(messages))
       val options = doc.select("option").asScala.toList.map(option => (option.attr("value")))
 
       options mustBe SearchByMRZForm.AllowedDocumentTypes
@@ -50,11 +50,10 @@ class IdentityDocumentTypeComponentSpec extends ViewSpec {
           doc.select("option").asScala.toList.map(option => (option.attr("value"), option.hasAttr("selected")))
 
         optionsWithSelected.headOption mustBe Some(("PASSPORT", true))
-        optionsWithSelected.tail.foreach {
-          case (option, selected) =>
-            withClue(s"$option was selected when it shouldnt be.") {
-              selected mustBe false
-            }
+        optionsWithSelected.tail.foreach { case (option, selected) =>
+          withClue(s"$option was selected when it shouldnt be.") {
+            selected mustBe false
+          }
         }
       }
     }

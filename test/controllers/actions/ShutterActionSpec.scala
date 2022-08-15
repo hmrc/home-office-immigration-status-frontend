@@ -44,8 +44,8 @@ class ShutterActionSpec extends ControllerSpec {
     )
     .build()
 
-  implicit val req = request
-  implicit val mess = messages
+  implicit val req        = request
+  implicit val mess       = messages
   lazy val shutteringPage = inject[ShutteringPage]
 
   lazy val shutterAction = inject[ShutterAction]

@@ -32,7 +32,7 @@ import uk.gov.hmrc.mongo.MongoComponent
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SessionCacheRepository @Inject()(
+class SessionCacheRepository @Inject() (
   mongoComponent: MongoComponent,
   appConfig: AppConfig
 )(implicit ec: ExecutionContext)
@@ -45,9 +45,11 @@ class SessionCacheRepository @Inject()(
           ascending("lastUpdated"),
           IndexOptions()
             .name("lastUpdatedTTL")
-            .expireAfter(appConfig.mongoSessionExpiration, TimeUnit.SECONDS))
+            .expireAfter(appConfig.mongoSessionExpiration, TimeUnit.SECONDS)
+        )
       )
-    ) with SearchableWithMongoCollection
+    )
+    with SearchableWithMongoCollection
 
 object SessionCacheRepository {
   val CollectionName = "form-query"

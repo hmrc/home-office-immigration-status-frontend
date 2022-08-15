@@ -23,7 +23,7 @@ import com.typesafe.config.ConfigException
 import config.Countries.ISOCountry
 
 @Singleton
-class Countries @Inject()(environment: Environment) {
+class Countries @Inject() (environment: Environment) {
 
   private[config] def alpha2ToHmrcName: Map[String, String] = {
     val file = "location-autocomplete-canonical-list.json"
@@ -35,10 +35,9 @@ class Countries @Inject()(environment: Environment) {
           .fromJson[Array[(String, String)]](locationJsValue)
           .asOpt
           .map {
-            _.map {
-              case (name, code) =>
-                val alpha2 = ":([A-Z]{2})$".r.findFirstMatchIn(code).map(_.group(1))
-                alpha2 -> name
+            _.map { case (name, code) =>
+              val alpha2 = ":([A-Z]{2})$".r.findFirstMatchIn(code).map(_.group(1))
+              alpha2 -> name
             }.collect { case (Some(code), name) => code -> name }.toMap
           }
       }

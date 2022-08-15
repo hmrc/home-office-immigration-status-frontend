@@ -49,7 +49,7 @@ object EEACountries {
     "SVN",
     "ESP",
     "SWE",
-    "CHE",
+    "CHE"
   )
 
 }

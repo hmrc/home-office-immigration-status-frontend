@@ -80,7 +80,8 @@ class StatusResultControllerSpec extends ControllerSpec {
       def mockProxyServiceWith(hoResponse: StatusCheckResponseWithStatus) =
         when(
           mockProxyService
-            .search(refEq(query))(any(), any(), any(), any()))
+            .search(refEq(query))(any(), any(), any(), any())
+        )
           .thenReturn(Future.successful(hoResponse))
 
       def verifyConnector() = verify(mockProxyService).search(any())(any(), any(), any(), any())
@@ -91,9 +92,11 @@ class StatusResultControllerSpec extends ControllerSpec {
           "",
           java.time.LocalDate.now(),
           "",
-          List(ImmigrationStatus(java.time.LocalDate.now(), None, "", "", false)))
+          List(ImmigrationStatus(java.time.LocalDate.now(), None, "", "", false))
+        )
         mockProxyServiceWith(
-          StatusCheckResponseWithStatus(OK, StatusCheckSuccessfulResponse(correlationId, result = hoResult)))
+          StatusCheckResponseWithStatus(OK, StatusCheckSuccessfulResponse(correlationId, result = hoResult))
+        )
 
         val result = sut.onPageLoad()(request)
 
@@ -109,7 +112,8 @@ class StatusResultControllerSpec extends ControllerSpec {
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(query)))
         val hoResult = StatusCheckResult("", java.time.LocalDate.now(), "", Nil)
         mockProxyServiceWith(
-          StatusCheckResponseWithStatus(OK, StatusCheckSuccessfulResponse(correlationId, result = hoResult)))
+          StatusCheckResponseWithStatus(OK, StatusCheckSuccessfulResponse(correlationId, result = hoResult))
+        )
 
         val result = sut.onPageLoad()(request)
 
@@ -126,7 +130,9 @@ class StatusResultControllerSpec extends ControllerSpec {
         mockProxyServiceWith(
           StatusCheckResponseWithStatus(
             CONFLICT,
-            StatusCheckErrorResponse(correlationId, StatusCheckError("Some response"))))
+            StatusCheckErrorResponse(correlationId, StatusCheckError("Some response"))
+          )
+        )
 
         val result = sut.onPageLoad()(request)
 
@@ -143,7 +149,9 @@ class StatusResultControllerSpec extends ControllerSpec {
         mockProxyServiceWith(
           StatusCheckResponseWithStatus(
             NOT_FOUND,
-            StatusCheckErrorResponse(correlationId, StatusCheckError("Some response"))))
+            StatusCheckErrorResponse(correlationId, StatusCheckError("Some response"))
+          )
+        )
 
         val result = sut.onPageLoad()(request)
 
@@ -161,7 +169,9 @@ class StatusResultControllerSpec extends ControllerSpec {
         mockProxyServiceWith(
           StatusCheckResponseWithStatus(
             TEAPOT,
-            StatusCheckErrorResponse(correlationId, StatusCheckError("Some response"))))
+            StatusCheckErrorResponse(correlationId, StatusCheckError("Some response"))
+          )
+        )
 
         val result = sut.onPageLoad()(request)
 

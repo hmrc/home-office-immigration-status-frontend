@@ -39,7 +39,10 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class SearchableWithMongoCollectionSpec
-    extends PlaySpec with GuiceOneAppPerSuite with Injecting with BeforeAndAfterEach {
+    extends PlaySpec
+    with GuiceOneAppPerSuite
+    with Injecting
+    with BeforeAndAfterEach {
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
@@ -49,10 +52,10 @@ class SearchableWithMongoCollectionSpec
 
   val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
 
-  val mockFindObs = mock(classOf[FindObservable[FormQueryModel]])
-  val mockSingleObs = mock(classOf[SingleObservable[Seq[FormQueryModel]]])
-  val mockSingleObsDelete = mock(classOf[SingleObservable[DeleteResult]])
-  val mockDeleteResult = mock(classOf[DeleteResult])
+  val mockFindObs                                     = mock(classOf[FindObservable[FormQueryModel]])
+  val mockSingleObs                                   = mock(classOf[SingleObservable[Seq[FormQueryModel]]])
+  val mockSingleObsDelete                             = mock(classOf[SingleObservable[DeleteResult]])
+  val mockDeleteResult                                = mock(classOf[DeleteResult])
   val mockCollection: MongoCollection[FormQueryModel] = mock(classOf[MongoCollection[FormQueryModel]])
 
   override def beforeEach(): Unit = {
@@ -66,17 +69,18 @@ class SearchableWithMongoCollectionSpec
     super.beforeEach
   }
 
-  val now = LocalDateTime.now
-  private val cipher = new TestGCMCipher
+  val now               = LocalDateTime.now
+  private val cipher    = new TestGCMCipher
   private val encrypter = new FormModelEncrypter(cipher)
   private val secretKey = "VqmXp7yigDFxbCUdDdNZVIvbW6RgPNJsliv6swQNCL8="
   val formModel = NinoSearchFormModel(
     nino = NinoGenerator.generateNino,
     givenName = "Jimmy",
     familyName = "Jazz",
-    dateOfBirth = LocalDate.now)
+    dateOfBirth = LocalDate.now
+  )
   val encryptedFormModel = encrypter.encryptSearchFormModel(formModel, "123", secretKey)
-  val formQuery = FormQueryModel(id = "ID1", data = encryptedFormModel, now)
+  val formQuery          = FormQueryModel(id = "ID1", data = encryptedFormModel, now)
 
   val filters: Bson = Filters.equal("_id", "ID1")
 

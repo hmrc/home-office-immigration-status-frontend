@@ -32,12 +32,12 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class AuditServiceSpec extends PlaySpec {
 
-  val mockAuditConnector = mock(classOf[AuditConnector])
-  val sut = new AuditServiceImpl(mockAuditConnector)
+  val mockAuditConnector                                    = mock(classOf[AuditConnector])
+  val sut                                                   = new AuditServiceImpl(mockAuditConnector)
   implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
-  implicit val hc = HeaderCarrier(sessionId = Some(SessionId("123")))
+  implicit val hc                                           = HeaderCarrier(sessionId = Some(SessionId("123")))
 
-  val testDate = LocalDate.now
+  val testDate  = LocalDate.now
   val formatter = DateTimeFormatter.ofPattern("d/MM/yyyy")
 
   val correlationId = Some("correlationId")
@@ -56,8 +56,8 @@ class AuditServiceSpec extends PlaySpec {
           StatusCheckRange(Some(LocalDate.now(ZoneId.of("UTC")).minusMonths(1)), Some(LocalDate.now(ZoneId.of("UTC"))))
         )
 
-        val statusCheckResult = StatusCheckResult("Damon Albarn", testDate, "GBR", Nil)
-        val response = StatusCheckSuccessfulResponse(correlationId, statusCheckResult)
+        val statusCheckResult  = StatusCheckResult("Damon Albarn", testDate, "GBR", Nil)
+        val response           = StatusCheckSuccessfulResponse(correlationId, statusCheckResult)
         val responseWithStatus = StatusCheckResponseWithStatus(200, response)
 
         val expectedDetails = StatusCheckAuditDetail(200, search, response)
@@ -78,8 +78,8 @@ class AuditServiceSpec extends PlaySpec {
           StatusCheckRange(Some(LocalDate.now(ZoneId.of("UTC")).minusMonths(1)), Some(LocalDate.now(ZoneId.of("UTC"))))
         )
 
-        val statusCheckResult = StatusCheckError("UNKNOWN_ERROR")
-        val error = StatusCheckErrorResponse(correlationId, statusCheckResult)
+        val statusCheckResult  = StatusCheckError("UNKNOWN_ERROR")
+        val error              = StatusCheckErrorResponse(correlationId, statusCheckResult)
         val responseWithStatus = StatusCheckResponseWithStatus(500, error)
 
         val expectedDetails = StatusCheckAuditDetail(500, search, error)

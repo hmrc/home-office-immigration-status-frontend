@@ -42,13 +42,13 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
     .build()
 
   lazy val sut = inject[MultipleMatchesFoundPage]
-  val nino = NinoGenerator.generateNino
+  val nino     = NinoGenerator.generateNino
 
   val ninSearchFormModel = NinoSearchFormModel(nino, "Pan", "", LocalDate.now())
   val mrzSearchFormModel = MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
 
   val NinoDocWithFeature: Document = asDocument(sut(ninSearchFormModel)(request, messages))
-  val MrzDocWithFeature: Document = asDocument(sut(mrzSearchFormModel)(request, messages))
+  val MrzDocWithFeature: Document  = asDocument(sut(mrzSearchFormModel)(request, messages))
 
   "MultipleMatchesFoundPage" must {
     "have a status conflict title" in {

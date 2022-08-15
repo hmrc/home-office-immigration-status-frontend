@@ -33,14 +33,16 @@ import support.CallOps
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthActionImpl @Inject()(
+class AuthActionImpl @Inject() (
   val env: Environment,
   override val authConnector: AuthConnector,
   appConfig: AppConfig,
   val parser: BodyParsers.Default,
   val config: Configuration
 )(implicit val executionContext: ExecutionContext)
-    extends AuthAction with AuthorisedFunctions with AuthRedirects {
+    extends AuthAction
+    with AuthorisedFunctions
+    with AuthRedirects {
 
   override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] = {
 

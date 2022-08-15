@@ -35,7 +35,8 @@ class PreviousStatusesComponentSpec extends ViewSpec {
       productType = "EUS",
       immigrationStatus = "ILR",
       noRecourseToPublicFunds = true
-    ))
+    )
+  )
 
   def singleStatusCustomImmigrationStatus(productType: String, immigrationStatus: String) =
     Seq(
@@ -45,7 +46,8 @@ class PreviousStatusesComponentSpec extends ViewSpec {
         productType = productType,
         immigrationStatus = immigrationStatus,
         noRecourseToPublicFunds = true
-      ))
+      )
+    )
 
   val threeStatuses = Seq(
     ImmigrationStatus(
@@ -103,27 +105,28 @@ class PreviousStatusesComponentSpec extends ViewSpec {
         ("01 January 2012", "status-found.previous.startDate", "startDate-previous-0"),
         ("01 January 2013", "status-found.previous.endDate", "expiryDate-previous-0"),
         ("No", "status-found.previous.recourse", "recourse-previous-0")
-      ).zipWithIndex.foreach {
-        case ((data, msgKey, id), index) =>
-          val row: Elements = doc.select(s"#history-0 > .govuk-summary-list__row:nth-child(${index + 1})")
-          assertCustomWidthRow(row, messages(msgKey), data, id, "third")
+      ).zipWithIndex.foreach { case ((data, msgKey, id), index) =>
+        val row: Elements = doc.select(s"#history-0 > .govuk-summary-list__row:nth-child(${index + 1})")
+        assertCustomWidthRow(row, messages(msgKey), data, id, "third")
       }
     }
 
     "display noRecourseToPublicFunds field" when {
       "when noRecourse is true" in {
         val doc: Document = asDocument(sut(singleStatus.map(_.copy(noRecourseToPublicFunds = true)))(messages))
-        val e = doc.getElementById("recourse-previous-0")
+        val e             = doc.getElementById("recourse-previous-0")
         e.text() mustBe messages(s"status-found.previous.noRecourseToPublicFunds.true")
       }
 
       "each status is different" in {
         val doc = asDocument(sut(threeStatuses)(messages))
         doc.getElementById("recourse-previous-0").text() mustBe messages(
-          "status-found.previous.noRecourseToPublicFunds.true")
+          "status-found.previous.noRecourseToPublicFunds.true"
+        )
         assertNotRenderedById(doc, "recourse-previous-1")
         doc.getElementById("recourse-previous-2").text() mustBe messages(
-          "status-found.previous.noRecourseToPublicFunds.true")
+          "status-found.previous.noRecourseToPublicFunds.true"
+        )
       }
     }
 
@@ -173,7 +176,8 @@ class PreviousStatusesComponentSpec extends ViewSpec {
           assertElementHasText(
             doc,
             "#status-previous-0",
-            "Dependants of a person with immigration permission - Limited leave to enter")
+            "Dependants of a person with immigration permission - Limited leave to enter"
+          )
         }
         "LTR" in {
           val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("DEPENDANT", "LTR"))(messages))
@@ -181,7 +185,8 @@ class PreviousStatusesComponentSpec extends ViewSpec {
           assertElementHasText(
             doc,
             "#status-previous-0",
-            "Dependants of a person with immigration permission - Limited leave to remain")
+            "Dependants of a person with immigration permission - Limited leave to remain"
+          )
         }
       }
 
@@ -227,7 +232,8 @@ class PreviousStatusesComponentSpec extends ViewSpec {
           assertElementHasText(
             doc,
             "#status-previous-0",
-            "British National Overseas (leave outside the rules) - Limited leave to enter")
+            "British National Overseas (leave outside the rules) - Limited leave to enter"
+          )
         }
         "LTR" in {
           val doc: Document = asDocument(sut(singleStatusCustomImmigrationStatus("BNO_LOTR", "LTR"))(messages))
@@ -235,7 +241,8 @@ class PreviousStatusesComponentSpec extends ViewSpec {
           assertElementHasText(
             doc,
             "#status-previous-0",
-            "British National Overseas (leave outside the rules) - Limited leave to remain")
+            "British National Overseas (leave outside the rules) - Limited leave to remain"
+          )
         }
       }
 
@@ -254,7 +261,8 @@ class PreviousStatusesComponentSpec extends ViewSpec {
           assertElementHasText(
             doc,
             "#status-previous-0",
-            "EU Settlement Scheme - Pending EU Settlement Scheme application")
+            "EU Settlement Scheme - Pending EU Settlement Scheme application"
+          )
         }
         "POST_GRACE_PERIOD_COA_GRANT" in {
           val doc: Document =
@@ -263,7 +271,8 @@ class PreviousStatusesComponentSpec extends ViewSpec {
           assertElementHasText(
             doc,
             "#status-previous-0",
-            "EU Settlement Scheme - Pending EU Settlement Scheme application")
+            "EU Settlement Scheme - Pending EU Settlement Scheme application"
+          )
         }
       }
 
@@ -287,7 +296,8 @@ class PreviousStatusesComponentSpec extends ViewSpec {
           assertElementHasText(
             doc,
             "#status-previous-0",
-            "British National Overseas or Settlement Protection - Indefinite leave to remain")
+            "British National Overseas or Settlement Protection - Indefinite leave to remain"
+          )
         }
       }
 
@@ -327,7 +337,8 @@ class PreviousStatusesComponentSpec extends ViewSpec {
           assertElementHasText(
             doc,
             "#status-previous-0",
-            "Dependants of a person with immigration permission - Indefinite leave to remain")
+            "Dependants of a person with immigration permission - Indefinite leave to remain"
+          )
         }
       }
 

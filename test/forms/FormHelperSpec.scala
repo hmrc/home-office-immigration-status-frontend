@@ -24,14 +24,15 @@ import play.api.data.Forms.{nonEmptyText, tuple}
 
 class FormHelperSpec extends AnyWordSpecLike with Matchers {
 
-  val form = Form(tuple("myField1" -> nonEmptyText, "dateOfBirth" -> nonEmptyText))
+  val form                                                = Form(tuple("myField1" -> nonEmptyText, "dateOfBirth" -> nonEmptyText))
   def testFormFill(myField1: String, dateOfBirth: String) = Map("myField1" -> myField1, "dateOfBirth" -> dateOfBirth)
 
   "updateDateOfBirthErrors" should {
     "convert all dob errors to have the key be the day" in {
       val filledForm = form.bind(testFormFill("string", ""))
       FormHelper.updateDateOfBirthErrors(filledForm.errors) shouldBe List(
-        FormError("dateOfBirth.day", List("error.required")))
+        FormError("dateOfBirth.day", List("error.required"))
+      )
     }
 
     "not change non dob errors" in {
@@ -43,7 +44,8 @@ class FormHelperSpec extends AnyWordSpecLike with Matchers {
       val filledForm = form.bind(testFormFill("", ""))
       FormHelper.updateDateOfBirthErrors(filledForm.errors) shouldBe List(
         FormError("myField1", List("error.required")),
-        FormError("dateOfBirth.day", List("error.required")))
+        FormError("dateOfBirth.day", List("error.required"))
+      )
     }
 
   }

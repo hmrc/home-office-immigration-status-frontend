@@ -41,7 +41,11 @@ import scala.concurrent.{Await, Future}
 import scala.language.postfixOps
 
 class SessionCacheServiceSpec
-    extends PlaySpec with GuiceOneAppPerSuite with Injecting with BeforeAndAfterEach with ScalaFutures {
+    extends PlaySpec
+    with GuiceOneAppPerSuite
+    with Injecting
+    with BeforeAndAfterEach
+    with ScalaFutures {
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
@@ -51,12 +55,12 @@ class SessionCacheServiceSpec
 
   val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
 
-  val now = LocalDateTime.now
-  val mockRepo = mock(classOf[SessionCacheRepository])
-  private val cipher = new TestGCMCipher
-  private val encrypter = new FormModelEncrypter(cipher)
+  val now                       = LocalDateTime.now
+  val mockRepo                  = mock(classOf[SessionCacheRepository])
+  private val cipher            = new TestGCMCipher
+  private val encrypter         = new FormModelEncrypter(cipher)
   lazy val appConfig: AppConfig = inject[AppConfig]
-  val sut = new SessionCacheServiceImpl(mockRepo, encrypter, appConfig)
+  val sut                       = new SessionCacheServiceImpl(mockRepo, encrypter, appConfig)
 
   override def beforeEach(): Unit = {
     reset(mockRepo)
@@ -68,15 +72,16 @@ class SessionCacheServiceSpec
     nino = NinoGenerator.generateNino,
     givenName = "Jimmy",
     familyName = "Jazz",
-    dateOfBirth = LocalDate.now)
+    dateOfBirth = LocalDate.now
+  )
   val encryptedFormModel = encrypter.encryptSearchFormModel(formModel, "123", secretKey)
-  val formQuery = FormQueryModel(id = "123", data = encryptedFormModel, now)
+  val formQuery          = FormQueryModel(id = "123", data = encryptedFormModel, now)
 
   "get" must {
 
     "check the repository and return none where the header carrier has a session id" in {
       when(mockRepo.get(any())(any())).thenReturn(Future.successful(None))
-      val hc = HeaderCarrier(sessionId = Some(SessionId("123")))
+      val hc     = HeaderCarrier(sessionId = Some(SessionId("123")))
       val result = Await.result(sut.get(hc, implicitly), 5 seconds)
       result mustBe None
       verify(mockRepo).get(refEq("123"))(any())
@@ -84,7 +89,7 @@ class SessionCacheServiceSpec
 
     "check the repository and return some where the header carrier has a session id" in {
       when(mockRepo.get(any())(any())).thenReturn(Future.successful(Some(formQuery)))
-      val hc = HeaderCarrier(sessionId = Some(SessionId("123")))
+      val hc     = HeaderCarrier(sessionId = Some(SessionId("123")))
       val result = Await.result(sut.get(hc, implicitly), 5 seconds)
       result mustBe Some(formModel)
       verify(mockRepo).get(refEq("123"))(any())
@@ -92,7 +97,7 @@ class SessionCacheServiceSpec
 
     "return an error where the header carrier has no session id" in {
       val hc = HeaderCarrier(sessionId = None)
-      intercept[NoSessionIdException.type] { Await.result(sut.get(hc, implicitly), 5 seconds) }
+      intercept[NoSessionIdException.type](Await.result(sut.get(hc, implicitly), 5 seconds))
       verify(mockRepo, never()).get(any())(any())
     }
   }
@@ -110,7 +115,7 @@ class SessionCacheServiceSpec
 
     "return an error where the header carrier has no session id" in {
       val hc = HeaderCarrier(sessionId = None)
-      intercept[NoSessionIdException.type] { Await.result(sut.set(formModel, now)(hc, implicitly), 5 seconds) }
+      intercept[NoSessionIdException.type](Await.result(sut.set(formModel, now)(hc, implicitly), 5 seconds))
       verify(mockRepo, never).set(any())(any())
     }
   }
@@ -126,7 +131,7 @@ class SessionCacheServiceSpec
 
     "return an error where the header carrier has no session id" in {
       val hc = HeaderCarrier(sessionId = None)
-      intercept[NoSessionIdException.type] { Await.result(sut.delete(hc, implicitly), 5 seconds) }
+      intercept[NoSessionIdException.type](Await.result(sut.delete(hc, implicitly), 5 seconds))
       verify(mockRepo, never()).delete(any())(any())
     }
   }
