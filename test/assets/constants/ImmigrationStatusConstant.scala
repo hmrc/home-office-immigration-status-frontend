@@ -21,7 +21,7 @@ import models.{ImmigrationStatus}
 
 object ImmigrationStatusConstant {
 
-  val ValidStatus = ImmigrationStatus(
+  val validStatus = ImmigrationStatus(
     statusStartDate = LocalDate.parse("2021-01-01"),
     statusEndDate = Some(LocalDate.now().plusDays(1)),
     productType = "EUS",
@@ -29,7 +29,7 @@ object ImmigrationStatusConstant {
     noRecourseToPublicFunds = false
   )
 
-  val ValidStatusNoRecourceTrue = ImmigrationStatus(
+  val validStatusNoResourceTrue = ImmigrationStatus(
     statusStartDate = LocalDate.parse("2021-01-01"),
     statusEndDate = None,
     productType = "EUS",
@@ -37,7 +37,7 @@ object ImmigrationStatusConstant {
     noRecourseToPublicFunds = true
   )
 
-  def ValidStatusCustomProductType(typeName: String) = ImmigrationStatus(
+  def validStatusCustomProductType(typeName: String): ImmigrationStatus = ImmigrationStatus(
     statusStartDate = LocalDate.parse("2021-01-01"),
     statusEndDate = None,
     productType = typeName,
@@ -45,7 +45,7 @@ object ImmigrationStatusConstant {
     noRecourseToPublicFunds = true
   )
 
-  def ValidStatusCustomImmigrationStatus(typeName: String, status: String) = ImmigrationStatus(
+  def validStatusCustomImmigrationStatus(typeName: String, status: String): ImmigrationStatus = ImmigrationStatus(
     statusStartDate = LocalDate.parse("2021-01-01"),
     statusEndDate = None,
     productType = typeName,

@@ -37,7 +37,8 @@ class SearchSpec extends PlaySpec {
           StatusCheckRange(Some(date), Some(date))
         )
         Json.toJson(search) mustEqual Json.parse(
-          s"""{"documentType":"documentType","documentNumber":"documentNumber","dateOfBirth":"${date.toString}","nationality":"nationality","statusCheckRange":{"startDate":"${date.toString}","endDate":"${date.toString}"}}"""
+          s"""{"documentType":"documentType","documentNumber":"documentNumber","dateOfBirth":"${date.toString}",
+             |"nationality":"nationality","statusCheckRange":{"startDate":"${date.toString}","endDate":"${date.toString}"}}""".stripMargin
         )
       }
 
@@ -51,7 +52,8 @@ class SearchSpec extends PlaySpec {
           StatusCheckRange(Some(date), Some(date))
         )
         Json.toJson(search) mustEqual Json.parse(
-          s"""{"nino":"${nino.toString}","givenName":"given","familyName":"family","dateOfBirth":"${date.toString}","statusCheckRange":{"startDate":"${date.toString}","endDate":"${date.toString}"}}"""
+          s"""{"nino":"${nino.toString}","givenName":"given","familyName":"family","dateOfBirth":"${date.toString}",
+             |"statusCheckRange":{"startDate":"${date.toString}","endDate":"${date.toString}"}}""".stripMargin
         )
       }
     }

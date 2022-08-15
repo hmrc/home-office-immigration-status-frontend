@@ -34,7 +34,7 @@ class SummaryListComponentSpec extends ViewSpec {
       assert(list.hasClass("govuk-summary-list"))
     }
 
-    def mkRow(i: Int) = RowViewModel(i.toString, s"message.$i", s"data$i")
+    def mkRow(i: Int): RowViewModel = RowViewModel(i.toString, s"message.$i", s"data$i")
 
     "list all elements passed as 1/3 gov uk rows" in {
       val doc: Document = asDocument(sut("the-list-id", Seq(1, 2, 3).map(mkRow))(messages))

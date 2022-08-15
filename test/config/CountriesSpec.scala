@@ -19,6 +19,7 @@ package config
 import com.typesafe.config.ConfigException
 import org.mockito.ArgumentMatchers.refEq
 import org.mockito.Mockito._
+import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -27,6 +28,8 @@ import play.api.{Application, Environment}
 import play.api.test.Injecting
 import play.api.inject.bind
 import repositories.SessionCacheRepository
+
+import java.io.InputStream
 
 class CountriesSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with BeforeAndAfterEach {
 
@@ -72,7 +75,7 @@ class CountriesSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting wit
     }
   }
 
-  def mockActualEnvFile(filename: String) =
+  def mockActualEnvFile(filename: String): OngoingStubbing[Option[InputStream]] =
     when(mockEnv.resourceAsStream(refEq(filename))).thenReturn(env.resourceAsStream(filename))
 
 }

@@ -24,8 +24,9 @@ import play.api.data.Forms.{nonEmptyText, tuple}
 
 class FormHelperSpec extends AnyWordSpecLike with Matchers {
 
-  val form                                                = Form(tuple("myField1" -> nonEmptyText, "dateOfBirth" -> nonEmptyText))
-  def testFormFill(myField1: String, dateOfBirth: String) = Map("myField1" -> myField1, "dateOfBirth" -> dateOfBirth)
+  val form = Form(tuple("myField1" -> nonEmptyText, "dateOfBirth" -> nonEmptyText))
+  def testFormFill(myField1: String, dateOfBirth: String): Map[String, String] =
+    Map("myField1" -> myField1, "dateOfBirth" -> dateOfBirth)
 
   "updateDateOfBirthErrors" should {
     "convert all dob errors to have the key be the day" in {

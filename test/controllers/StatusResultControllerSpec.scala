@@ -19,10 +19,11 @@ package controllers
 import services.HomeOfficeImmigrationStatusProxyService
 import controllers.actions.AccessAction
 import models._
-import java.time.LocalDate
 
+import java.time.LocalDate
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
+import org.mockito.stubbing.OngoingStubbing
 import play.api.Application
 import play.api.http.Status.{CONFLICT, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
 import play.api.inject.bind
@@ -77,14 +78,17 @@ class StatusResultControllerSpec extends ControllerSpec {
     "display the return from HO" when {
       val query = NinoSearchFormModel(generateNino, "pan", "peter", LocalDate.now())
 
-      def mockProxyServiceWith(hoResponse: StatusCheckResponseWithStatus) =
+      def mockProxyServiceWith(
+        hoResponse: StatusCheckResponseWithStatus
+      ): OngoingStubbing[Future[StatusCheckResponseWithStatus]] =
         when(
           mockProxyService
             .search(refEq(query))(any(), any(), any(), any())
         )
           .thenReturn(Future.successful(hoResponse))
 
-      def verifyConnector() = verify(mockProxyService).search(any())(any(), any(), any(), any())
+      def verifyConnector(): Future[StatusCheckResponseWithStatus] =
+        verify(mockProxyService).search(any())(any(), any(), any(), any())
 
       "is found with statuses" in {
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(query)))

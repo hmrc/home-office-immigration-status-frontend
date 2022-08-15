@@ -60,7 +60,7 @@ class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecti
     nationality: String = "AFG",
     documentNumber: String = "docNumber",
     documentType: String = "PASSPORT"
-  ) = Map(
+  ): Map[String, String] = Map(
     "dateOfBirth.year"  -> dateOfBirth.getYear.toString,
     "dateOfBirth.month" -> dateOfBirth.getMonthValue.toString,
     "dateOfBirth.day"   -> dateOfBirth.getDayOfMonth.toString,
@@ -69,7 +69,7 @@ class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecti
     "documentType"      -> documentType
   )
 
-  def inputYear(year: String) = Map(
+  def inputYear(year: String): Map[String, String] = Map(
     "dateOfBirth.year"  -> year,
     "dateOfBirth.month" -> yesterday.getMonthValue.toString,
     "dateOfBirth.day"   -> yesterday.getDayOfMonth.toString,

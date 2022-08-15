@@ -21,14 +21,14 @@ import org.mockito.ArgumentMatchers.{any, matches}
 import org.mockito.Mockito._
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
-import org.scalatest.{BeforeAndAfterEach, OptionValues}
+import org.scalatest.{Assertion, BeforeAndAfterEach, OptionValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n._
 import play.api.mvc.Call
 import utils.NinoGenerator
 import viewmodels.RowViewModel
-import java.time.LocalDate
 
+import java.time.LocalDate
 import config.Countries
 import play.api.Application
 import play.api.inject.bind
@@ -65,16 +65,22 @@ class StatusFoundPageContextSpec
     when(mockMessages(matches("status-found\\.current.*"), any())).thenReturn(currentStatusLabelMsg)
   }
 
-  def checkMessagesFile(key: String) =
+  def checkMessagesFile(key: String): Assertion =
     withClue(s"msg key:[$key] not defined in messages file") {
       assert(realMessages.isDefinedAt(key))
     }
 
-  val ninoQuery = NinoSearchFormModel(NinoGenerator.generateNino, "Surname", "Forename", LocalDate.now())
-  val mrzQuery  = MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
-  val call      = Call("GET", "/")
+  val ninoQuery: NinoSearchFormModel =
+    NinoSearchFormModel(NinoGenerator.generateNino, "Surname", "Forename", LocalDate.now())
+  val mrzQuery: MrzSearchFormModel = MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
+  val call                         = Call("GET", "/")
 
-  def createNinoContext(pt: String, is: String, endDate: Option[LocalDate], hasRecourseToPublicFunds: Boolean = false) =
+  def createNinoContext(
+    pt: String,
+    is: String,
+    endDate: Option[LocalDate],
+    hasRecourseToPublicFunds: Boolean = false
+  ): StatusFoundPageContext =
     StatusFoundPageContext(
       ninoQuery,
       StatusCheckResult(
@@ -85,7 +91,12 @@ class StatusFoundPageContextSpec
       )
     )
 
-  def createMrzContext(pt: String, is: String, endDate: Option[LocalDate], hasRecourseToPublicFunds: Boolean = false) =
+  def createMrzContext(
+    pt: String,
+    is: String,
+    endDate: Option[LocalDate],
+    hasRecourseToPublicFunds: Boolean = false
+  ): StatusFoundPageContext =
     StatusFoundPageContext(
       mrzQuery,
       StatusCheckResult(

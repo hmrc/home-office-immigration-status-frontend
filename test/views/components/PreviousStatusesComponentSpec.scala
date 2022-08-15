@@ -38,7 +38,7 @@ class PreviousStatusesComponentSpec extends ViewSpec {
     )
   )
 
-  def singleStatusCustomImmigrationStatus(productType: String, immigrationStatus: String) =
+  def singleStatusCustomImmigrationStatus(productType: String, immigrationStatus: String): Seq[ImmigrationStatus] =
     Seq(
       ImmigrationStatus(
         statusStartDate = LocalDate.parse("2012-01-01"),

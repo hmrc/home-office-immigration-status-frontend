@@ -55,6 +55,7 @@ lazy val root = (project in file("."))
     Assets / pipelineStages := Seq(concat)
   )
   .configs(IntegrationTest)
+  .settings(inConfig(IntegrationTest)(org.scalafmt.sbt.ScalafmtPlugin.scalafmtConfigSettings): _*)
   .settings(
     IntegrationTest / Keys.fork := false,
     Defaults.itSettings,
@@ -65,8 +66,6 @@ lazy val root = (project in file("."))
   )
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .enablePlugins(PlayScala, SbtDistributablesPlugin)
-
-inConfig(IntegrationTest)(org.scalafmt.sbt.ScalafmtPlugin.scalafmtConfigSettings)
 
 scalacOptions ++= Seq(
   "-P:silencer:globalFilters=Unused import",
