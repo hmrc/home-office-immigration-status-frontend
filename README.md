@@ -10,6 +10,10 @@ Web application providing internal HMRC staff with an interface to check custome
 
     sbt clean coverageOn test it:test coverageReport
 
+## Running the tests with coverage, scalafmt, scalastyle and dependency checks
+
+    ./run_all_tests
+
 ## Running the app locally
 
     sm --start HOME_OFFICE_IMMIGRATION_STATUS_ALL -r
