@@ -7,7 +7,9 @@ import play.api.libs.ws.{WSClient, WSRequest, WSResponse}
 import play.api.test.Helpers.LOCATION
 import repositories.SessionCacheRepository
 
+import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.DurationInt
 
 trait ISpec extends BaseISpec with MockSessionCookie {
   val baseUrl: String = s"http://localhost:$port/check-immigration-status"
@@ -16,11 +18,11 @@ trait ISpec extends BaseISpec with MockSessionCookie {
   lazy val cacheRepo          = inject[SessionCacheRepository]
   lazy val formModelEncrypter = inject[FormModelEncrypter]
 
-  def setFormQuery(formModel: NinoSearchFormModel, sessionId: String) = {
+  def setFormQuery(formModel: NinoSearchFormModel, sessionId: String): Unit = {
     val encryptedFormModel =
       formModelEncrypter.encryptSearchFormModel(formModel, sessionId, "VqmXp7yigDFxbCUdDdNZVIvbW6RgPNJsliv6swQNCL8=")
     val formQueryModel = FormQueryModel(sessionId, encryptedFormModel)
-    cacheRepo.set(formQueryModel).map(_ => ())
+    Await.result(cacheRepo.set(formQueryModel).map(_ => ()), 5.seconds)
   }
 
   def request(path: String, sessionId: String = "123"): WSRequest =
