@@ -28,11 +28,12 @@ import java.time.LocalDateTime
 import play.api.Logging
 
 @Singleton
-class SessionCacheServiceImpl @Inject()(
+class SessionCacheServiceImpl @Inject() (
   sessionCacheRepository: SessionCacheRepository,
   encrypter: FormModelEncrypter,
   appConfig: AppConfig
-) extends SessionCacheService with Logging {
+) extends SessionCacheService
+    with Logging {
 
   private val secretKey = appConfig.mongoEncryptionKey
 
@@ -45,12 +46,13 @@ class SessionCacheServiceImpl @Inject()(
         )
     }
 
-  def set(formModel: SearchFormModel, now: LocalDateTime = LocalDateTime.now)(
-    implicit hc: HeaderCarrier,
-    ec: ExecutionContext): Future[Unit] =
+  def set(formModel: SearchFormModel, now: LocalDateTime = LocalDateTime.now)(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[Unit] =
     withSessionId { sessionId =>
       val encryptedFormModel = encrypter.encryptSearchFormModel(formModel, sessionId, secretKey)
-      val formQueryModel = FormQueryModel(sessionId, encryptedFormModel, now)
+      val formQueryModel     = FormQueryModel(sessionId, encryptedFormModel, now)
       sessionCacheRepository.set(formQueryModel)
     }
 
@@ -72,9 +74,10 @@ trait SessionCacheService {
 
   def get(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SearchFormModel]]
 
-  def set(formModel: SearchFormModel, now: LocalDateTime = LocalDateTime.now)(
-    implicit hc: HeaderCarrier,
-    ec: ExecutionContext): Future[Unit]
+  def set(formModel: SearchFormModel, now: LocalDateTime = LocalDateTime.now)(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[Unit]
 
   def delete(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit]
 

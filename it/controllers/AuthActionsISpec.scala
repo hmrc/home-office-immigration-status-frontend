@@ -19,7 +19,7 @@ class AuthActionsISpec extends AuthActionISpecSetup {
 
       val result = TestController.test()(request)
 
-      status(result) shouldBe 200
+      status(result)          shouldBe 200
       contentAsString(result) shouldBe "Passed Auth"
       verifyAuthoriseAttempt()
     }
@@ -28,7 +28,7 @@ class AuthActionsISpec extends AuthActionISpecSetup {
       givenRequestIsNotAuthorised("SessionRecordNotFound")
 
       val result = TestController.test()(request)
-      status(result) shouldBe 303
+      status(result)             shouldBe 303
       redirectLocation(result).get should include("/stride/sign-in")
       verifyAuthoriseAttempt()
     }
@@ -37,7 +37,7 @@ class AuthActionsISpec extends AuthActionISpecSetup {
       givenRequestIsNotAuthorised("UnsupportedAuthProvider")
 
       val result = TestController.test()(request)
-      status(result) shouldBe 303
+      status(result)             shouldBe 303
       redirectLocation(result).get should include("/stride/sign-in")
       verifyAuthoriseAttempt()
     }
@@ -48,7 +48,8 @@ trait AuthActionISpecSetup extends BaseISpec with Injecting {
 
   override def fakeApplication: Application = appBuilder.build()
 
-  implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(SessionKeys.authToken -> "Bearer XYZ")
+  implicit val request: FakeRequest[AnyContentAsEmpty.type] =
+    FakeRequest().withSession(SessionKeys.authToken -> "Bearer XYZ")
 
   object TestController {
     val sut = inject[AuthAction]

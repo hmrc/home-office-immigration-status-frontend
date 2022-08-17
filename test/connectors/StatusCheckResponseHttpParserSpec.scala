@@ -30,13 +30,13 @@ class StatusCheckResponseHttpParserSpec extends AnyWordSpecLike with Matchers {
   "StatusCheckResponseReads.read" should {
 
     implicit val resultWrites = Json.writes[StatusCheckResult]
-    val responseWrites = Json.writes[StatusCheckSuccessfulResponse]
+    val responseWrites        = Json.writes[StatusCheckSuccessfulResponse]
 
     "return a success where a 200 is returned with a valid response" in {
-      val statusCheckResult = StatusCheckResult("Damon Albarn", LocalDate.now, "GBR", Nil)
+      val statusCheckResult   = StatusCheckResult("Damon Albarn", LocalDate.now, "GBR", Nil)
       val statusCheckResponse = StatusCheckSuccessfulResponse(Some("CorrelationId"), statusCheckResult)
-      val responseBody = Json.toJson(statusCheckResponse)(responseWrites).toString
-      val response = HttpResponse(OK, responseBody, Map("X-Correlation-Id" -> Seq("correlationId")))
+      val responseBody        = Json.toJson(statusCheckResponse)(responseWrites).toString
+      val response            = HttpResponse(OK, responseBody, Map("X-Correlation-Id" -> Seq("correlationId")))
 
       val expectedResponse = StatusCheckResponseWithStatus(OK, statusCheckResponse)
 
@@ -49,11 +49,12 @@ class StatusCheckResponseHttpParserSpec extends AnyWordSpecLike with Matchers {
 
       val unknownErrorResponse = StatusCheckResponseWithStatus(
         INTERNAL_SERVER_ERROR,
-        StatusCheckErrorResponse(Some("correlationId"), StatusCheckError("UNKNOWN_ERROR")))
+        StatusCheckErrorResponse(Some("correlationId"), StatusCheckError("UNKNOWN_ERROR"))
+      )
 
       "a 200 is returned without json" in {
         val responseBody = "This is not a valid response"
-        val response = HttpResponse(OK, responseBody, Map("X-Correlation-Id" -> Seq("correlationId")))
+        val response     = HttpResponse(OK, responseBody, Map("X-Correlation-Id" -> Seq("correlationId")))
 
         val result = StatusCheckResponseReads.read("POST", "some url", response)
         result shouldBe unknownErrorResponse
@@ -61,7 +62,7 @@ class StatusCheckResponseHttpParserSpec extends AnyWordSpecLike with Matchers {
 
       "a 200 is returned with an invalid json response" in {
         val responseBody = """{"response": "Something"}"""
-        val response = HttpResponse(OK, responseBody, Map("X-Correlation-Id" -> Seq("correlationId")))
+        val response     = HttpResponse(OK, responseBody, Map("X-Correlation-Id" -> Seq("correlationId")))
 
         val result = StatusCheckResponseReads.read("POST", "some url", response)
         result shouldBe unknownErrorResponse
@@ -69,7 +70,7 @@ class StatusCheckResponseHttpParserSpec extends AnyWordSpecLike with Matchers {
 
       "a non-200 is returned without json" in {
         val responseBody = "This is not a valid response"
-        val response = HttpResponse(OK, responseBody, Map("X-Correlation-Id" -> Seq("correlationId")))
+        val response     = HttpResponse(OK, responseBody, Map("X-Correlation-Id" -> Seq("correlationId")))
 
         val result = StatusCheckResponseReads.read("POST", "some url", response)
         result shouldBe unknownErrorResponse
@@ -87,9 +88,9 @@ class StatusCheckResponseHttpParserSpec extends AnyWordSpecLike with Matchers {
 
     "return the home office error" when {
       "a 500 status code is returned with a valid error response" in {
-        val statusCheckError = StatusCheckError("Oh no!")
+        val statusCheckError    = StatusCheckError("Oh no!")
         val statusCheckResponse = StatusCheckErrorResponse(Some("CorrelationId"), statusCheckError)
-        val responseBody = Json.toJson(statusCheckResponse).toString
+        val responseBody        = Json.toJson(statusCheckResponse).toString
         val response =
           HttpResponse(INTERNAL_SERVER_ERROR, responseBody, Map("X-Correlation-Id" -> Seq("correlationId")))
 
@@ -100,10 +101,10 @@ class StatusCheckResponseHttpParserSpec extends AnyWordSpecLike with Matchers {
       }
 
       "a 404 status code is returned with a valid error response" in {
-        val statusCheckError = StatusCheckError("Oh no!")
+        val statusCheckError    = StatusCheckError("Oh no!")
         val statusCheckResponse = StatusCheckErrorResponse(Some("CorrelationId"), statusCheckError)
-        val responseBody = Json.toJson(statusCheckResponse).toString
-        val response = HttpResponse(NOT_FOUND, responseBody, Map("X-Correlation-Id" -> Seq("correlationId")))
+        val responseBody        = Json.toJson(statusCheckResponse).toString
+        val response            = HttpResponse(NOT_FOUND, responseBody, Map("X-Correlation-Id" -> Seq("correlationId")))
 
         val expectedResponse = StatusCheckResponseWithStatus(NOT_FOUND, statusCheckResponse)
 

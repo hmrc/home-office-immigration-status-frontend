@@ -42,11 +42,14 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
 class HomeOfficeImmigrationStatusProxyConnectorSpec
-    extends PlaySpec with GuiceOneAppPerSuite with Injecting with BeforeAndAfterEach {
+    extends PlaySpec
+    with GuiceOneAppPerSuite
+    with Injecting
+    with BeforeAndAfterEach {
 
   val mockAppConfig = mock(classOf[AppConfig])
   when(mockAppConfig.homeOfficeImmigrationStatusProxyBaseUrl).thenReturn("http://localhost:1234")
-  val mockHttpClient = mock(classOf[HttpClient])
+  val mockHttpClient                                  = mock(classOf[HttpClient])
   val mockSessionCacheService: SessionCacheRepository = mock(classOf[SessionCacheRepository])
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
@@ -64,7 +67,7 @@ class HomeOfficeImmigrationStatusProxyConnectorSpec
   }
 
   implicit val fakeReq: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
-  implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(fakeReq)
+  implicit val hc: HeaderCarrier                            = HeaderCarrierConverter.fromRequest(fakeReq)
 
   lazy val sut = inject[HomeOfficeImmigrationStatusProxyConnector]
 
@@ -108,7 +111,9 @@ class HomeOfficeImmigrationStatusProxyConnectorSpec
           any[Writes[NinoSearch]],
           any[HttpReads[Either[StatusCheckError, StatusCheckSuccessfulResponse]]],
           capture.capture(),
-          any[ExecutionContext]))
+          any[ExecutionContext]
+        )
+      )
         .thenReturn(Future.successful(response))
 
       sut.statusPublicFundsByNino(ninoRequest)
@@ -131,7 +136,9 @@ class HomeOfficeImmigrationStatusProxyConnectorSpec
           any[Writes[MrzSearch]],
           any[HttpReads[Either[StatusCheckError, StatusCheckSuccessfulResponse]]],
           any[HeaderCarrier],
-          any[ExecutionContext]))
+          any[ExecutionContext]
+        )
+      )
         .thenReturn(Future.successful(response))
 
       sut.statusPublicFundsByMrz(mrzRequest)
@@ -143,9 +150,10 @@ class HomeOfficeImmigrationStatusProxyConnectorSpec
 
   "requestID is present in the headerCarrier" should {
     "return new ID pre-appending the requestID when the requestID matches the format(8-4-4-4)" in new Setup {
-      val requestId = "dcba0000-ij12-df34-jk56"
+      val requestId  = "dcba0000-ij12-df34-jk56"
+      val uuidLength = 24
       connector.correlationId(HeaderCarrier(requestId = Some(RequestId(requestId)))) mustBe
-        s"$requestId-${uuid.substring(24)}"
+        s"$requestId-${uuid.substring(uuidLength)}"
     }
 
     "return new ID when the requestID does not match the format(8-4-4-4)" in new Setup {

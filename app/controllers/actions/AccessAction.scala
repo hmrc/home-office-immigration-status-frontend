@@ -20,12 +20,12 @@ import com.google.inject.{ImplementedBy, Inject}
 import play.api.mvc.{ActionBuilder, AnyContent, BodyParsers, Request, Result}
 import scala.concurrent.{ExecutionContext, Future}
 
-class AccessActionImpl @Inject()(
+class AccessActionImpl @Inject() (
   shutterAction: ShutterAction,
   authAction: AuthAction,
   override val parser: BodyParsers.Default
-)(
-  implicit val executionContext: ExecutionContext
+)(implicit
+  val executionContext: ExecutionContext
 ) extends AccessAction {
 
   override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] =

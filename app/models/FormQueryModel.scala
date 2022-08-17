@@ -26,25 +26,24 @@ import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 final case class FormQueryModel(
   id: String,
   data: EncryptedSearchFormModel,
-  lastUpdated: LocalDateTime = LocalDateTime.now())
+  lastUpdated: LocalDateTime = LocalDateTime.now()
+)
 
 object FormQueryModel {
 
   implicit lazy val format = Format(reads, writes)
 
-  implicit lazy val reads: Reads[FormQueryModel] = {
+  implicit lazy val reads: Reads[FormQueryModel] =
     (
       (__ \ "_id").read[String] and
         (__ \ "data").read[EncryptedSearchFormModel] and
         (__ \ "lastUpdated").read(MongoJavatimeFormats.localDateTimeReads)
     )(FormQueryModel.apply _)
-  }
 
-  implicit lazy val writes: Writes[FormQueryModel] = {
+  implicit lazy val writes: Writes[FormQueryModel] =
     (
       (__ \ "_id").write[String] and
         (__ \ "data").write[EncryptedSearchFormModel] and
         (__ \ "lastUpdated").write(MongoJavatimeFormats.localDateTimeWrites)
     )(unlift(FormQueryModel.unapply))
-  }
 }

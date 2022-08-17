@@ -26,42 +26,44 @@ import scala.language.postfixOps
 
 trait BaseISpec
     extends AnyWordSpecLike
-      with Matchers
-      with GuiceOneServerPerSuite
-      with OptionValues
-      with ScalaFutures
-      with WireMockSupport
-      with AuthStubs
-      with DataStreamStubs
-      with MetricsTestSupport
-      with Injecting {
+    with Matchers
+    with GuiceOneServerPerSuite
+    with OptionValues
+    with ScalaFutures
+    with WireMockSupport
+    with AuthStubs
+    with DataStreamStubs
+    with MetricsTestSupport
+    with Injecting {
 
   override def fakeApplication: Application = appBuilder.build()
 
   implicit val defaultTimeout: FiniteDuration = 5 seconds
 
   object FakeAuditService extends AuditService {
-    def auditStatusCheckEvent(search: Search, result: StatusCheckResponseWithStatus)(
-      implicit hc: HeaderCarrier,
+    def auditStatusCheckEvent(search: Search, result: StatusCheckResponseWithStatus)(implicit
+      hc: HeaderCarrier,
       request: Request[Any],
-      ec: ExecutionContext): Unit = ()
+      ec: ExecutionContext
+    ): Unit = ()
   }
 
   protected def appBuilder: GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .configure(
-        "isShuttered" -> false,
-        "metrics.enabled"                -> true,
-        "auditing.enabled"                     -> true,
-        "auditing.consumer.baseUri.host"       -> wireMockHost,
-        "auditing.consumer.baseUri.port"       -> wireMockPort,
-        "play.filters.csrf.method.whiteList.0" -> "POST",
-        "play.filters.csrf.method.whiteList.1" -> "GET",
-        "microservice.services.auth.host" -> wireMockHost,
-        "microservice.services.auth.port" -> wireMockPort,
+        "isShuttered"                                                     -> false,
+        "metrics.enabled"                                                 -> true,
+        "auditing.enabled"                                                -> true,
+        "auditing.consumer.baseUri.host"                                  -> wireMockHost,
+        "auditing.consumer.baseUri.port"                                  -> wireMockPort,
+        "play.filters.csrf.method.whiteList.0"                            -> "POST",
+        "play.filters.csrf.method.whiteList.1"                            -> "GET",
+        "microservice.services.auth.host"                                 -> wireMockHost,
+        "microservice.services.auth.port"                                 -> wireMockPort,
         "microservice.services.home-office-immigration-status-proxy.host" -> wireMockHost,
         "microservice.services.home-office-immigration-status-proxy.port" -> wireMockPort
-      ).overrides(
+      )
+      .overrides(
         bind[AuditService].toInstance(FakeAuditService)
       )
 
@@ -73,9 +75,9 @@ trait BaseISpec
   protected implicit val materializer: Materializer = app.materializer
 
   protected def checkHtmlResultWithBodyText(result: Future[Result], expectedSubstring: String): Unit = {
-    status(result) shouldBe 200
-    contentType(result) shouldBe Some("text/html")
-    charset(result) shouldBe Some("utf-8")
+    status(result)        shouldBe 200
+    contentType(result)   shouldBe Some("text/html")
+    charset(result)       shouldBe Some("utf-8")
     contentAsString(result) should include(expectedSubstring)
   }
 

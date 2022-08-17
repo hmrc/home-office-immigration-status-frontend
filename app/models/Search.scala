@@ -26,7 +26,7 @@ import play.api.i18n.Messages
 sealed trait Search
 
 object Search {
-  implicit val reads: Reads[Search] = Json.reads[Search]
+  implicit val reads: Reads[Search]   = Json.reads[Search]
   implicit val writes: Writes[Search] = (o: Search) => Json.toJson(o)(Json.writes[Search]).as[JsObject] - "_type"
 }
 
@@ -46,7 +46,8 @@ object NinoSearch {
     givenName: String,
     familyName: String,
     dateOfBirth: LocalDate,
-    statusCheckRange: StatusCheckRange) =
+    statusCheckRange: StatusCheckRange
+  ): NinoSearch =
     new NinoSearch(nino, givenName, familyName, dateOfBirth.format(ISO8601), statusCheckRange)
 
   implicit val formats: Format[NinoSearch] = Json.format[NinoSearch]
@@ -63,10 +64,10 @@ final case class MrzSearch(
 object MrzSearch {
   implicit val formats: Format[MrzSearch] = Json.format[MrzSearch]
 
-  val Passport = "PASSPORT"
+  val Passport                     = "PASSPORT"
   val EuropeanNationalIdentityCard = "NAT"
-  val BiometricResidencyCard = "BRC"
-  val BiometricResidencyPermit = "BRP"
+  val BiometricResidencyCard       = "BRC"
+  val BiometricResidencyPermit     = "BRP"
 
   def documentTypeToMessageKey(documentType: String)(implicit messages: Messages): String = documentType match {
     case Passport                     => messages("lookup.passport")

@@ -58,8 +58,8 @@ class SearchByMrzControllerSpec extends ControllerSpec {
   }
 
   "onPageLoad" must {
-    val query = MrzSearchFormModel("docType", "docNum", LocalDate.now(), "nationality")
-    val emptyForm = inject[SearchByMRZForm].apply()
+    val query      = MrzSearchFormModel("docType", "docNum", LocalDate.now(), "nationality")
+    val emptyForm  = inject[SearchByMRZForm].apply()
     val prePopForm = emptyForm.fill(query)
 
     "display the search by mrz form view" when {
@@ -115,7 +115,7 @@ class SearchByMrzControllerSpec extends ControllerSpec {
       "form binds correct data" in {
         when(mockSessionCacheService.set(any(), any())(any(), any())).thenReturn(Future.unit)
         val validDob = LocalDate.now().minusDays(1)
-        val query = MrzSearchFormModel("PASSPORT", "1234567890", validDob, "AFG")
+        val query    = MrzSearchFormModel("PASSPORT", "1234567890", validDob, "AFG")
 
         val requestWithForm = fakePostRequest.withFormUrlEncodedBody(
           "dateOfBirth.year"  -> validDob.getYear.toString,
@@ -135,9 +135,9 @@ class SearchByMrzControllerSpec extends ControllerSpec {
 
     "return the errored form" when {
       val formProvider = inject[SearchByMRZForm]
-      val form = formProvider.apply()
+      val form         = formProvider.apply()
       "the submitted form is empty" in {
-        val result = sut.onSubmit(request)
+        val result         = sut.onSubmit(request)
         val formWithErrors = formProvider.collateDOBErrors(form.bindFromRequest()(request, implicitly))
 
         status(result) mustBe BAD_REQUEST
@@ -159,7 +159,7 @@ class SearchByMrzControllerSpec extends ControllerSpec {
           "documentType"      -> "blah",
           "documentNumber"    -> "blah"
         )
-        val result = sut.onSubmit(requestWithForm)
+        val result         = sut.onSubmit(requestWithForm)
         val formWithErrors = formProvider.collateDOBErrors(form.bindFromRequest()(requestWithForm, implicitly))
 
         status(result) mustBe BAD_REQUEST
@@ -175,7 +175,7 @@ class SearchByMrzControllerSpec extends ControllerSpec {
       "the session cache returns a failure" in {
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.failed(new Exception("Something happened")))
         val validDob = LocalDate.now().minusDays(1)
-        val query = MrzSearchFormModel("PASSPORT", "1234567890", validDob, "AFG")
+        val query    = MrzSearchFormModel("PASSPORT", "1234567890", validDob, "AFG")
         val requestWithForm = fakePostRequest.withFormUrlEncodedBody(
           "dateOfBirth.year"  -> validDob.getYear.toString,
           "dateOfBirth.month" -> validDob.getMonthValue.toString,

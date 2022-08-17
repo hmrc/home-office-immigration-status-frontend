@@ -131,7 +131,13 @@ trait HomeOfficeImmigrationStatusStubs extends JourneyTestData {
 
   }
 
-  def givenStatusPublicFundsCheckStub(endpoint: String, httpResponseCode: Int, requestBody: String, responseBody: String, correlationId: String = "correlationId"): StubMapping =
+  def givenStatusPublicFundsCheckStub(
+    endpoint: String,
+    httpResponseCode: Int,
+    requestBody: String,
+    responseBody: String,
+    correlationId: String = "correlationId"
+  ): StubMapping =
     stubFor(
       post(urlEqualTo(s"/v1/status/public-funds/$endpoint"))
         .withHeader("X-Correlation-Id", new AnythingPattern())
@@ -143,5 +149,6 @@ trait HomeOfficeImmigrationStatusStubs extends JourneyTestData {
             .withHeader("Content-Type", "application/json")
             .withHeader("X-Correlation-Id", correlationId)
             .withBody(responseBody)
-        ))
+        )
+    )
 }

@@ -42,15 +42,20 @@ trait ViewSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
 
   val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
 
-  lazy val messages: Messages = inject[MessagesApi].preferred(Seq.empty[Lang])
+  lazy val messages: Messages                      = inject[MessagesApi].preferred(Seq.empty[Lang])
   val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
 
   def asDocument(html: Html): Document = Jsoup.parse(html.toString())
 
-  def assertEqualsMessage(doc: Document, cssSelector: String, expectedMessageKey: String, messages: Messages) =
+  def assertEqualsMessage(
+    doc: Document,
+    cssSelector: String,
+    expectedMessageKey: String,
+    messages: Messages
+  ): Assertion =
     assertEqualsValue(doc, cssSelector, messages(expectedMessageKey))
 
-  def assertElementHasText(doc: Document, cssSelector: String, expectedValue: String) = {
+  def assertElementHasText(doc: Document, cssSelector: String, expectedValue: String): Assertion = {
     val elements = doc.select(cssSelector)
 
     if (elements.isEmpty) throw new IllegalArgumentException(s"CSS Selector $cssSelector wasn't rendered.")
@@ -59,7 +64,7 @@ trait ViewSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
     assert(elements.first().text() == expectedValue)
   }
 
-  def assertEqualsValue(doc: Document, cssSelector: String, expectedValue: String) = {
+  def assertEqualsValue(doc: Document, cssSelector: String, expectedValue: String): Assertion = {
     val elements = doc.select(cssSelector)
 
     if (elements.isEmpty) throw new IllegalArgumentException(s"CSS Selector $cssSelector wasn't rendered.")
@@ -68,13 +73,13 @@ trait ViewSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
     assert(elements.first().html().replace("\n", "") == expectedValue)
   }
 
-  def assertRenderedById(doc: Document, id: String) =
+  def assertRenderedById(doc: Document, id: String): Assertion =
     assert(doc.getElementById(id) != null, "\n\nElement " + id + " was not rendered on the page.\n")
 
-  def assertRenderedByCssSelector(doc: Document, cssSelector: String) =
+  def assertRenderedByCssSelector(doc: Document, cssSelector: String): Assertion =
     assert(doc.select(cssSelector) != null, "\n\nElement " + cssSelector + " was not rendered on the page.\n")
 
-  def assertNotRenderedById(doc: Document, id: String) =
+  def assertNotRenderedById(doc: Document, id: String): Assertion =
     assert(doc.getElementById(id) == null, "\n\nElement " + id + " was rendered on the page.\n")
 
   def assertCustomWidthRow(e: Elements, key: String, value: String, id: String, length: String): Assertion = {
@@ -96,7 +101,8 @@ trait ViewSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
     id: String,
     actionText: String,
     actionUrl: String,
-    rowWidth: String): Assertion = {
+    rowWidth: String
+  ): Assertion = {
     assertCustomWidthRow(e, key, value, id, rowWidth)
     val actionElement = e.select("dd:nth-of-type(2)")
     assert(actionElement.hasClass(s"govuk-summary-list__actions govuk-!-width-one-third"))

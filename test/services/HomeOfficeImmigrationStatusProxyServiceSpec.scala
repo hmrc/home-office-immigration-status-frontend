@@ -40,7 +40,7 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
   val formatter = DateTimeFormatter.ofPattern("d/MM/yyyy")
 
   val mockAuditService = mock(classOf[AuditService])
-  val mockConnector = mock(classOf[HomeOfficeImmigrationStatusProxyConnector])
+  val mockConnector    = mock(classOf[HomeOfficeImmigrationStatusProxyConnector])
 
   override protected def beforeEach(): Unit = {
     reset(mockAuditService)
@@ -58,12 +58,12 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
 
   lazy val sut: HomeOfficeImmigrationStatusProxyService =
     app.injector.instanceOf[HomeOfficeImmigrationStatusProxyService]
-
-  val testDate = LocalDate.now
-  val formModel = NinoSearchFormModel(NinoGenerator.generateNino, "Doe", "Jane", LocalDate.of(2001, 1, 31))
+  //scalastyle:off magic.number
+  val testDate           = LocalDate.now
+  val formModel          = NinoSearchFormModel(NinoGenerator.generateNino, "Doe", "Jane", LocalDate.of(2001, 1, 31))
   val mrzSearchFormModel = MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
-  val statusRequest = formModel.toSearch(6)
-  implicit val conf = appConfig
+  val statusRequest      = formModel.toSearch(6)
+  implicit val conf      = appConfig
 
   val statusCheckResult = StatusCheckResult("Damon Albarn", testDate, "GBR", Nil)
   val result =

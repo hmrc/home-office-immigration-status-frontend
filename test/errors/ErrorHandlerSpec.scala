@@ -25,14 +25,14 @@ import scala.concurrent.Future
 
 class ErrorHandlerSpec extends ControllerSpec {
 
-  lazy val sut = inject[ErrorHandler]
-  lazy val errorPage = inject[ExternalErrorPage]
+  lazy val sut           = inject[ErrorHandler]
+  lazy val errorPage     = inject[ExternalErrorPage]
   lazy val errorTemplate = inject[error_template]
 
   "resolveError" must {
     "show the InternalServerError for an unexpected error" in {
       val exception = new Exception("Oh no! Our table! It's broken!")
-      val result = Future.successful(sut.resolveError(request, exception))
+      val result    = Future.successful(sut.resolveError(request, exception))
 
       status(result) mustBe INTERNAL_SERVER_ERROR
       contentAsString(result) mustEqual errorPage()(request, messages).toString
@@ -45,7 +45,8 @@ class ErrorHandlerSpec extends ControllerSpec {
         "pageTitle",
         "heading",
         "message",
-        None)(request, messages)
+        None
+      )(request, messages)
 
     }
   }

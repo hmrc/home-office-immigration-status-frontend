@@ -46,8 +46,9 @@ trait FormFieldMappings extends Constraints {
   val allowedNameCharacters: Set[Char] = Set('-', '\'', ' ')
 
   private def hasAllowedCharacters(fieldName: String): Constraint[String] =
-    cond(s"error.$fieldName.invalid-format")(_.forall(ch =>
-      Character.isLetter(ch) || allowedNameCharacters.contains(ch)))
+    cond(s"error.$fieldName.invalid-format")(
+      _.forall(ch => Character.isLetter(ch) || allowedNameCharacters.contains(ch))
+    )
 
   protected def validName(fieldName: String, minLenInc: Int): Mapping[String] =
     nonEmptyText(fieldName)
@@ -63,15 +64,14 @@ trait FormFieldMappings extends Constraints {
       .transform(_.get.trim, Some.apply)
 
   private val validateIsRealDate: Constraint[(Int, Int, Int)] =
-    cond("error.dateOfBirth.invalid-format") {
-      case (day, month, year) =>
-        Try(LocalDate.of(year, month, day)).isSuccess
+    cond("error.dateOfBirth.invalid-format") { case (day, month, year) =>
+      Try(LocalDate.of(year, month, day)).isSuccess
     }
 
   private val validateInThePast: Constraint[LocalDate] =
     cond[LocalDate]("error.dateOfBirth.past")(_.isBefore(LocalDate.now()))
 
-  private val asDate: (Int, Int, Int) => LocalDate = (d, m, y) => LocalDate.of(y, m, d)
+  private val asDate: (Int, Int, Int) => LocalDate  = (d, m, y) => LocalDate.of(y, m, d)
   private val asTuple: LocalDate => (Int, Int, Int) = d => (d.getDayOfMonth, d.getMonthValue, d.getYear)
 
   def isInt(str: String): Boolean = Try(str.trim.toInt).isSuccess
@@ -88,7 +88,7 @@ trait FormFieldMappings extends Constraints {
       .verifying(max(maxValue = maxValue, errorMessage = s"error.dateOfBirth.$field.max"))
 
   protected def dobFieldsMapping: Mapping[LocalDate] =
-    tuple(
+    tuple( //scalastyle:off magic.number
       "day"   -> dateComponent("day", 31),
       "month" -> dateComponent("month", 12),
       "year"  -> dateComponent("year", 3000, 1000)
@@ -101,8 +101,12 @@ trait FormFieldMappings extends Constraints {
       val required = form.errors.count(_.message.matches(""".*dateOfBirth.*\.required""")) == 3
       (form.errors.filterNot(_.key.contains("dateOfBirth")) :+ FormError(
         "dateOfBirth",
-        "error.dateOfBirth." + (if (required) "required" else "invalid-format")))
+        "error.dateOfBirth." + (if (required) { "required" }
+                                else { "invalid-format" })
+      ))
         .foldLeft(form.discardingErrors)((form, error) => form.withError(error))
-    } else form
+    } else {
+      form
+    }
 
 }

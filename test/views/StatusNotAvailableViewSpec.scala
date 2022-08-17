@@ -17,8 +17,6 @@
 package views
 
 import models.{NinoSearchFormModel, StatusCheckResult}
-import java.time.LocalDate
-
 import org.jsoup.nodes.{Document, Element}
 import org.mockito.Mockito.mock
 import play.api.Application
@@ -27,7 +25,9 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import repositories.SessionCacheRepository
 import utils.NinoGenerator.generateNino
 import views.html.StatusNotAvailablePage
-import views.html.components.{SearchAgainButton, ShowChangeQuery}
+import views.html.components.ShowChangeQuery
+
+import java.time.LocalDate
 
 class StatusNotAvailableViewSpec extends ViewSpec {
 
@@ -42,7 +42,7 @@ class StatusNotAvailableViewSpec extends ViewSpec {
 
   lazy val sut: StatusNotAvailablePage = inject[StatusNotAvailablePage]
 
-  val nino = NinoSearchFormModel(generateNino, "Applicant", "", LocalDate.now())
+  val nino   = NinoSearchFormModel(generateNino, "Applicant", "", LocalDate.now())
   val result = StatusCheckResult("Full name", LocalDate.now(), "JPN", Nil)
 
   val query = StatusNotAvailablePageContext(nino, result)
@@ -64,7 +64,8 @@ class StatusNotAvailableViewSpec extends ViewSpec {
         doc,
         "#not-available-list",
         messages("status-not-available.list-item1") + " "
-          + messages("status-not-available.list-item2"))
+          + messages("status-not-available.list-item2")
+      )
     }
 
     "have the summary list" in {

@@ -30,11 +30,11 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class AuthActionSpec extends ControllerSpec with AuthRedirects {
 
-  lazy val config = inject[Configuration]
-  lazy val env: Environment = inject[Environment]
-  lazy val connector: AuthConnector = inject[AuthConnector]
+  lazy val config                      = inject[Configuration]
+  lazy val env: Environment            = inject[Environment]
+  lazy val connector: AuthConnector    = inject[AuthConnector]
   lazy val parser: BodyParsers.Default = inject[BodyParsers.Default]
-  val mockAppConfig = mock(classOf[AppConfig])
+  val mockAppConfig                    = mock(classOf[AppConfig])
 
   lazy val sut = new AuthActionImpl(env, connector, mockAppConfig, parser, config)
 
@@ -58,7 +58,7 @@ class AuthActionSpec extends ControllerSpec with AuthRedirects {
 
   "handleFailure" should {
     "redirect the user to stride login" in {
-      val continueUrl = CallOps.localFriendlyUrl(env, config)(request.uri, request.host)
+      val continueUrl    = CallOps.localFriendlyUrl(env, config)(request.uri, request.host)
       val expectedResult = toStrideLogin(continueUrl)
 
       sut.handleFailure(request)(new InsufficientConfidenceLevel) mustEqual expectedResult

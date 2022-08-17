@@ -75,7 +75,8 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
 
         val expectedResult = StatusCheckResponseWithStatus(
           BAD_REQUEST,
-          StatusCheckErrorResponse(Some(correlationId), StatusCheckError("ERR_REQUEST_INVALID")))
+          StatusCheckErrorResponse(Some(correlationId), StatusCheckError("ERR_REQUEST_INVALID"))
+        )
 
         result shouldBe expectedResult
       }
@@ -87,7 +88,8 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
 
         val expectedResult = StatusCheckResponseWithStatus(
           NOT_FOUND,
-          StatusCheckErrorResponse(Some(correlationId), StatusCheckError("ERR_NOT_FOUND")))
+          StatusCheckErrorResponse(Some(correlationId), StatusCheckError("ERR_NOT_FOUND"))
+        )
 
         result shouldBe expectedResult
       }
@@ -101,7 +103,9 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
           BAD_REQUEST,
           StatusCheckErrorResponse(
             Some(correlationId),
-            StatusCheckError("ERR_VALIDATION", Option(Seq(FieldError("ERR_INVALID_DOB", "dateOfBirth"))))))
+            StatusCheckError("ERR_VALIDATION", Option(Seq(FieldError("ERR_INVALID_DOB", "dateOfBirth"))))
+          )
+        )
 
         result shouldBe expectedResult
       }
@@ -113,7 +117,8 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
 
         val expectedResult = StatusCheckResponseWithStatus(
           CONFLICT,
-          StatusCheckErrorResponse(Some("some-correlation-id"), StatusCheckError("UNKNOWN_ERROR")))
+          StatusCheckErrorResponse(Some("some-correlation-id"), StatusCheckError("UNKNOWN_ERROR"))
+        )
 
         result shouldBe expectedResult
       }
@@ -125,7 +130,8 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
 
         val expectedResult = StatusCheckResponseWithStatus(
           INTERNAL_SERVER_ERROR,
-          StatusCheckErrorResponse(Some("some-correlation-id"), StatusCheckError("UNKNOWN_ERROR")))
+          StatusCheckErrorResponse(Some("some-correlation-id"), StatusCheckError("UNKNOWN_ERROR"))
+        )
 
         result shouldBe expectedResult
       }
@@ -134,8 +140,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
 
 }
 
-trait HomeOfficeImmigrationStatusConnectorISpecSetup
-    extends BaseISpec with HomeOfficeImmigrationStatusStubs {
+trait HomeOfficeImmigrationStatusConnectorISpecSetup extends BaseISpec with HomeOfficeImmigrationStatusStubs {
 
   private val HEADER_X_CORRELATION_ID = "X-Correlation-Id"
   implicit val hc: HeaderCarrier =
@@ -155,6 +160,7 @@ trait HomeOfficeImmigrationStatusConnectorISpecSetup
     "2001-01-31",
     StatusCheckRange(
       Some(LocalDate.now(ZoneId.of("UTC")).minusMonths(queryMonths)),
-      Some(LocalDate.now(ZoneId.of("UTC"))))
+      Some(LocalDate.now(ZoneId.of("UTC")))
+    )
   )
 }

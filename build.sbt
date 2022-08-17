@@ -14,11 +14,14 @@ lazy val scoverageSettings = {
   )
 }
 
+addCommandAlias("scalafmtAll", "all scalafmtSbt scalafmt test:scalafmt")
+addCommandAlias("scalastyleAll", "all scalastyle test:scalastyle")
+
 lazy val root = (project in file("."))
   .settings(
     name := "home-office-immigration-status-frontend",
     organization := "uk.gov.hmrc",
-    scalaVersion := "2.12.15",
+    scalaVersion := "2.12.16",
     PlayKeys.playDefaultPort := 10210,
     TwirlKeys.templateImports ++= Seq(
       "play.twirl.api.HtmlFormat",
@@ -40,16 +43,19 @@ lazy val root = (project in file("."))
     majorVersion := 0,
     Concat.groups := Seq(
       "javascripts/immigrationstatus-app.js" ->
-        group(Seq(
-          "javascripts/jquery-3.6.0.min.js",
-          "javascripts/libraries/location-autocomplete.min.js",
-          "javascripts/autocomplete.js",
-          "javascripts/ga-events.js"
-        ))
+        group(
+          Seq(
+            "javascripts/jquery-3.6.0.min.js",
+            "javascripts/libraries/location-autocomplete.min.js",
+            "javascripts/autocomplete.js",
+            "javascripts/ga-events.js"
+          )
+        )
     ),
     Assets / pipelineStages := Seq(concat)
   )
   .configs(IntegrationTest)
+  .settings(inConfig(IntegrationTest)(org.scalafmt.sbt.ScalafmtPlugin.scalafmtConfigSettings): _*)
   .settings(
     IntegrationTest / Keys.fork := false,
     Defaults.itSettings,
@@ -61,15 +67,12 @@ lazy val root = (project in file("."))
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .enablePlugins(PlayScala, SbtDistributablesPlugin)
 
-inConfig(IntegrationTest)(scalafmtCoreSettings)
-
 scalacOptions ++= Seq(
   "-P:silencer:globalFilters=Unused import",
   "-feature"
 )
 
-def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] = {
+def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] =
   tests.map { test =>
     Group(test.name, Seq(test), SubProcess(ForkOptions().withRunJVMOptions(Vector(s"-Dtest.name=${test.name}"))))
   }
-}

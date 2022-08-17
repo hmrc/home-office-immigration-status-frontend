@@ -33,7 +33,7 @@ object EncryptedValue {
 }
 
 class EncryptionDecryptionException(method: String, reason: String, message: String) extends RuntimeException {
-  val failureReason = s"$reason for $method"
+  val failureReason          = s"$reason for $method"
   val failureMessage: String = message
 }
 
@@ -45,25 +45,26 @@ trait SecureGCMCipher {
 
 class SecureGCMCipherImpl extends SecureGCMCipher {
 
-  val IV_SIZE = 96
-  val TAG_BIT_LENGTH = 128
+  val IV_SIZE                       = 96
+  val TAG_BIT_LENGTH                = 128
   val ALGORITHM_TO_TRANSFORM_STRING = "AES/GCM/PKCS5Padding"
-  lazy val secureRandom = new SecureRandom()
-  val ALGORITHM_KEY = "AES"
-  val METHOD_ENCRYPT = "encrypt"
-  val METHOD_DECRYPT = "decrypt"
+  lazy val secureRandom             = new SecureRandom()
+  val ALGORITHM_KEY                 = "AES"
+  val METHOD_ENCRYPT                = "encrypt"
+  val METHOD_DECRYPT                = "decrypt"
 
   def encrypt(valueToEncrypt: String, associatedText: String, aesKey: String): EncryptedValue = {
 
     val initialisationVector = generateInitialisationVector
-    val nonce = new String(Base64.getEncoder.encode(initialisationVector))
-    val gcmParameterSpec = new GCMParameterSpec(TAG_BIT_LENGTH, initialisationVector)
-    val secretKey = validateSecretKey(aesKey, METHOD_ENCRYPT)
+    val nonce                = new String(Base64.getEncoder.encode(initialisationVector))
+    val gcmParameterSpec     = new GCMParameterSpec(TAG_BIT_LENGTH, initialisationVector)
+    val secretKey            = validateSecretKey(aesKey, METHOD_ENCRYPT)
     val cipherText = generateCipherText(
       valueToEncrypt,
       validateAssociatedText(associatedText, METHOD_ENCRYPT),
       gcmParameterSpec,
-      secretKey)
+      secretKey
+    )
 
     EncryptedValue(cipherText, nonce)
   }
@@ -71,14 +72,15 @@ class SecureGCMCipherImpl extends SecureGCMCipher {
   def decrypt(valueToDecrypt: EncryptedValue, associatedText: String, aesKey: String): String = {
 
     val initialisationVector = Base64.getDecoder.decode(valueToDecrypt.nonce)
-    val gcmParameterSpec = new GCMParameterSpec(TAG_BIT_LENGTH, initialisationVector)
-    val secretKey = validateSecretKey(aesKey, METHOD_DECRYPT)
+    val gcmParameterSpec     = new GCMParameterSpec(TAG_BIT_LENGTH, initialisationVector)
+    val secretKey            = validateSecretKey(aesKey, METHOD_DECRYPT)
 
     decryptCipherText(
       valueToDecrypt.value,
       validateAssociatedText(associatedText, METHOD_DECRYPT),
       gcmParameterSpec,
-      secretKey)
+      secretKey
+    )
   }
 
   private def generateInitialisationVector: Array[Byte] = {
@@ -100,7 +102,8 @@ class SecureGCMCipherImpl extends SecureGCMCipher {
     valueToEncrypt: String,
     associatedText: Array[Byte],
     gcmParameterSpec: GCMParameterSpec,
-    secretKey: SecretKey): String =
+    secretKey: SecretKey
+  ): String =
     Try {
       val cipher = getCipherInstance
       cipher.init(Cipher.ENCRYPT_MODE, secretKey, gcmParameterSpec, new SecureRandom())
@@ -115,7 +118,8 @@ class SecureGCMCipherImpl extends SecureGCMCipher {
     valueToDecrypt: String,
     associatedText: Array[Byte],
     gcmParameterSpec: GCMParameterSpec,
-    secretKey: SecretKey): String =
+    secretKey: SecretKey
+  ): String =
     Try {
       val cipher = getCipherInstance
       cipher.init(Cipher.DECRYPT_MODE, secretKey, gcmParameterSpec, new SecureRandom())
@@ -135,7 +139,8 @@ class SecureGCMCipherImpl extends SecureGCMCipher {
         throw new EncryptionDecryptionException(
           method,
           "associated text must not be null",
-          "associated text was not defined")
+          "associated text was not defined"
+        )
     }
 
   private def processCipherTextFailure(ex: Throwable, method: String): Throwable = ex match {
@@ -143,23 +148,27 @@ class SecureGCMCipherImpl extends SecureGCMCipher {
       throw new EncryptionDecryptionException(
         method,
         s"Algorithm being requested is not available in this environment: $ALGORITHM_KEY",
-        e.getMessage)
+        e.getMessage
+      )
     case e: NoSuchPaddingException =>
       throw new EncryptionDecryptionException(
         method,
         "Padding Scheme being requested is not available this environment",
-        e.getMessage)
+        e.getMessage
+      )
     case e: InvalidKeyException =>
       throw new EncryptionDecryptionException(
         method,
         "Key being used is not valid." +
           " It could be due to invalid encoding, wrong length or uninitialized",
-        e.getMessage)
+        e.getMessage
+      )
     case e: InvalidAlgorithmParameterException =>
       throw new EncryptionDecryptionException(
         method,
         "Algorithm parameters being specified are not valid",
-        e.getMessage)
+        e.getMessage
+      )
     case e: IllegalStateException =>
       throw new EncryptionDecryptionException(method, "Cipher is in an illegal state", e.getMessage)
     case e: UnsupportedOperationException =>

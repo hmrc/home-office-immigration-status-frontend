@@ -20,10 +20,13 @@ import play.api.data.validation.{Constraint, Constraints, Invalid, Valid, Valida
 
 object ValidateHelper extends Constraints {
 
-  def cond[A](failure: String)(condition: A => Boolean) =
+  def cond[A](failure: String)(condition: A => Boolean): Constraint[A] =
     Constraint[A] { data: A =>
-      if (condition(data)) Valid
-      else Invalid(ValidationError(failure))
+      if (condition(data)) {
+        Valid
+      } else {
+        Invalid(ValidationError(failure))
+      }
     }
 
   def validateField(emptyFailure: String, invalidFailure: String)(condition: String => Boolean): Constraint[String] =
@@ -33,10 +36,11 @@ object ValidateHelper extends Constraints {
         case i: Invalid =>
           i
         case Valid =>
-          if (condition(fieldValue.trim.toUpperCase))
+          if (condition(fieldValue.trim.toUpperCase)) {
             Valid
-          else
+          } else {
             Invalid(ValidationError(invalidFailure))
+          }
       }
     }
 }

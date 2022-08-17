@@ -35,7 +35,7 @@ import repositories.SessionCacheRepository
 
 class SearchByNinoViewSpec extends ViewSpec {
 
-  val mockDobInput = mock(classOf[inputDate])
+  val mockDobInput  = mock(classOf[inputDate])
   val mockAppConfig = mock(classOf[AppConfig])
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()

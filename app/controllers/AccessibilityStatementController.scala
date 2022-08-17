@@ -23,7 +23,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class AccessibilityStatementController @Inject()(
+class AccessibilityStatementController @Inject() (
   controllerComponents: MessagesControllerComponents,
   accessibilityStatementPage: AccessibilityStatementPage
 )(implicit val appConfig: AppConfig)

@@ -35,10 +35,10 @@ class LandingControllerSpec extends ControllerSpec {
     reset(mockSessionCacheService)
     super.beforeEach
   }
-
-  val nino = NinoGenerator.generateNino
+  //scalastyle:off magic.number
+  val nino                = NinoGenerator.generateNino
   val ninoSearchFormModel = NinoSearchFormModel(nino, "Pan", "", LocalDate.now())
-  val mrzSearchFormModel = MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
+  val mrzSearchFormModel  = MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
 
   "onPageLoad" must {
 
@@ -65,7 +65,7 @@ class LandingControllerSpec extends ControllerSpec {
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(None))
         val result = sut.onPageLoad(request)
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).get mustBe routes.SearchByNinoController.onPageLoad(false).url
+        redirectLocation(result).get mustBe routes.SearchByNinoController.onPageLoad().url
       }
     }
 

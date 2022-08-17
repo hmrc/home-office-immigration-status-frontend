@@ -19,9 +19,7 @@ package views
 import assets.constants.ImmigrationStatusConstant._
 import models.{ImmigrationStatus, NinoSearchFormModel, StatusCheckResult}
 import org.jsoup.nodes.{Document, Element}
-import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.domain.Nino
 import utils.NinoGenerator
 import views.html.StatusFoundPage
 
@@ -31,14 +29,14 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
   val sut: StatusFoundPage = inject[StatusFoundPage]
 
-  def buildContext(statuses: List[ImmigrationStatus] = List(ValidStatus)): StatusFoundPageContext =
+  def buildContext(statuses: List[ImmigrationStatus] = List(validStatus)): StatusFoundPageContext =
     StatusFoundPageContext(
       NinoSearchFormModel(NinoGenerator.generateNino, "Pan", "", LocalDate.now()),
       StatusCheckResult("Pan", LocalDate.now(), "D", statuses)
     )
 
   "StatusFoundPageView" must {
-    val context = buildContext()
+    val context       = buildContext()
     val doc: Document = asDocument(sut(context)(request, messages))
 
     "have a status found title" in {
@@ -49,7 +47,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
     "have recourse to public funds field" when {
       "noRecourseToPublicFunds is true, and no warning is shown" in {
         val html: HtmlFormat.Appendable =
-          sut(buildContext(List(ValidStatus)))(request, messages)
+          sut(buildContext(List(validStatus)))(request, messages)
 
         val doc = asDocument(html)
 
@@ -59,7 +57,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
       "noRecourseToPublicFunds is false, and the warning is shown" in {
         val html: HtmlFormat.Appendable =
-          sut(buildContext(List(ValidStatusNoRecourceTrue)))(request, messages)
+          sut(buildContext(List(validStatusNoResourceTrue)))(request, messages)
 
         val doc = asDocument(html)
 
@@ -76,10 +74,9 @@ class StatusFoundPageViewSpec extends ViewSpec {
         "nino",
         "nationality",
         "dob"
-      ).zipWithIndex.foreach {
-        case (id, index) =>
-          val row: Element = doc.select(s".govuk-summary-list__row").get(index)
-          row.select("dd").attr("id") mustBe id
+      ).zipWithIndex.foreach { case (id, index) =>
+        val row: Element = doc.select(s".govuk-summary-list__row").get(index)
+        row.select("dd").attr("id") mustBe id
       }
     }
 
@@ -90,7 +87,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
     }
 
     "have the history section" when {
-      val context = buildContext(statuses = List(ValidStatus, ValidStatus))
+      val context       = buildContext(statuses = List(validStatus, validStatus))
       val doc: Document = asDocument(sut(context)(request, messages))
       "there is previous statuses" in {
         assertRenderedById(doc, "previousStatuses")
@@ -107,7 +104,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
     "Immigration route" when {
       "EUS displays" in {
         val html: HtmlFormat.Appendable =
-          sut(buildContext(List(ValidStatusNoRecourceTrue)))(request, messages)
+          sut(buildContext(List(validStatusNoResourceTrue)))(request, messages)
 
         val doc = asDocument(html)
         assertElementHasText(doc, "#immigrationRoute", "EU Settlement Scheme")
@@ -115,7 +112,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
       "STUDY displays" in {
         val html: HtmlFormat.Appendable =
-          sut(buildContext(List(ValidStatusCustomProductType("STUDY"))))(request, messages)
+          sut(buildContext(List(validStatusCustomProductType("STUDY"))))(request, messages)
 
         val doc = asDocument(html)
         assertElementHasText(doc, "#immigrationRoute", "Student")
@@ -123,7 +120,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
       "DEPENDANT displays" in {
         val html: HtmlFormat.Appendable =
-          sut(buildContext(List(ValidStatusCustomProductType("DEPENDANT"))))(request, messages)
+          sut(buildContext(List(validStatusCustomProductType("DEPENDANT"))))(request, messages)
 
         val doc = asDocument(html)
         assertElementHasText(doc, "#immigrationRoute", "Dependants of a person with immigration permission")
@@ -131,7 +128,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
       "WORK displays" in {
         val html: HtmlFormat.Appendable =
-          sut(buildContext(List(ValidStatusCustomProductType("WORK"))))(request, messages)
+          sut(buildContext(List(validStatusCustomProductType("WORK"))))(request, messages)
 
         val doc = asDocument(html)
         assertElementHasText(doc, "#immigrationRoute", "Worker")
@@ -139,7 +136,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
       "FRONTIER_WORKER displays" in {
         val html: HtmlFormat.Appendable =
-          sut(buildContext(List(ValidStatusCustomProductType("FRONTIER_WORKER"))))(request, messages)
+          sut(buildContext(List(validStatusCustomProductType("FRONTIER_WORKER"))))(request, messages)
 
         val doc = asDocument(html)
         assertElementHasText(doc, "#immigrationRoute", "Frontier worker")
@@ -147,7 +144,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
       "BNO displays" in {
         val html: HtmlFormat.Appendable =
-          sut(buildContext(List(ValidStatusCustomProductType("BNO"))))(request, messages)
+          sut(buildContext(List(validStatusCustomProductType("BNO"))))(request, messages)
 
         val doc = asDocument(html)
         assertElementHasText(doc, "#immigrationRoute", "British National Overseas")
@@ -155,7 +152,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
       "BNO_LOTR displays" in {
         val html: HtmlFormat.Appendable =
-          sut(buildContext(List(ValidStatusCustomProductType("BNO_LOTR"))))(request, messages)
+          sut(buildContext(List(validStatusCustomProductType("BNO_LOTR"))))(request, messages)
 
         val doc = asDocument(html)
         assertElementHasText(doc, "#immigrationRoute", "British National Overseas (leave outside the rules)")
@@ -163,7 +160,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
       "GRADUATE displays" in {
         val html: HtmlFormat.Appendable =
-          sut(buildContext(List(ValidStatusCustomProductType("GRADUATE"))))(request, messages)
+          sut(buildContext(List(validStatusCustomProductType("GRADUATE"))))(request, messages)
 
         val doc = asDocument(html)
         assertElementHasText(doc, "#immigrationRoute", "Graduate")
@@ -171,7 +168,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
       "SPORTSPERSON displays" in {
         val html: HtmlFormat.Appendable =
-          sut(buildContext(List(ValidStatusCustomProductType("SPORTSPERSON"))))(request, messages)
+          sut(buildContext(List(validStatusCustomProductType("SPORTSPERSON"))))(request, messages)
 
         val doc = asDocument(html)
         assertElementHasText(doc, "#immigrationRoute", "International Sportsperson")
@@ -179,7 +176,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
       "SETTLEMENT displays" in {
         val html: HtmlFormat.Appendable =
-          sut(buildContext(List(ValidStatusCustomProductType("SETTLEMENT"))))(request, messages)
+          sut(buildContext(List(validStatusCustomProductType("SETTLEMENT"))))(request, messages)
 
         val doc = asDocument(html)
         assertElementHasText(doc, "#immigrationRoute", "British National Overseas or Settlement Protection")
@@ -187,7 +184,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
       "TEMP_WORKER displays" in {
         val html: HtmlFormat.Appendable =
-          sut(buildContext(List(ValidStatusCustomProductType("TEMP_WORKER"))))(request, messages)
+          sut(buildContext(List(validStatusCustomProductType("TEMP_WORKER"))))(request, messages)
 
         val doc = asDocument(html)
         assertElementHasText(doc, "#immigrationRoute", "Temporary Worker")
@@ -195,7 +192,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
       "EUS_EUN_JFM displays" in {
         val html: HtmlFormat.Appendable =
-          sut(buildContext(List(ValidStatusCustomProductType("EUS_EUN_JFM"))))(request, messages)
+          sut(buildContext(List(validStatusCustomProductType("EUS_EUN_JFM"))))(request, messages)
 
         val doc = asDocument(html)
         assertElementHasText(doc, "#immigrationRoute", "EU Settlement Scheme (joiner family member)")
@@ -203,7 +200,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
       "EUS_FMFW displays" in {
         val html: HtmlFormat.Appendable =
-          sut(buildContext(List(ValidStatusCustomProductType("EUS_FMFW"))))(request, messages)
+          sut(buildContext(List(validStatusCustomProductType("EUS_FMFW"))))(request, messages)
 
         val doc = asDocument(html)
         assertElementHasText(doc, "#immigrationRoute", "EU Settlement Scheme (frontier worker family member)")
@@ -211,7 +208,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
 
       "Error with ProductType displays" in {
         val html: HtmlFormat.Appendable =
-          sut(buildContext(List(ValidStatusCustomProductType("error"))))(request, messages)
+          sut(buildContext(List(validStatusCustomProductType("error"))))(request, messages)
 
         val doc = asDocument(html)
         assertElementHasText(doc, "#immigrationRoute", "error")
@@ -223,7 +220,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
     "context.isZambrano is true" in {
       val context = StatusFoundPageContext(
         NinoSearchFormModel(NinoGenerator.generateNino, "Pan", "", LocalDate.now()),
-        StatusCheckResult("Pan", LocalDate.now(), "JPN", List(ValidStatus))
+        StatusCheckResult("Pan", LocalDate.now(), "JPN", List(validStatus))
       )
       val html: HtmlFormat.Appendable =
         sut(context)(request, messages)
@@ -237,7 +234,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
     "context.isZambrano is false" in {
       val context = StatusFoundPageContext(
         NinoSearchFormModel(NinoGenerator.generateNino, "Pan", "", LocalDate.now()),
-        StatusCheckResult("Pan", LocalDate.now(), "FRA", List(ValidStatus))
+        StatusCheckResult("Pan", LocalDate.now(), "FRA", List(validStatus))
       )
 
       val html: HtmlFormat.Appendable =

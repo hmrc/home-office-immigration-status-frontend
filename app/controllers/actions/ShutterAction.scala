@@ -25,12 +25,13 @@ import views.html.ShutteringPage
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ShutterActionImpl @Inject()(
+class ShutterActionImpl @Inject() (
   val messagesApi: MessagesApi,
   val parser: BodyParsers.Default,
   shutteringPage: ShutteringPage
 )(implicit val executionContext: ExecutionContext, appConfig: AppConfig)
-    extends ShutterAction with I18nSupport {
+    extends ShutterAction
+    with I18nSupport {
 
   def filter[A](request: Request[A]): Future[Option[Result]] = Future.successful(applyShuttering(request))
 
@@ -41,7 +42,9 @@ class ShutterActionImpl @Inject()(
           shutteringPage()
         )
       )
-    } else None
+    } else {
+      None
+    }
 
 }
 

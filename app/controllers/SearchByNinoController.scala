@@ -29,7 +29,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SearchByNinoController @Inject()(
+class SearchByNinoController @Inject() (
   access: AccessAction,
   override val messagesApi: MessagesApi,
   controllerComponents: MessagesControllerComponents,
@@ -37,7 +37,8 @@ class SearchByNinoController @Inject()(
   searchByNinoView: SearchByNinoView,
   sessionCacheService: SessionCacheService
 )(implicit ec: ExecutionContext)
-    extends FrontendController(controllerComponents) with I18nSupport {
+    extends FrontendController(controllerComponents)
+    with I18nSupport {
 
   def onPageLoad(clearForm: Boolean): Action[AnyContent] =
     access.async { implicit request =>

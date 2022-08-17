@@ -28,7 +28,7 @@ import views.html.SearchByMrzView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SearchByMrzController @Inject()(
+class SearchByMrzController @Inject() (
   access: AccessAction,
   override val messagesApi: MessagesApi,
   view: SearchByMrzView,
@@ -36,7 +36,8 @@ class SearchByMrzController @Inject()(
   formProvider: SearchByMRZForm,
   cc: MessagesControllerComponents
 )(implicit ec: ExecutionContext)
-    extends FrontendController(cc) with I18nSupport {
+    extends FrontendController(cc)
+    with I18nSupport {
 
   def onPageLoad(clearForm: Boolean): Action[AnyContent] =
     access.async { implicit request =>

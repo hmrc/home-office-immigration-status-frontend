@@ -45,7 +45,7 @@ object NinoSearchFormModel {
 
   private def statusCheckRange(timeRangeInMonths: Int): StatusCheckRange = {
     val startDate = LocalDate.now(ZoneId.of("UTC")).minusMonths(timeRangeInMonths)
-    val endDate = LocalDate.now(ZoneId.of("UTC"))
+    val endDate   = LocalDate.now(ZoneId.of("UTC"))
     StatusCheckRange(Some(startDate), Some(endDate))
   }
 }
@@ -67,7 +67,7 @@ object MrzSearchFormModel {
 
   private def statusCheckRange(timeRangeInMonths: Int): StatusCheckRange = {
     val startDate = LocalDate.now(ZoneId.of("UTC")).minusMonths(timeRangeInMonths)
-    val endDate = LocalDate.now(ZoneId.of("UTC"))
+    val endDate   = LocalDate.now(ZoneId.of("UTC"))
     StatusCheckRange(Some(startDate), Some(endDate))
   }
 }

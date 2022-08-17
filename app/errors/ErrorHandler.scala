@@ -37,7 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import play.api.Logging
 
 @Singleton
-class ErrorHandler @Inject()(
+class ErrorHandler @Inject() (
   val env: Environment,
   val messagesApi: MessagesApi,
   val auditConnector: AuditConnector,
@@ -46,15 +46,21 @@ class ErrorHandler @Inject()(
   shutteringPage: ShutteringPage,
   @Named("appName") val appName: String,
   appConfig: AppConfig,
-  val config: Configuration)(implicit ec: ExecutionContext)
-    extends FrontendErrorHandler with AuthRedirects with ErrorAuditing with Logging {
+  val config: Configuration
+)(implicit ec: ExecutionContext)
+    extends FrontendErrorHandler
+    with AuthRedirects
+    with ErrorAuditing
+    with Logging {
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
     auditClientError(request, statusCode, message)
     if (appConfig.shuttered) {
       implicit val r: Request[String] = Request(request, "")
       Future.successful(ServiceUnavailable(shutteringPage()))
-    } else super.onClientError(request, statusCode, message)
+    } else {
+      super.onClientError(request, statusCode, message)
+    }
   }
 
   override def resolveError(request: RequestHeader, exception: Throwable): Result = {
@@ -70,19 +76,20 @@ class ErrorHandler @Inject()(
     }
   }
 
-  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(
-    implicit request: Request[_]): Html =
+  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit
+    request: Request[_]
+  ): Html =
     errorTemplate(pageTitle, heading, message, None)
 
 }
 
 object EventTypes {
 
-  val RequestReceived: String = "RequestReceived"
+  val RequestReceived: String          = "RequestReceived"
   val TransactionFailureReason: String = "transactionFailureReason"
-  val ServerInternalError: String = "ServerInternalError"
-  val ResourceNotFound: String = "ResourceNotFound"
-  val ServerValidationError: String = "ServerValidationError"
+  val ServerInternalError: String      = "ServerInternalError"
+  val ResourceNotFound: String         = "ResourceNotFound"
+  val ServerValidationError: String    = "ServerValidationError"
 }
 
 trait ErrorAuditing extends HttpAuditEvent {
@@ -92,7 +99,7 @@ trait ErrorAuditing extends HttpAuditEvent {
   def auditConnector: AuditConnector
 
   private val unexpectedError = "Unexpected error"
-  private val notFoundError = "Resource Endpoint Not Found"
+  private val notFoundError   = "Resource Endpoint Not Found"
   private val badRequestError = "Request bad format exception"
 
   def auditServerError(request: RequestHeader, ex: Throwable)(implicit ec: ExecutionContext): Unit = {
@@ -107,7 +114,9 @@ trait ErrorAuditing extends HttpAuditEvent {
     }
     auditConnector.sendEvent(
       dataEvent(eventType, transactionName, request, Map(TransactionFailureReason -> ex.getMessage))(
-        HeaderCarrierConverter.fromRequestAndSession(request, request.session)))
+        HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+      )
+    )
   }
 
   def auditClientError(request: RequestHeader, statusCode: Int, message: String)(implicit ec: ExecutionContext): Unit =
@@ -115,11 +124,15 @@ trait ErrorAuditing extends HttpAuditEvent {
       case NOT_FOUND =>
         auditConnector.sendEvent(
           dataEvent(ResourceNotFound, notFoundError, request, Map(TransactionFailureReason -> message))(
-            HeaderCarrierConverter.fromRequestAndSession(request, request.session)))
+            HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+          )
+        )
       case BAD_REQUEST =>
         auditConnector.sendEvent(
           dataEvent(ServerValidationError, badRequestError, request, Map(TransactionFailureReason -> message))(
-            HeaderCarrierConverter.fromRequestAndSession(request, request.session)))
+            HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+          )
+        )
       case _ =>
     }
 }

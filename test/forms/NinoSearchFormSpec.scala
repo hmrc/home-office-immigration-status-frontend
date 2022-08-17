@@ -32,20 +32,20 @@ class NinoSearchFormSpec extends PlaySpec with OptionValues with ScalaCheckDrive
 
   implicit def noShrink[T]: Shrink[T] = Shrink.shrinkAny
 
-  val formProvider: SearchByNinoForm = new SearchByNinoForm()
+  val formProvider: SearchByNinoForm  = new SearchByNinoForm()
   val form: Form[NinoSearchFormModel] = formProvider()
 
-  val now: LocalDate = LocalDate.now()
-  val tomorrow: LocalDate = now.plusDays(1)
+  val now: LocalDate       = LocalDate.now()
+  val tomorrow: LocalDate  = now.plusDays(1)
   val yesterday: LocalDate = now.minusDays(1)
-  val testNino = NinoGenerator.generateNino
+  val testNino             = NinoGenerator.generateNino
 
   def input(
     dateOfBirth: LocalDate = yesterday,
     familyName: String = "last",
     givenName: String = "first",
     nino: String = testNino.nino
-  ) = Map(
+  ): Map[String, String] = Map(
     "dateOfBirth.year"  -> dateOfBirth.getYear.toString,
     "dateOfBirth.month" -> dateOfBirth.getMonthValue.toString,
     "dateOfBirth.day"   -> dateOfBirth.getDayOfMonth.toString,
@@ -54,7 +54,7 @@ class NinoSearchFormSpec extends PlaySpec with OptionValues with ScalaCheckDrive
     "nino"              -> nino
   )
 
-  def inputYear(year: String = yesterday.getYear.toString) = Map(
+  def inputYear(year: String = yesterday.getYear.toString): Map[String, String] = Map(
     "dateOfBirth.year"  -> year,
     "dateOfBirth.month" -> yesterday.getMonthValue.toString,
     "dateOfBirth.day"   -> yesterday.getDayOfMonth.toString,
@@ -97,7 +97,7 @@ class NinoSearchFormSpec extends PlaySpec with OptionValues with ScalaCheckDrive
         forAll(validChar) { name =>
           val validInput = input(givenName = name)
 
-          val out = NinoSearchFormModel(testNino, name, "last", yesterday)
+          val out   = NinoSearchFormModel(testNino, name, "last", yesterday)
           val bound = form.bind(validInput)
           bound.value mustBe Some(out)
           bound.errors mustBe Nil
@@ -147,7 +147,8 @@ class NinoSearchFormSpec extends PlaySpec with OptionValues with ScalaCheckDrive
 
         form.bind(invalidInput).value must not be defined
         form.bind(invalidInput).errors mustBe List(
-          FormError("dateOfBirth.month", List("error.dateOfBirth.month.required")))
+          FormError("dateOfBirth.month", List("error.dateOfBirth.month.required"))
+        )
       }
 
       "dob year is invalid" in {
@@ -155,7 +156,8 @@ class NinoSearchFormSpec extends PlaySpec with OptionValues with ScalaCheckDrive
 
         form.bind(invalidInput).value must not be defined
         form.bind(invalidInput).errors mustBe List(
-          FormError("dateOfBirth.year", List("error.dateOfBirth.year.required")))
+          FormError("dateOfBirth.year", List("error.dateOfBirth.year.required"))
+        )
       }
 
       "dob is invalid" in {
@@ -219,7 +221,8 @@ class NinoSearchFormSpec extends PlaySpec with OptionValues with ScalaCheckDrive
 
           form.bind(invalidInput).value must not be defined
           form.bind(invalidInput).errors mustBe List(
-            FormError("familyName", List("error.familyName.invalid-format"), Seq()))
+            FormError("familyName", List("error.familyName.invalid-format"), Seq())
+          )
         }
       }
 

@@ -28,19 +28,21 @@ import config.AppConfig
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class HomeOfficeImmigrationStatusProxyService @Inject()(
+class HomeOfficeImmigrationStatusProxyService @Inject() (
   connector: HomeOfficeImmigrationStatusProxyConnector,
-  auditService: AuditService) {
+  auditService: AuditService
+) {
 
-  def search(query: SearchFormModel)(
-    implicit hc: HeaderCarrier,
+  def search(query: SearchFormModel)(implicit
+    hc: HeaderCarrier,
     ec: ExecutionContext,
     request: Request[Any],
-    appConfig: AppConfig): Future[StatusCheckResponseWithStatus] = {
+    appConfig: AppConfig
+  ): Future[StatusCheckResponseWithStatus] = {
 
     val correlationId: String = UUID.randomUUID().toString
-    val headerCarrier = hc.withExtraHeaders(Constants.HEADER_X_CORRELATION_ID -> correlationId)
-    val searchFromRequest = query.toSearch(appConfig.defaultQueryTimeRangeInMonths)
+    val headerCarrier         = hc.withExtraHeaders(Constants.HEADER_X_CORRELATION_ID -> correlationId)
+    val searchFromRequest     = query.toSearch(appConfig.defaultQueryTimeRangeInMonths)
 
     sendRequestAuditingResults(searchFromRequest) {
       searchFromRequest match {
@@ -50,10 +52,9 @@ class HomeOfficeImmigrationStatusProxyService @Inject()(
     }
   }
 
-  private def sendRequestAuditingResults[A](search: Search)(future: Future[StatusCheckResponseWithStatus])(
-    implicit hc: HeaderCarrier,
-    ec: ExecutionContext,
-    request: Request[Any]): Future[StatusCheckResponseWithStatus] =
+  private def sendRequestAuditingResults[A](search: Search)(
+    future: Future[StatusCheckResponseWithStatus]
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext, request: Request[Any]): Future[StatusCheckResponseWithStatus] =
     future.map { result =>
       auditService.auditStatusCheckEvent(search, result)
       result

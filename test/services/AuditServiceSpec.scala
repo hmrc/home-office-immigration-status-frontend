@@ -18,26 +18,27 @@ package services
 
 import java.time.{LocalDate, ZoneId}
 import java.time.format.DateTimeFormatter
-
 import org.scalatestplus.play.PlaySpec
 import org.mockito.Mockito._
 import org.mockito.ArgumentMatchers.{any, refEq}
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import models._
-import play.api.libs.json.{JsObject}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import play.api.libs.json.JsObject
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class AuditServiceSpec extends PlaySpec {
 
-  val mockAuditConnector = mock(classOf[AuditConnector])
-  val sut = new AuditServiceImpl(mockAuditConnector)
+  val mockAuditConnector                                    = mock(classOf[AuditConnector])
+  val sut                                                   = new AuditServiceImpl(mockAuditConnector)
   implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
-  implicit val hc = HeaderCarrier(sessionId = Some(SessionId("123")))
+  implicit val hc                                           = HeaderCarrier(sessionId = Some(SessionId("123")))
 
-  val testDate = LocalDate.now
+  val testDate  = LocalDate.now
   val formatter = DateTimeFormatter.ofPattern("d/MM/yyyy")
 
   val correlationId = Some("correlationId")
@@ -56,11 +57,11 @@ class AuditServiceSpec extends PlaySpec {
           StatusCheckRange(Some(LocalDate.now(ZoneId.of("UTC")).minusMonths(1)), Some(LocalDate.now(ZoneId.of("UTC"))))
         )
 
-        val statusCheckResult = StatusCheckResult("Damon Albarn", testDate, "GBR", Nil)
-        val response = StatusCheckSuccessfulResponse(correlationId, statusCheckResult)
-        val responseWithStatus = StatusCheckResponseWithStatus(200, response)
+        val statusCheckResult  = StatusCheckResult("Damon Albarn", testDate, "GBR", Nil)
+        val response           = StatusCheckSuccessfulResponse(correlationId, statusCheckResult)
+        val responseWithStatus = StatusCheckResponseWithStatus(OK, response)
 
-        val expectedDetails = StatusCheckAuditDetail(200, search, response)
+        val expectedDetails = StatusCheckAuditDetail(OK, search, response)
 
         sut.auditStatusCheckEvent(search, responseWithStatus)
 
@@ -78,11 +79,11 @@ class AuditServiceSpec extends PlaySpec {
           StatusCheckRange(Some(LocalDate.now(ZoneId.of("UTC")).minusMonths(1)), Some(LocalDate.now(ZoneId.of("UTC"))))
         )
 
-        val statusCheckResult = StatusCheckError("UNKNOWN_ERROR")
-        val error = StatusCheckErrorResponse(correlationId, statusCheckResult)
-        val responseWithStatus = StatusCheckResponseWithStatus(500, error)
+        val statusCheckResult  = StatusCheckError("UNKNOWN_ERROR")
+        val error              = StatusCheckErrorResponse(correlationId, statusCheckResult)
+        val responseWithStatus = StatusCheckResponseWithStatus(INTERNAL_SERVER_ERROR, error)
 
-        val expectedDetails = StatusCheckAuditDetail(500, search, error)
+        val expectedDetails = StatusCheckAuditDetail(INTERNAL_SERVER_ERROR, search, error)
 
         sut.auditStatusCheckEvent(search, responseWithStatus)
 

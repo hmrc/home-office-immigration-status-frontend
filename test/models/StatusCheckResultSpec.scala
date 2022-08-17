@@ -29,7 +29,8 @@ class StatusCheckResultSpec extends PlaySpec {
       None,
       "some product type",
       "some immigration status",
-      noRecourseToPublicFunds = true)
+      noRecourseToPublicFunds = true
+    )
 
   "mostRecentStatus" must {
     "return none when there is no immigration status" in {
@@ -40,13 +41,13 @@ class StatusCheckResultSpec extends PlaySpec {
 
     "return the immigration status when there is only one immigration status" in {
       val expected = makeImmigrationStatus()
-      val sut = StatusCheckResult("some name", LocalDate.now, "some nationality", List(expected))
+      val sut      = StatusCheckResult("some name", LocalDate.now, "some nationality", List(expected))
 
       sut.mostRecentStatus mustBe Some(expected)
     }
 
     "return the most recent immigration status when there is more than one immigration status" in {
-      val expected = makeImmigrationStatus()
+      val expected    = makeImmigrationStatus()
       val olderStatus = makeImmigrationStatus(1)
 
       val sut = StatusCheckResult("some name", LocalDate.now, "some nationality", List(olderStatus, expected))
@@ -70,7 +71,7 @@ class StatusCheckResultSpec extends PlaySpec {
     }
     "return everything but the most recent status" in {
       val mostRecent = makeImmigrationStatus()
-      val others = List(3, 1, 2).map(makeImmigrationStatus)
+      val others     = List(3, 1, 2).map(makeImmigrationStatus)
 
       val sut = StatusCheckResult("some name", LocalDate.now, "some nationality", mostRecent +: others)
 
@@ -85,9 +86,9 @@ class StatusCheckResultSpec extends PlaySpec {
   "auditWrites" must {
 
     "write json with mostRecentStatus and previous status" in {
-      val date = LocalDate.now
+      val date             = LocalDate.now
       val mostRecentStatus = makeImmigrationStatus()
-      val previousStatuses = Seq(makeImmigrationStatus(100), makeImmigrationStatus(1000))
+      val previousStatuses = Seq(makeImmigrationStatus(100), makeImmigrationStatus(1000)) //scalastyle:off magic.number
       val result =
         StatusCheckResult("some name", date, "some nationality", (previousStatuses :+ mostRecentStatus).toList)
 
@@ -99,7 +100,7 @@ class StatusCheckResultSpec extends PlaySpec {
     }
 
     "write json with mostRecentStatus" in {
-      val date = LocalDate.now
+      val date             = LocalDate.now
       val mostRecentStatus = makeImmigrationStatus()
       val result =
         StatusCheckResult("some name", date, "some nationality", List(mostRecentStatus))

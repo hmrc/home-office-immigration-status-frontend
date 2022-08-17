@@ -44,9 +44,10 @@ class InputDateSpec extends ViewSpec {
         legendClasses = "govuk-label",
         legendContent = messages("some.legend.content"),
         hintMessage = Some(messages("lookup.dateOfBirth.hint"))
-      )(messages))
+      )(messages)
+    )
 
-  val doc = renderDocument(emptyForm)
+  val doc                    = renderDocument(emptyForm)
   val countrySelect: Element = doc.getElementById("nationality")
 
   "inputDate" must {
@@ -75,8 +76,9 @@ class InputDateSpec extends ViewSpec {
     }
   }
 
-  val formWithErrors: Form[MrzSearchFormModel] = inject[SearchByMRZForm].apply().bind(JsNull, 200)
-  lazy val docWithErrors: Document = renderDocument(formWithErrors)
+  val maxCharsAllowed                          = 200
+  val formWithErrors: Form[MrzSearchFormModel] = inject[SearchByMRZForm].apply().bind(JsNull, maxCharsAllowed)
+  lazy val docWithErrors: Document             = renderDocument(formWithErrors)
 
   "inputDate with errors" must {
     "assign day an error class" in {

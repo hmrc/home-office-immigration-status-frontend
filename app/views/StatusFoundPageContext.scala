@@ -26,19 +26,24 @@ import play.api.{Logger, Logging}
 final case class StatusFoundPageContext(query: SearchFormModel, result: StatusCheckResult) {
 
   val mostRecentStatus: Option[ImmigrationStatus] = result.mostRecentStatus
-  val previousStatuses: Seq[ImmigrationStatus] = result.previousStatuses
+  val previousStatuses: Seq[ImmigrationStatus]    = result.previousStatuses
 
   def immigrationStatusRows(implicit messages: Messages): Seq[Row] =
     Seq(
       immigrationRoute.map(route => Row("immigrationRoute", "status-found.route", route)),
       mostRecentStatus.map(s =>
-        Row("startDate", "status-found.startDate", DateFormat.format(messages.lang.locale)(s.statusStartDate))),
+        Row("startDate", "status-found.startDate", DateFormat.format(messages.lang.locale)(s.statusStartDate))
+      ),
       mostRecentStatus.flatMap(s =>
         s.statusEndDate.map(date =>
-          Row("expiryDate", "status-found.endDate", DateFormat.format(messages.lang.locale)(date)))),
-      if (!hasRecourseToPublicFunds)
+          Row("expiryDate", "status-found.endDate", DateFormat.format(messages.lang.locale)(date))
+        )
+      ),
+      if (!hasRecourseToPublicFunds) {
         Some(Row("recourse-text", "status-found.norecourse", messages("status-found.no")))
-      else None
+      } else {
+        None
+      }
     ).flatten
 
   def detailRows(countries: Countries)(implicit messages: Messages): Seq[Row] = query match {
@@ -60,13 +65,13 @@ final case class StatusFoundPageContext(query: SearchFormModel, result: StatusCh
 
   def hasRecourseToPublicFunds: Boolean = !mostRecentStatus.exists(_.noRecourseToPublicFunds)
 
-  val prefix = "status-found.current."
+  val prefix                                              = "status-found.current."
   def key(key: String, status: ImmigrationStatus): String = prefix + key + status.expiredMsg
 
   def currentStatusLabel(implicit messages: Messages): String =
     mostRecentStatus match {
       case Some(status) =>
-        val default = messages(prefix + "hasFBIS", status.productType, status.immigrationStatus)
+        val default   = messages(prefix + "hasFBIS", status.productType, status.immigrationStatus)
         val eusPrefix = if (status.isEUS) "EUS." else "nonEUS."
         messages.getOrElse(key(eusPrefix + status.immigrationStatus, status), default)
       case None =>
@@ -83,8 +88,9 @@ object StatusFoundPageContext extends Logging {
 
   implicit class RichMessages(val messages: Messages) extends AnyVal {
     def getOrElse(key: String, default: String): String =
-      if (messages.isDefinedAt(key)) messages(key)
-      else {
+      if (messages.isDefinedAt(key)) {
+        messages(key)
+      } else {
         logger.warn(s"$key was not defined. Consider adding this to the messages file. Using default placeholder text.")
         default
       }
@@ -100,7 +106,7 @@ object StatusFoundPageContext extends Logging {
 
   def immigrationStatusLabel(status: ImmigrationStatus)(implicit messages: Messages): String = {
     val productString = getImmigrationRouteLabel(status.productType)
-    val statusString = getStatusLabel(status)
+    val statusString  = getStatusLabel(status)
     s"$productString - $statusString"
   }
 

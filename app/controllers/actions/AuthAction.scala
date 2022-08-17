@@ -30,17 +30,20 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import config.AppConfig
 import support.CallOps
+import uk.gov.hmrc.auth.core.authorise.Predicate
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthActionImpl @Inject()(
+class AuthActionImpl @Inject() (
   val env: Environment,
   override val authConnector: AuthConnector,
   appConfig: AppConfig,
   val parser: BodyParsers.Default,
   val config: Configuration
 )(implicit val executionContext: ExecutionContext)
-    extends AuthAction with AuthorisedFunctions with AuthRedirects {
+    extends AuthAction
+    with AuthorisedFunctions
+    with AuthRedirects {
 
   override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] = {
 
@@ -69,9 +72,12 @@ class AuthActionImpl @Inject()(
       toStrideLogin(continueUrl)
   }
 
-  def getPredicate =
-    if (appConfig.authorisedStrideGroup == "ANY") AuthProviders(PrivilegedApplication)
-    else Enrolment(appConfig.authorisedStrideGroup) and AuthProviders(PrivilegedApplication)
+  def getPredicate: Predicate =
+    if (appConfig.authorisedStrideGroup == "ANY") {
+      AuthProviders(PrivilegedApplication)
+    } else {
+      Enrolment(appConfig.authorisedStrideGroup) and AuthProviders(PrivilegedApplication)
+    }
 
 }
 

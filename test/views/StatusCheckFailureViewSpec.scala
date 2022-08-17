@@ -16,18 +16,18 @@
 
 package views
 
-import models.{MrzSearchFormModel, NinoSearchFormModel}
-import java.time.LocalDate
-
 import config.AppConfig
+import models.{MrzSearchFormModel, NinoSearchFormModel}
 import org.jsoup.nodes.{Document, Element}
-import org.mockito.Mockito.{mock, when}
+import org.mockito.Mockito.mock
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import repositories.SessionCacheRepository
 import utils.NinoGenerator
 import views.html.StatusCheckFailurePage
+
+import java.time.LocalDate
 
 class StatusCheckFailureViewSpec extends ViewSpec {
 
@@ -41,13 +41,13 @@ class StatusCheckFailureViewSpec extends ViewSpec {
     .build()
 
   lazy val sut: StatusCheckFailurePage = inject[StatusCheckFailurePage]
-
-  val nino = NinoGenerator.generateNino
+  //scalastyle:off magic.number
+  val nino               = NinoGenerator.generateNino
   val ninSearchFormModel = NinoSearchFormModel(nino, "Pan", "", LocalDate.now())
   val mrzSearchFormModel = MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
 
   val NinoDocWithFeature: Document = asDocument(sut(ninSearchFormModel)(request, messages))
-  val MrzDocWithFeature: Document = asDocument(sut(mrzSearchFormModel)(request, messages))
+  val MrzDocWithFeature: Document  = asDocument(sut(mrzSearchFormModel)(request, messages))
 
   "StatusCheckFailurePage" must {
     "have a status conflict title" in {

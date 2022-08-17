@@ -26,10 +26,10 @@ import org.scalatest.freespec.AnyFreeSpec
 
 class SecureGCMCipherSpec extends AnyFreeSpec with Matchers {
 
-  private val encrypter = new SecureGCMCipherImpl
-  private val secretKey = "VqmXp7yigDFxbCUdDdNZVIvbW6RgPNJsliv6swQNCL8="
-  private val secretKey2 = "cXo7u0HuJK8B/52xLwW7eQ=="
-  private val textToEncrypt = "textNotEncrypted"
+  private val encrypter      = new SecureGCMCipherImpl
+  private val secretKey      = "VqmXp7yigDFxbCUdDdNZVIvbW6RgPNJsliv6swQNCL8="
+  private val secretKey2     = "cXo7u0HuJK8B/52xLwW7eQ=="
+  private val textToEncrypt  = "textNotEncrypted"
   private val associatedText = "associatedText"
   private val encryptedText = EncryptedValue(
     "jOrmajkEqb7Jbo1GvK4Mhc3E7UiOfKS3RCy3O/F6myQ=",
@@ -52,7 +52,7 @@ class SecureGCMCipherSpec extends AnyFreeSpec with Matchers {
     }
 
     "must return an EncryptionDecryptionException if the encrypted value is different" in {
-      val invalidText = Base64.getEncoder.encodeToString("invalid value".getBytes)
+      val invalidText           = Base64.getEncoder.encodeToString("invalid value".getBytes)
       val invalidEncryptedValue = EncryptedValue(invalidText, encryptedText.nonce)
 
       val decryptAttempt = intercept[EncryptionDecryptionException](
@@ -63,7 +63,7 @@ class SecureGCMCipherSpec extends AnyFreeSpec with Matchers {
     }
 
     "must return an EncryptionDecryptionException if the nonce is different" in {
-      val invalidNonce = Base64.getEncoder.encodeToString("invalid value".getBytes)
+      val invalidNonce          = Base64.getEncoder.encodeToString("invalid value".getBytes)
       val invalidEncryptedValue = EncryptedValue(encryptedText.value, invalidNonce)
 
       val decryptAttempt = intercept[EncryptionDecryptionException](
@@ -112,13 +112,14 @@ class SecureGCMCipherSpec extends AnyFreeSpec with Matchers {
 
       decryptAttempt.failureReason must include(
         "Key being used is not valid." +
-          " It could be due to invalid encoding, wrong length or uninitialized")
+          " It could be due to invalid encoding, wrong length or uninitialized"
+      )
     }
 
     "return an EncryptionDecryptionError if the secret key is an invalid type" in {
 
       val keyGen = KeyGenerator.getInstance("DES")
-      val key = keyGen.generateKey()
+      val key    = keyGen.generateKey()
       val secureGCMEncryter = new SecureGCMCipherImpl {
         override val ALGORITHM_KEY: String = "DES"
       }
@@ -126,13 +127,15 @@ class SecureGCMCipherSpec extends AnyFreeSpec with Matchers {
         secureGCMEncryter.generateCipherText(
           textToEncrypt,
           associatedText.getBytes,
-          new GCMParameterSpec(96, "hjdfbhvbhvbvjvjfvb".getBytes),
-          key)
+          new GCMParameterSpec(96, "hjdfbhvbhvbvjvjfvb".getBytes), //scalastyle:off magic.number
+          key
+        )
       )
 
       encryptedAttempt.failureReason must include(
         "Key being used is not valid." +
-          " It could be due to invalid encoding, wrong length or uninitialized")
+          " It could be due to invalid encoding, wrong length or uninitialized"
+      )
     }
 
     "return an EncryptionDecryptionError if the algorithm is invalid" in {

@@ -23,7 +23,7 @@ import java.time.LocalDate
 
 class FormModelEncrypterSpec extends PlaySpec {
 
-  private val cipher = new SecureGCMCipherImpl
+  private val cipher    = new SecureGCMCipherImpl
   private val encrypter = new FormModelEncrypter(cipher)
   private val secretKey = "VqmXp7yigDFxbCUdDdNZVIvbW6RgPNJsliv6swQNCL8="
   private val sessionId = "1234567890"
@@ -31,9 +31,9 @@ class FormModelEncrypterSpec extends PlaySpec {
   "encryptNinoSearchFormModel" must {
 
     "encrypt a nino form model such that it is decryptable with the same sessionId and secretKey" in {
-      val nino = NinoGenerator.generateNino
+      val nino        = NinoGenerator.generateNino
       val dateOfBirth = LocalDate.now().minusYears(1)
-      val formModel = NinoSearchFormModel(nino, "James", "Buchanan", dateOfBirth)
+      val formModel   = NinoSearchFormModel(nino, "James", "Buchanan", dateOfBirth)
 
       val encryptedFormModel = encrypter.encryptSearchFormModel(formModel, sessionId, secretKey)
       val decryptedFormModel = encrypter.decryptSearchFormModel(encryptedFormModel, sessionId, secretKey)
@@ -43,7 +43,7 @@ class FormModelEncrypterSpec extends PlaySpec {
 
     "encrypt an mrz form model such that it is decryptable with the same sessionId and secretKey" in {
       val dateOfBirth = LocalDate.now().minusYears(1)
-      val formModel = MrzSearchFormModel("documentType", "documentNumber", dateOfBirth, "nationality")
+      val formModel   = MrzSearchFormModel("documentType", "documentNumber", dateOfBirth, "nationality")
 
       val encryptedFormModel = encrypter.encryptSearchFormModel(formModel, sessionId, secretKey)
       val decryptedFormModel = encrypter.decryptSearchFormModel(encryptedFormModel, sessionId, secretKey)
@@ -55,9 +55,9 @@ class FormModelEncrypterSpec extends PlaySpec {
   "decryptNinoSearchFormModel" must {
 
     "return None where the nino is invalid for a nino model" in {
-      val nino = NinoGenerator.generateNino
+      val nino        = NinoGenerator.generateNino
       val dateOfBirth = LocalDate.now().minusYears(1)
-      val formModel = NinoSearchFormModel(nino, "James", "Buchanan", dateOfBirth)
+      val formModel   = NinoSearchFormModel(nino, "James", "Buchanan", dateOfBirth)
 
       def e(field: String): EncryptedValue = cipher.encrypt(field, sessionId, secretKey)
 
@@ -65,7 +65,8 @@ class FormModelEncrypterSpec extends PlaySpec {
         e("abc123"),
         e(formModel.givenName),
         e(formModel.familyName),
-        e(formModel.dateOfBirth.toString))
+        e(formModel.dateOfBirth.toString)
+      )
 
       val decryptedFormModel = encrypter.decryptSearchFormModel(encryptedWithBadNino, sessionId, secretKey)
 
@@ -73,9 +74,9 @@ class FormModelEncrypterSpec extends PlaySpec {
     }
 
     "return None where the dob is invalid for a nino model" in {
-      val nino = NinoGenerator.generateNino
+      val nino        = NinoGenerator.generateNino
       val dateOfBirth = LocalDate.now().minusYears(1)
-      val formModel = NinoSearchFormModel(nino, "James", "Buchanan", dateOfBirth)
+      val formModel   = NinoSearchFormModel(nino, "James", "Buchanan", dateOfBirth)
 
       def e(field: String): EncryptedValue = cipher.encrypt(field, sessionId, secretKey)
 
@@ -84,7 +85,8 @@ class FormModelEncrypterSpec extends PlaySpec {
           e(formModel.nino.toString),
           e(formModel.givenName),
           e(formModel.familyName),
-          e("123456"))
+          e("123456")
+        )
 
       val decryptedFormModel = encrypter.decryptSearchFormModel(encryptedWithBadDob, sessionId, secretKey)
 
@@ -93,7 +95,7 @@ class FormModelEncrypterSpec extends PlaySpec {
 
     "return None where the dob is invalid an mrz model" in {
       val dateOfBirth = LocalDate.now().minusYears(1)
-      val formModel = MrzSearchFormModel("documentType", "documentNumber", dateOfBirth, "nationality")
+      val formModel   = MrzSearchFormModel("documentType", "documentNumber", dateOfBirth, "nationality")
 
       def e(field: String): EncryptedValue = cipher.encrypt(field, sessionId, secretKey)
 

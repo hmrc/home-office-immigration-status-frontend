@@ -48,14 +48,14 @@ trait ControllerSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting wi
     )
     .build()
 
-  val timeoutDuration: FiniteDuration = 5 seconds
-  implicit val timeout: Timeout = Timeout(timeoutDuration)
-  def await[T](future: Awaitable[T]): T = Await.result(future, timeoutDuration)
-  lazy val messages: Messages = inject[MessagesApi].preferred(Seq.empty)
-  lazy val appConfig: AppConfig = inject[AppConfig]
+  val timeoutDuration: FiniteDuration                       = 5 seconds
+  implicit val timeout: Timeout                             = Timeout(timeoutDuration)
+  def await[T](future: Awaitable[T]): T                     = Await.result(future, timeoutDuration)
+  lazy val messages: Messages                               = inject[MessagesApi].preferred(Seq.empty)
+  lazy val appConfig: AppConfig                             = inject[AppConfig]
   implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
-  val fakePostRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("POST", "/")
-  val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
-  val mockSessionCacheService: SessionCacheService = mock(classOf[SessionCacheService])
-  implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
+  val fakePostRequest: FakeRequest[AnyContentAsEmpty.type]  = FakeRequest("POST", "/")
+  val mockSessionCacheRepository: SessionCacheRepository    = mock(classOf[SessionCacheRepository])
+  val mockSessionCacheService: SessionCacheService          = mock(classOf[SessionCacheService])
+  implicit val hc: HeaderCarrier                            = HeaderCarrierConverter.fromRequest(request)
 }

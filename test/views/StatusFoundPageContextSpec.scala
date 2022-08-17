@@ -21,14 +21,14 @@ import org.mockito.ArgumentMatchers.{any, matches}
 import org.mockito.Mockito._
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
-import org.scalatest.{BeforeAndAfterEach, OptionValues}
+import org.scalatest.{Assertion, BeforeAndAfterEach, OptionValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n._
 import play.api.mvc.Call
 import utils.NinoGenerator
 import viewmodels.RowViewModel
-import java.time.LocalDate
 
+import java.time.LocalDate
 import config.Countries
 import play.api.Application
 import play.api.inject.bind
@@ -37,7 +37,11 @@ import play.api.test.Injecting
 import repositories.SessionCacheRepository
 
 class StatusFoundPageContextSpec
-    extends AnyWordSpecLike with Matchers with OptionValues with BeforeAndAfterEach with GuiceOneAppPerSuite
+    extends AnyWordSpecLike
+    with Matchers
+    with OptionValues
+    with BeforeAndAfterEach
+    with GuiceOneAppPerSuite
     with Injecting {
 
   val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
@@ -49,11 +53,11 @@ class StatusFoundPageContextSpec
     .build()
 
   lazy val realMessages: Messages = inject[MessagesApi].preferred(Seq.empty)
-  lazy val countries = inject[Countries]
-  val allCountries: Countries = inject[Countries]
+  lazy val countries              = inject[Countries]
+  val allCountries: Countries     = inject[Countries]
 
   val mockMessages: Messages = mock(classOf[MessagesImpl], RETURNS_DEEP_STUBS)
-  val currentStatusLabelMsg = "current status label msg"
+  val currentStatusLabelMsg  = "current status label msg"
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -61,16 +65,23 @@ class StatusFoundPageContextSpec
     when(mockMessages(matches("status-found\\.current.*"), any())).thenReturn(currentStatusLabelMsg)
   }
 
-  def checkMessagesFile(key: String) =
+  def checkMessagesFile(key: String): Assertion =
     withClue(s"msg key:[$key] not defined in messages file") {
       assert(realMessages.isDefinedAt(key))
     }
 
-  val ninoQuery = NinoSearchFormModel(NinoGenerator.generateNino, "Surname", "Forename", LocalDate.now())
-  val mrzQuery = MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
+  val ninoQuery: NinoSearchFormModel =
+    NinoSearchFormModel(NinoGenerator.generateNino, "Surname", "Forename", LocalDate.now())
+  val mrzQuery: MrzSearchFormModel =
+    MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA") //scalastyle:off magic.number
   val call = Call("GET", "/")
 
-  def createNinoContext(pt: String, is: String, endDate: Option[LocalDate], hasRecourseToPublicFunds: Boolean = false) =
+  def createNinoContext(
+    pt: String,
+    is: String,
+    endDate: Option[LocalDate],
+    hasRecourseToPublicFunds: Boolean = false
+  ): StatusFoundPageContext =
     StatusFoundPageContext(
       ninoQuery,
       StatusCheckResult(
@@ -81,7 +92,12 @@ class StatusFoundPageContextSpec
       )
     )
 
-  def createMrzContext(pt: String, is: String, endDate: Option[LocalDate], hasRecourseToPublicFunds: Boolean = false) =
+  def createMrzContext(
+    pt: String,
+    is: String,
+    endDate: Option[LocalDate],
+    hasRecourseToPublicFunds: Boolean = false
+  ): StatusFoundPageContext =
     StatusFoundPageContext(
       mrzQuery,
       StatusCheckResult(
@@ -98,20 +114,19 @@ class StatusFoundPageContextSpec
       ("EUS", "LTR"),
       ("EUS", "COA_IN_TIME_GRANT"),
       ("EUS", "POST_GRACE_PERIOD_COA_GRANT")
-    ).foreach {
-      case (productType, immigrationStatus) =>
-        s"productType is EUS and immigrationStatus is $immigrationStatus" should {
-          "give correct in-time info" in {
-            val msgKey = s"status-found.current.$productType.$immigrationStatus"
-            when(mockMessages.isDefinedAt(any())).thenReturn(true)
-            val date = LocalDate.now()
-            val sut = createNinoContext(productType, immigrationStatus, Some(date))
+    ).foreach { case (productType, immigrationStatus) =>
+      s"productType is EUS and immigrationStatus is $immigrationStatus" should {
+        "give correct in-time info" in {
+          val msgKey = s"status-found.current.$productType.$immigrationStatus"
+          when(mockMessages.isDefinedAt(any())).thenReturn(true)
+          val date = LocalDate.now()
+          val sut  = createNinoContext(productType, immigrationStatus, Some(date))
 
-            sut.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
-            verify(mockMessages, times(1)).apply(msgKey)
-            checkMessagesFile(msgKey)
-          }
+          sut.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
+          verify(mockMessages, times(1)).apply(msgKey)
+          checkMessagesFile(msgKey)
         }
+      }
     }
 
     Seq(
@@ -119,40 +134,38 @@ class StatusFoundPageContextSpec
       ("other", "ILR"),
       ("non EUS", "LTE"),
       ("FRONTIER_WORKER", "PERMIT")
-    ).foreach {
-      case (productType, immigrationStatus) =>
-        s"productType is non EUS and immigrationStatus is $immigrationStatus" should {
-          "give correct in-time info" in {
-            val msgKey = s"status-found.current.nonEUS.$immigrationStatus"
-            when(mockMessages.isDefinedAt(any())).thenReturn(true)
-            val date = LocalDate.now()
-            val sut = createNinoContext(productType, immigrationStatus, Some(date))
+    ).foreach { case (productType, immigrationStatus) =>
+      s"productType is non EUS and immigrationStatus is $immigrationStatus" should {
+        "give correct in-time info" in {
+          val msgKey = s"status-found.current.nonEUS.$immigrationStatus"
+          when(mockMessages.isDefinedAt(any())).thenReturn(true)
+          val date = LocalDate.now()
+          val sut  = createNinoContext(productType, immigrationStatus, Some(date))
 
-            sut.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
-            verify(mockMessages, times(1)).apply(msgKey)
-            checkMessagesFile(msgKey)
-          }
+          sut.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
+          verify(mockMessages, times(1)).apply(msgKey)
+          checkMessagesFile(msgKey)
         }
+      }
     }
     Seq(
       ("EUS", "ILR"),
       ("EUS", "LTR"),
       ("EUS", "COA_IN_TIME_GRANT"),
       ("EUS", "POST_GRACE_PERIOD_COA_GRANT")
-    ).foreach {
-      case (productType, immigrationStatus) =>
-        s"productType is EUS and immigrationStatus is $immigrationStatus and is expired" should {
-          "give correct expired info" in {
-            when(mockMessages.isDefinedAt(any())).thenReturn(true)
-            val date = LocalDate.now().minusDays(1)
-            val sut = createNinoContext(productType, immigrationStatus, Some(date))
+    ).foreach { case (productType, immigrationStatus) =>
+      s"productType is EUS and immigrationStatus is $immigrationStatus and is expired" should {
+        "give correct expired info" in {
+          when(mockMessages.isDefinedAt(any())).thenReturn(true)
+          val date = LocalDate.now().minusDays(1)
+          val sut  = createNinoContext(productType, immigrationStatus, Some(date))
 
-            sut.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
-            val msgKeyExpired = s"status-found.current.EUS.$immigrationStatus.expired"
-            verify(mockMessages, times(1)).apply(msgKeyExpired)
-            checkMessagesFile(msgKeyExpired)
-          }
+          sut.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
+          val msgKeyExpired = s"status-found.current.EUS.$immigrationStatus.expired"
+          verify(mockMessages, times(1)).apply(msgKeyExpired)
+          checkMessagesFile(msgKeyExpired)
         }
+      }
     }
 
     Seq(
@@ -160,26 +173,25 @@ class StatusFoundPageContextSpec
       ("some", "ILR"),
       ("other", "LTE"),
       ("FRONTIER_WORKER", "PERMIT")
-    ).foreach {
-      case (productType, immigrationStatus) =>
-        s"productType is $productType and immigrationStatus is $immigrationStatus and is expired" should {
-          "give correct expired info" in {
-            when(mockMessages.isDefinedAt(any())).thenReturn(true)
-            val date = LocalDate.now().minusDays(1)
-            val sut = createNinoContext(productType, immigrationStatus, Some(date))
+    ).foreach { case (productType, immigrationStatus) =>
+      s"productType is $productType and immigrationStatus is $immigrationStatus and is expired" should {
+        "give correct expired info" in {
+          when(mockMessages.isDefinedAt(any())).thenReturn(true)
+          val date = LocalDate.now().minusDays(1)
+          val sut  = createNinoContext(productType, immigrationStatus, Some(date))
 
-            sut.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
-            val msgKeyExpired = s"status-found.current.nonEUS.$immigrationStatus.expired"
-            verify(mockMessages, times(1)).apply(msgKeyExpired)
-            checkMessagesFile(msgKeyExpired)
-          }
+          sut.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
+          val msgKeyExpired = s"status-found.current.nonEUS.$immigrationStatus.expired"
+          verify(mockMessages, times(1)).apply(msgKeyExpired)
+          checkMessagesFile(msgKeyExpired)
         }
+      }
     }
 
     "the immigration status is unrecognised" should {
       "provide a temporary description" in {
         val context = createNinoContext("FOO", "BAR", None)
-        val msgKey = "status-found.current.hasFBIS"
+        val msgKey  = "status-found.current.hasFBIS"
 
         context.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
         checkMessagesFile(msgKey)
@@ -191,7 +203,8 @@ class StatusFoundPageContextSpec
         val context =
           StatusFoundPageContext(
             ninoQuery,
-            StatusCheckResult("Some name", LocalDate.MIN, "some nation", statuses = Nil))
+            StatusCheckResult("Some name", LocalDate.MIN, "some nation", statuses = Nil)
+          )
 
         context.currentStatusLabel(mockMessages) shouldBe currentStatusLabelMsg
         val msgKey = "status-found.current.noStatus"
@@ -204,17 +217,18 @@ class StatusFoundPageContextSpec
   "mostRecentStatus" should {
     "return the results most recent" in {
       val mockResult: StatusCheckResult = mock(classOf[StatusCheckResult])
-      val fakeImmigrationStatus = ImmigrationStatus(LocalDate.now(), None, "TEST", "STATUS", true)
+      val fakeImmigrationStatus         = ImmigrationStatus(LocalDate.now(), None, "TEST", "STATUS", true)
       when(mockResult.mostRecentStatus).thenReturn(Some(fakeImmigrationStatus))
-
+      //scalastyle:off null
       StatusFoundPageContext(null, mockResult).mostRecentStatus shouldBe Some(fakeImmigrationStatus)
+
     }
   }
 
   "previousStatuses" should {
     "return previous statuses" in {
       val mockResult: StatusCheckResult = mock(classOf[StatusCheckResult])
-      val fakeImmigrationStatus = ImmigrationStatus(LocalDate.now(), None, "TEST", "STATUS", true)
+      val fakeImmigrationStatus         = ImmigrationStatus(LocalDate.now(), None, "TEST", "STATUS", true)
       when(mockResult.previousStatuses).thenReturn(Seq(fakeImmigrationStatus))
       when(mockResult.mostRecentStatus).thenReturn(Some(fakeImmigrationStatus))
       when(mockResult.nationality).thenReturn("FRA")
@@ -226,7 +240,7 @@ class StatusFoundPageContextSpec
   "displayNoResourceToPublicFunds" should {
     "return false when noRecourseToPublicFunds is true" in {
       val context = createNinoContext("FOO", "BAR", None, true)
-      assert(context.hasRecourseToPublicFunds == false)
+      assert(!context.hasRecourseToPublicFunds)
     }
 
     "return true" when {
@@ -258,11 +272,10 @@ class StatusFoundPageContextSpec
         ("nino", "generic.nino", ninoQuery.nino.nino),
         ("nationality", "generic.nationality", countries.getCountryNameFor(context.result.nationality)),
         ("dob", "generic.dob", context.result.dobFormatted(realMessages.lang.locale))
-      ).foreach {
-        case (id, msgKey, data) =>
-          s"it's a NINO search and the row is $id" in {
-            assert(context.detailRows(countries)(realMessages).contains(RowViewModel(id, msgKey, data)))
-          }
+      ).foreach { case (id, msgKey, data) =>
+        s"it's a NINO search and the row is $id" in {
+          assert(context.detailRows(countries)(realMessages).contains(RowViewModel(id, msgKey, data)))
+        }
       }
 
       val mrzContext = createMrzContext("PT", "IS", Some(LocalDate.now()))
@@ -270,15 +283,15 @@ class StatusFoundPageContextSpec
         (
           "documentType",
           "lookup.identity.label",
-          MrzSearch.documentTypeToMessageKey(mrzQuery.documentType)(realMessages)),
+          MrzSearch.documentTypeToMessageKey(mrzQuery.documentType)(realMessages)
+        ),
         ("documentNumber", "lookup.mrz.label", mrzQuery.documentNumber),
         ("nationality", "generic.nationality", countries.getCountryNameFor(mrzContext.result.nationality)),
         ("dob", "generic.dob", mrzContext.result.dobFormatted(realMessages.lang.locale))
-      ).foreach {
-        case (id, msgKey, data) =>
-          s"it's a mrz search and the row is $id" in {
-            assert(mrzContext.detailRows(countries)(realMessages).contains(RowViewModel(id, msgKey, data)))
-          }
+      ).foreach { case (id, msgKey, data) =>
+        s"it's a mrz search and the row is $id" in {
+          assert(mrzContext.detailRows(countries)(realMessages).contains(RowViewModel(id, msgKey, data)))
+        }
       }
     }
   }
@@ -291,16 +304,17 @@ class StatusFoundPageContextSpec
         (
           "startDate",
           "status-found.startDate",
-          DateFormat.format(realMessages.lang.locale)(context.mostRecentStatus.get.statusStartDate)),
+          DateFormat.format(realMessages.lang.locale)(context.mostRecentStatus.get.statusStartDate)
+        ),
         (
           "expiryDate",
           "status-found.endDate",
-          DateFormat.format(realMessages.lang.locale)(context.mostRecentStatus.get.statusEndDate.get))
-      ).foreach {
-        case (id, msgKey, data) =>
-          s"row is for $id" in {
-            assert(context.immigrationStatusRows(realMessages).contains(RowViewModel(id, msgKey, data)))
-          }
+          DateFormat.format(realMessages.lang.locale)(context.mostRecentStatus.get.statusEndDate.get)
+        )
+      ).foreach { case (id, msgKey, data) =>
+        s"row is for $id" in {
+          assert(context.immigrationStatusRows(realMessages).contains(RowViewModel(id, msgKey, data)))
+        }
       }
     }
   }
@@ -313,7 +327,7 @@ class StatusFoundPageContextSpec
       "the product type is EUS and the nationality is an EEA country" in {
         EEACountries.countries.foreach { country =>
           val mockResult: StatusCheckResult = mock(classOf[StatusCheckResult])
-          val fakeImmigrationStatus = ImmigrationStatus(LocalDate.now(), None, "EUS", "STATUS", true)
+          val fakeImmigrationStatus         = ImmigrationStatus(LocalDate.now(), None, "EUS", "STATUS", true)
           when(mockResult.mostRecentStatus).thenReturn(Some(fakeImmigrationStatus))
           when(mockResult.nationality).thenReturn(country)
 
@@ -324,7 +338,7 @@ class StatusFoundPageContextSpec
       "the product type is NOT EUS and the nationality is an EEA country" in {
         EEACountries.countries.foreach { country =>
           val mockResult: StatusCheckResult = mock(classOf[StatusCheckResult])
-          val fakeImmigrationStatus = ImmigrationStatus(LocalDate.now(), None, "WORK", "STATUS", true)
+          val fakeImmigrationStatus         = ImmigrationStatus(LocalDate.now(), None, "WORK", "STATUS", true)
           when(mockResult.mostRecentStatus).thenReturn(Some(fakeImmigrationStatus))
           when(mockResult.nationality).thenReturn(country)
 
@@ -335,7 +349,7 @@ class StatusFoundPageContextSpec
       "the product type is NOT EUS and the nationality is a non EEA country" in {
         nonEEACountries.foreach { country =>
           val mockResult: StatusCheckResult = mock(classOf[StatusCheckResult])
-          val fakeImmigrationStatus = ImmigrationStatus(LocalDate.now(), None, "WORK", "STATUS", true)
+          val fakeImmigrationStatus         = ImmigrationStatus(LocalDate.now(), None, "WORK", "STATUS", true)
           when(mockResult.mostRecentStatus).thenReturn(Some(fakeImmigrationStatus))
           when(mockResult.nationality).thenReturn(country.alpha3)
 
@@ -349,7 +363,7 @@ class StatusFoundPageContextSpec
       "the product type is EUS and the nationality is a non EEA country" in {
         nonEEACountries.foreach { country =>
           val mockResult: StatusCheckResult = mock(classOf[StatusCheckResult])
-          val fakeImmigrationStatus = ImmigrationStatus(LocalDate.now(), None, "EUS", "STATUS", true)
+          val fakeImmigrationStatus         = ImmigrationStatus(LocalDate.now(), None, "EUS", "STATUS", true)
           when(mockResult.mostRecentStatus).thenReturn(Some(fakeImmigrationStatus))
           when(mockResult.nationality).thenReturn(country.alpha3)
 
@@ -379,12 +393,11 @@ class StatusFoundPageContextSpec
       ("STUDY", "LTR", "Student - Limited leave to remain"),
       ("FRONTIER_WORKER", "PERMIT", "Frontier worker - Frontier worker permit"),
       ("SETTLEMENT", "ILR", "British National Overseas or Settlement Protection - Indefinite leave to remain")
-    ).foreach {
-      case (product, status, label) =>
-        s"format label for $product - $status" in {
-          val fullStatus = createStatus(product, status)
-          StatusFoundPageContext.immigrationStatusLabel(fullStatus) shouldBe label
-        }
+    ).foreach { case (product, status, label) =>
+      s"format label for $product - $status" in {
+        val fullStatus = createStatus(product, status)
+        StatusFoundPageContext.immigrationStatusLabel(fullStatus) shouldBe label
+      }
     }
 
     "return the product type label where that exists but status doesn't" in {
