@@ -29,7 +29,7 @@ class StatusResultISpec extends ISpec with HomeOfficeImmigrationStatusStubs {
       givenAnExternalServiceErrorCheckByNino()
       givenAuthorisedForStride("TBC", "StrideUserId")
 
-      val sessionId = "session-statusResultPost"
+      val sessionId = "session-statusResultGet"
       val query     = NinoSearchFormModel(nino, "Doe", "Jane", LocalDate.of(2001, 1, 31))
       setFormQuery(query, sessionId)
 
