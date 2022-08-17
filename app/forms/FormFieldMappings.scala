@@ -88,7 +88,7 @@ trait FormFieldMappings extends Constraints {
       .verifying(max(maxValue = maxValue, errorMessage = s"error.dateOfBirth.$field.max"))
 
   protected def dobFieldsMapping: Mapping[LocalDate] =
-    tuple(
+    tuple( //scalastyle:off magic.number
       "day"   -> dateComponent("day", 31),
       "month" -> dateComponent("month", 12),
       "year"  -> dateComponent("year", 3000, 1000)
@@ -101,9 +101,12 @@ trait FormFieldMappings extends Constraints {
       val required = form.errors.count(_.message.matches(""".*dateOfBirth.*\.required""")) == 3
       (form.errors.filterNot(_.key.contains("dateOfBirth")) :+ FormError(
         "dateOfBirth",
-        "error.dateOfBirth." + (if (required) "required" else "invalid-format")
+        "error.dateOfBirth." + (if (required) { "required" }
+                                else { "invalid-format" })
       ))
         .foldLeft(form.discardingErrors)((form, error) => form.withError(error))
-    } else form
+    } else {
+      form
+    }
 
 }

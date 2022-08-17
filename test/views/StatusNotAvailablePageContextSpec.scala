@@ -71,7 +71,7 @@ class StatusNotAvailablePageContextSpec
       val query  = NinoSearchFormModel(NinoGenerator.generateNino, "Surname", "Forename", dob)
       val result = StatusCheckResult("Full name", dob, "JPN", Nil)
 
-      def createContext = StatusNotAvailablePageContext(query, result)
+      def createContext: StatusNotAvailablePageContext = StatusNotAvailablePageContext(query, result)
 
       Seq(
         ("nino", "generic.nino", query.nino.nino),
@@ -91,7 +91,7 @@ class StatusNotAvailablePageContextSpec
       val query  = MrzSearchFormModel("PASSPORT", "12345", dob, "JPN")
       val result = StatusCheckResult("Full name", dob, "JPN", Nil)
 
-      def createContext = StatusNotAvailablePageContext(query, result)
+      def createContext: StatusNotAvailablePageContext = StatusNotAvailablePageContext(query, result)
 
       Seq(
         ("documentType", "lookup.identity.label", "Passport"),

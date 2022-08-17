@@ -127,7 +127,7 @@ class SecureGCMCipherSpec extends AnyFreeSpec with Matchers {
         secureGCMEncryter.generateCipherText(
           textToEncrypt,
           associatedText.getBytes,
-          new GCMParameterSpec(96, "hjdfbhvbhvbvjvjfvb".getBytes),
+          new GCMParameterSpec(96, "hjdfbhvbhvbvjvjfvb".getBytes), //scalastyle:off magic.number
           key
         )
       )

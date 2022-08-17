@@ -33,7 +33,7 @@ case class ImmigrationStatus(
   noRecourseToPublicFunds: Boolean
 ) {
 
-  def isEUS = productType.take(3) == EUS
+  def isEUS: Boolean = productType.take(3) == EUS
 
   private val hasExpired: Boolean = statusEndDate.exists(_.isBefore(LocalDate.now))
   val expiredMsg: String          = if (hasExpired) ".expired" else ""

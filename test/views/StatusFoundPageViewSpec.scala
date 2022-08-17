@@ -19,9 +19,7 @@ package views
 import assets.constants.ImmigrationStatusConstant._
 import models.{ImmigrationStatus, NinoSearchFormModel, StatusCheckResult}
 import org.jsoup.nodes.{Document, Element}
-import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.domain.Nino
 import utils.NinoGenerator
 import views.html.StatusFoundPage
 

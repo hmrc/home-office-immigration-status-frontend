@@ -47,7 +47,7 @@ object NinoSearch {
     familyName: String,
     dateOfBirth: LocalDate,
     statusCheckRange: StatusCheckRange
-  ) =
+  ): NinoSearch =
     new NinoSearch(nino, givenName, familyName, dateOfBirth.format(ISO8601), statusCheckRange)
 
   implicit val formats: Format[NinoSearch] = Json.format[NinoSearch]

@@ -17,8 +17,6 @@
 package views
 
 import models.NinoSearchFormModel
-import java.time.LocalDate
-
 import org.jsoup.nodes.Document
 import play.api.Application
 import play.api.inject.bind
@@ -26,7 +24,8 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import repositories.SessionCacheRepository
 import utils.NinoGenerator
 import views.html.MultipleMatchesFoundPage
-import views.html.components.ShowChangeQuery
+
+import java.time.LocalDate
 
 class GovukWrapperViewSpec extends ViewSpec {
 

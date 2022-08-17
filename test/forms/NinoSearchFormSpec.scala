@@ -45,7 +45,7 @@ class NinoSearchFormSpec extends PlaySpec with OptionValues with ScalaCheckDrive
     familyName: String = "last",
     givenName: String = "first",
     nino: String = testNino.nino
-  ) = Map(
+  ): Map[String, String] = Map(
     "dateOfBirth.year"  -> dateOfBirth.getYear.toString,
     "dateOfBirth.month" -> dateOfBirth.getMonthValue.toString,
     "dateOfBirth.day"   -> dateOfBirth.getDayOfMonth.toString,
@@ -54,7 +54,7 @@ class NinoSearchFormSpec extends PlaySpec with OptionValues with ScalaCheckDrive
     "nino"              -> nino
   )
 
-  def inputYear(year: String = yesterday.getYear.toString) = Map(
+  def inputYear(year: String = yesterday.getYear.toString): Map[String, String] = Map(
     "dateOfBirth.year"  -> year,
     "dateOfBirth.month" -> yesterday.getMonthValue.toString,
     "dateOfBirth.day"   -> yesterday.getDayOfMonth.toString,

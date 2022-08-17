@@ -76,7 +76,8 @@ class InputDateSpec extends ViewSpec {
     }
   }
 
-  val formWithErrors: Form[MrzSearchFormModel] = inject[SearchByMRZForm].apply().bind(JsNull, 200)
+  val maxCharsAllowed                          = 200
+  val formWithErrors: Form[MrzSearchFormModel] = inject[SearchByMRZForm].apply().bind(JsNull, maxCharsAllowed)
   lazy val docWithErrors: Document             = renderDocument(formWithErrors)
 
   "inputDate with errors" must {

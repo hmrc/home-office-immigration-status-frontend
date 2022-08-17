@@ -16,19 +16,18 @@
 
 package views
 
-import models.{MrzSearchFormModel, NinoSearchFormModel}
-import java.time.LocalDate
-
 import config.AppConfig
+import models.{MrzSearchFormModel, NinoSearchFormModel}
 import org.jsoup.nodes.{Document, Element}
-import org.mockito.Mockito.{mock, when}
+import org.mockito.Mockito.mock
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import repositories.SessionCacheRepository
-import services.SessionCacheService
 import utils.NinoGenerator
 import views.html.MultipleMatchesFoundPage
+
+import java.time.LocalDate
 
 class MultipleMatchesFoundViewSpec extends ViewSpec {
 
@@ -43,7 +42,7 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
 
   lazy val sut = inject[MultipleMatchesFoundPage]
   val nino     = NinoGenerator.generateNino
-
+  //scalastyle:off magic.number
   val ninSearchFormModel = NinoSearchFormModel(nino, "Pan", "", LocalDate.now())
   val mrzSearchFormModel = MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
 

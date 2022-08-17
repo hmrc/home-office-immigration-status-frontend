@@ -28,13 +28,19 @@ object CallOps {
     */
   def localFriendlyUrl(env: Environment, config: Configuration)(url: String, hostAndPort: String): String = {
     val isLocalEnv = {
-      if (env.mode.equals(Mode.Test)) false
-      else config.getOptional[String]("run.mode").contains(Mode.Dev.toString)
+      if (env.mode.equals(Mode.Test)) {
+        false
+      } else {
+        config.getOptional[String]("run.mode").contains(Mode.Dev.toString)
+      }
     }
 
     val uri = new URI(url)
 
-    if (!uri.isAbsolute && isLocalEnv) s"http://$hostAndPort$url"
-    else url
+    if (!uri.isAbsolute && isLocalEnv) {
+      s"http://$hostAndPort$url"
+    } else {
+      url
+    }
   }
 }

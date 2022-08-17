@@ -105,7 +105,7 @@ class SearchByMrzViewSpec extends ViewSpec {
       assertRenderedById(doc, "search-button")
     }
   }
-
+  //scalastyle:off magic.number
   val formWithErrors: Form[MrzSearchFormModel] = inject[SearchByMRZForm].apply().bind(JsNull, 200)
   lazy val docWithErrors: Document             = asDocument(sut(formWithErrors)(request, messages))
 

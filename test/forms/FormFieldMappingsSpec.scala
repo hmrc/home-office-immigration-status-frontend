@@ -36,11 +36,11 @@ class FormFieldMappingsSpec
   def validateName(errorName: String, len: Int): Mapping[String] = validName(fieldName = errorName, minLenInc = len)
   val invalid: Invalid                                           = Invalid("error.bar.invalid-format")
 
-  def form(name: String, min: Int) = Form(single(name -> validateName(name, min)))
-  def testFormFill(map: String)    = Map("foo" -> map)
+  def form(name: String, min: Int): Form[String]     = Form(single(name -> validateName(name, min)))
+  def testFormFill(map: String): Map[String, String] = Map("foo" -> map)
 
   "collateDOBErrors" should {
-    def formWithErrors(errorKeyMessage: (String, String)*) = {
+    def formWithErrors(errorKeyMessage: (String, String)*): Form[String] = {
       val someForm = Form("value" -> Forms.of[String]).discardingErrors
       errorKeyMessage.foldLeft(someForm)((form, error) => form.withError(error._1, error._2))
     }
@@ -120,8 +120,8 @@ class FormFieldMappingsSpec
       )
 
     }
-
-    val intGen = Gen.numStr.suchThat(str => str.length > 0).map(_.take(9))
+    //scalastyle:off magic.number
+    val intGen: Gen[String] = Gen.numStr.suchThat(str => str.length > 0).map(_.take(9))
 
     "isInt" should {
       "return true for a number" in {
@@ -129,7 +129,7 @@ class FormFieldMappingsSpec
       }
 
       "return false for a non-numeric string" in {
-        forAll(Gen.alphaStr.suchThat(_.length > 0))(n => isInt(n) shouldBe false)
+        forAll(Gen.alphaStr.suchThat(_.nonEmpty))(n => isInt(n) shouldBe false)
       }
     }
 
@@ -145,8 +145,8 @@ class FormFieldMappingsSpec
 
     "dateComponent" should {
 
-      def form(max: Int, min: Int)  = Form(single("myField" -> dateComponent("myField", max, min)))
-      def testFormFill(day: String) = Map("myField" -> day)
+      def form(max: Int, min: Int): Form[Int]            = Form(single("myField" -> dateComponent("myField", max, min)))
+      def testFormFill(day: String): Map[String, String] = Map("myField" -> day)
 
       "checks emptiness" in {
         form(10, 0).bind(testFormFill("")).errors shouldBe List(
@@ -155,7 +155,7 @@ class FormFieldMappingsSpec
       }
 
       "check that the string is an int" in {
-        forAll(Gen.alphaStr.suchThat(_.length > 0))(str =>
+        forAll(Gen.alphaStr.suchThat(_.nonEmpty))(str =>
           form(10, 0).bind(testFormFill(str)).errors shouldBe List(
             FormError("myField", List("error.dateOfBirth.myField.invalid"))
           )

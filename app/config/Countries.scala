@@ -71,8 +71,12 @@ class Countries @Inject() (environment: Environment) {
   private val code2Country: Map[String, String] = countries.map(country => country.alpha3 -> country.name).toMap
 
   def getCountryNameFor(code: String): String =
-    if (code == "D") "Germany" // an exception required by the Home Office API
-    else code2Country.getOrElse(code, code)
+    if (code == "D") {
+      "Germany"
+    } // an exception required by the Home Office API
+    else {
+      code2Country.getOrElse(code, code)
+    }
 
 }
 

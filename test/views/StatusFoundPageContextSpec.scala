@@ -72,8 +72,9 @@ class StatusFoundPageContextSpec
 
   val ninoQuery: NinoSearchFormModel =
     NinoSearchFormModel(NinoGenerator.generateNino, "Surname", "Forename", LocalDate.now())
-  val mrzQuery: MrzSearchFormModel = MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
-  val call                         = Call("GET", "/")
+  val mrzQuery: MrzSearchFormModel =
+    MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA") //scalastyle:off magic.number
+  val call = Call("GET", "/")
 
   def createNinoContext(
     pt: String,
@@ -218,8 +219,9 @@ class StatusFoundPageContextSpec
       val mockResult: StatusCheckResult = mock(classOf[StatusCheckResult])
       val fakeImmigrationStatus         = ImmigrationStatus(LocalDate.now(), None, "TEST", "STATUS", true)
       when(mockResult.mostRecentStatus).thenReturn(Some(fakeImmigrationStatus))
-
+      //scalastyle:off null
       StatusFoundPageContext(null, mockResult).mostRecentStatus shouldBe Some(fakeImmigrationStatus)
+
     }
   }
 
@@ -238,7 +240,7 @@ class StatusFoundPageContextSpec
   "displayNoResourceToPublicFunds" should {
     "return false when noRecourseToPublicFunds is true" in {
       val context = createNinoContext("FOO", "BAR", None, true)
-      assert(context.hasRecourseToPublicFunds == false)
+      assert(!context.hasRecourseToPublicFunds)
     }
 
     "return true" when {

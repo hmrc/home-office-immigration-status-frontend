@@ -251,7 +251,7 @@ class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecti
     "documentNumber is invalid chars" in {
       val invalidDocNumber: Gen[String] =
         Gen
-          .atLeastOne(Range(32, 44).map(_.toChar))
+          .atLeastOne(Range(32, 44).map(_.toChar)) //scalastyle:off magic.number
           .map(_.mkString)
           .suchThat(_.trim.nonEmpty)
           .suchThat(_.length <= SearchByMRZForm.DocumentNumberMaxLength)

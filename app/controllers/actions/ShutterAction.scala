@@ -42,7 +42,9 @@ class ShutterActionImpl @Inject() (
           shutteringPage()
         )
       )
-    } else None
+    } else {
+      None
+    }
 
 }
 

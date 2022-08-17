@@ -58,7 +58,7 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
 
   lazy val sut: HomeOfficeImmigrationStatusProxyService =
     app.injector.instanceOf[HomeOfficeImmigrationStatusProxyService]
-
+  //scalastyle:off magic.number
   val testDate           = LocalDate.now
   val formModel          = NinoSearchFormModel(NinoGenerator.generateNino, "Doe", "Jane", LocalDate.of(2001, 1, 31))
   val mrzSearchFormModel = MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")

@@ -36,7 +36,10 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
   val mongoEncryptionKey                              = servicesConfig.getString("mongodb.encryption.key")
 
   val isDevEnv =
-    if (env.mode.equals(Mode.Test)) false
-    else configuration.getOptional[String]("run.mode").forall(Mode.Dev.toString.equals)
+    if (env.mode.equals(Mode.Test)) {
+      false
+    } else {
+      configuration.getOptional[String]("run.mode").forall(Mode.Dev.toString.equals)
+    }
 
 }

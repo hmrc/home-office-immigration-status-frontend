@@ -17,8 +17,6 @@
 package views
 
 import models.{NinoSearchFormModel, StatusCheckResult}
-import java.time.LocalDate
-
 import org.jsoup.nodes.{Document, Element}
 import org.mockito.Mockito.mock
 import play.api.Application
@@ -27,7 +25,9 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import repositories.SessionCacheRepository
 import utils.NinoGenerator.generateNino
 import views.html.StatusNotAvailablePage
-import views.html.components.{SearchAgainButton, ShowChangeQuery}
+import views.html.components.ShowChangeQuery
+
+import java.time.LocalDate
 
 class StatusNotAvailableViewSpec extends ViewSpec {
 

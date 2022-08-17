@@ -30,6 +30,7 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import config.AppConfig
 import support.CallOps
+import uk.gov.hmrc.auth.core.authorise.Predicate
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -71,9 +72,12 @@ class AuthActionImpl @Inject() (
       toStrideLogin(continueUrl)
   }
 
-  def getPredicate =
-    if (appConfig.authorisedStrideGroup == "ANY") AuthProviders(PrivilegedApplication)
-    else Enrolment(appConfig.authorisedStrideGroup) and AuthProviders(PrivilegedApplication)
+  def getPredicate: Predicate =
+    if (appConfig.authorisedStrideGroup == "ANY") {
+      AuthProviders(PrivilegedApplication)
+    } else {
+      Enrolment(appConfig.authorisedStrideGroup) and AuthProviders(PrivilegedApplication)
+    }
 
 }
 

@@ -33,7 +33,7 @@ object HossFooterLinks {
       Some(AccessibilityStatementController.showPage.url)
     )
 
-  def items(implicit messages: Messages) = Seq(
+  def items(implicit messages: Messages): Seq[FooterItem] = Seq(
     accessibilityLink,
     govukHelpLink
   )
