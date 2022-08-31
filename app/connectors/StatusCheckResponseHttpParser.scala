@@ -36,7 +36,7 @@ object StatusCheckResponseHttpParser extends Logging {
             case Success(res) =>
               StatusCheckResponseWithStatus(OK, res)
             case Failure(e) =>
-              logger.error(s"Invalid json returned in response", e)
+              logger.info(s"Invalid json returned in response", e)
               StatusCheckResponseWithStatus(
                 INTERNAL_SERVER_ERROR,
                 StatusCheckErrorResponse(correlationId, StatusCheckError(UNKNOWN_ERROR))
