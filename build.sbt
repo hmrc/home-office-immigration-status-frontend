@@ -7,10 +7,9 @@ lazy val scoverageSettings = {
     // Semicolon-separated list of regexes matching classes to exclude
     ScoverageKeys.coverageExcludedPackages := "<empty>;.*BuildInfo;.*Routes;.*RoutesPrefix;.*Filters?;MicroserviceAuditConnector;" +
       "Module;GraphiteStartUp;Reverse.*",
-    ScoverageKeys.coverageMinimumStmtTotal := 90.00,
-    ScoverageKeys.coverageFailOnMinimum := false,
-    ScoverageKeys.coverageHighlighting := true,
-    Test / parallelExecution := false
+    ScoverageKeys.coverageMinimumStmtTotal := 94,
+    ScoverageKeys.coverageFailOnMinimum := true,
+    ScoverageKeys.coverageHighlighting := true
   )
 }
 
@@ -34,7 +33,6 @@ lazy val root = (project in file("."))
       Resolver.typesafeRepo("releases")
     ),
     libraryDependencies ++= AppDependencies(),
-    dependencyOverrides ++= AppDependencies.jettyOverrides,
     publishingSettings,
     scoverageSettings,
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",

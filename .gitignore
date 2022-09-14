@@ -1,9 +1,3 @@
-.*
-
-!.gitignore
-!.scalafmt.conf
-!.description
-
 .cache
 /.classpath
 db
@@ -37,3 +31,4 @@ tmp
 bin
 project/metals.sbt
 .metals/
+/.bsp/
