@@ -17,7 +17,7 @@
 package controllers.actions
 
 import com.google.inject.{ImplementedBy, Inject}
-import play.api.{Configuration, Environment, Logger}
+import play.api.{Configuration, Environment, Logging}
 import play.api.mvc.Results.Forbidden
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
@@ -43,7 +43,8 @@ class AuthActionImpl @Inject() (
 )(implicit val executionContext: ExecutionContext)
     extends AuthAction
     with AuthorisedFunctions
-    with AuthRedirects {
+    with AuthRedirects
+    with Logging {
 
   override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] = {
 
@@ -56,7 +57,7 @@ class AuthActionImpl @Inject() (
       .retrieve(credentials and allEnrolments) {
         case Some(Credentials(authProviderId, _)) ~ enrollments =>
           val userRoles = enrollments.enrolments.map(_.key).mkString("[", ",", "]")
-          Logger(getClass).info(s"User $authProviderId has been authorized with $userRoles")
+          logger.debug(s"User $authProviderId has been authorized with $userRoles")
           block(request)
 
         case None ~ _ =>
@@ -74,8 +75,10 @@ class AuthActionImpl @Inject() (
 
   def getPredicate: Predicate =
     if (appConfig.authorisedStrideGroup == "ANY") {
+      logger.info("Skip stride group check")
       AuthProviders(PrivilegedApplication)
     } else {
+      logger.info("Check if stride group match")
       Enrolment(appConfig.authorisedStrideGroup) and AuthProviders(PrivilegedApplication)
     }
 
