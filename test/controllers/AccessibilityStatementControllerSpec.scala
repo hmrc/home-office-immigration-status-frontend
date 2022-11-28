@@ -22,8 +22,8 @@ import views.html.AccessibilityStatementPage
 
 class AccessibilityStatementControllerSpec extends ControllerSpec {
 
-  lazy val sut  = inject[AccessibilityStatementController]
-  lazy val view = inject[AccessibilityStatementPage]
+  lazy val sut: AccessibilityStatementController = inject[AccessibilityStatementController]
+  lazy val view: AccessibilityStatementPage      = inject[AccessibilityStatementPage]
 
   "showPage" must {
     "show the accessibilityStatementPage" in {

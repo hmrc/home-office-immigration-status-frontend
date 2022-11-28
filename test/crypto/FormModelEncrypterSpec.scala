@@ -19,6 +19,7 @@ package crypto
 import models._
 import org.scalatestplus.play.PlaySpec
 import utils.NinoGenerator
+
 import java.time.LocalDate
 
 class FormModelEncrypterSpec extends PlaySpec {
@@ -38,7 +39,7 @@ class FormModelEncrypterSpec extends PlaySpec {
       val encryptedFormModel = encrypter.encryptSearchFormModel(formModel, sessionId, secretKey)
       val decryptedFormModel = encrypter.decryptSearchFormModel(encryptedFormModel, sessionId, secretKey)
 
-      decryptedFormModel mustEqual Some(formModel)
+      decryptedFormModel must be(Some(formModel))
     }
 
     "encrypt an mrz form model such that it is decryptable with the same sessionId and secretKey" in {
@@ -48,7 +49,7 @@ class FormModelEncrypterSpec extends PlaySpec {
       val encryptedFormModel = encrypter.encryptSearchFormModel(formModel, sessionId, secretKey)
       val decryptedFormModel = encrypter.decryptSearchFormModel(encryptedFormModel, sessionId, secretKey)
 
-      decryptedFormModel mustEqual Some(formModel)
+      decryptedFormModel must be(Some(formModel))
     }
   }
 
@@ -70,7 +71,7 @@ class FormModelEncrypterSpec extends PlaySpec {
 
       val decryptedFormModel = encrypter.decryptSearchFormModel(encryptedWithBadNino, sessionId, secretKey)
 
-      decryptedFormModel mustEqual None
+      decryptedFormModel must be(None)
     }
 
     "return None where the dob is invalid for a nino model" in {
@@ -90,7 +91,7 @@ class FormModelEncrypterSpec extends PlaySpec {
 
       val decryptedFormModel = encrypter.decryptSearchFormModel(encryptedWithBadDob, sessionId, secretKey)
 
-      decryptedFormModel mustEqual None
+      decryptedFormModel must be(None)
     }
 
     "return None where the dob is invalid an mrz model" in {
@@ -109,7 +110,7 @@ class FormModelEncrypterSpec extends PlaySpec {
 
       val decryptedFormModel = encrypter.decryptSearchFormModel(encryptedWithBadDob, sessionId, secretKey)
 
-      decryptedFormModel mustEqual None
+      decryptedFormModel must be(None)
     }
 
   }

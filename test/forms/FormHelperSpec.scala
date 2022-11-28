@@ -19,12 +19,12 @@ package forms
 import forms.helpers.FormHelper
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
-import play.api.data.{Form, FormError}
 import play.api.data.Forms.{nonEmptyText, tuple}
+import play.api.data.{Form, FormError}
 
 class FormHelperSpec extends AnyWordSpecLike with Matchers {
 
-  val form = Form(tuple("myField1" -> nonEmptyText, "dateOfBirth" -> nonEmptyText))
+  val form: Form[(String, String)] = Form(tuple("myField1" -> nonEmptyText, "dateOfBirth" -> nonEmptyText))
   def testFormFill(myField1: String, dateOfBirth: String): Map[String, String] =
     Map("myField1" -> myField1, "dateOfBirth" -> dateOfBirth)
 

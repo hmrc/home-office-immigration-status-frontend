@@ -16,20 +16,19 @@
 
 package controllers.actions
 
-import org.mockito.Mockito.{mock, reset, verify, when}
-
 import config.AppConfig
-import play.api.mvc.{Request, RequestHeader, Result}
-import play.api.mvc.Results._
-
-import scala.language.postfixOps
-import views.html.ShutteringPage
+import controllers.ControllerSpec
+import org.mockito.Mockito.{mock, reset, when}
+import play.api.Application
+import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.Application
+import play.api.mvc.Results._
+import play.api.mvc.{AnyContentAsEmpty, Request, Result}
+import play.api.test.FakeRequest
 import play.api.test.Helpers.contentAsString
-import controllers.ControllerSpec
 import repositories.SessionCacheRepository
+import views.html.ShutteringPage
 
 import scala.concurrent.Future
 
@@ -44,15 +43,15 @@ class ShutterActionSpec extends ControllerSpec {
     )
     .build()
 
-  implicit val req        = request
-  implicit val mess       = messages
-  lazy val shutteringPage = inject[ShutteringPage]
+  implicit val req: FakeRequest[AnyContentAsEmpty.type] = request
+  implicit val mess: Messages                           = messages
+  lazy val shutteringPage: ShutteringPage               = inject[ShutteringPage]
 
-  lazy val shutterAction = inject[ShutterAction]
+  lazy val shutterAction: ShutterAction = inject[ShutterAction]
 
   override def beforeEach(): Unit = {
     reset(mockAppConfig)
-    super.beforeEach
+    super.beforeEach()
   }
   val block: Request[_] => Future[Result] = _ => Future.successful(Ok("Invoked"))
 

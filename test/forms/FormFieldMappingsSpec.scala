@@ -20,11 +20,11 @@ import org.scalacheck.Gen
 import org.scalatest.OptionValues
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
-import play.api.data.{Form, FormError, Forms, Mapping}
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.data.Forms.single
 import play.api.data.format.Formats.stringFormat
 import play.api.data.validation.Invalid
+import play.api.data.{Form, FormError, Forms, Mapping}
 
 class FormFieldMappingsSpec
     extends AnyWordSpecLike
@@ -121,7 +121,7 @@ class FormFieldMappingsSpec
 
     }
     //scalastyle:off magic.number
-    val intGen: Gen[String] = Gen.numStr.suchThat(str => str.length > 0).map(_.take(9))
+    val intGen: Gen[String] = Gen.numStr.suchThat(str => str.nonEmpty).map(_.take(9))
 
     "isInt" should {
       "return true for a number" in {

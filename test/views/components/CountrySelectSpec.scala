@@ -16,16 +16,16 @@
 
 package views.components
 
+import config.Countries
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
+import play.api.data.Forms.mapping
 import play.api.data.format.Formats._
+import play.api.data.{Form, Forms}
 import views.ViewSpec
 import views.html.components.CountrySelect
-import config.Countries
-import play.api.data.{Form, Forms}
-import play.api.data.Forms.mapping
 
-import collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 class CountrySelectSpec extends ViewSpec {
 
@@ -36,8 +36,8 @@ class CountrySelectSpec extends ViewSpec {
     mapping("documentType" -> Forms.of[String])(identity)(Some.apply)
   }
 
-  val emptyForm  = testForm.bind(Map.empty[String, String])
-  val filledForm = testForm.bind(Map("nationality" -> "GBR"))
+  val emptyForm: Form[String]  = testForm.bind(Map.empty[String, String])
+  val filledForm: Form[String] = testForm.bind(Map("nationality" -> "GBR"))
 
   val doc: Document          = asDocument(sut(emptyForm)(messages))
   val countrySelect: Element = doc.getElementById("nationality")

@@ -24,18 +24,17 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
-import utils.NinoGenerator
-import viewmodels.RowViewModel
-import java.time.LocalDate
-import java.util.Locale
-
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.Application
+import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Injecting
 import repositories.SessionCacheRepository
+import utils.NinoGenerator
+import viewmodels.RowViewModel
+
+import java.time.LocalDate
+import java.util.Locale
 
 class StatusNotAvailablePageContextSpec
     extends AnyWordSpecLike
@@ -57,7 +56,7 @@ class StatusNotAvailablePageContextSpec
   val mockMessages: Messages      = mock(classOf[MessagesImpl], RETURNS_DEEP_STUBS)
   val currentStatusLabelMsg       = "current status label msg"
 
-  lazy val countries = inject[Countries]
+  lazy val countries: Countries = inject[Countries]
 
   override def beforeEach(): Unit = {
     super.beforeEach()

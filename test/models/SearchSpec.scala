@@ -16,15 +16,15 @@
 
 package models
 
-import java.time.{LocalDate, ZoneId}
-
 import org.scalatestplus.play.PlaySpec
 import play.api.libs.json.Json
 import utils.NinoGenerator
 
+import java.time.LocalDate
+
 class SearchSpec extends PlaySpec {
 
-  val date = LocalDate.now
+  val date: LocalDate = LocalDate.now
 
   "writes" should {
     "Convert to json without the type" when {

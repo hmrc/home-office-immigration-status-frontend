@@ -16,25 +16,17 @@
 
 package connectors
 
-import java.time.{LocalDate, ZoneId}
-import java.util.UUID
-
 import models._
 import org.mockito.Mockito.mock
-import org.scalatest.OptionValues
-import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpecLike
-import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.Application
 import play.api.http.Status._
-import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
 import repositories.SessionCacheRepository
 import stubs.HomeOfficeImmigrationStatusStubs
-import support.{BaseISpec, WireMockSupport}
+import support.BaseISpec
 import uk.gov.hmrc.http._
 
+import java.time.{LocalDate, ZoneId}
+import java.util.UUID
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationStatusConnectorISpecSetup {
@@ -124,7 +116,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
       }
 
       "throw exception if 5xx response" in {
-        givenAnExternalServiceErrorCheckByNino
+        givenAnExternalServiceErrorCheckByNino()
 
         val result = connector.statusPublicFundsByNino(request).futureValue
 

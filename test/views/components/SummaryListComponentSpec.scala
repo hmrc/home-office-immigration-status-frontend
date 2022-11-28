@@ -20,11 +20,11 @@ import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import viewmodels.RowViewModel
 import views.ViewSpec
-import views.html.components.SummaryList
+import views.html.components.HossSummaryList
 
 class SummaryListComponentSpec extends ViewSpec {
 
-  val sut: SummaryList = inject[SummaryList]
+  val sut: HossSummaryList = inject[HossSummaryList]
 
   "SummaryList" must {
     "have a description list" in {

@@ -16,27 +16,27 @@
 
 package views
 
+import config.AppConfig
 import forms.SearchByNinoForm
 import models.NinoSearchFormModel
 import org.jsoup.nodes.{Document, Element}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, verify, when}
-import play.api.inject.bind
 import play.api.Application
 import play.api.data.Form
+import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.Html
+import repositories.SessionCacheRepository
 import views.html.SearchByNinoView
 import views.html.components.inputDate
-import java.util.UUID
 
-import config.AppConfig
-import repositories.SessionCacheRepository
+import java.util.UUID
 
 class SearchByNinoViewSpec extends ViewSpec {
 
-  val mockDobInput  = mock(classOf[inputDate])
-  val mockAppConfig = mock(classOf[AppConfig])
+  val mockDobInput: inputDate  = mock(classOf[inputDate])
+  val mockAppConfig: AppConfig = mock(classOf[AppConfig])
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(

@@ -18,23 +18,26 @@ package views.components
 
 import controllers.routes
 import models.{MrzSearchFormModel, NinoSearchFormModel}
+import org.jsoup.nodes.Document
+import uk.gov.hmrc.domain.Nino
 import utils.NinoGenerator
 import views.html.components.ShowChangeQuery
 import views.{DateFormat, ViewSpec}
+
 import java.time.LocalDate
 
 class ShowChangeQuerySpec extends ViewSpec {
 
-  val sut = inject[ShowChangeQuery]
+  val sut: ShowChangeQuery = inject[ShowChangeQuery]
 
-  val nino  = NinoGenerator.generateNino
-  val query = NinoSearchFormModel(nino, "Pan", "", LocalDate.now())
+  val nino: Nino                 = NinoGenerator.generateNino
+  val query: NinoSearchFormModel = NinoSearchFormModel(nino, "Pan", "", LocalDate.now())
 
-  val dateOfBirth = LocalDate.now().minusYears(1)
-  val mrzQuery    = MrzSearchFormModel("documentType", "documentNumber", dateOfBirth, "nationality")
+  val dateOfBirth: LocalDate       = LocalDate.now().minusYears(1)
+  val mrzQuery: MrzSearchFormModel = MrzSearchFormModel("documentType", "documentNumber", dateOfBirth, "nationality")
 
-  val doc    = asDocument(sut(query)(messages))
-  val mrzDoc = asDocument(sut(mrzQuery)(messages))
+  val doc: Document    = asDocument(sut(query)(messages))
+  val mrzDoc: Document = asDocument(sut(mrzQuery)(messages))
 
   "showChangeQuery" must {
     "nino - have all of the things in the list in the correct order" in {
@@ -57,7 +60,7 @@ class ShowChangeQuerySpec extends ViewSpec {
           data,
           id,
           s"${messages("generic.change")} ${messages(actionText)}",
-          routes.SearchByNinoController.onPageLoad(false).url + "#" + fieldId,
+          routes.SearchByNinoController.onPageLoad().url + "#" + fieldId,
           "half"
         )
       }
@@ -83,7 +86,7 @@ class ShowChangeQuerySpec extends ViewSpec {
           data,
           id,
           s"${messages("generic.change")} ${messages(actionText)}",
-          routes.SearchByMrzController.onPageLoad(false).url + "#" + fieldId,
+          routes.SearchByMrzController.onPageLoad().url + "#" + fieldId,
           "half"
         )
       }

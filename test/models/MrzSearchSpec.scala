@@ -20,7 +20,7 @@ import org.mockito.Mockito.mock
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
-import play.api.i18n.MessagesApi
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Injecting
@@ -36,7 +36,7 @@ class MrzSearchSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
     )
     .build()
 
-  lazy implicit val messages = inject[MessagesApi].preferred(Seq.empty)
+  lazy implicit val messages: Messages = inject[MessagesApi].preferred(Seq.empty)
 
   "MrzSearch.documentTypeToMessageKey" should {
     "return the relevant message" when {

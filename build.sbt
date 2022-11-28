@@ -13,14 +13,16 @@ lazy val scoverageSettings = {
   )
 }
 
-addCommandAlias("scalafmtAll", "all scalafmtSbt scalafmt test:scalafmt")
-addCommandAlias("scalastyleAll", "all scalastyle test:scalastyle")
+addCommandAlias("scalafmtAll", "all scalafmtSbt scalafmt test:scalafmt it:scalafmt")
+addCommandAlias("scalastyleAll", "all scalastyle test:scalastyle it:scalastyle")
 
 lazy val root = (project in file("."))
   .settings(
     name := "home-office-immigration-status-frontend",
     organization := "uk.gov.hmrc",
-    scalaVersion := "2.12.16",
+    scalaVersion := "2.13.10",
+    // To resolve a bug with version 2.x.x of the scoverage plugin - https://github.com/sbt/sbt/issues/6997
+    libraryDependencySchemes ++= Seq("org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always),
     PlayKeys.playDefaultPort := 10210,
     TwirlKeys.templateImports ++= Seq(
       "play.twirl.api.HtmlFormat",
@@ -28,16 +30,10 @@ lazy val root = (project in file("."))
       "uk.gov.hmrc.hmrcfrontend.views.html.components._",
       "uk.gov.hmrc.hmrcfrontend.views.html.helpers._"
     ),
-    resolvers ++= Seq(
-      Resolver.jcenterRepo,
-      Resolver.typesafeRepo("releases")
-    ),
     libraryDependencies ++= AppDependencies(),
     publishingSettings,
     scoverageSettings,
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
-    Compile / scalafmtOnCompile := true,
-    Test / scalafmtOnCompile := true,
     majorVersion := 0,
     Concat.groups := Seq(
       "javascripts/immigrationstatus-app.js" ->
@@ -53,20 +49,19 @@ lazy val root = (project in file("."))
     Assets / pipelineStages := Seq(concat)
   )
   .configs(IntegrationTest)
-  .settings(inConfig(IntegrationTest)(org.scalafmt.sbt.ScalafmtPlugin.scalafmtConfigSettings): _*)
+  .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
   .settings(
     IntegrationTest / Keys.fork := false,
-    Defaults.itSettings,
     IntegrationTest / unmanagedSourceDirectories += baseDirectory(_ / "it").value,
     IntegrationTest / parallelExecution := false,
-    IntegrationTest / testGrouping := oneForkedJvmPerTest((IntegrationTest / definedTests).value),
-    IntegrationTest / scalafmtOnCompile := true
+    IntegrationTest / testGrouping := oneForkedJvmPerTest((IntegrationTest / definedTests).value)
   )
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .enablePlugins(PlayScala, SbtDistributablesPlugin)
 
 scalacOptions ++= Seq(
-  "-P:silencer:globalFilters=Unused import",
+  "-Wconf:cat=unused-imports&site=.*views.html.*:s",
+  "-Wconf:src=routes/.*:s",
   "-feature"
 )
 

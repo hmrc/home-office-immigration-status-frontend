@@ -16,12 +16,13 @@
 
 package assets.constants
 
+import models.ImmigrationStatus
+
 import java.time.LocalDate
-import models.{ImmigrationStatus}
 
 object ImmigrationStatusConstant {
 
-  val validStatus = ImmigrationStatus(
+  val validStatus: ImmigrationStatus = ImmigrationStatus(
     statusStartDate = LocalDate.parse("2021-01-01"),
     statusEndDate = Some(LocalDate.now().plusDays(1)),
     productType = "EUS",
@@ -29,7 +30,7 @@ object ImmigrationStatusConstant {
     noRecourseToPublicFunds = false
   )
 
-  val validStatusNoResourceTrue = ImmigrationStatus(
+  val validStatusNoResourceTrue: ImmigrationStatus = ImmigrationStatus(
     statusStartDate = LocalDate.parse("2021-01-01"),
     statusEndDate = None,
     productType = "EUS",

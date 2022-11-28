@@ -27,11 +27,11 @@ import java.io.File
 
 class CallOpsSpec extends AnyWordSpecLike with Matchers with OptionValues {
 
-  val testEnv  = Environment(new File(""), classOf[CallOpsSpec].getClassLoader, Mode.Test)
-  val prodEnv  = Environment(new File(""), classOf[CallOpsSpec].getClassLoader, Mode.Prod)
-  val devEnv   = Environment(new File(""), classOf[CallOpsSpec].getClassLoader, Mode.Dev)
-  val devConf  = Configuration(ConfigFactory.parseString(""" run.mode = "Dev" """))
-  val prodConf = Configuration(ConfigFactory.parseString(""" run.mode = "Prod" """))
+  val testEnv: Environment    = Environment(new File(""), classOf[CallOpsSpec].getClassLoader, Mode.Test)
+  val prodEnv: Environment    = Environment(new File(""), classOf[CallOpsSpec].getClassLoader, Mode.Prod)
+  val devEnv: Environment     = Environment(new File(""), classOf[CallOpsSpec].getClassLoader, Mode.Dev)
+  val devConf: Configuration  = Configuration(ConfigFactory.parseString(""" run.mode = "Dev" """))
+  val prodConf: Configuration = Configuration(ConfigFactory.parseString(""" run.mode = "Prod" """))
 
   "CallOps" should {
 

@@ -17,11 +17,11 @@
 package views
 
 import config.Countries
+import models._
+import play.api.Logging
 import play.api.i18n.Messages
 import viewmodels.{RowViewModel => Row}
 import views.StatusFoundPageContext.RichMessages
-import models.{EEACountries, ImmigrationStatus, MrzSearch, MrzSearchFormModel, NinoSearchFormModel, SearchFormModel, StatusCheckResult}
-import play.api.{Logger, Logging}
 
 final case class StatusFoundPageContext(query: SearchFormModel, result: StatusCheckResult) {
 
@@ -71,9 +71,10 @@ final case class StatusFoundPageContext(query: SearchFormModel, result: StatusCh
   def currentStatusLabel(implicit messages: Messages): String =
     mostRecentStatus match {
       case Some(status) =>
-        val default   = messages(prefix + "hasFBIS", status.productType, status.immigrationStatus)
-        val eusPrefix = if (status.isEUS) "EUS." else "nonEUS."
-        messages.getOrElse(key(eusPrefix + status.immigrationStatus, status), default)
+        val defaultKey = prefix + "hasFBIS"
+        val default    = messages(defaultKey, status.productType, status.immigrationStatus)
+        val eusPrefix  = if (status.isEUS) "EUS." else "nonEUS."
+        messages.getOrElse(key(eusPrefix + status.immigrationStatus, status), defaultKey, default)
       case None =>
         messages(prefix + "noStatus")
     }
@@ -87,21 +88,23 @@ final case class StatusFoundPageContext(query: SearchFormModel, result: StatusCh
 object StatusFoundPageContext extends Logging {
 
   implicit class RichMessages(val messages: Messages) extends AnyVal {
-    def getOrElse(key: String, default: String): String =
+    def getOrElse(key: String, defaultKey: String, defaultValue: String): String =
       if (messages.isDefinedAt(key)) {
         messages(key)
       } else {
-        logger.warn(s"$key was not defined. Consider adding this to the messages file. Using default placeholder text.")
-        default
+        logger.warn(
+          s"$key was not defined. Consider adding this to the messages file. Using default key '$defaultKey' placeholder text."
+        )
+        defaultValue
       }
   }
 
   def getImmigrationRouteLabel(productType: String)(implicit messages: Messages): String =
-    messages.getOrElse(s"immigration.${productType.toLowerCase}", productType)
+    messages.getOrElse(s"immigration.${productType.toLowerCase}", "NO_KEY", productType)
 
   def getStatusLabel(status: ImmigrationStatus)(implicit messages: Messages): String = {
     val prefix = if (status.isEUS) "immigration.EUS." else "immigration.nonEUS."
-    messages.getOrElse(s"$prefix${status.immigrationStatus.toLowerCase}", status.immigrationStatus)
+    messages.getOrElse(s"$prefix${status.immigrationStatus.toLowerCase}", "NO_KEY", status.immigrationStatus)
   }
 
   def immigrationStatusLabel(status: ImmigrationStatus)(implicit messages: Messages): String = {

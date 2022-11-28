@@ -16,29 +16,30 @@
 
 package controllers
 
-import java.time.LocalDate
-
 import models.{MrzSearchFormModel, NinoSearchFormModel}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.Mockito.{reset, when}
 import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{redirectLocation, status}
+import uk.gov.hmrc.domain.Nino
 import utils.NinoGenerator
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class LandingControllerSpec extends ControllerSpec {
 
-  val sut = inject[LandingController]
+  val sut: LandingController = inject[LandingController]
 
   override def beforeEach(): Unit = {
     reset(mockSessionCacheService)
-    super.beforeEach
+    super.beforeEach()
   }
   //scalastyle:off magic.number
-  val nino                = NinoGenerator.generateNino
-  val ninoSearchFormModel = NinoSearchFormModel(nino, "Pan", "", LocalDate.now())
-  val mrzSearchFormModel  = MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
+  val nino: Nino                               = NinoGenerator.generateNino
+  val ninoSearchFormModel: NinoSearchFormModel = NinoSearchFormModel(nino, "Pan", "", LocalDate.now())
+  val mrzSearchFormModel: MrzSearchFormModel =
+    MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
 
   "onPageLoad" must {
 

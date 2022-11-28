@@ -16,11 +16,11 @@
 
 package forms
 
-import play.api.data.Forms.{of, optional, text, tuple}
-import play.api.data.{Form, FormError, Mapping}
-import play.api.data.validation._
-import uk.gov.hmrc.domain.Nino
 import forms.helpers.ValidateHelper.cond
+import play.api.data.Forms.{optional, text, tuple}
+import play.api.data.validation._
+import play.api.data.{Form, FormError, Mapping}
+import uk.gov.hmrc.domain.Nino
 
 import java.time.LocalDate
 import scala.util.Try

@@ -17,13 +17,13 @@
 package views.components
 
 import forms.SearchByMRZForm
-import play.api.data.{Form, Forms}
 import play.api.data.Forms.mapping
+import play.api.data.format.Formats._
+import play.api.data.{Form, Forms}
 import views.ViewSpec
 import views.html.components.identityDocumentType
-import play.api.data.format.Formats._
 
-import scala.collection.JavaConverters.asScalaBufferConverter
+import scala.jdk.CollectionConverters._
 
 class IdentityDocumentTypeComponentSpec extends ViewSpec {
 
@@ -37,7 +37,7 @@ class IdentityDocumentTypeComponentSpec extends ViewSpec {
     val emptyForm = testForm.bind(Map.empty[String, String])
     "have all 4 options, in the correct order" in {
       val doc     = asDocument(sut(emptyForm)(messages))
-      val options = doc.select("option").asScala.toList.map(option => (option.attr("value")))
+      val options = doc.select("option").asScala.toList.map(option => option.attr("value"))
 
       options mustBe SearchByMRZForm.AllowedDocumentTypes
     }

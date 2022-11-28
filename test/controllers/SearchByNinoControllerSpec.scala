@@ -18,9 +18,7 @@ package controllers
 
 import controllers.actions.AccessAction
 import forms.SearchByNinoForm
-import models.{FormQueryModel, NinoSearchFormModel}
-import java.time.LocalDate
-
+import models.NinoSearchFormModel
 import org.mockito.ArgumentMatchers.{any, refEq, eq => is}
 import org.mockito.Mockito._
 import play.api.Application
@@ -29,12 +27,13 @@ import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
-import play.twirl.api.HtmlFormat
+import play.twirl.api.{Html, HtmlFormat}
 import repositories.SessionCacheRepository
 import services.SessionCacheService
 import utils.NinoGenerator.generateNino
 import views.html.SearchByNinoView
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class SearchByNinoControllerSpec extends ControllerSpec {
@@ -48,9 +47,9 @@ class SearchByNinoControllerSpec extends ControllerSpec {
     )
     .build()
 
-  lazy val sut = inject[SearchByNinoController]
-  val mockView = mock(classOf[SearchByNinoView])
-  val fakeView = HtmlFormat.escape("Correct Form View")
+  lazy val sut: SearchByNinoController = inject[SearchByNinoController]
+  val mockView: SearchByNinoView       = mock(classOf[SearchByNinoView])
+  val fakeView: Html                   = HtmlFormat.escape("Correct Form View")
 
   override def beforeEach(): Unit = {
     reset(mockView)

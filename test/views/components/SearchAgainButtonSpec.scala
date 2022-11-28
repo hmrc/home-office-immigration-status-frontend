@@ -17,13 +17,14 @@
 package views.components
 
 import controllers.routes
+import org.jsoup.nodes.Document
 import views.ViewSpec
 import views.html.components.SearchAgainButton
 
 class SearchAgainButtonSpec extends ViewSpec {
 
-  val sut = inject[SearchAgainButton]
-  val doc = asDocument(sut()(messages))
+  val sut: SearchAgainButton = inject[SearchAgainButton]
+  val doc: Document          = asDocument(sut()(messages))
 
   "SearchAgainButton" must {
     val button = doc.select("a")

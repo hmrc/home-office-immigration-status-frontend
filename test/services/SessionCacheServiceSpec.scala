@@ -16,25 +16,24 @@
 
 package services
 
-import models.{FormQueryModel, NinoSearchFormModel}
+import config.AppConfig
+import crypto.{FormModelEncrypter, TestGCMCipher}
+import models.{EncryptedSearchFormModel, FormQueryModel, NinoSearchFormModel}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.play.PlaySpec
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.Application
+import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.test.Injecting
 import repositories.SessionCacheRepository
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import utils.NinoGenerator
-import crypto.{FormModelEncrypter, TestGCMCipher}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.Application
-import play.api.test.Injecting
-import config.AppConfig
+
 import java.time.{LocalDate, LocalDateTime}
-
-import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
@@ -55,27 +54,27 @@ class SessionCacheServiceSpec
 
   val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
 
-  val now                       = LocalDateTime.now
-  val mockRepo                  = mock(classOf[SessionCacheRepository])
-  private val cipher            = new TestGCMCipher
-  private val encrypter         = new FormModelEncrypter(cipher)
-  lazy val appConfig: AppConfig = inject[AppConfig]
-  val sut                       = new SessionCacheServiceImpl(mockRepo, encrypter, appConfig)
+  val now: LocalDateTime               = LocalDateTime.now
+  val mockRepo: SessionCacheRepository = mock(classOf[SessionCacheRepository])
+  private val cipher                   = new TestGCMCipher
+  private val encrypter                = new FormModelEncrypter(cipher)
+  lazy val appConfig: AppConfig        = inject[AppConfig]
+  val sut                              = new SessionCacheServiceImpl(mockRepo, encrypter, appConfig)
 
   override def beforeEach(): Unit = {
     reset(mockRepo)
-    super.beforeEach
+    super.beforeEach()
   }
 
   private val secretKey = "VqmXp7yigDFxbCUdDdNZVIvbW6RgPNJsliv6swQNCL8="
-  val formModel = NinoSearchFormModel(
+  val formModel: NinoSearchFormModel = NinoSearchFormModel(
     nino = NinoGenerator.generateNino,
     givenName = "Jimmy",
     familyName = "Jazz",
     dateOfBirth = LocalDate.now
   )
-  val encryptedFormModel = encrypter.encryptSearchFormModel(formModel, "123", secretKey)
-  val formQuery          = FormQueryModel(id = "123", data = encryptedFormModel, now)
+  val encryptedFormModel: EncryptedSearchFormModel = encrypter.encryptSearchFormModel(formModel, "123", secretKey)
+  val formQuery: FormQueryModel                    = FormQueryModel(id = "123", data = encryptedFormModel, now)
 
   "get" must {
 
