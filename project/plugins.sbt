@@ -15,7 +15,7 @@ addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.8.18")
 
 addSbtPlugin("uk.gov.hmrc" % "sbt-distributables" % "2.1.0")
 
-addSbtPlugin("org.scoverage" % "sbt-scoverage" % "2.0.6")
+addSbtPlugin("org.scoverage" % "sbt-scoverage" % "2.0.0")
 
 addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.5.0")
 
