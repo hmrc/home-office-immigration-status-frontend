@@ -17,24 +17,23 @@
 package errors
 
 import com.google.inject.name.Named
+import config.AppConfig
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND}
 import play.api.i18n.MessagesApi
 import play.api.mvc.Results._
 import play.api.mvc.{Request, RequestHeader, Result}
-import play.api.{Configuration, Environment, Mode}
+import play.api.{Configuration, Environment, Logging}
 import play.twirl.api.Html
 import uk.gov.hmrc.auth.core.{InsufficientEnrolments, NoActiveSession}
-import config.AppConfig
-import views.html.{ExternalErrorPage, ShutteringPage, error_template}
 import uk.gov.hmrc.http.{JsValidationException, NotFoundException}
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.config.{AuthRedirects, HttpAuditEvent}
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import javax.inject.{Inject, Singleton}
+import views.html.{ExternalErrorPage, ShutteringPage, error_template}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import play.api.Logging
 
 @Singleton
 class ErrorHandler @Inject() (
@@ -85,7 +84,6 @@ class ErrorHandler @Inject() (
 
 object EventTypes {
 
-  val RequestReceived: String          = "RequestReceived"
   val TransactionFailureReason: String = "transactionFailureReason"
   val ServerInternalError: String      = "ServerInternalError"
   val ResourceNotFound: String         = "ResourceNotFound"

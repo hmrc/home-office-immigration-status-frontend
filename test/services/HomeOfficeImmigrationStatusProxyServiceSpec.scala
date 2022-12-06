@@ -16,31 +16,31 @@
 
 package services
 
+import config.AppConfig
 import connectors.HomeOfficeImmigrationStatusProxyConnector
 import controllers.ControllerSpec
-import models.StatusCheckError._
 import models._
-import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import uk.gov.hmrc.domain.Nino
+import repositories.SessionCacheRepository
 import utils.NinoGenerator
+
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-
-import repositories.SessionCacheRepository
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
 
-  val formatter = DateTimeFormatter.ofPattern("d/MM/yyyy")
+  val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d/MM/yyyy")
 
-  val mockAuditService = mock(classOf[AuditService])
-  val mockConnector    = mock(classOf[HomeOfficeImmigrationStatusProxyConnector])
+  val mockAuditService: AuditService = mock(classOf[AuditService])
+  val mockConnector: HomeOfficeImmigrationStatusProxyConnector = mock(
+    classOf[HomeOfficeImmigrationStatusProxyConnector]
+  )
 
   override protected def beforeEach(): Unit = {
     reset(mockAuditService)
@@ -59,14 +59,16 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
   lazy val sut: HomeOfficeImmigrationStatusProxyService =
     app.injector.instanceOf[HomeOfficeImmigrationStatusProxyService]
   //scalastyle:off magic.number
-  val testDate           = LocalDate.now
-  val formModel          = NinoSearchFormModel(NinoGenerator.generateNino, "Doe", "Jane", LocalDate.of(2001, 1, 31))
-  val mrzSearchFormModel = MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
-  val statusRequest      = formModel.toSearch(6)
-  implicit val conf      = appConfig
+  val testDate: LocalDate = LocalDate.now
+  val formModel: NinoSearchFormModel =
+    NinoSearchFormModel(NinoGenerator.generateNino, "Doe", "Jane", LocalDate.of(2001, 1, 31))
+  val mrzSearchFormModel: MrzSearchFormModel =
+    MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
+  val statusRequest: Search    = formModel.toSearch(6)
+  implicit val conf: AppConfig = appConfig
 
-  val statusCheckResult = StatusCheckResult("Damon Albarn", testDate, "GBR", Nil)
-  val result =
+  val statusCheckResult: StatusCheckResult = StatusCheckResult("Damon Albarn", testDate, "GBR", Nil)
+  val result: StatusCheckResponseWithStatus =
     StatusCheckResponseWithStatus(200, StatusCheckSuccessfulResponse(Some("CorrelationId"), statusCheckResult))
 
   "statusPublicFundsByNino" should {

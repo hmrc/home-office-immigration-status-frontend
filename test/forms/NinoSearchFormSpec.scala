@@ -17,13 +17,12 @@
 package forms
 
 import models.NinoSearchFormModel
-import org.scalacheck.Gen
+import org.scalacheck.{Gen, Shrink}
 import org.scalatest.OptionValues
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.data.{Form, FormError}
 import uk.gov.hmrc.domain.Nino
-import org.scalacheck.Shrink
 import utils.NinoGenerator
 
 import java.time.LocalDate
@@ -38,7 +37,7 @@ class NinoSearchFormSpec extends PlaySpec with OptionValues with ScalaCheckDrive
   val now: LocalDate       = LocalDate.now()
   val tomorrow: LocalDate  = now.plusDays(1)
   val yesterday: LocalDate = now.minusDays(1)
-  val testNino             = NinoGenerator.generateNino
+  val testNino: Nino       = NinoGenerator.generateNino
 
   def input(
     dateOfBirth: LocalDate = yesterday,
@@ -63,7 +62,7 @@ class NinoSearchFormSpec extends PlaySpec with OptionValues with ScalaCheckDrive
     "nino"              -> testNino.nino
   )
 
-  val allowedSpecialChars = Gen.oneOf(formProvider.allowedNameCharacters)
+  val allowedSpecialChars: Gen[Char] = Gen.oneOf(formProvider.allowedNameCharacters)
   val validChar: Gen[String] =
     Gen.oneOf(Gen.alphaLowerChar, Gen.alphaUpperChar, allowedSpecialChars).map(_.toString).suchThat(_.trim.nonEmpty)
 
@@ -191,7 +190,7 @@ class NinoSearchFormSpec extends PlaySpec with OptionValues with ScalaCheckDrive
       }
 
       "givenName contains invalid chars" in {
-        forAll(invalidCharString.suchThat(_.length >= 1)) { name =>
+        forAll(invalidCharString.suchThat(_.nonEmpty)) { name =>
           val invalidInput = input(givenName = name)
 
           form.bind(invalidInput).value must not be defined

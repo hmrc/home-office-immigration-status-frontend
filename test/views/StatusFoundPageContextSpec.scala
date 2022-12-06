@@ -16,25 +16,25 @@
 
 package views
 
-import models.{EEACountries, ImmigrationStatus, MrzSearch, MrzSearchFormModel, NinoSearchFormModel, StatusCheckResult}
+import config.Countries
+import models._
 import org.mockito.ArgumentMatchers.{any, matches}
 import org.mockito.Mockito._
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatest.{Assertion, BeforeAndAfterEach, OptionValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.Application
 import play.api.i18n._
+import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Call
+import play.api.test.Injecting
+import repositories.SessionCacheRepository
 import utils.NinoGenerator
 import viewmodels.RowViewModel
 
 import java.time.LocalDate
-import config.Countries
-import play.api.Application
-import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.test.Injecting
-import repositories.SessionCacheRepository
 
 class StatusFoundPageContextSpec
     extends AnyWordSpecLike
@@ -53,7 +53,7 @@ class StatusFoundPageContextSpec
     .build()
 
   lazy val realMessages: Messages = inject[MessagesApi].preferred(Seq.empty)
-  lazy val countries              = inject[Countries]
+  lazy val countries: Countries   = inject[Countries]
   val allCountries: Countries     = inject[Countries]
 
   val mockMessages: Messages = mock(classOf[MessagesImpl], RETURNS_DEEP_STUBS)
@@ -74,7 +74,7 @@ class StatusFoundPageContextSpec
     NinoSearchFormModel(NinoGenerator.generateNino, "Surname", "Forename", LocalDate.now())
   val mrzQuery: MrzSearchFormModel =
     MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA") //scalastyle:off magic.number
-  val call = Call("GET", "/")
+  val call: Call = Call("GET", "/")
 
   def createNinoContext(
     pt: String,
@@ -217,7 +217,8 @@ class StatusFoundPageContextSpec
   "mostRecentStatus" should {
     "return the results most recent" in {
       val mockResult: StatusCheckResult = mock(classOf[StatusCheckResult])
-      val fakeImmigrationStatus         = ImmigrationStatus(LocalDate.now(), None, "TEST", "STATUS", true)
+      val fakeImmigrationStatus =
+        ImmigrationStatus(LocalDate.now(), None, "TEST", "STATUS", noRecourseToPublicFunds = true)
       when(mockResult.mostRecentStatus).thenReturn(Some(fakeImmigrationStatus))
       //scalastyle:off null
       StatusFoundPageContext(null, mockResult).mostRecentStatus shouldBe Some(fakeImmigrationStatus)
@@ -228,7 +229,8 @@ class StatusFoundPageContextSpec
   "previousStatuses" should {
     "return previous statuses" in {
       val mockResult: StatusCheckResult = mock(classOf[StatusCheckResult])
-      val fakeImmigrationStatus         = ImmigrationStatus(LocalDate.now(), None, "TEST", "STATUS", true)
+      val fakeImmigrationStatus =
+        ImmigrationStatus(LocalDate.now(), None, "TEST", "STATUS", noRecourseToPublicFunds = true)
       when(mockResult.previousStatuses).thenReturn(Seq(fakeImmigrationStatus))
       when(mockResult.mostRecentStatus).thenReturn(Some(fakeImmigrationStatus))
       when(mockResult.nationality).thenReturn("FRA")
@@ -239,7 +241,7 @@ class StatusFoundPageContextSpec
 
   "displayNoResourceToPublicFunds" should {
     "return false when noRecourseToPublicFunds is true" in {
-      val context = createNinoContext("FOO", "BAR", None, true)
+      val context = createNinoContext("FOO", "BAR", None, hasRecourseToPublicFunds = true)
       assert(!context.hasRecourseToPublicFunds)
     }
 
@@ -255,12 +257,12 @@ class StatusFoundPageContextSpec
           )
         )
 
-        assert(context.hasRecourseToPublicFunds == true)
+        assert(context.hasRecourseToPublicFunds)
       }
 
       "noRecourseToPublicFunds is false" in {
-        val context = createNinoContext("FOO", "BAR", None, false)
-        assert(context.hasRecourseToPublicFunds == true)
+        val context = createNinoContext("FOO", "BAR", None)
+        assert(context.hasRecourseToPublicFunds)
       }
     }
   }
@@ -327,7 +329,8 @@ class StatusFoundPageContextSpec
       "the product type is EUS and the nationality is an EEA country" in {
         EEACountries.countries.foreach { country =>
           val mockResult: StatusCheckResult = mock(classOf[StatusCheckResult])
-          val fakeImmigrationStatus         = ImmigrationStatus(LocalDate.now(), None, "EUS", "STATUS", true)
+          val fakeImmigrationStatus =
+            ImmigrationStatus(LocalDate.now(), None, "EUS", "STATUS", noRecourseToPublicFunds = true)
           when(mockResult.mostRecentStatus).thenReturn(Some(fakeImmigrationStatus))
           when(mockResult.nationality).thenReturn(country)
 
@@ -338,7 +341,8 @@ class StatusFoundPageContextSpec
       "the product type is NOT EUS and the nationality is an EEA country" in {
         EEACountries.countries.foreach { country =>
           val mockResult: StatusCheckResult = mock(classOf[StatusCheckResult])
-          val fakeImmigrationStatus         = ImmigrationStatus(LocalDate.now(), None, "WORK", "STATUS", true)
+          val fakeImmigrationStatus =
+            ImmigrationStatus(LocalDate.now(), None, "WORK", "STATUS", noRecourseToPublicFunds = true)
           when(mockResult.mostRecentStatus).thenReturn(Some(fakeImmigrationStatus))
           when(mockResult.nationality).thenReturn(country)
 
@@ -349,7 +353,8 @@ class StatusFoundPageContextSpec
       "the product type is NOT EUS and the nationality is a non EEA country" in {
         nonEEACountries.foreach { country =>
           val mockResult: StatusCheckResult = mock(classOf[StatusCheckResult])
-          val fakeImmigrationStatus         = ImmigrationStatus(LocalDate.now(), None, "WORK", "STATUS", true)
+          val fakeImmigrationStatus =
+            ImmigrationStatus(LocalDate.now(), None, "WORK", "STATUS", noRecourseToPublicFunds = true)
           when(mockResult.mostRecentStatus).thenReturn(Some(fakeImmigrationStatus))
           when(mockResult.nationality).thenReturn(country.alpha3)
 
@@ -363,7 +368,8 @@ class StatusFoundPageContextSpec
       "the product type is EUS and the nationality is a non EEA country" in {
         nonEEACountries.foreach { country =>
           val mockResult: StatusCheckResult = mock(classOf[StatusCheckResult])
-          val fakeImmigrationStatus         = ImmigrationStatus(LocalDate.now(), None, "EUS", "STATUS", true)
+          val fakeImmigrationStatus =
+            ImmigrationStatus(LocalDate.now(), None, "EUS", "STATUS", noRecourseToPublicFunds = true)
           when(mockResult.mostRecentStatus).thenReturn(Some(fakeImmigrationStatus))
           when(mockResult.nationality).thenReturn(country.alpha3)
 

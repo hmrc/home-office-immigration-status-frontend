@@ -36,7 +36,7 @@ trait BaseISpec
     with MetricsTestSupport
     with Injecting {
 
-  override def fakeApplication: Application = appBuilder.build()
+  override def fakeApplication(): Application = appBuilder.build()
 
   implicit val defaultTimeout: FiniteDuration = 5 seconds
 

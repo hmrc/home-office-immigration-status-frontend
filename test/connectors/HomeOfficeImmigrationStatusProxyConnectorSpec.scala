@@ -47,9 +47,9 @@ class HomeOfficeImmigrationStatusProxyConnectorSpec
     with Injecting
     with BeforeAndAfterEach {
 
-  val mockAppConfig = mock(classOf[AppConfig])
+  val mockAppConfig: AppConfig = mock(classOf[AppConfig])
   when(mockAppConfig.homeOfficeImmigrationStatusProxyBaseUrl).thenReturn("http://localhost:1234")
-  val mockHttpClient                                  = mock(classOf[HttpClient])
+  val mockHttpClient: HttpClient                      = mock(classOf[HttpClient])
   val mockSessionCacheService: SessionCacheRepository = mock(classOf[SessionCacheRepository])
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
@@ -69,9 +69,9 @@ class HomeOfficeImmigrationStatusProxyConnectorSpec
   implicit val fakeReq: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
   implicit val hc: HeaderCarrier                            = HeaderCarrierConverter.fromRequest(fakeReq)
 
-  lazy val sut = inject[HomeOfficeImmigrationStatusProxyConnector]
+  lazy val sut: HomeOfficeImmigrationStatusProxyConnector = inject[HomeOfficeImmigrationStatusProxyConnector]
 
-  val ninoRequest = NinoSearch(
+  val ninoRequest: NinoSearch = NinoSearch(
     NinoGenerator.generateNino,
     "Name",
     "Full",
@@ -79,7 +79,7 @@ class HomeOfficeImmigrationStatusProxyConnectorSpec
     StatusCheckRange(Some(LocalDate.now(ZoneId.of("UTC")).minusMonths(1)), Some(LocalDate.now(ZoneId.of("UTC"))))
   )
 
-  val mrzRequest = MrzSearch(
+  val mrzRequest: MrzSearch = MrzSearch(
     "documentType",
     "documentNumber",
     LocalDate.now,
@@ -87,9 +87,9 @@ class HomeOfficeImmigrationStatusProxyConnectorSpec
     StatusCheckRange(Some(LocalDate.now(ZoneId.of("UTC")).minusMonths(1)), Some(LocalDate.now(ZoneId.of("UTC"))))
   )
 
-  val correlationId = Some("some-correlation-id")
+  val correlationId: Some[String] = Some("some-correlation-id")
 
-  lazy val metrics = mock(classOf[Metrics])
+  lazy val metrics: Metrics = mock(classOf[Metrics])
 
   trait Setup {
     val uuid = "123f4567-g89c-42c3-b456-557742330000"
@@ -104,7 +104,7 @@ class HomeOfficeImmigrationStatusProxyConnectorSpec
       val url = new URL("http://localhost:1234/v1/status/public-funds/nino").toExternalForm
       val response =
         Right(StatusCheckSuccessfulResponse(correlationId, StatusCheckResult("Full Name", LocalDate.now, "USA", Nil)))
-      val capture = ArgumentCaptor.forClass(classOf[HeaderCarrier])
+      val capture: ArgumentCaptor[HeaderCarrier] = ArgumentCaptor.forClass(classOf[HeaderCarrier])
 
       when(
         mockHttpClient.POST(any(), any(), any[Seq[(String, String)]])(

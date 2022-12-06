@@ -16,32 +16,32 @@
 
 package services
 
-import java.time.{LocalDate, ZoneId}
-import java.time.format.DateTimeFormatter
-import org.scalatestplus.play.PlaySpec
-import org.mockito.Mockito._
-import org.mockito.ArgumentMatchers.{any, refEq}
-import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import models._
+import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.Mockito._
+import org.scalatestplus.play.PlaySpec
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.JsObject
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
+import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 
+import java.time.format.DateTimeFormatter
+import java.time.{LocalDate, ZoneId}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class AuditServiceSpec extends PlaySpec {
 
-  val mockAuditConnector                                    = mock(classOf[AuditConnector])
+  val mockAuditConnector: AuditConnector                    = mock(classOf[AuditConnector])
   val sut                                                   = new AuditServiceImpl(mockAuditConnector)
   implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
-  implicit val hc                                           = HeaderCarrier(sessionId = Some(SessionId("123")))
+  implicit val hc: HeaderCarrier                            = HeaderCarrier(sessionId = Some(SessionId("123")))
 
-  val testDate  = LocalDate.now
-  val formatter = DateTimeFormatter.ofPattern("d/MM/yyyy")
+  val testDate: LocalDate          = LocalDate.now
+  val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d/MM/yyyy")
 
-  val correlationId = Some("correlationId")
+  val correlationId: Some[String] = Some("correlationId")
 
   "auditStatusCheckEvent" should {
 

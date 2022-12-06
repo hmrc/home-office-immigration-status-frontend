@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package controllers
+package errors
 
+import controllers.ControllerSpec
 import play.api.http.Status._
 import play.api.test.Helpers.{contentAsString, status}
 import views.html.{ExternalErrorPage, error_template}
-import errors.ErrorHandler
 
 import scala.concurrent.Future
 
 class ErrorHandlerSpec extends ControllerSpec {
 
-  lazy val sut           = inject[ErrorHandler]
-  lazy val errorPage     = inject[ExternalErrorPage]
-  lazy val errorTemplate = inject[error_template]
+  lazy val sut: ErrorHandler             = inject[ErrorHandler]
+  lazy val errorPage: ExternalErrorPage  = inject[ExternalErrorPage]
+  lazy val errorTemplate: error_template = inject[error_template]
 
   "resolveError" must {
     "show the InternalServerError for an unexpected error" in {

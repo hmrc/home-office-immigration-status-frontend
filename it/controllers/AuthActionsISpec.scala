@@ -2,8 +2,8 @@ package controllers
 
 import controllers.actions.AuthAction
 import play.api.Application
-import play.api.mvc.AnyContentAsEmpty
 import play.api.mvc.Results._
+import play.api.mvc.{Action, AnyContent, AnyContentAsEmpty}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import play.api.test.{FakeRequest, Injecting}
 import support.BaseISpec
@@ -46,14 +46,14 @@ class AuthActionsISpec extends AuthActionISpecSetup {
 
 trait AuthActionISpecSetup extends BaseISpec with Injecting {
 
-  override def fakeApplication: Application = appBuilder.build()
+  override def fakeApplication(): Application = appBuilder.build()
 
   implicit val request: FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest().withSession(SessionKeys.authToken -> "Bearer XYZ")
 
   object TestController {
-    val sut = inject[AuthAction]
+    val sut: AuthAction = inject[AuthAction]
 
-    def test() = sut(Ok("Passed Auth"))
+    def test(): Action[AnyContent] = sut(Ok("Passed Auth"))
   }
 }

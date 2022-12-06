@@ -45,7 +45,7 @@ class AccessActionSpec extends ControllerSpec {
     )
     .build()
 
-  val expected                                = Ok("Invoked")
+  val expected: Result                        = Ok("Invoked")
   val testBlock: Request[_] => Future[Result] = _ => Future.successful(expected)
 
   "invokeBlock" must {

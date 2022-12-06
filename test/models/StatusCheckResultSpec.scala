@@ -17,9 +17,9 @@
 package models
 
 import org.scalatestplus.play.PlaySpec
-import java.time.LocalDate
+import play.api.libs.json.{JsUndefined, Json}
 
-import play.api.libs.json.{JsNull, JsUndefined, Json, Writes}
+import java.time.LocalDate
 
 class StatusCheckResultSpec extends PlaySpec {
 

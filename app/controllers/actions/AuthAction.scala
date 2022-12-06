@@ -67,7 +67,7 @@ class AuthActionImpl @Inject() (
 
   def handleFailure(implicit request: Request[_]): PartialFunction[Throwable, Result] = {
 
-    case _: AuthorisationException ⇒
+    case _: AuthorisationException =>
       val continueUrl = CallOps.localFriendlyUrl(env, config)(request.uri, request.host)
       toStrideLogin(continueUrl)
   }

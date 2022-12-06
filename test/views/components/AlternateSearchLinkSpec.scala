@@ -16,13 +16,14 @@
 
 package views.components
 
+import org.jsoup.nodes.Document
 import views.ViewSpec
 import views.html.components.AlternateSearchLink
 
 class AlternateSearchLinkSpec extends ViewSpec {
 
-  val sut = inject[AlternateSearchLink]
-  val doc = asDocument(sut("some.message.key", "/some/url", "link-id")(messages))
+  val sut: AlternateSearchLink = inject[AlternateSearchLink]
+  val doc: Document            = asDocument(sut("some.message.key", "/some/url", "link-id")(messages))
 
   "alternate link" must {
     "have the link" in {

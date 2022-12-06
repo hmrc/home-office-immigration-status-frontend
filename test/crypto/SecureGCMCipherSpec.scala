@@ -16,13 +16,13 @@
 
 package crypto
 
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
+
 import java.security.InvalidAlgorithmParameterException
 import java.util.Base64
-
-import javax.crypto.{Cipher, IllegalBlockSizeException, KeyGenerator, NoSuchPaddingException}
 import javax.crypto.spec.GCMParameterSpec
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.freespec.AnyFreeSpec
+import javax.crypto.{Cipher, IllegalBlockSizeException, KeyGenerator, NoSuchPaddingException}
 
 class SecureGCMCipherSpec extends AnyFreeSpec with Matchers {
 

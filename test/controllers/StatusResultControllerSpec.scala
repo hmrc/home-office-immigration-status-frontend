@@ -16,30 +16,28 @@
 
 package controllers
 
-import services.HomeOfficeImmigrationStatusProxyService
 import controllers.actions.AccessAction
 import models._
-
-import java.time.LocalDate
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
 import org.mockito.stubbing.OngoingStubbing
 import play.api.Application
-import play.api.http.Status.{CONFLICT, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
+import play.api.http.Status._
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
-import services.SessionCacheService
-import views.html.{ExternalErrorPage, MultipleMatchesFoundPage, StatusCheckFailurePage, StatusFoundPage, StatusNotAvailablePage}
-import views.{StatusFoundPageContext, StatusNotAvailablePageContext}
 import repositories.SessionCacheRepository
+import services.{HomeOfficeImmigrationStatusProxyService, SessionCacheService}
 import utils.NinoGenerator.generateNino
+import views.html._
+import views.{StatusFoundPageContext, StatusNotAvailablePageContext}
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class StatusResultControllerSpec extends ControllerSpec {
 
-  lazy val sut = inject[StatusResultController]
+  lazy val sut: StatusResultController = inject[StatusResultController]
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
@@ -56,9 +54,9 @@ class StatusResultControllerSpec extends ControllerSpec {
     super.beforeEach()
   }
 
-  val mockProxyService = mock(classOf[HomeOfficeImmigrationStatusProxyService])
+  val mockProxyService: HomeOfficeImmigrationStatusProxyService = mock(classOf[HomeOfficeImmigrationStatusProxyService])
 
-  val correlationId = Some("CorrelationId")
+  val correlationId: Some[String] = Some("CorrelationId")
 
   "onPageLoad" must {
     "redirect to the form" when {
@@ -67,7 +65,7 @@ class StatusResultControllerSpec extends ControllerSpec {
         val result = sut.onPageLoad()(request)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).get mustBe routes.SearchByNinoController.onPageLoad(false).url
+        redirectLocation(result).get mustBe routes.SearchByNinoController.onPageLoad().url
         withClue("Connector should not be called") {
           verify(mockProxyService, times(0)).search(any())(any(), any(), any(), any())
         }
@@ -96,7 +94,7 @@ class StatusResultControllerSpec extends ControllerSpec {
           "",
           java.time.LocalDate.now(),
           "",
-          List(ImmigrationStatus(java.time.LocalDate.now(), None, "", "", false))
+          List(ImmigrationStatus(java.time.LocalDate.now(), None, "", "", noRecourseToPublicFunds = false))
         )
         mockProxyServiceWith(
           StatusCheckResponseWithStatus(OK, StatusCheckSuccessfulResponse(correlationId, result = hoResult))

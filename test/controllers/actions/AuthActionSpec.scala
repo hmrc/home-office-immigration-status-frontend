@@ -19,8 +19,8 @@ package controllers.actions
 import config.AppConfig
 import controllers.ControllerSpec
 import org.mockito.Mockito._
-import play.api.{Configuration, Environment}
 import play.api.mvc.BodyParsers
+import play.api.{Configuration, Environment}
 import support.CallOps
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
 import uk.gov.hmrc.auth.core._
@@ -30,11 +30,11 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class AuthActionSpec extends ControllerSpec with AuthRedirects {
 
-  lazy val config                      = inject[Configuration]
+  lazy val config: Configuration       = inject[Configuration]
   lazy val env: Environment            = inject[Environment]
   lazy val connector: AuthConnector    = inject[AuthConnector]
   lazy val parser: BodyParsers.Default = inject[BodyParsers.Default]
-  val mockAppConfig                    = mock(classOf[AppConfig])
+  val mockAppConfig: AppConfig         = mock(classOf[AppConfig])
 
   lazy val sut = new AuthActionImpl(env, connector, mockAppConfig, parser, config)
 

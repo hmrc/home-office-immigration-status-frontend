@@ -24,6 +24,7 @@ import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import repositories.SessionCacheRepository
+import uk.gov.hmrc.domain.Nino
 import utils.NinoGenerator
 import views.html.StatusCheckFailurePage
 
@@ -42,9 +43,10 @@ class StatusCheckFailureViewSpec extends ViewSpec {
 
   lazy val sut: StatusCheckFailurePage = inject[StatusCheckFailurePage]
   //scalastyle:off magic.number
-  val nino               = NinoGenerator.generateNino
-  val ninSearchFormModel = NinoSearchFormModel(nino, "Pan", "", LocalDate.now())
-  val mrzSearchFormModel = MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
+  val nino: Nino                              = NinoGenerator.generateNino
+  val ninSearchFormModel: NinoSearchFormModel = NinoSearchFormModel(nino, "Pan", "", LocalDate.now())
+  val mrzSearchFormModel: MrzSearchFormModel =
+    MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
 
   val NinoDocWithFeature: Document = asDocument(sut(ninSearchFormModel)(request, messages))
   val MrzDocWithFeature: Document  = asDocument(sut(mrzSearchFormModel)(request, messages))

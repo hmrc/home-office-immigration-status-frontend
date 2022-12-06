@@ -18,21 +18,21 @@ package forms
 
 import config.Countries
 import models.MrzSearchFormModel
+import org.mockito.Mockito.mock
 import org.scalacheck.{Gen, Shrink}
-import org.scalatest.OptionValues
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
-import play.api.data.{Form, FormError}
-import play.api.test.Injecting
-import utils.NinoGenerator
-import java.time.LocalDate
-
-import play.api.inject.bind
-import org.mockito.Mockito.mock
 import play.api.Application
+import play.api.data.{Form, FormError}
+import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.test.Injecting
 import repositories.SessionCacheRepository
+import uk.gov.hmrc.domain.Nino
+import utils.NinoGenerator
+
+import java.time.LocalDate
 
 class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with ScalaCheckDrivenPropertyChecks {
 
@@ -47,13 +47,13 @@ class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecti
   implicit def noShrink[T]: Shrink[T] = Shrink.shrinkAny
 
   lazy val formProvider: SearchByMRZForm  = inject[SearchByMRZForm]
-  lazy val countriesValues                = inject[Countries].countries.map(_.alpha3)
+  lazy val countriesValues: Seq[String]   = inject[Countries].countries.map(_.alpha3)
   lazy val form: Form[MrzSearchFormModel] = formProvider()
 
   val now: LocalDate       = LocalDate.now()
   val tomorrow: LocalDate  = now.plusDays(1)
   val yesterday: LocalDate = now.minusDays(1)
-  val testNino             = NinoGenerator.generateNino
+  val testNino: Nino       = NinoGenerator.generateNino
 
   def input(
     dateOfBirth: LocalDate = yesterday,
@@ -78,7 +78,7 @@ class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecti
     "documentType"      -> "PASSPORT"
   )
 
-  val allowedSpecialChars = Gen.oneOf(formProvider.allowedNameCharacters)
+  val allowedSpecialChars: Gen[Char] = Gen.oneOf(formProvider.allowedNameCharacters)
   val validChar: Gen[String] =
     Gen.oneOf(Gen.alphaLowerChar, Gen.alphaUpperChar, allowedSpecialChars).map(_.toString).suchThat(_.trim.nonEmpty)
 

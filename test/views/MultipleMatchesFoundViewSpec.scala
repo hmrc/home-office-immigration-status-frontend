@@ -24,6 +24,7 @@ import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import repositories.SessionCacheRepository
+import uk.gov.hmrc.domain.Nino
 import utils.NinoGenerator
 import views.html.MultipleMatchesFoundPage
 
@@ -40,11 +41,12 @@ class MultipleMatchesFoundViewSpec extends ViewSpec {
     )
     .build()
 
-  lazy val sut = inject[MultipleMatchesFoundPage]
-  val nino     = NinoGenerator.generateNino
+  lazy val sut: MultipleMatchesFoundPage = inject[MultipleMatchesFoundPage]
+  val nino: Nino                         = NinoGenerator.generateNino
   //scalastyle:off magic.number
-  val ninSearchFormModel = NinoSearchFormModel(nino, "Pan", "", LocalDate.now())
-  val mrzSearchFormModel = MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
+  val ninSearchFormModel: NinoSearchFormModel = NinoSearchFormModel(nino, "Pan", "", LocalDate.now())
+  val mrzSearchFormModel: MrzSearchFormModel =
+    MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
 
   val NinoDocWithFeature: Document = asDocument(sut(ninSearchFormModel)(request, messages))
   val MrzDocWithFeature: Document  = asDocument(sut(mrzSearchFormModel)(request, messages))

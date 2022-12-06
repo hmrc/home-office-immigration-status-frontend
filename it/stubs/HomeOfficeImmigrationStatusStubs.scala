@@ -1,12 +1,14 @@
 package stubs
 
-import java.time.{LocalDate, ZoneId}
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.matching.AnythingPattern
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.mvc.Http.HeaderNames
 import support.WireMockSupport
+import uk.gov.hmrc.domain.Nino
 import utils.NinoGenerator
+
+import java.time.{LocalDate, ZoneId}
 
 trait HomeOfficeImmigrationStatusStubs extends JourneyTestData {
   me: WireMockSupport =>
@@ -23,7 +25,7 @@ trait HomeOfficeImmigrationStatusStubs extends JourneyTestData {
     byMrzBodyWithRange(date.minusMonths(queryMonths).toString, date.toString)
   }
 
-  val nino = NinoGenerator.generateNino
+  val nino: Nino = NinoGenerator.generateNino
 
   def byMrzBodyWithRange(startDate: String, endDate: String): String =
     s"""{

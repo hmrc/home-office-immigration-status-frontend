@@ -42,10 +42,10 @@ class StatusNotAvailableViewSpec extends ViewSpec {
 
   lazy val sut: StatusNotAvailablePage = inject[StatusNotAvailablePage]
 
-  val nino   = NinoSearchFormModel(generateNino, "Applicant", "", LocalDate.now())
-  val result = StatusCheckResult("Full name", LocalDate.now(), "JPN", Nil)
+  val nino: NinoSearchFormModel = NinoSearchFormModel(generateNino, "Applicant", "", LocalDate.now())
+  val result: StatusCheckResult = StatusCheckResult("Full name", LocalDate.now(), "JPN", Nil)
 
-  val query = StatusNotAvailablePageContext(nino, result)
+  val query: StatusNotAvailablePageContext = StatusNotAvailablePageContext(nino, result)
 
   lazy val doc: Document = asDocument(sut(query)(request, messages))
 

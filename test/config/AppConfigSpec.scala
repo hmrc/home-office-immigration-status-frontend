@@ -16,13 +16,13 @@
 
 package config
 
-import java.io.File
-
-import com.typesafe.config.{ConfigFactory}
+import com.typesafe.config.ConfigFactory
 import org.mockito.Mockito._
 import org.scalatestplus.play.PlaySpec
 import play.api.{Configuration, Environment, Mode}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+
+import java.io.File
 
 class AppConfigSpec extends PlaySpec {
 

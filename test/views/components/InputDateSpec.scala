@@ -47,7 +47,7 @@ class InputDateSpec extends ViewSpec {
       )(messages)
     )
 
-  val doc                    = renderDocument(emptyForm)
+  val doc: Document          = renderDocument(emptyForm)
   val countrySelect: Element = doc.getElementById("nationality")
 
   "inputDate" must {

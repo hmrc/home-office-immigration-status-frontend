@@ -28,7 +28,7 @@ class PreviousStatusesComponentSpec extends ViewSpec {
 
   val sut: PreviousStatuses = inject[PreviousStatuses]
 
-  val singleStatus = Seq(
+  val singleStatus: Seq[ImmigrationStatus] = Seq(
     ImmigrationStatus(
       statusStartDate = LocalDate.parse("2012-01-01"),
       statusEndDate = Some(LocalDate.parse("2013-01-01")),
@@ -49,7 +49,7 @@ class PreviousStatusesComponentSpec extends ViewSpec {
       )
     )
 
-  val threeStatuses = Seq(
+  val threeStatuses: Seq[ImmigrationStatus] = Seq(
     ImmigrationStatus(
       statusStartDate = LocalDate.parse("2013-01-01"),
       productType = "EUS",

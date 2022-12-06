@@ -1,8 +1,8 @@
 package stubs
 
+import models.{ImmigrationStatus, StatusCheckResult}
+
 import java.time.LocalDate
-import uk.gov.hmrc.domain.Nino
-import models.{ImmigrationStatus, NinoSearch, StatusCheckRange, StatusCheckResult}
 
 trait JourneyTestData {
 

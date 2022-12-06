@@ -18,20 +18,18 @@ package controllers
 
 import controllers.actions.AccessAction
 import forms.SearchByMRZForm
-import models.{FormQueryModel, MrzSearchFormModel}
-import org.mockito.Mockito.{mock, never, reset, verify, when}
-import play.api.Application
-import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK, SEE_OTHER}
-import play.api.data.FormBinding.Implicits.formBinding
+import models.MrzSearchFormModel
 import org.mockito.ArgumentMatchers.{any, refEq, eq => is}
+import org.mockito.Mockito._
+import play.api.Application
+import play.api.data.FormBinding.Implicits.formBinding
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
-import play.twirl.api.HtmlFormat
+import play.twirl.api.{Html, HtmlFormat}
 import services.SessionCacheService
 import views.html.SearchByMrzView
-import config.AppConfig
-import play.api.test.FakeRequest
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -46,9 +44,9 @@ class SearchByMrzControllerSpec extends ControllerSpec {
     )
     .build()
 
-  lazy val sut = inject[SearchByMrzController]
-  val mockView = mock(classOf[SearchByMrzView])
-  val fakeView = HtmlFormat.escape("Correct Form View")
+  lazy val sut: SearchByMrzController = inject[SearchByMrzController]
+  val mockView: SearchByMrzView       = mock(classOf[SearchByMrzView])
+  val fakeView: Html                  = HtmlFormat.escape("Correct Form View")
 
   override def beforeEach(): Unit = {
     reset(mockView)

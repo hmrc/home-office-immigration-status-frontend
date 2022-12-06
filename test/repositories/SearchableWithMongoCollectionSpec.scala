@@ -16,25 +16,24 @@
 
 package repositories
 
-import java.time.{LocalDate, LocalDateTime}
-
 import crypto.{FormModelEncrypter, TestGCMCipher}
-import models.{FormQueryModel, NinoSearchFormModel}
-import org.mockito.ArgumentMatchers.{any, eq, refEq}
-import org.mongodb.scala.{FindObservable, MongoCollection, SingleObservable}
-import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.test.Injecting
-import org.mockito.Mockito.{mock, never, reset, verify, when}
+import models.{EncryptedSearchFormModel, FormQueryModel, NinoSearchFormModel}
+import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.Mockito.{mock, reset, verify, when}
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.{Filters, FindOneAndReplaceOptions}
 import org.mongodb.scala.result.DeleteResult
+import org.mongodb.scala.{FindObservable, MongoCollection, SingleObservable}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.play.PlaySpec
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.test.Injecting
 import utils.NinoGenerator
 
+import java.time.{LocalDate, LocalDateTime}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -52,11 +51,11 @@ class SearchableWithMongoCollectionSpec
 
   val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
 
-  val mockFindObs                                     = mock(classOf[FindObservable[FormQueryModel]])
-  val mockSingleObs                                   = mock(classOf[SingleObservable[Seq[FormQueryModel]]])
-  val mockSingleObsDelete                             = mock(classOf[SingleObservable[DeleteResult]])
-  val mockDeleteResult                                = mock(classOf[DeleteResult])
-  val mockCollection: MongoCollection[FormQueryModel] = mock(classOf[MongoCollection[FormQueryModel]])
+  val mockFindObs: FindObservable[FormQueryModel]          = mock(classOf[FindObservable[FormQueryModel]])
+  val mockSingleObs: SingleObservable[Seq[FormQueryModel]] = mock(classOf[SingleObservable[Seq[FormQueryModel]]])
+  val mockSingleObsDelete: SingleObservable[DeleteResult]  = mock(classOf[SingleObservable[DeleteResult]])
+  val mockDeleteResult: DeleteResult                       = mock(classOf[DeleteResult])
+  val mockCollection: MongoCollection[FormQueryModel]      = mock(classOf[MongoCollection[FormQueryModel]])
 
   override def beforeEach(): Unit = {
     reset(mockFindObs)
@@ -65,26 +64,26 @@ class SearchableWithMongoCollectionSpec
     reset(mockSingleObsDelete)
     reset(mockDeleteResult)
     when(mockCollection.find[FormQueryModel](any(classOf[Bson]))(any(), any())).thenReturn(mockFindObs)
-    when(mockFindObs.collect).thenReturn(mockSingleObs)
-    super.beforeEach
+    when(mockFindObs.collect()).thenReturn(mockSingleObs)
+    super.beforeEach()
   }
 
-  val now               = LocalDateTime.now
-  private val cipher    = new TestGCMCipher
-  private val encrypter = new FormModelEncrypter(cipher)
-  private val secretKey = "VqmXp7yigDFxbCUdDdNZVIvbW6RgPNJsliv6swQNCL8="
-  val formModel = NinoSearchFormModel(
+  val now: LocalDateTime = LocalDateTime.now
+  private val cipher     = new TestGCMCipher
+  private val encrypter  = new FormModelEncrypter(cipher)
+  private val secretKey  = "VqmXp7yigDFxbCUdDdNZVIvbW6RgPNJsliv6swQNCL8="
+  val formModel: NinoSearchFormModel = NinoSearchFormModel(
     nino = NinoGenerator.generateNino,
     givenName = "Jimmy",
     familyName = "Jazz",
     dateOfBirth = LocalDate.now
   )
-  val encryptedFormModel = encrypter.encryptSearchFormModel(formModel, "123", secretKey)
-  val formQuery          = FormQueryModel(id = "ID1", data = encryptedFormModel, now)
+  val encryptedFormModel: EncryptedSearchFormModel = encrypter.encryptSearchFormModel(formModel, "123", secretKey)
+  val formQuery: FormQueryModel                    = FormQueryModel(id = "ID1", data = encryptedFormModel, now)
 
   val filters: Bson = Filters.equal("_id", "ID1")
 
-  val unit = ()
+  val unit: Unit = ()
 
   object TestSearchable extends SearchableWithMongoCollection {
     val collection: MongoCollection[FormQueryModel] = mockCollection
@@ -92,20 +91,20 @@ class SearchableWithMongoCollectionSpec
 
   "get" must {
     "call collection.find and find a result" in {
-      when(mockSingleObs.head).thenReturn(Future.successful(Seq(formQuery)))
+      when(mockSingleObs.head()).thenReturn(Future.successful(Seq(formQuery)))
 
       TestSearchable.get("ID1").map { result =>
         verify(mockCollection).find(refEq(filters))(any(), any())
-        result mustEqual Some(formQuery)
+        result must be(Some(formQuery))
       }
     }
 
     "call collection.find and not find a result" in {
-      when(mockSingleObs.head).thenReturn(Future.successful(Nil))
+      when(mockSingleObs.head()).thenReturn(Future.successful(Nil))
 
       TestSearchable.get("ID1").map { result =>
         verify(mockCollection).find(refEq(filters))(any(), any())
-        result mustEqual None
+        result must be(None)
       }
     }
   }
@@ -114,7 +113,7 @@ class SearchableWithMongoCollectionSpec
     "call collection.findOneAndReplace" in {
       when(mockCollection.findOneAndReplace(any(), any(), any(classOf[FindOneAndReplaceOptions])))
         .thenReturn(mockFindObs)
-      when(mockSingleObs.head).thenReturn(Future.successful(Seq(formQuery)))
+      when(mockSingleObs.head()).thenReturn(Future.successful(Seq(formQuery)))
 
       val filters: Bson = Filters.equal("_id", "ID1")
 
@@ -129,7 +128,7 @@ class SearchableWithMongoCollectionSpec
   "delete" must {
     "call collection.deleteOne" in {
       when(mockCollection.deleteOne(any())).thenReturn(mockSingleObsDelete)
-      when(mockSingleObsDelete.head).thenReturn(Future.successful(mockDeleteResult))
+      when(mockSingleObsDelete.head()).thenReturn(Future.successful(mockDeleteResult))
 
       TestSearchable.delete("ID1").map { result =>
         verify(mockCollection).deleteOne(refEq(filters))

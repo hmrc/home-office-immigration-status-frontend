@@ -16,21 +16,22 @@
 
 package connectors
 
-import uk.gov.hmrc.http.HttpResponse
-import models._
-import java.time.LocalDate
-import play.api.libs.json.Json
 import connectors.StatusCheckResponseHttpParser._
+import models._
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.http.Status._
+import play.api.libs.json.{Json, OWrites}
+import uk.gov.hmrc.http.HttpResponse
+
+import java.time.LocalDate
 
 class StatusCheckResponseHttpParserSpec extends AnyWordSpecLike with Matchers {
 
   "StatusCheckResponseReads.read" should {
 
-    implicit val resultWrites = Json.writes[StatusCheckResult]
-    val responseWrites        = Json.writes[StatusCheckSuccessfulResponse]
+    implicit val resultWrites: OWrites[StatusCheckResult] = Json.writes[StatusCheckResult]
+    val responseWrites                                    = Json.writes[StatusCheckSuccessfulResponse]
 
     "return a success where a 200 is returned with a valid response" in {
       val statusCheckResult   = StatusCheckResult("Damon Albarn", LocalDate.now, "GBR", Nil)

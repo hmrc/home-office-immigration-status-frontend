@@ -35,25 +35,25 @@ class GovukWrapperViewSpec extends ViewSpec {
     )
     .build()
 
-  lazy val sut = inject[MultipleMatchesFoundPage]
+  lazy val sut: MultipleMatchesFoundPage = inject[MultipleMatchesFoundPage]
 
-  val query              = NinoSearchFormModel(NinoGenerator.generateNino, "Pan", "", LocalDate.now())
-  lazy val doc: Document = asDocument(sut(query)(request, messages))
+  val query: NinoSearchFormModel = NinoSearchFormModel(NinoGenerator.generateNino, "Pan", "", LocalDate.now())
+  lazy val doc: Document         = asDocument(sut(query)(request, messages))
 
   "govuk_wrapper" must {
 
     "banner contains title" in {
-      val docAsString: String = doc.toString()
+      val docAsString: String = doc.toString
       docAsString.contains(messages("app.name")) mustBe true
     }
 
     "banner contains service url" in {
-      val docAsString: String = doc.toString()
+      val docAsString: String = doc.toString
       docAsString.contains("/check-immigration-status") mustBe true
     }
 
     "banner contains logo link" in {
-      val docAsString: String = doc.toString()
+      val docAsString: String = doc.toString
       docAsString.contains("https://www.gov.uk/government/organisations/hm-revenue-customs") mustBe true
     }
   }
