@@ -111,7 +111,7 @@ class SearchByMrzViewSpec extends ViewSpec {
 
   "SearchByMrzView with an error" must {
     "display the error summary" in {
-      assertRenderedById(docWithErrors, "error-summary-title")
+      assertRenderedByClass(docWithErrors, "govuk-error-summary")
     }
   }
 }
