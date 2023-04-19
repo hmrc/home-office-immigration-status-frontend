@@ -4,15 +4,21 @@ Web application providing internal HMRC staff with an interface to check custome
 
 ## Running the tests
 
-    sbt test it:test
+```bash
+sbt Test/test IntegrationTest/test
+```
 
 ## Running the tests with coverage
 
-    sbt clean coverageOn test it:test coverageReport
+```bash
+sbt clean coverageOn Test/test IntegrationTest/test coverageReport
+```
 
 ## Running the tests with coverage, scalafmt, scalastyle and dependency checks
 
-    ./run_all_tests
+```bash
+./run_all_tests
+```
 
 ## Running the app locally
 

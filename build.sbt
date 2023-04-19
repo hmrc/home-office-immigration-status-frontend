@@ -1,20 +1,9 @@
 import sbt.Tests.{Group, SubProcess}
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
+import uk.gov.hmrc.DefaultBuildSettings.*
+import scoverage.ScoverageKeys
 
-lazy val scoverageSettings = {
-  import scoverage.ScoverageKeys
-  Seq(
-    // Semicolon-separated list of regexes matching classes to exclude
-    ScoverageKeys.coverageExcludedPackages := "<empty>;.*BuildInfo;.*Routes;.*RoutesPrefix;.*Filters?;MicroserviceAuditConnector;" +
-      "Module;GraphiteStartUp;Reverse.*",
-    ScoverageKeys.coverageMinimumStmtTotal := 94,
-    ScoverageKeys.coverageFailOnMinimum := true,
-    ScoverageKeys.coverageHighlighting := true
-  )
-}
-
-addCommandAlias("scalafmtAll", "all scalafmtSbt scalafmt test:scalafmt it:scalafmt")
-addCommandAlias("scalastyleAll", "all scalastyle test:scalastyle it:scalastyle")
+addCommandAlias("scalafmtAll", "all scalafmtSbt scalafmt Test/scalafmt IntegrationTest/scalafmt")
+addCommandAlias("scalastyleAll", "all scalastyle Test/scalastyle IntegrationTest/scalastyle")
 
 lazy val root = (project in file("."))
   .settings(
@@ -31,8 +20,11 @@ lazy val root = (project in file("."))
       "uk.gov.hmrc.hmrcfrontend.views.html.helpers._"
     ),
     libraryDependencies ++= AppDependencies(),
-    publishingSettings,
-    scoverageSettings,
+    ScoverageKeys.coverageExcludedPackages := "<empty>;.*BuildInfo;.*Routes;.*RoutesPrefix;.*Filters?;MicroserviceAuditConnector;" +
+      "Module;GraphiteStartUp;Reverse.*",
+    ScoverageKeys.coverageMinimumStmtTotal := 94,
+    ScoverageKeys.coverageFailOnMinimum := true,
+    ScoverageKeys.coverageHighlighting := true,
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
     majorVersion := 0,
     Concat.groups := Seq(
@@ -49,7 +41,7 @@ lazy val root = (project in file("."))
     Assets / pipelineStages := Seq(concat)
   )
   .configs(IntegrationTest)
-  .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
+  .settings(integrationTestSettings())
   .settings(
     IntegrationTest / Keys.fork := false,
     IntegrationTest / unmanagedSourceDirectories += baseDirectory(_ / "it").value,
