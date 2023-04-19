@@ -16,7 +16,7 @@
 
 package forms.helpers
 
-import play.api.data.validation.{Constraint, Constraints, Invalid, Valid, ValidationError}
+import play.api.data.validation._
 
 object ValidateHelper extends Constraints {
 
@@ -26,21 +26,6 @@ object ValidateHelper extends Constraints {
         Valid
       } else {
         Invalid(ValidationError(failure))
-      }
-    }
-
-  def validateField(emptyFailure: String, invalidFailure: String)(condition: String => Boolean): Constraint[String] =
-    Constraint[String] { fieldValue: String =>
-      val nonEmptyConstraint: Constraint[String] = nonEmpty(emptyFailure)
-      nonEmptyConstraint(fieldValue) match {
-        case i: Invalid =>
-          i
-        case Valid =>
-          if (condition(fieldValue.trim.toUpperCase)) {
-            Valid
-          } else {
-            Invalid(ValidationError(invalidFailure))
-          }
       }
     }
 }

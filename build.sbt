@@ -22,7 +22,7 @@ lazy val root = (project in file("."))
     libraryDependencies ++= AppDependencies(),
     ScoverageKeys.coverageExcludedPackages := "<empty>;.*BuildInfo;.*Routes;.*RoutesPrefix;.*Filters?;MicroserviceAuditConnector;" +
       "Module;GraphiteStartUp;Reverse.*",
-    ScoverageKeys.coverageMinimumStmtTotal := 94,
+    ScoverageKeys.coverageMinimumStmtTotal := 95,
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true,
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
