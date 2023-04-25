@@ -1,6 +1,4 @@
-import sbt.Tests.{Group, SubProcess}
 import uk.gov.hmrc.DefaultBuildSettings.*
-import scoverage.ScoverageKeys
 
 addCommandAlias("scalafmtAll", "all scalafmtSbt scalafmt Test/scalafmt IntegrationTest/scalafmt")
 addCommandAlias("scalastyleAll", "all scalastyle Test/scalastyle IntegrationTest/scalastyle")
@@ -20,11 +18,11 @@ lazy val root = (project in file("."))
       "uk.gov.hmrc.hmrcfrontend.views.html.helpers._"
     ),
     libraryDependencies ++= AppDependencies(),
-    ScoverageKeys.coverageExcludedPackages := "<empty>;.*BuildInfo;.*Routes;.*RoutesPrefix;.*Filters?;MicroserviceAuditConnector;" +
+    coverageExcludedPackages := "<empty>;.*BuildInfo;.*Routes;.*RoutesPrefix;.*Filters?;MicroserviceAuditConnector;" +
       "Module;GraphiteStartUp;Reverse.*",
-    ScoverageKeys.coverageMinimumStmtTotal := 95,
-    ScoverageKeys.coverageFailOnMinimum := true,
-    ScoverageKeys.coverageHighlighting := true,
+    coverageMinimumStmtTotal := 95,
+    coverageFailOnMinimum := true,
+    coverageHighlighting := true,
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
     majorVersion := 0,
     Concat.groups := Seq(
@@ -42,22 +40,11 @@ lazy val root = (project in file("."))
   )
   .configs(IntegrationTest)
   .settings(integrationTestSettings())
-  .settings(
-    IntegrationTest / Keys.fork := false,
-    IntegrationTest / unmanagedSourceDirectories += baseDirectory(_ / "it").value,
-    IntegrationTest / parallelExecution := false,
-    IntegrationTest / testGrouping := oneForkedJvmPerTest((IntegrationTest / definedTests).value)
-  )
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .enablePlugins(PlayScala, SbtDistributablesPlugin)
 
 scalacOptions ++= Seq(
-  "-Wconf:cat=unused-imports&site=.*views.html.*:s",
+  "-Wconf:cat=unused-imports&src=html/.*:s",
   "-Wconf:src=routes/.*:s",
   "-feature"
 )
-
-def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] =
-  tests.map { test =>
-    Group(test.name, Seq(test), SubProcess(ForkOptions().withRunJVMOptions(Vector(s"-Dtest.name=${test.name}"))))
-  }
