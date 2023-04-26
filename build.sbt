@@ -1,20 +1,7 @@
-import sbt.Tests.{Group, SubProcess}
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
+import uk.gov.hmrc.DefaultBuildSettings.*
 
-lazy val scoverageSettings = {
-  import scoverage.ScoverageKeys
-  Seq(
-    // Semicolon-separated list of regexes matching classes to exclude
-    ScoverageKeys.coverageExcludedPackages := "<empty>;.*BuildInfo;.*Routes;.*RoutesPrefix;.*Filters?;MicroserviceAuditConnector;" +
-      "Module;GraphiteStartUp;Reverse.*",
-    ScoverageKeys.coverageMinimumStmtTotal := 94,
-    ScoverageKeys.coverageFailOnMinimum := true,
-    ScoverageKeys.coverageHighlighting := true
-  )
-}
-
-addCommandAlias("scalafmtAll", "all scalafmtSbt scalafmt test:scalafmt it:scalafmt")
-addCommandAlias("scalastyleAll", "all scalastyle test:scalastyle it:scalastyle")
+addCommandAlias("scalafmtAll", "all scalafmtSbt scalafmt Test/scalafmt IntegrationTest/scalafmt")
+addCommandAlias("scalastyleAll", "all scalastyle Test/scalastyle IntegrationTest/scalastyle")
 
 lazy val root = (project in file("."))
   .settings(
@@ -31,8 +18,11 @@ lazy val root = (project in file("."))
       "uk.gov.hmrc.hmrcfrontend.views.html.helpers._"
     ),
     libraryDependencies ++= AppDependencies(),
-    publishingSettings,
-    scoverageSettings,
+    coverageExcludedPackages := "<empty>;.*BuildInfo;.*Routes;.*RoutesPrefix;.*Filters?;MicroserviceAuditConnector;" +
+      "Module;GraphiteStartUp;Reverse.*",
+    coverageMinimumStmtTotal := 95,
+    coverageFailOnMinimum := true,
+    coverageHighlighting := true,
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
     majorVersion := 0,
     Concat.groups := Seq(
@@ -49,23 +39,12 @@ lazy val root = (project in file("."))
     Assets / pipelineStages := Seq(concat)
   )
   .configs(IntegrationTest)
-  .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
-  .settings(
-    IntegrationTest / Keys.fork := false,
-    IntegrationTest / unmanagedSourceDirectories += baseDirectory(_ / "it").value,
-    IntegrationTest / parallelExecution := false,
-    IntegrationTest / testGrouping := oneForkedJvmPerTest((IntegrationTest / definedTests).value)
-  )
+  .settings(integrationTestSettings())
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .enablePlugins(PlayScala, SbtDistributablesPlugin)
 
 scalacOptions ++= Seq(
-  "-Wconf:cat=unused-imports&site=.*views.html.*:s",
+  "-Wconf:cat=unused-imports&src=html/.*:s",
   "-Wconf:src=routes/.*:s",
   "-feature"
 )
-
-def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] =
-  tests.map { test =>
-    Group(test.name, Seq(test), SubProcess(ForkOptions().withRunJVMOptions(Vector(s"-Dtest.name=${test.name}"))))
-  }

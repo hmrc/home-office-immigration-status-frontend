@@ -118,9 +118,14 @@ class HomeOfficeImmigrationStatusProxyConnectorSpec
 
       sut.statusPublicFundsByNino(ninoRequest)
 
+      val capturedCorrelationId: Option[String] =
+        capture.getValue.extraHeaders.collectFirst {
+          case (key, value) if key == "CorrelationId" => value
+        }
+
       verify(mockHttpClient).POST(refEq(url), refEq(ninoRequest), any())(any(), any(), any(), any())
       capture.getValue.extraHeaders.size mustBe 1
-      capture.getValue.extraHeaders.filter(h => h._1.equals("CorrelationId")).map(h => h._2).orElse("") mustNot be("")
+      capturedCorrelationId mustNot be("")
 
     }
   }

@@ -2,17 +2,11 @@
 
 Web application providing internal HMRC staff with an interface to check customer's immigration status and rights to public funds.
 
-## Running the tests
-
-    sbt test it:test
-
-## Running the tests with coverage
-
-    sbt clean coverageOn test it:test coverageReport
-
 ## Running the tests with coverage, scalafmt, scalastyle and dependency checks
 
-    ./run_all_tests
+```bash
+./run_all_tests
+```
 
 ## Running the app locally
 

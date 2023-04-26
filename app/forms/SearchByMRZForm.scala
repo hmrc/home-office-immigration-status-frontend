@@ -53,5 +53,5 @@ class SearchByMRZForm @Inject() (countries: Countries) extends FormFieldMappings
 object SearchByMRZForm {
   final val AllowedDocumentTypes =
     Seq(Passport, EuropeanNationalIdentityCard, BiometricResidencyCard, BiometricResidencyPermit)
-  final val DocumentNumberMaxLength = 30
+  val DocumentNumberMaxLength = 30
 }
