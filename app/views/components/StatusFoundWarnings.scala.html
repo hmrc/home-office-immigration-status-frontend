@@ -25,7 +25,7 @@
 
 @if(context.isZambrano) {
     @warning(WarningText(
-        iconFallbackText = messages("generic.warning"),
+        iconFallbackText = Some(messages("generic.warning")),
         content = Text(messages("status-found.zambrano")),
         attributes = Map("id" -> "zambrano-warning")
     ))
@@ -33,7 +33,7 @@
 
 @if(!context.hasRecourseToPublicFunds) {
     @warning(WarningText(
-        iconFallbackText = messages("generic.warning"),
+        iconFallbackText = Some(messages("generic.warning")),
         content = Text(messages("status-found.warning")),
         attributes = Map("id" -> "recourse-warning")
     ))
