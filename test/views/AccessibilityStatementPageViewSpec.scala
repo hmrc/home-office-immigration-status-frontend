@@ -17,26 +17,28 @@
 package views
 
 import org.jsoup.nodes.Document
-import play.twirl.api.{Html, HtmlFormat}
-import views.html.govuk_wrapper
+import play.twirl.api.HtmlFormat
+import views.html.AccessibilityStatementPage
 
-class GovukWrapperViewSpec extends ViewSpec {
+class AccessibilityStatementPageViewSpec extends ViewSpec {
 
-  private lazy val sut: govuk_wrapper = inject[govuk_wrapper]
+  private val sut: AccessibilityStatementPage = inject[AccessibilityStatementPage]
 
-  private val pageTitle: String = "Sorry, there is a problem with the service"
+  private val viewViaApply: HtmlFormat.Appendable  = sut.apply()(request, messages)
+  private val viewViaRender: HtmlFormat.Appendable = sut.render(request, messages)
+  private val viewViaF: HtmlFormat.Appendable      = sut.f()(request, messages)
 
-  private val viewViaApply: HtmlFormat.Appendable = sut.apply(pageTitle)(Html(""))(request, messages)
-  private val viewViaRender: HtmlFormat.Appendable =
-    sut.render(pageTitle, None, Seq.empty, None, Html(""), request, messages)
-  private val viewViaF: HtmlFormat.Appendable = sut.f(pageTitle, None, Seq.empty, None)(Html(""))(request, messages)
-
-  "GovukWrapperView" when {
+  "AccessibilityStatementPageView" when {
     def test(method: String, view: HtmlFormat.Appendable): Unit =
       s"$method" must {
         val doc: Document = asDocument(view)
-        "have the title" in {
-          assertElementHasText(doc, "title", s"$pageTitle - Check immigration status - GOV.UK")
+        "have the title and heading" in {
+          assertElementHasText(
+            doc,
+            "title",
+            "Accessibility statement for check immigration status - Check immigration status - GOV.UK"
+          )
+          assertElementHasText(doc, "h1", "Accessibility statement for the Check Immigration Status service")
         }
       }
 

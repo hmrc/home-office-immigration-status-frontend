@@ -17,26 +17,32 @@
 package views
 
 import org.jsoup.nodes.Document
-import play.twirl.api.{Html, HtmlFormat}
-import views.html.govuk_wrapper
+import play.twirl.api.HtmlFormat
+import views.html.error_template
 
-class GovukWrapperViewSpec extends ViewSpec {
+class ErrorTemplateViewSpec extends ViewSpec {
 
-  private lazy val sut: govuk_wrapper = inject[govuk_wrapper]
+  private val sut: error_template = inject[error_template]
 
   private val pageTitle: String = "Sorry, there is a problem with the service"
+  private val heading: String   = "Sorry, there is a problem with the service"
+  private val message: String   = "internal.error.500.message"
 
-  private val viewViaApply: HtmlFormat.Appendable = sut.apply(pageTitle)(Html(""))(request, messages)
-  private val viewViaRender: HtmlFormat.Appendable =
-    sut.render(pageTitle, None, Seq.empty, None, Html(""), request, messages)
-  private val viewViaF: HtmlFormat.Appendable = sut.f(pageTitle, None, Seq.empty, None)(Html(""))(request, messages)
+  private val viewViaApply: HtmlFormat.Appendable  = sut.apply(pageTitle, heading, message)(request, messages)
+  private val viewViaRender: HtmlFormat.Appendable = sut.render(pageTitle, heading, message, None, request, messages)
+  private val viewViaF: HtmlFormat.Appendable      = sut.f(pageTitle, heading, message, None)(request, messages)
 
-  "GovukWrapperView" when {
+  "ErrorTemplateView" when {
     def test(method: String, view: HtmlFormat.Appendable): Unit =
       s"$method" must {
         val doc: Document = asDocument(view)
-        "have the title" in {
+        "have the title and heading" in {
           assertElementHasText(doc, "title", s"$pageTitle - Check immigration status - GOV.UK")
+          assertElementHasText(doc, "#title", heading)
+        }
+
+        "have the paragraph content" in {
+          assertElementHasText(doc, ".govuk-body", "Contact the Helpline.")
         }
       }
 

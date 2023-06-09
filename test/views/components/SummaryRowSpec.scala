@@ -14,29 +14,36 @@
  * limitations under the License.
  */
 
-package views
+package views.components
 
 import org.jsoup.nodes.Document
-import play.twirl.api.{Html, HtmlFormat}
-import views.html.govuk_wrapper
+import play.twirl.api.HtmlFormat
+import viewmodels.RowViewModel
+import views.ViewSpec
+import views.html.components.summaryRow
 
-class GovukWrapperViewSpec extends ViewSpec {
+class SummaryRowSpec extends ViewSpec {
 
-  private lazy val sut: govuk_wrapper = inject[govuk_wrapper]
+  private val rowViewModel: RowViewModel = RowViewModel(
+    id = "recourse-text",
+    messageKey = "status-found.norecourse",
+    data = "No"
+  )
 
-  private val pageTitle: String = "Sorry, there is a problem with the service"
+  private val viewViaApply: HtmlFormat.Appendable  = summaryRow.apply(rowViewModel)(messages)
+  private val viewViaRender: HtmlFormat.Appendable = summaryRow.render(rowViewModel, messages)
+  private val viewViaF: HtmlFormat.Appendable      = summaryRow.f(rowViewModel)(messages)
 
-  private val viewViaApply: HtmlFormat.Appendable = sut.apply(pageTitle)(Html(""))(request, messages)
-  private val viewViaRender: HtmlFormat.Appendable =
-    sut.render(pageTitle, None, Seq.empty, None, Html(""), request, messages)
-  private val viewViaF: HtmlFormat.Appendable = sut.f(pageTitle, None, Seq.empty, None)(Html(""))(request, messages)
-
-  "GovukWrapperView" when {
+  "SummaryRow" when {
     def test(method: String, view: HtmlFormat.Appendable): Unit =
       s"$method" must {
         val doc: Document = asDocument(view)
-        "have the title" in {
-          assertElementHasText(doc, "title", s"$pageTitle - Check immigration status - GOV.UK")
+        "have the name text in a description list" in {
+          assertElementHasText(doc, ".govuk-summary-list__key", "Recourse to public funds")
+        }
+
+        "have the value text in a description list" in {
+          assertElementHasText(doc, "#recourse-text", "No")
         }
       }
 

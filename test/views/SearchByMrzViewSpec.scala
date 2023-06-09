@@ -16,102 +16,92 @@
 
 package views
 
+import java.time.LocalDate
+
 import forms.SearchByMRZForm
 import models.MrzSearchFormModel
-import org.jsoup.nodes.{Document, Element}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, verify, when}
-import play.api.Application
+import org.jsoup.nodes.Document
 import play.api.data.Form
-import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.JsNull
-import play.twirl.api.Html
-import repositories.SessionCacheRepository
+import play.twirl.api.HtmlFormat
 import views.html.SearchByMrzView
-import views.html.components.inputDate
-
-import java.util.UUID
 
 class SearchByMrzViewSpec extends ViewSpec {
 
-  val mockDobInput: inputDate = mock(classOf[inputDate])
+  private lazy val sut: SearchByMrzView = inject[SearchByMrzView]
 
-  override implicit lazy val app: Application = new GuiceApplicationBuilder()
-    .overrides(
-      bind[inputDate].toInstance(mockDobInput),
-      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
+  private val titleAndHeading: String = "Search by passport or ID card"
+
+  private val mrzSearchFormModel: MrzSearchFormModel = MrzSearchFormModel(
+    documentType = "PASSPORT",
+    documentNumber = "123456",
+    dateOfBirth = LocalDate.parse("1980-12-22"),
+    nationality = "AFG"
+  )
+
+  private val validForm: Form[MrzSearchFormModel]   = inject[SearchByMRZForm].apply().fill(mrzSearchFormModel)
+  private val invalidForm: Form[MrzSearchFormModel] = inject[SearchByMRZForm].apply().bind(Map("" -> ""))
+
+  private def viewViaApply(form: Form[MrzSearchFormModel]): HtmlFormat.Appendable  = sut.apply(form)(request, messages)
+  private def viewViaRender(form: Form[MrzSearchFormModel]): HtmlFormat.Appendable = sut.render(form, request, messages)
+  private def viewViaF(form: Form[MrzSearchFormModel]): HtmlFormat.Appendable      = sut.f(form)(request, messages)
+
+  "SearchByMrzView" when {
+    def test(method: String, viewWithoutErrors: HtmlFormat.Appendable, viewWithErrors: HtmlFormat.Appendable): Unit =
+      s"$method" must {
+        val docWithoutErrors: Document = asDocument(viewWithoutErrors)
+        val docWithErrors: Document    = asDocument(viewWithErrors)
+        "have the title and heading" in {
+          assertElementHasText(docWithoutErrors, "title", s"$titleAndHeading - Check immigration status - GOV.UK")
+          assertElementHasText(docWithoutErrors, "#mrz-search-title", titleAndHeading)
+        }
+
+        "have the search description paragraph content" in {
+          assertElementHasText(
+            docWithoutErrors,
+            "#search-description",
+            "Enter all the information to search for the customer by passport or ID card. Or you can search by National Insurance number."
+          )
+        }
+
+        "have the alternative search link" in {
+          assertElementHasText(docWithoutErrors, "#alt-search-by-nino", "search by National Insurance number")
+          docWithoutErrors
+            .getElementById("alt-search-by-nino")
+            .attr("href") mustBe "/check-immigration-status/search-by-nino?clearForm=true"
+        }
+
+        "have the documentType, documentNumber, search button and nationality select" in {
+          assertRenderedById(docWithoutErrors, "documentType")
+          assertRenderedById(docWithoutErrors, "documentNumber")
+          assertRenderedById(docWithoutErrors, "search-button")
+          assertRenderedById(docWithoutErrors, "nationality")
+        }
+
+        "have the identity component options" in {
+          assertElementHasText(
+            docWithoutErrors,
+            "#documentType",
+            "Passport European National Identity Card Biometric Residence Card Biometric Residence Permit"
+          )
+        }
+
+        "have the dob input" in {
+          docWithoutErrors.getElementById("dateOfBirth.day").attr("value") mustBe "22"
+          docWithoutErrors.getElementById("dateOfBirth.month").attr("value") mustBe "12"
+          docWithoutErrors.getElementById("dateOfBirth.year").attr("value") mustBe "1980"
+        }
+
+        "have the error summary" in {
+          assertRenderedByClass(docWithErrors, "govuk-error-summary")
+        }
+      }
+
+    val input: Seq[(String, HtmlFormat.Appendable, HtmlFormat.Appendable)] = Seq(
+      (".apply", viewViaApply(validForm), viewViaApply(invalidForm)),
+      (".render", viewViaRender(validForm), viewViaRender(invalidForm)),
+      (".f", viewViaF(validForm), viewViaF(invalidForm))
     )
-    .build()
 
-  val fakeDobInput: String = UUID.randomUUID().toString
-  when(mockDobInput.apply(any(), any(), any(), any(), any(), any(), any())(any())).thenReturn(Html(fakeDobInput))
-
-  lazy val sut: SearchByMrzView = inject[SearchByMrzView]
-
-  val form: Form[MrzSearchFormModel] = inject[SearchByMRZForm].apply()
-
-  lazy val doc: Document = asDocument(sut(form)(request, messages))
-
-  "SearchByMrzView" must {
-    "have the look up title" in {
-      val e: Element = doc.getElementsByTag("h1").first()
-      e.text() mustBe messages("lookup.mrz.title")
-    }
-
-    "have the search description" in {
-      val e: Element = doc.getElementById("search-description")
-      e.text() mustBe s"${messages("lookup.mrz.desc")}${messages("lookup.mrz.alternate-search")}."
-    }
-
-    "have the alternative search link" in {
-      val e: Element = doc.getElementById("alt-search-by-nino")
-      e.text() mustBe messages("lookup.mrz.alternate-search")
-      e.attr("href") mustBe controllers.routes.SearchByNinoController.onPageLoad(true).url
-    }
-
-    "have documentType" in {
-      assertRenderedById(doc, "documentType")
-    }
-
-    "have the identity component contains options" in {
-      val e: Element = doc.getElementById("documentType")
-      e.text() mustBe messages(
-        "Passport European National Identity Card Biometric Residence Card Biometric Residence Permit"
-      )
-    }
-
-    "have documentNumber" in {
-      assertRenderedById(doc, "documentNumber")
-    }
-
-    "have the nationality select" in {
-      assertRenderedById(doc, "nationality")
-    }
-
-    "have the dob input" in {
-      doc.text() must include(fakeDobInput)
-      verify(mockDobInput)
-        .apply(
-          form,
-          id = "dateOfBirth",
-          legendClasses = "govuk-label",
-          legendContent = messages("lookup.dateOfBirth.label"),
-          hintMessage = Some(messages("lookup.dateOfBirth.hint"))
-        )(messages)
-    }
-
-    "have the search button" in {
-      assertRenderedById(doc, "search-button")
-    }
-  }
-  //scalastyle:off magic.number
-  val formWithErrors: Form[MrzSearchFormModel] = inject[SearchByMRZForm].apply().bind(JsNull, 200)
-  lazy val docWithErrors: Document             = asDocument(sut(formWithErrors)(request, messages))
-
-  "SearchByMrzView with an error" must {
-    "display the error summary" in {
-      assertRenderedByClass(docWithErrors, "govuk-error-summary")
-    }
+    input.foreach(args => (test _).tupled(args))
   }
 }

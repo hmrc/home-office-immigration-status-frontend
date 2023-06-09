@@ -51,7 +51,8 @@ trait ControllerSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting wi
   val timeoutDuration: FiniteDuration                       = 5 seconds
   implicit val timeout: Timeout                             = Timeout(timeoutDuration)
   def await[T](future: Awaitable[T]): T                     = Await.result(future, timeoutDuration)
-  lazy val messages: Messages                               = inject[MessagesApi].preferred(Seq.empty)
+  lazy val messagesApi: MessagesApi                         = inject[MessagesApi]
+  lazy val messages: Messages                               = messagesApi.preferred(Seq.empty)
   lazy val appConfig: AppConfig                             = inject[AppConfig]
   implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
   val fakePostRequest: FakeRequest[AnyContentAsEmpty.type]  = FakeRequest("POST", "/")

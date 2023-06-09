@@ -17,11 +17,12 @@
 package views.components
 
 import config.Countries
-import org.jsoup.nodes.{Document, Element}
+import org.jsoup.nodes._
 import org.jsoup.select.Elements
 import play.api.data.Forms.mapping
 import play.api.data.format.Formats._
-import play.api.data.{Form, Forms}
+import play.api.data._
+import play.twirl.api.HtmlFormat
 import views.ViewSpec
 import views.html.components.CountrySelect
 
@@ -29,62 +30,72 @@ import scala.jdk.CollectionConverters._
 
 class CountrySelectSpec extends ViewSpec {
 
-  val sut: CountrySelect   = inject[CountrySelect]
-  val countries: Countries = inject[Countries]
+  private val sut: CountrySelect   = inject[CountrySelect]
+  private val countries: Countries = inject[Countries]
 
-  val testForm: Form[String] = Form[String] {
+  private val testForm: Form[String] = Form[String] {
     mapping("documentType" -> Forms.of[String])(identity)(Some.apply)
   }
 
-  val emptyForm: Form[String]  = testForm.bind(Map.empty[String, String])
-  val filledForm: Form[String] = testForm.bind(Map("nationality" -> "GBR"))
+  private val emptyForm: Form[String]  = testForm.bind(Map.empty[String, String])
+  private val filledForm: Form[String] = testForm.bind(Map("nationality" -> "GBR"))
 
-  val doc: Document          = asDocument(sut(emptyForm)(messages))
-  val countrySelect: Element = doc.getElementById("nationality")
+  private def viewViaApply(form: Form[String]): HtmlFormat.Appendable  = sut.apply(form)(messages)
+  private def viewViaRender(form: Form[String]): HtmlFormat.Appendable = sut.render(form, messages)
+  private def viewViaF(form: Form[String]): HtmlFormat.Appendable      = sut.f(form)(messages)
 
-  "form group" must {
-    "have the autocomplete-wrapper class" in {
-      val formGroup = doc.select(".govuk-form-group")
-      assert(formGroup.hasClass("autocomplete-wrapper"))
-    }
-  }
+  "CountrySelect" when {
+    def test(
+      method: String,
+      viewWithEmptyForm: HtmlFormat.Appendable,
+      viewWithFilledForm: HtmlFormat.Appendable
+    ): Unit =
+      s"$method" must {
+        val docWithEmptyForm: Document  = asDocument(viewWithEmptyForm)
+        val docWithFilledForm: Document = asDocument(viewWithFilledForm)
+        "have the label text" in {
+          assertElementHasText(docWithEmptyForm, ".govuk-label", "Country of nationality")
+        }
 
-  "CountrySelect" must {
-    "have a label" in {
-      val label = doc.select(".govuk-label")
-      label.text() mustBe messages("lookup.nationality.label")
-    }
+        "have the hint text" in {
+          assertElementHasText(docWithEmptyForm, "#nationality-hint", "For example, France.")
+        }
 
-    "have hint text" in {
-      val nationalityHint: Element = doc.getElementById("nationality-hint")
-      nationalityHint.text() mustBe messages("lookup.nationality.hint")
-    }
+        "have the autocomplete-wrapper class" in {
+          assertRenderedByClass(docWithEmptyForm, "autocomplete-wrapper")
+        }
 
-  }
+        "have the data-all-countries attribute" in {
+          val countrySelect: Option[Elements] = Option(docWithEmptyForm.select("nationality[data-all-countries]"))
+          countrySelect mustBe defined
+        }
 
-  "nationality" must {
-    "have the data-all-countries attribute" in {
-      val countrySelect: Option[Elements] = Option(doc.select("nationality[data-all-countries]"))
-      countrySelect mustBe defined
-    }
+        "have an item for each country" in {
+          val options: Elements = docWithEmptyForm.select("option")
+          val optionTuples: List[(String, String)] =
+            options.asScala.toList.map(option => (option.attr("value"), option.text()))
+          val countryConfigTuples: Seq[(String, String)] =
+            countries.countries.map(country => country.alpha3 -> country.name) :+ " " -> ""
+          optionTuples must contain theSameElementsAs countryConfigTuples
+        }
 
-    "have an item for each country" in {
-      val options             = doc.select("option")
-      val optionTuples        = options.asScala.toList.map(option => (option.attr("value"), option.text()))
-      val countryConfigTuples = countries.countries.map(country => country.alpha3 -> country.name) :+ " " -> ""
-      optionTuples must contain theSameElementsAs countryConfigTuples
-    }
+        "have the selected item set when it is passed" in {
+          val options: List[Element] = docWithFilledForm.select("option[selected]").asScala.toList
+          options.map(_.text()) must contain theSameElementsAs List("United Kingdom")
+        }
 
-    "have the selected item set when it's passed in" in {
-      val doc: Document = asDocument(sut(filledForm)(messages))
-      val options       = doc.select("option[selected]").asScala.toList
-      options.map(_.text()) must contain theSameElementsAs List("United Kingdom")
-    }
+        "have no selected item set when it is not passed" in {
+          val options: List[Element] = docWithEmptyForm.select("option[selected]").asScala.toList
+          options.map(_.text()) must contain theSameElementsAs Nil
+        }
+      }
 
-    "have no selected item set when it's not passed in" in {
-      val doc: Document = asDocument(sut(emptyForm)(messages))
-      val options       = doc.select("option[selected]").asScala.toList
-      options.map(_.text()) must contain theSameElementsAs Nil
-    }
+    val input: Seq[(String, HtmlFormat.Appendable, HtmlFormat.Appendable)] = Seq(
+      (".apply", viewViaApply(emptyForm), viewViaApply(filledForm)),
+      (".render", viewViaRender(emptyForm), viewViaRender(filledForm)),
+      (".f", viewViaF(emptyForm), viewViaF(filledForm))
+    )
+
+    input.foreach(args => (test _).tupled(args))
   }
 }

@@ -16,27 +16,38 @@
 
 package views.components
 
-import controllers.routes
 import org.jsoup.nodes.Document
+import play.twirl.api.HtmlFormat
 import views.ViewSpec
 import views.html.components.SearchAgainButton
 
 class SearchAgainButtonSpec extends ViewSpec {
 
-  val sut: SearchAgainButton = inject[SearchAgainButton]
-  val doc: Document          = asDocument(sut()(messages))
+  private val sut: SearchAgainButton = inject[SearchAgainButton]
 
-  "SearchAgainButton" must {
-    val button = doc.select("a")
-    "have the content" in {
-      button.text() mustBe messages("generic.searchAgain")
-    }
-    "link to the correct place" in {
-      button.attr("href") mustBe routes.LandingController.onPageLoad.url
-    }
+  private val viewViaApply: HtmlFormat.Appendable  = sut.apply()(messages)
+  private val viewViaRender: HtmlFormat.Appendable = sut.render(messages)
+  private val viewViaF: HtmlFormat.Appendable      = sut.f()(messages)
 
-    "have id search-again-button" in {
-      button.attr("id") mustBe "search-again-button"
-    }
+  "SearchAgainButton" when {
+    def test(method: String, view: HtmlFormat.Appendable): Unit =
+      s"$method" must {
+        val doc: Document = asDocument(view)
+        "have the link text" in {
+          assertElementHasText(doc, "#search-again-button", "Search again")
+        }
+
+        "have the link" in {
+          doc.getElementById("search-again-button").attr("href") mustBe "/check-immigration-status"
+        }
+      }
+
+    val input: Seq[(String, HtmlFormat.Appendable)] = Seq(
+      (".apply", viewViaApply),
+      (".render", viewViaRender),
+      (".f", viewViaF)
+    )
+
+    input.foreach(args => (test _).tupled(args))
   }
 }
