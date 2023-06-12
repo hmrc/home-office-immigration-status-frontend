@@ -45,7 +45,8 @@ trait ISpec extends BaseISpec with MockSessionCookie {
     wsClient
       .url(s"$baseUrl$path")
       .withHttpHeaders(
-        "X-Session-ID" -> sessionId
+        "X-Session-ID" -> sessionId,
+        "Csrf-Token"   -> "nocheck"
       )
 
   def requestWithSession(path: String, sessionId: String): WSRequest =

@@ -94,6 +94,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
     ("GRADUATE", "Graduate"),
     ("SPORTSPERSON", "International Sportsperson"),
     ("SETTLEMENT", "British National Overseas or Settlement Protection"),
+    ("SETTLEMENT_LOTR", "British National Overseas with Settlement (leave outside the rules)"),
     ("TEMP_WORKER", "Temporary Worker"),
     ("EUS_EUN_JFM", "EU Settlement Scheme (joiner family member)"),
     ("EUS_FMFW", "EU Settlement Scheme (frontier worker family member)"),
