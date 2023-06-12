@@ -1,30 +1,38 @@
 import uk.gov.hmrc.DefaultBuildSettings.*
 
-addCommandAlias("scalafmtAll", "all scalafmtSbt scalafmt Test/scalafmt IntegrationTest/scalafmt")
-addCommandAlias("scalastyleAll", "all scalastyle Test/scalastyle IntegrationTest/scalastyle")
+val appName = "home-office-immigration-status-frontend"
 
-lazy val root = (project in file("."))
+lazy val microservice = Project(appName, file("."))
+  .enablePlugins(PlayScala, SbtDistributablesPlugin)
+  .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .settings(
-    name := "home-office-immigration-status-frontend",
-    organization := "uk.gov.hmrc",
-    scalaVersion := "2.13.10",
+    majorVersion := 0,
+    scalaVersion := "2.13.11",
+    PlayKeys.playDefaultPort := 10210
+  )
+  .settings(
     // To resolve a bug with version 2.x.x of the scoverage plugin - https://github.com/sbt/sbt/issues/6997
-    libraryDependencySchemes ++= Seq("org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always),
-    PlayKeys.playDefaultPort := 10210,
+    libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,
+    // To resolve dependency clash between flexmark v0.64.4+ and play-language to run accessibility tests, remove when versions align
+    dependencyOverrides += "com.ibm.icu" % "icu4j" % "69.1",
+    libraryDependencies ++= AppDependencies()
+  )
+  .settings(
     TwirlKeys.templateImports ++= Seq(
       "play.twirl.api.HtmlFormat",
       "uk.gov.hmrc.govukfrontend.views.html.components._",
       "uk.gov.hmrc.hmrcfrontend.views.html.components._",
       "uk.gov.hmrc.hmrcfrontend.views.html.helpers._"
-    ),
-    libraryDependencies ++= AppDependencies(),
-    coverageExcludedPackages := "<empty>;.*BuildInfo;.*Routes;.*RoutesPrefix;.*Filters?;MicroserviceAuditConnector;" +
-      "Module;GraphiteStartUp;Reverse.*",
-    coverageMinimumStmtTotal := 95,
+    )
+  )
+  .settings(
+    coverageExcludedPackages := "<empty>;.*Routes.*",
+    coverageMinimumStmtTotal := 100,
     coverageFailOnMinimum := true,
-    coverageHighlighting := true,
+    coverageHighlighting := true
+  )
+  .settings(
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
-    majorVersion := 0,
     Concat.groups := Seq(
       "javascripts/immigrationstatus-app.js" ->
         group(
@@ -40,11 +48,13 @@ lazy val root = (project in file("."))
   )
   .configs(IntegrationTest)
   .settings(integrationTestSettings())
-  .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
-  .enablePlugins(PlayScala, SbtDistributablesPlugin)
+  .settings(
+    scalacOptions ++= Seq(
+      "-Wconf:cat=unused-imports&src=views/.*:s",
+      "-Wconf:src=routes/.*:s",
+      "-feature"
+    )
+  )
 
-scalacOptions ++= Seq(
-  "-Wconf:cat=unused-imports&src=html/.*:s",
-  "-Wconf:src=routes/.*:s",
-  "-feature"
-)
+addCommandAlias("scalafmtAll", "all scalafmtSbt scalafmt Test/scalafmt IntegrationTest/scalafmt")
+addCommandAlias("scalastyleAll", "all scalastyle Test/scalastyle IntegrationTest/scalastyle")

@@ -19,41 +19,32 @@ package views.components
 import org.jsoup.nodes.Document
 import play.twirl.api.HtmlFormat
 import views.ViewSpec
-import views.html.components.AlternateSearchLink
+import views.html.components.LookupDescription
 
-class AlternateSearchLinkSpec extends ViewSpec {
+class LookupDescriptionSpec extends ViewSpec {
 
-  private val message: String = "some.message.key"
-  private val url: String     = "/some/url"
-  private val id: String      = "link-id"
+  private val message: String  = "some.message.key"
+  private val linkText: String = "link text"
+  private val url: String      = "/some/url"
+  private val id: String       = "link-id"
 
-  private val sut: AlternateSearchLink = inject[AlternateSearchLink]
+  private val sut: LookupDescription = inject[LookupDescription]
 
-  private val viewViaApply: HtmlFormat.Appendable  = sut.apply(message, url, id)(messages)
-  private val viewViaRender: HtmlFormat.Appendable = sut.render(message, url, id, messages)
-  private val viewViaF: HtmlFormat.Appendable      = sut.f(message, url, id)(messages)
+  private val viewViaApply: HtmlFormat.Appendable  = sut.apply(message, linkText, url, id)(messages)
+  private val viewViaRender: HtmlFormat.Appendable = sut.render(message, linkText, url, id, messages)
+  private val viewViaF: HtmlFormat.Appendable      = sut.f(message, linkText, url, id)(messages)
 
-  "AlternateSearchLink" when {
+  "LookupDescription" when {
     def test(method: String, view: HtmlFormat.Appendable): Unit =
       s"$method" must {
         val doc: Document = asDocument(view)
-        "have the paragraph content" in {
-          assertElementHasText(
-            doc,
-            "#alternate-search",
-            "You can change the customer’s details you have entered or some.message.key."
-          )
+        "have the search description paragraph content" in {
+          assertElementHasText(doc, "#search-description", "some.message.key link text.")
         }
 
         "have the link" in {
-          assertElementHasText(doc, "#link-id", "some.message.key")
+          assertElementHasText(doc, "#link-id", "link text")
           doc.getElementById("link-id").attr("href") mustBe "/some/url"
-        }
-
-        "have the section break" in {
-          assertRenderedByClass(doc, "govuk-section-break")
-          assertRenderedByClass(doc, "govuk-section-break--xl")
-          assertRenderedByClass(doc, "govuk-section-break--visible")
         }
       }
 

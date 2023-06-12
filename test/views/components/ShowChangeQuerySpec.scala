@@ -16,80 +16,121 @@
 
 package views.components
 
-import controllers.routes
-import models.{MrzSearchFormModel, NinoSearchFormModel}
-import org.jsoup.nodes.Document
-import uk.gov.hmrc.domain.Nino
-import utils.NinoGenerator
-import views.html.components.ShowChangeQuery
-import views.{DateFormat, ViewSpec}
-
 import java.time.LocalDate
+
+import controllers.routes
+import models._
+import org.jsoup.nodes.Document
+import play.twirl.api.HtmlFormat
+import utils.NinoGenerator.generateNino
+import views.html.components.ShowChangeQuery
+import views._
 
 class ShowChangeQuerySpec extends ViewSpec {
 
-  val sut: ShowChangeQuery = inject[ShowChangeQuery]
+  private val sut: ShowChangeQuery = inject[ShowChangeQuery]
 
-  val nino: Nino                 = NinoGenerator.generateNino
-  val query: NinoSearchFormModel = NinoSearchFormModel(nino, "Pan", "", LocalDate.now())
+  private val dateOfBirth: LocalDate                   = LocalDate.now().minusYears(1)
+  private val ninoSearchFormModel: NinoSearchFormModel = NinoSearchFormModel(generateNino, "Pan", "", LocalDate.now())
+  private val mrzSearchFormModel: MrzSearchFormModel =
+    MrzSearchFormModel("documentType", "documentNumber", dateOfBirth, "nationality")
 
-  val dateOfBirth: LocalDate       = LocalDate.now().minusYears(1)
-  val mrzQuery: MrzSearchFormModel = MrzSearchFormModel("documentType", "documentNumber", dateOfBirth, "nationality")
+  private def viewViaApply(query: SearchFormModel): HtmlFormat.Appendable  = sut.apply(query)(messages)
+  private def viewViaRender(query: SearchFormModel): HtmlFormat.Appendable = sut.render(query, messages)
+  private def viewViaF(query: SearchFormModel): HtmlFormat.Appendable      = sut.f(query)(messages)
 
-  val doc: Document    = asDocument(sut(query)(messages))
-  val mrzDoc: Document = asDocument(sut(mrzQuery)(messages))
+  private val ninoInput: Seq[(String, HtmlFormat.Appendable)] = Seq(
+    (".apply", viewViaApply(ninoSearchFormModel)),
+    (".render", viewViaRender(ninoSearchFormModel)),
+    (".f", viewViaF(ninoSearchFormModel))
+  )
 
-  "showChangeQuery" must {
-    "nino - have all of the things in the list in the correct order" in {
-      List(
-        (query.nino.nino, "generic.nino", "nino", "nino", "generic.nino"),
-        (query.givenName, "generic.givenName", "givenName", "givenName", "generic.givenName.lowercase"),
-        (query.familyName, "generic.familyName", "familyName", "familyName", "generic.familyName.lowercase"),
-        (
-          DateFormat.format(messages.lang.locale)(query.dateOfBirth),
-          "generic.dob",
-          "dob",
-          "dateOfBirth.day",
-          "generic.dob.lowercase"
-        )
-      ).zipWithIndex.foreach { case ((data, msgKey, id, fieldId, actionText), index) =>
-        val row = doc.select(s"#inputted-data > .govuk-summary-list__row:nth-child(${index + 1})")
-        assertOneThirdRowWithAction(
-          row,
-          messages(msgKey),
-          data,
-          id,
-          s"${messages("generic.change")} ${messages(actionText)}",
-          routes.SearchByNinoController.onPageLoad().url + "#" + fieldId,
-          "half"
-        )
+  private val mrzInput: Seq[(String, HtmlFormat.Appendable)] = Seq(
+    (".apply", viewViaApply(mrzSearchFormModel)),
+    (".render", viewViaRender(mrzSearchFormModel)),
+    (".f", viewViaF(mrzSearchFormModel))
+  )
+
+  private def ninoTest(method: String, ninoSearchView: HtmlFormat.Appendable): Unit =
+    s"$method for nino" must {
+      val ninoDoc: Document = asDocument(ninoSearchView)
+      "have all of the content in the list in the correct order" in {
+        List(
+          (ninoSearchFormModel.nino.nino, "generic.nino", "nino", "nino", "generic.nino"),
+          (
+            ninoSearchFormModel.givenName,
+            "generic.givenName",
+            "givenName",
+            "givenName",
+            "generic.givenName.lowercase"
+          ),
+          (
+            ninoSearchFormModel.familyName,
+            "generic.familyName",
+            "familyName",
+            "familyName",
+            "generic.familyName.lowercase"
+          ),
+          (
+            DateFormat.format(messages.lang.locale)(ninoSearchFormModel.dateOfBirth),
+            "generic.dob",
+            "dob",
+            "dateOfBirth.day",
+            "generic.dob.lowercase"
+          )
+        ).zipWithIndex.foreach { case ((data, msgKey, id, fieldId, actionText), index) =>
+          val row = ninoDoc.select(s"#inputted-data > .govuk-summary-list__row:nth-child(${index + 1})")
+          assertOneThirdRowWithAction(
+            row,
+            messages(msgKey),
+            data,
+            id,
+            s"${messages("generic.change")} ${messages(actionText)}",
+            routes.SearchByNinoController.onPageLoad().url + "#" + fieldId,
+            "half"
+          )
+        }
       }
     }
 
-    "mrz - have all of the things in the list in the correct order" in {
-      List(
-        (mrzQuery.documentType, "lookup.identity.label", "documentType", "documentType", "mrz.idtype"),
-        (mrzQuery.documentNumber, "lookup.mrz.label", "documentNumber", "documentNumber", "mrz.idnumber"),
-        (mrzQuery.nationality, "lookup.nationality.label", "nationality", "nationality", "mrz.nationality"),
-        (
-          DateFormat.format(messages.lang.locale)(mrzQuery.dateOfBirth),
-          "generic.dob",
-          "dob",
-          "dateOfBirth.day",
-          "generic.dob.lowercase"
-        )
-      ).zipWithIndex.foreach { case ((data, msgKey, id, fieldId, actionText), index) =>
-        val row = mrzDoc.select(s"#inputted-data > .govuk-summary-list__row:nth-child(${index + 1})")
-        assertOneThirdRowWithAction(
-          row,
-          messages(msgKey),
-          data,
-          id,
-          s"${messages("generic.change")} ${messages(actionText)}",
-          routes.SearchByMrzController.onPageLoad().url + "#" + fieldId,
-          "half"
-        )
+  private def mrzTest(method: String, mrzSearchView: HtmlFormat.Appendable): Unit =
+    s"$method for mrz" must {
+      val mrzDoc: Document = asDocument(mrzSearchView)
+      "have all of the content in the list in the correct order" in {
+        List(
+          (mrzSearchFormModel.documentType, "lookup.identity.label", "documentType", "documentType", "mrz.idtype"),
+          (mrzSearchFormModel.documentNumber, "lookup.mrz.label", "documentNumber", "documentNumber", "mrz.idnumber"),
+          (
+            mrzSearchFormModel.nationality,
+            "lookup.nationality.label",
+            "nationality",
+            "nationality",
+            "mrz.nationality"
+          ),
+          (
+            DateFormat.format(messages.lang.locale)(mrzSearchFormModel.dateOfBirth),
+            "generic.dob",
+            "dob",
+            "dateOfBirth.day",
+            "generic.dob.lowercase"
+          )
+        ).zipWithIndex.foreach { case ((data, msgKey, id, fieldId, actionText), index) =>
+          val row = mrzDoc.select(s"#inputted-data > .govuk-summary-list__row:nth-child(${index + 1})")
+          assertOneThirdRowWithAction(
+            row,
+            messages(msgKey),
+            data,
+            id,
+            s"${messages("generic.change")} ${messages(actionText)}",
+            routes.SearchByMrzController.onPageLoad().url + "#" + fieldId,
+            "half"
+          )
+        }
       }
     }
+
+  "ShowChangeQuery" when {
+    ninoInput.foreach(args => (ninoTest _).tupled(args))
+    mrzInput.foreach(args => (mrzTest _).tupled(args))
   }
 }

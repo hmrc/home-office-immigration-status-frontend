@@ -14,29 +14,38 @@
  * limitations under the License.
  */
 
-package views
+package views.components
 
 import org.jsoup.nodes.Document
-import play.twirl.api.{Html, HtmlFormat}
-import views.html.govuk_wrapper
+import play.api.data.FormError
+import play.twirl.api.HtmlFormat
+import views.html.components.errorSummary
+import views.ViewSpec
 
-class GovukWrapperViewSpec extends ViewSpec {
+class ErrorSummarySpec extends ViewSpec {
 
-  private lazy val sut: govuk_wrapper = inject[govuk_wrapper]
+  private val sut: errorSummary = inject[errorSummary]
 
-  private val pageTitle: String = "Sorry, there is a problem with the service"
+  private val errors: Seq[FormError] = Seq(FormError("nino", List("error.nino.required")))
 
-  private val viewViaApply: HtmlFormat.Appendable = sut.apply(pageTitle)(Html(""))(request, messages)
-  private val viewViaRender: HtmlFormat.Appendable =
-    sut.render(pageTitle, None, Seq.empty, None, Html(""), request, messages)
-  private val viewViaF: HtmlFormat.Appendable = sut.f(pageTitle, None, Seq.empty, None)(Html(""))(request, messages)
+  private val viewViaApply: HtmlFormat.Appendable  = sut.apply(errors)(messages)
+  private val viewViaRender: HtmlFormat.Appendable = sut.render(errors, messages)
+  private val viewViaF: HtmlFormat.Appendable      = sut.f(errors)(messages)
 
-  "GovukWrapperView" when {
+  "ErrorSummary" when {
     def test(method: String, view: HtmlFormat.Appendable): Unit =
       s"$method" must {
         val doc: Document = asDocument(view)
-        "have the title" in {
-          assertElementHasText(doc, "title", s"$pageTitle - Check immigration status - GOV.UK")
+        "have the heading" in {
+          assertElementHasText(doc, "h2", "There is a problem")
+        }
+
+        "have the error message" in {
+          assertElementHasText(doc, "#nino-error-summary", "Enter a National Insurance number in the correct format")
+        }
+
+        "have the link" in {
+          doc.getElementById("nino-error-summary").attr("href") mustBe "#nino"
         }
       }
 

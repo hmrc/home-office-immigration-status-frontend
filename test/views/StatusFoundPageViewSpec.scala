@@ -16,233 +16,178 @@
 
 package views
 
-import assets.constants.ImmigrationStatusConstant._
-import models.{ImmigrationStatus, NinoSearchFormModel, StatusCheckResult}
-import org.jsoup.nodes.{Document, Element}
-import play.twirl.api.HtmlFormat
-import utils.NinoGenerator
-import views.html.StatusFoundPage
-
 import java.time.LocalDate
+
+import models._
+import org.jsoup.nodes._
+import play.twirl.api.HtmlFormat
+import utils.NinoGenerator.generateNino
+import views.html.StatusFoundPage
 
 class StatusFoundPageViewSpec extends ViewSpec {
 
-  val sut: StatusFoundPage = inject[StatusFoundPage]
+  private val sut: StatusFoundPage = inject[StatusFoundPage]
 
-  def buildContext(statuses: List[ImmigrationStatus] = List(validStatus)): StatusFoundPageContext =
-    StatusFoundPageContext(
-      NinoSearchFormModel(NinoGenerator.generateNino, "Pan", "", LocalDate.now()),
-      StatusCheckResult("Pan", LocalDate.now(), "D", statuses)
+  private def statusList(
+    fillNumber: Int = 1,
+    productType: String = "EUS",
+    noRecourseToPublicFunds: Boolean = false
+  ): List[ImmigrationStatus] =
+    List.fill(fillNumber)(
+      ImmigrationStatus(
+        statusStartDate = LocalDate.parse("2021-01-01"),
+        statusEndDate = Some(LocalDate.now().plusDays(1)),
+        productType = productType,
+        immigrationStatus = "ILR",
+        noRecourseToPublicFunds = noRecourseToPublicFunds
+      )
     )
 
-  "StatusFoundPageView" must {
-    val context       = buildContext()
-    val doc: Document = asDocument(sut(context)(request, messages))
-
-    "have a status found title" in {
-      val e: Element = doc.getElementById("status-found-title")
-      e.text() mustBe "Pan has settled status"
-    }
-
-    "have recourse to public funds field" when {
-      "noRecourseToPublicFunds is true, and no warning is shown" in {
-        val html: HtmlFormat.Appendable =
-          sut(buildContext(List(validStatus)))(request, messages)
-
-        val doc = asDocument(html)
-
-        assertNotRenderedById(doc, "#recourse-text")
-        assertNotRenderedById(doc, "recourse-warning")
-      }
-
-      "noRecourseToPublicFunds is false, and the warning is shown" in {
-        val html: HtmlFormat.Appendable =
-          sut(buildContext(List(validStatusNoResourceTrue)))(request, messages)
-
-        val doc = asDocument(html)
-
-        assertElementHasText(doc, "#recourse-text", messages("status-found.no"))
-        assertElementHasText(doc, "#recourse-warning", "! Warning " + messages("status-found.warning"))
-      }
-    }
-
-    "have all of the things in the list in the correct order" in {
-      List(
-        "immigrationRoute",
-        "startDate",
-        "expiryDate",
-        "nino",
-        "nationality",
-        "dob"
-      ).zipWithIndex.foreach { case (id, index) =>
-        val row: Element = doc.select(s".govuk-summary-list__row").get(index)
-        row.select("dd").attr("id") mustBe id
-      }
-    }
-
-    "not have the history section" when {
-      "there is not previous status" in {
-        assertNotRenderedById(doc, "previousStatuses")
-      }
-    }
-
-    "have the history section" when {
-      val context       = buildContext(statuses = List(validStatus, validStatus))
-      val doc: Document = asDocument(sut(context)(request, messages))
-      "there is previous statuses" in {
-        assertRenderedById(doc, "previousStatuses")
-      }
-    }
-
-    "have the search again button" in {
-      val button = doc.select("#content > a")
-      button.text() mustBe "Search again"
-      button.attr("href") mustBe "/check-immigration-status"
-      button.attr("id") mustBe "search-again-button"
-    }
-
-    "Immigration route" when {
-      "EUS displays" in {
-        val html: HtmlFormat.Appendable =
-          sut(buildContext(List(validStatusNoResourceTrue)))(request, messages)
-
-        val doc = asDocument(html)
-        assertElementHasText(doc, "#immigrationRoute", "EU Settlement Scheme")
-      }
-
-      "STUDY displays" in {
-        val html: HtmlFormat.Appendable =
-          sut(buildContext(List(validStatusCustomProductType("STUDY"))))(request, messages)
-
-        val doc = asDocument(html)
-        assertElementHasText(doc, "#immigrationRoute", "Student")
-      }
-
-      "DEPENDANT displays" in {
-        val html: HtmlFormat.Appendable =
-          sut(buildContext(List(validStatusCustomProductType("DEPENDANT"))))(request, messages)
-
-        val doc = asDocument(html)
-        assertElementHasText(doc, "#immigrationRoute", "Dependants of a person with immigration permission")
-      }
-
-      "WORK displays" in {
-        val html: HtmlFormat.Appendable =
-          sut(buildContext(List(validStatusCustomProductType("WORK"))))(request, messages)
-
-        val doc = asDocument(html)
-        assertElementHasText(doc, "#immigrationRoute", "Worker")
-      }
-
-      "FRONTIER_WORKER displays" in {
-        val html: HtmlFormat.Appendable =
-          sut(buildContext(List(validStatusCustomProductType("FRONTIER_WORKER"))))(request, messages)
-
-        val doc = asDocument(html)
-        assertElementHasText(doc, "#immigrationRoute", "Frontier worker")
-      }
-
-      "BNO displays" in {
-        val html: HtmlFormat.Appendable =
-          sut(buildContext(List(validStatusCustomProductType("BNO"))))(request, messages)
-
-        val doc = asDocument(html)
-        assertElementHasText(doc, "#immigrationRoute", "British National Overseas")
-      }
-
-      "BNO_LOTR displays" in {
-        val html: HtmlFormat.Appendable =
-          sut(buildContext(List(validStatusCustomProductType("BNO_LOTR"))))(request, messages)
-
-        val doc = asDocument(html)
-        assertElementHasText(doc, "#immigrationRoute", "British National Overseas (leave outside the rules)")
-      }
-
-      "GRADUATE displays" in {
-        val html: HtmlFormat.Appendable =
-          sut(buildContext(List(validStatusCustomProductType("GRADUATE"))))(request, messages)
-
-        val doc = asDocument(html)
-        assertElementHasText(doc, "#immigrationRoute", "Graduate")
-      }
-
-      "SPORTSPERSON displays" in {
-        val html: HtmlFormat.Appendable =
-          sut(buildContext(List(validStatusCustomProductType("SPORTSPERSON"))))(request, messages)
-
-        val doc = asDocument(html)
-        assertElementHasText(doc, "#immigrationRoute", "International Sportsperson")
-      }
-
-      "SETTLEMENT displays" in {
-        val html: HtmlFormat.Appendable =
-          sut(buildContext(List(validStatusCustomProductType("SETTLEMENT"))))(request, messages)
-
-        val doc = asDocument(html)
-        assertElementHasText(doc, "#immigrationRoute", "British National Overseas or Settlement Protection")
-      }
-
-      "TEMP_WORKER displays" in {
-        val html: HtmlFormat.Appendable =
-          sut(buildContext(List(validStatusCustomProductType("TEMP_WORKER"))))(request, messages)
-
-        val doc = asDocument(html)
-        assertElementHasText(doc, "#immigrationRoute", "Temporary Worker")
-      }
-
-      "EUS_EUN_JFM displays" in {
-        val html: HtmlFormat.Appendable =
-          sut(buildContext(List(validStatusCustomProductType("EUS_EUN_JFM"))))(request, messages)
-
-        val doc = asDocument(html)
-        assertElementHasText(doc, "#immigrationRoute", "EU Settlement Scheme (joiner family member)")
-      }
-
-      "EUS_FMFW displays" in {
-        val html: HtmlFormat.Appendable =
-          sut(buildContext(List(validStatusCustomProductType("EUS_FMFW"))))(request, messages)
-
-        val doc = asDocument(html)
-        assertElementHasText(doc, "#immigrationRoute", "EU Settlement Scheme (frontier worker family member)")
-      }
-
-      "Error with ProductType displays" in {
-        val html: HtmlFormat.Appendable =
-          sut(buildContext(List(validStatusCustomProductType("error"))))(request, messages)
-
-        val doc = asDocument(html)
-        assertElementHasText(doc, "#immigrationRoute", "error")
-      }
-    }
-  }
-
-  "have zambrano warning message" when {
-    "context.isZambrano is true" in {
-      val context = StatusFoundPageContext(
-        NinoSearchFormModel(NinoGenerator.generateNino, "Pan", "", LocalDate.now()),
-        StatusCheckResult("Pan", LocalDate.now(), "JPN", List(validStatus))
+  private def buildContext(
+    statuses: List[ImmigrationStatus] = statusList(),
+    nationality: String = "FRA"
+  ): StatusFoundPageContext =
+    StatusFoundPageContext(
+      query = NinoSearchFormModel(
+        nino = generateNino,
+        givenName = "Pan",
+        familyName = "Walker",
+        dateOfBirth = LocalDate.parse("1980-12-10")
+      ),
+      result = StatusCheckResult(
+        fullName = "Pan Walker",
+        dateOfBirth = LocalDate.parse("1980-12-10"),
+        nationality = nationality,
+        statuses = statuses
       )
-      val html: HtmlFormat.Appendable =
-        sut(context)(request, messages)
+    )
 
-      val doc = asDocument(html)
+  private def viewViaApply(context: StatusFoundPageContext = buildContext()): HtmlFormat.Appendable =
+    sut.apply(context)(request, messages)
+  private def viewViaRender(context: StatusFoundPageContext = buildContext()): HtmlFormat.Appendable =
+    sut.render(context, request, messages)
+  private def viewViaF(context: StatusFoundPageContext = buildContext()): HtmlFormat.Appendable =
+    sut.f(context)(request, messages)
 
-      assertElementHasText(doc, "#zambrano-warning", "! Warning " + messages("status-found.zambrano"))
+  private val idList: List[String] = List("immigrationRoute", "startDate", "expiryDate", "nino", "nationality", "dob")
+
+  private val standardContentInput: Seq[(String, HtmlFormat.Appendable, HtmlFormat.Appendable)] = Seq(
+    (".apply", viewViaApply(), viewViaApply(buildContext(statusList(2)))),
+    (".render", viewViaRender(), viewViaRender(buildContext(statusList(2)))),
+    (".f", viewViaF(), viewViaF(buildContext(statusList(2))))
+  )
+
+  private val warningContentInput: Seq[(String, HtmlFormat.Appendable, HtmlFormat.Appendable)] = Seq(
+    (".apply", viewViaApply(buildContext(statusList(noRecourseToPublicFunds = true), "JPN")), viewViaApply()),
+    (".render", viewViaRender(buildContext(statusList(noRecourseToPublicFunds = true), "JPN")), viewViaRender()),
+    (".f", viewViaF(buildContext(statusList(noRecourseToPublicFunds = true), "JPN")), viewViaF())
+  )
+
+  private val immigrationRouteInput: Seq[(String, String)] = Seq(
+    ("EUS", "EU Settlement Scheme"),
+    ("STUDY", "Student"),
+    ("DEPENDANT", "Dependants of a person with immigration permission"),
+    ("WORK", "Worker"),
+    ("FRONTIER_WORKER", "Frontier worker"),
+    ("BNO", "British National Overseas"),
+    ("BNO_LOTR", "British National Overseas (leave outside the rules)"),
+    ("GRADUATE", "Graduate"),
+    ("SPORTSPERSON", "International Sportsperson"),
+    ("SETTLEMENT", "British National Overseas or Settlement Protection"),
+    ("TEMP_WORKER", "Temporary Worker"),
+    ("EUS_EUN_JFM", "EU Settlement Scheme (joiner family member)"),
+    ("EUS_FMFW", "EU Settlement Scheme (frontier worker family member)"),
+    ("error", "error")
+  )
+
+  private def standardContentTest(
+    method: String,
+    viewWithoutNoRecourseToPublicFunds: HtmlFormat.Appendable,
+    viewWithPreviousStatuses: HtmlFormat.Appendable
+  ): Unit =
+    s"$method" must {
+      val docWithoutNoRecourseToPublicFunds: Document = asDocument(viewWithoutNoRecourseToPublicFunds)
+      val docWithPreviousStatuses: Document           = asDocument(viewWithPreviousStatuses)
+      "have the title and heading" in {
+        assertElementHasText(
+          docWithoutNoRecourseToPublicFunds,
+          "title",
+          "Applicant has settled status - Check immigration status - GOV.UK"
+        )
+        assertElementHasText(docWithoutNoRecourseToPublicFunds, "#status-found-title", "Pan Walker has settled status")
+      }
+
+      "have all of the ids in the list in the correct order" in {
+        idList.zipWithIndex.foreach { case (id, index) =>
+          val row: Element = docWithoutNoRecourseToPublicFunds.select(".govuk-summary-list__row").get(index)
+          row.select("dd").attr("id") mustBe id
+        }
+      }
+
+      "not have the history section" when {
+        "there is no previous status" in {
+          assertNotRenderedById(docWithoutNoRecourseToPublicFunds, "previousStatuses")
+        }
+      }
+
+      "have the history section" when {
+        "there are previous statuses" in {
+          assertRenderedById(docWithPreviousStatuses, "previousStatuses")
+        }
+      }
+
+      "have the search again button" in {
+        assertElementHasText(docWithoutNoRecourseToPublicFunds, "#search-again-button", "Search again")
+        docWithoutNoRecourseToPublicFunds
+          .getElementById("search-again-button")
+          .attr("href") mustBe "/check-immigration-status"
+      }
     }
-  }
-  "have no zambrano warning message" when {
-    "context.isZambrano is false" in {
-      val context = StatusFoundPageContext(
-        NinoSearchFormModel(NinoGenerator.generateNino, "Pan", "", LocalDate.now()),
-        StatusCheckResult("Pan", LocalDate.now(), "FRA", List(validStatus))
-      )
 
-      val html: HtmlFormat.Appendable =
-        sut(context)(request, messages)
+  private def warningContentTest(
+    method: String,
+    viewWithWarnings: HtmlFormat.Appendable,
+    viewWithoutWarnings: HtmlFormat.Appendable
+  ): Unit =
+    s"$method" must {
+      val docWithWarnings: Document    = asDocument(viewWithWarnings)
+      val docWithoutWarnings: Document = asDocument(viewWithoutWarnings)
+      "have recourse warning message if noRecourseToPublicFunds is true" in {
+        val message: String = "! Warning Child Benefit users only. This customer has no recourse to public funds, " +
+          "but there may be exceptions. Eligibility needs to be checked on Home Office systems (such as ATLAS)."
 
-      val doc = asDocument(html)
+        assertElementHasText(docWithWarnings, "#recourse-text", "No")
+        assertElementHasText(docWithWarnings, "#recourse-warning", message)
+      }
 
-      assertNotRenderedById(doc, "zambrano-warning")
+      "not have recourse warning message if noRecourseToPublicFunds is false" in {
+        assertNotRenderedById(docWithoutWarnings, "#recourse-text")
+        assertNotRenderedById(docWithoutWarnings, "recourse-warning")
+      }
+
+      "have zambrano warning message if context.isZambrano is true" in {
+        val message: String = "! Warning This is a rest of the world national with an EU Settlement Scheme status. " +
+          "Eligibility needs to be checked on Home Office systems (such as ATLAS)."
+
+        assertElementHasText(docWithWarnings, "#zambrano-warning", message)
+      }
+
+      "not have zambrano warning message if context.isZambrano is false" in {
+        assertNotRenderedById(docWithoutWarnings, "zambrano-warning")
+      }
     }
+
+  private def immigrationRouteTest(productType: String, expectedValue: String): Unit =
+    ".apply" must {
+      val doc: Document = asDocument(viewViaApply(buildContext(statusList(productType = productType), "D")))
+      s"have the content $expectedValue for the immigration route immigration.${productType.toLowerCase}" in {
+        assertElementHasText(doc, "#immigrationRoute", expectedValue)
+      }
+    }
+
+  "StatusFoundPageView" when {
+    standardContentInput.foreach(args => (standardContentTest _).tupled(args))
+    warningContentInput.foreach(args => (warningContentTest _).tupled(args))
+    immigrationRouteInput.foreach(args => (immigrationRouteTest _).tupled(args))
   }
 }

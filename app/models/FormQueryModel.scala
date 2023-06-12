@@ -31,7 +31,7 @@ final case class FormQueryModel(
 
 object FormQueryModel {
 
-  implicit lazy val format = Format(reads, writes)
+  implicit lazy val format: Format[FormQueryModel] = Format(reads, writes)
 
   implicit lazy val reads: Reads[FormQueryModel] =
     (

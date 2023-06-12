@@ -16,97 +16,86 @@
 
 package views
 
-import config.AppConfig
+import java.time.LocalDate
+
 import forms.SearchByNinoForm
 import models.NinoSearchFormModel
-import org.jsoup.nodes.{Document, Element}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, reset, verify, when}
-import play.api.Application
+import org.jsoup.nodes.Document
 import play.api.data.Form
-import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.twirl.api.Html
-import repositories.SessionCacheRepository
+import play.twirl.api.HtmlFormat
+import utils.NinoGenerator.generateNino
 import views.html.SearchByNinoView
-import views.html.components.inputDate
-
-import java.util.UUID
 
 class SearchByNinoViewSpec extends ViewSpec {
 
-  val mockDobInput: inputDate  = mock(classOf[inputDate])
-  val mockAppConfig: AppConfig = mock(classOf[AppConfig])
+  private lazy val sut: SearchByNinoView = inject[SearchByNinoView]
 
-  override implicit lazy val app: Application = new GuiceApplicationBuilder()
-    .overrides(
-      bind[inputDate].toInstance(mockDobInput),
-      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository),
-      bind[AppConfig].toInstance(mockAppConfig)
+  private val ninoSearchFormModel: NinoSearchFormModel = NinoSearchFormModel(
+    nino = generateNino,
+    givenName = "Josh",
+    familyName = "Walker",
+    dateOfBirth = LocalDate.parse("1990-10-11")
+  )
+
+  private val form: Form[NinoSearchFormModel] = new SearchByNinoForm()().fill(ninoSearchFormModel)
+
+  private val viewViaApply: HtmlFormat.Appendable  = sut.apply(form)(request, messages)
+  private val viewViaRender: HtmlFormat.Appendable = sut.render(form, request, messages)
+  private val viewViaF: HtmlFormat.Appendable      = sut.f(form)(request, messages)
+
+  "SearchByNinoView" when {
+    def test(method: String, view: HtmlFormat.Appendable): Unit =
+      s"$method" must {
+        val doc: Document = asDocument(view)
+        "have the title and heading" in {
+          assertElementHasText(doc, "title", "Search by National Insurance number - Check immigration status - GOV.UK")
+          assertElementHasText(doc, "#nino-search-title", "Search by National Insurance number")
+        }
+
+        "have the search description paragraph content" in {
+          assertElementHasText(
+            doc,
+            "#search-description",
+            "Enter all the information to search for the customer by National Insurance number. Or you can search by passport or ID card."
+          )
+        }
+
+        "have the alternative search link" in {
+          assertElementHasText(doc, "#alt-search-by-mrz", "search by passport or ID card")
+          doc
+            .getElementById("alt-search-by-mrz")
+            .attr("href") mustBe "/check-immigration-status/search-by-passport?clearForm=true"
+        }
+
+        "have the nino input" in {
+          doc.getElementById("nino").attr("value") mustBe ninoSearchFormModel.nino.nino
+        }
+
+        "have the givenName input" in {
+          doc.getElementById("givenName").attr("value") mustBe "Josh"
+        }
+
+        "have the familyName input" in {
+          doc.getElementById("familyName").attr("value") mustBe "Walker"
+        }
+
+        "have the dob input" in {
+          doc.getElementById("dateOfBirth.day").attr("value") mustBe "11"
+          doc.getElementById("dateOfBirth.month").attr("value") mustBe "10"
+          doc.getElementById("dateOfBirth.year").attr("value") mustBe "1990"
+        }
+
+        "have the search button" in {
+          assertElementHasText(doc, "#search-button", "Search")
+        }
+      }
+
+    val input: Seq[(String, HtmlFormat.Appendable)] = Seq(
+      (".apply", viewViaApply),
+      (".render", viewViaRender),
+      (".f", viewViaF)
     )
-    .build()
 
-  val fakeDobInput: String = UUID.randomUUID().toString
-
-  lazy val sut: SearchByNinoView = inject[SearchByNinoView]
-
-  val form: Form[NinoSearchFormModel] = inject[SearchByNinoForm].apply()
-
-  def createDocument: Document = {
-    reset(mockDobInput)
-    when(mockDobInput.apply(any(), any(), any(), any(), any(), any(), any())(any()))
-      .thenReturn(Html(fakeDobInput))
-    reset(mockAppConfig)
-
-    asDocument(sut(form)(request, messages))
+    input.foreach(args => (test _).tupled(args))
   }
-
-  "With the document search enabled, the view" must {
-    lazy val doc = createDocument
-
-    "have the look up title" in {
-      val e: Element = doc.getElementsByTag("h1").first()
-      e.text() mustBe messages("lookup.nino.title")
-    }
-
-    "have the search description" in {
-      val e: Element = doc.getElementById("search-description")
-      e.text() mustBe s"${messages("lookup.nino.desc")}${messages("lookup.nino.alternate-search")}."
-    }
-
-    "have the alternative search link" in {
-      val e: Element = doc.getElementById("alt-search-by-mrz")
-      e.text() mustBe messages("lookup.nino.alternate-search")
-      e.attr("href") mustBe controllers.routes.SearchByMrzController.onPageLoad(true).url
-    }
-
-    "have nino" in {
-      assertRenderedById(doc, "nino")
-    }
-
-    "have givenName" in {
-      assertRenderedById(doc, "givenName")
-    }
-
-    "have familyName" in {
-      assertRenderedById(doc, "familyName")
-    }
-
-    "have the dob input" in {
-      doc.text() must include(fakeDobInput)
-      verify(mockDobInput)
-        .apply(
-          form,
-          id = "dateOfBirth",
-          legendClasses = "govuk-label",
-          legendContent = messages("lookup.dateOfBirth.label"),
-          hintMessage = Some(messages("lookup.dateOfBirth.hint"))
-        )(messages)
-    }
-
-    "have the search button" in {
-      assertRenderedById(doc, "search-button")
-    }
-  }
-
 }

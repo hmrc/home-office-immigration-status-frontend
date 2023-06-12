@@ -19,21 +19,17 @@ package views.components
 import org.jsoup.nodes.Document
 import play.twirl.api.HtmlFormat
 import views.ViewSpec
-import views.html.components.AlternateSearchLink
+import views.html.components.AlternateLinkText
 
-class AlternateSearchLinkSpec extends ViewSpec {
+class AlternateLinkTextSpec extends ViewSpec {
 
-  private val message: String = "some.message.key"
-  private val url: String     = "/some/url"
-  private val id: String      = "link-id"
+  private val sut: AlternateLinkText = inject[AlternateLinkText]
 
-  private val sut: AlternateSearchLink = inject[AlternateSearchLink]
+  private val viewViaApply: HtmlFormat.Appendable  = sut.apply(isNinoSearch = true)(messages)
+  private val viewViaRender: HtmlFormat.Appendable = sut.render(isNinoSearch = true, messages)
+  private val viewViaF: HtmlFormat.Appendable      = sut.f(true)(messages)
 
-  private val viewViaApply: HtmlFormat.Appendable  = sut.apply(message, url, id)(messages)
-  private val viewViaRender: HtmlFormat.Appendable = sut.render(message, url, id, messages)
-  private val viewViaF: HtmlFormat.Appendable      = sut.f(message, url, id)(messages)
-
-  "AlternateSearchLink" when {
+  "AlternateLinkText" when {
     def test(method: String, view: HtmlFormat.Appendable): Unit =
       s"$method" must {
         val doc: Document = asDocument(view)
@@ -41,13 +37,15 @@ class AlternateSearchLinkSpec extends ViewSpec {
           assertElementHasText(
             doc,
             "#alternate-search",
-            "You can change the customer’s details you have entered or some.message.key."
+            "You can change the customer’s details you have entered or search by passport or ID card."
           )
         }
 
         "have the link" in {
-          assertElementHasText(doc, "#link-id", "some.message.key")
-          doc.getElementById("link-id").attr("href") mustBe "/some/url"
+          assertElementHasText(doc, "#alt-search-by-mrz", "search by passport or ID card")
+          doc
+            .getElementById("alt-search-by-mrz")
+            .attr("href") mustBe "/check-immigration-status/search-by-passport?clearForm=true"
         }
 
         "have the section break" in {
