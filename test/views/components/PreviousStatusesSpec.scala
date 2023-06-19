@@ -115,6 +115,11 @@ class PreviousStatusesSpec extends ViewSpec {
     ("GRADUATE", "LTR", "Graduate - Limited leave to remain"),
     ("FRONTIER_WORKER", "PERMIT", "Frontier worker - Frontier worker permit"),
     ("SETTLEMENT", "ILR", "British National Overseas or Settlement Protection - Indefinite leave to remain"),
+    (
+      "SETTLEMENT_LOTR",
+      "ILR",
+      "British National Overseas with Settlement (leave outside the rules) - Indefinite leave to remain"
+    ),
     ("PROTECTION", "LTR", "Settlement Protection - Limited leave to remain"),
     ("PROTECTION_ROUTE", "LTR", "Settlement Protection - Limited leave to remain")
   )

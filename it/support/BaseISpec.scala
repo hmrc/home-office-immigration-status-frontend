@@ -68,12 +68,7 @@ trait BaseISpec
     new GuiceApplicationBuilder()
       .configure(
         "isShuttered"                                                     -> false,
-        "metrics.enabled"                                                 -> true,
-        "auditing.enabled"                                                -> true,
-        "auditing.consumer.baseUri.host"                                  -> wireMockHost,
-        "auditing.consumer.baseUri.port"                                  -> wireMockPort,
-        "play.filters.csrf.method.whiteList.0"                            -> "POST",
-        "play.filters.csrf.method.whiteList.1"                            -> "GET",
+        "play.filters.csrf.header.bypassHeaders.Csrf-Token"               -> "nocheck",
         "microservice.services.auth.host"                                 -> wireMockHost,
         "microservice.services.auth.port"                                 -> wireMockPort,
         "microservice.services.home-office-immigration-status-proxy.host" -> wireMockHost,
