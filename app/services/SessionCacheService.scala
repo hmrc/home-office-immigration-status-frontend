@@ -17,15 +17,14 @@
 package services
 
 import com.google.inject.{ImplementedBy, Inject, Singleton}
-import repositories.SessionCacheRepository
-import models.{FormQueryModel, SearchFormModel}
-import uk.gov.hmrc.http.HeaderCarrier
-import crypto.FormModelEncrypter
 import config.AppConfig
+import crypto.FormModelEncrypter
+import models.{FormQueryModel, SearchFormModel}
+import play.api.Logging
+import repositories.SessionCacheRepository
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
-import java.time.LocalDateTime
-import play.api.Logging
 
 @Singleton
 class SessionCacheServiceImpl @Inject() (
@@ -46,13 +45,10 @@ class SessionCacheServiceImpl @Inject() (
         )
     }
 
-  def set(formModel: SearchFormModel, now: LocalDateTime = LocalDateTime.now)(implicit
-    hc: HeaderCarrier,
-    ec: ExecutionContext
-  ): Future[Unit] =
+  def set(formModel: SearchFormModel)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] =
     withSessionId { sessionId =>
       val encryptedFormModel = encrypter.encryptSearchFormModel(formModel, sessionId, secretKey)
-      val formQueryModel     = FormQueryModel(sessionId, encryptedFormModel, now)
+      val formQueryModel     = FormQueryModel(sessionId, encryptedFormModel)
       sessionCacheRepository.set(formQueryModel)
     }
 
@@ -74,10 +70,7 @@ trait SessionCacheService {
 
   def get(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SearchFormModel]]
 
-  def set(formModel: SearchFormModel, now: LocalDateTime = LocalDateTime.now)(implicit
-    hc: HeaderCarrier,
-    ec: ExecutionContext
-  ): Future[Unit]
+  def set(formModel: SearchFormModel)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit]
 
   def delete(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit]
 

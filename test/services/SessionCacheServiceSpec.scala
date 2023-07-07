@@ -19,6 +19,7 @@ package services
 import config.AppConfig
 import crypto.{FormModelEncrypter, TestGCMCipher}
 import models.{EncryptedSearchFormModel, FormQueryModel, NinoSearchFormModel}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -33,7 +34,7 @@ import repositories.SessionCacheRepository
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import utils.NinoGenerator
 
-import java.time.{LocalDate, LocalDateTime}
+import java.time.{Instant, LocalDate}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
@@ -54,12 +55,13 @@ class SessionCacheServiceSpec
 
   val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
 
-  val now: LocalDateTime               = LocalDateTime.now
-  val mockRepo: SessionCacheRepository = mock(classOf[SessionCacheRepository])
-  private val cipher                   = new TestGCMCipher
-  private val encrypter                = new FormModelEncrypter(cipher)
-  lazy val appConfig: AppConfig        = inject[AppConfig]
-  val sut                              = new SessionCacheServiceImpl(mockRepo, encrypter, appConfig)
+  val now: Instant                                   = Instant.now()
+  val mockRepo: SessionCacheRepository               = mock(classOf[SessionCacheRepository])
+  val argumentCaptor: ArgumentCaptor[FormQueryModel] = ArgumentCaptor.forClass(classOf[FormQueryModel])
+  private val cipher                                 = new TestGCMCipher
+  private val encrypter                              = new FormModelEncrypter(cipher)
+  lazy val appConfig: AppConfig                      = inject[AppConfig]
+  val sut                                            = new SessionCacheServiceImpl(mockRepo, encrypter, appConfig)
 
   override def beforeEach(): Unit = {
     reset(mockRepo)
@@ -108,13 +110,16 @@ class SessionCacheServiceSpec
 
       when(mockRepo.set(any())(any())).thenReturn(Future.unit)
 
-      Await.result(sut.set(formModel, now)(hc, implicitly), 5 seconds)
-      verify(mockRepo).set(refEq(formQuery))(any())
+      Await.result(sut.set(formModel)(hc, implicitly), 5 seconds)
+      verify(mockRepo).set(argumentCaptor.capture())(any())
+
+      val form = argumentCaptor.getValue.copy(lastUpdated = now)
+      form mustBe formQuery
     }
 
     "return an error where the header carrier has no session id" in {
       val hc = HeaderCarrier(sessionId = None)
-      intercept[NoSessionIdException.type](Await.result(sut.set(formModel, now)(hc, implicitly), 5 seconds))
+      intercept[NoSessionIdException.type](Await.result(sut.set(formModel)(hc, implicitly), 5 seconds))
       verify(mockRepo, never).set(any())(any())
     }
   }

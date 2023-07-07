@@ -87,6 +87,14 @@ class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecti
     .suchThat(_.exists(c => !c.isLetter && !formProvider.allowedNameCharacters.contains(c)))
     .suchThat(_.trim.nonEmpty)
 
+  "validate" must {
+    "DocumentNumberMaxLength" must {
+      "be 30" in {
+        SearchByMRZForm.DocumentNumberMaxLength mustBe 30
+      }
+    }
+  }
+
   "form" must {
     "bind" when {
       "inputs are valid" in {
