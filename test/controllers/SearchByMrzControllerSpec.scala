@@ -111,7 +111,7 @@ class SearchByMrzControllerSpec extends ControllerSpec {
   "onSubmit" must {
     "redirect to result page" when {
       "form binds correct data" in {
-        when(mockSessionCacheService.set(any(), any())(any(), any())).thenReturn(Future.unit)
+        when(mockSessionCacheService.set(any())(any(), any())).thenReturn(Future.unit)
         val validDob = LocalDate.now().minusDays(1)
         val query    = MrzSearchFormModel("PASSPORT", "1234567890", validDob, "AFG")
 
@@ -127,7 +127,7 @@ class SearchByMrzControllerSpec extends ControllerSpec {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result).get mustBe routes.StatusResultController.onPageLoad.url
-        verify(mockSessionCacheService).set(refEq(query), any())(any(), any())
+        verify(mockSessionCacheService).set(refEq(query))(any(), any())
       }
     }
 
@@ -145,7 +145,7 @@ class SearchByMrzControllerSpec extends ControllerSpec {
           val updatedSession = await(result).session(request)
           updatedSession.get("query") must not be defined
         }
-        verify(mockSessionCacheService, never).set(any(), any())(any(), any())
+        verify(mockSessionCacheService, never).set(any())(any(), any())
       }
 
       "the form has errors" in {
@@ -167,7 +167,7 @@ class SearchByMrzControllerSpec extends ControllerSpec {
           val updatedSession = await(result).session(request)
           updatedSession.get("query") must not be defined
         }
-        verify(mockSessionCacheService, never).set(any(), any())(any(), any())
+        verify(mockSessionCacheService, never).set(any())(any(), any())
       }
 
       "the session cache returns a failure" in {

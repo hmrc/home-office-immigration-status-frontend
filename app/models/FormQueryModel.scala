@@ -16,17 +16,16 @@
 
 package models
 
-import play.api.libs.json.{Reads, Writes}
-import java.time.LocalDateTime
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
-
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
+
+import java.time.Instant
 
 final case class FormQueryModel(
   id: String,
   data: EncryptedSearchFormModel,
-  lastUpdated: LocalDateTime = LocalDateTime.now()
+  lastUpdated: Instant = Instant.now()
 )
 
 object FormQueryModel {
@@ -37,13 +36,13 @@ object FormQueryModel {
     (
       (__ \ "_id").read[String] and
         (__ \ "data").read[EncryptedSearchFormModel] and
-        (__ \ "lastUpdated").read(MongoJavatimeFormats.localDateTimeReads)
+        (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat)
     )(FormQueryModel.apply _)
 
   implicit lazy val writes: Writes[FormQueryModel] =
     (
       (__ \ "_id").write[String] and
         (__ \ "data").write[EncryptedSearchFormModel] and
-        (__ \ "lastUpdated").write(MongoJavatimeFormats.localDateTimeWrites)
+        (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat)
     )(unlift(FormQueryModel.unapply))
 }

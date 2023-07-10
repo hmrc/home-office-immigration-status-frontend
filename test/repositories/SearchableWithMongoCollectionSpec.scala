@@ -33,7 +33,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Injecting
 import utils.NinoGenerator
 
-import java.time.{LocalDate, LocalDateTime}
+import java.time.{Instant, LocalDate}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -68,10 +68,10 @@ class SearchableWithMongoCollectionSpec
     super.beforeEach()
   }
 
-  val now: LocalDateTime = LocalDateTime.now
-  private val cipher     = new TestGCMCipher
-  private val encrypter  = new FormModelEncrypter(cipher)
-  private val secretKey  = "VqmXp7yigDFxbCUdDdNZVIvbW6RgPNJsliv6swQNCL8="
+  private val now       = Instant.now()
+  private val cipher    = new TestGCMCipher
+  private val encrypter = new FormModelEncrypter(cipher)
+  private val secretKey = "VqmXp7yigDFxbCUdDdNZVIvbW6RgPNJsliv6swQNCL8="
   val formModel: NinoSearchFormModel = NinoSearchFormModel(
     nino = NinoGenerator.generateNino,
     givenName = "Jimmy",
