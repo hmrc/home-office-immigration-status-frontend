@@ -120,6 +120,8 @@ class PreviousStatusesSpec extends ViewSpec {
       "ILR",
       "British National Overseas with Settlement (leave outside the rules) - Indefinite leave to remain"
     ),
+    ("ARMED_FORCES", "ILR", "Armed Forces Settlement - Indefinite leave to remain"),
+    ("ARMED_FORCES", "LTR", "Armed Forces Settlement - Limited leave to remain"),
     ("PROTECTION", "LTR", "Settlement Protection - Limited leave to remain"),
     ("PROTECTION_ROUTE", "LTR", "Settlement Protection - Limited leave to remain")
   )

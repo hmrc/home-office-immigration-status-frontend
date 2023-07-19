@@ -98,6 +98,7 @@ class StatusFoundPageViewSpec extends ViewSpec {
     ("TEMP_WORKER", "Temporary Worker"),
     ("EUS_EUN_JFM", "EU Settlement Scheme (joiner family member)"),
     ("EUS_FMFW", "EU Settlement Scheme (frontier worker family member)"),
+    ("ARMED_FORCES", "Armed Forces Settlement"),
     ("error", "error")
   )
 
