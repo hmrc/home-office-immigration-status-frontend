@@ -33,8 +33,7 @@ object EncryptedValue {
 }
 
 class EncryptionDecryptionException(method: String, reason: String, message: String) extends RuntimeException {
-  val failureReason          = s"$reason for $method"
-  val failureMessage: String = message
+  val failureReason = s"$reason for $method"
 }
 
 @ImplementedBy(classOf[SecureGCMCipherImpl])
@@ -45,13 +44,13 @@ trait SecureGCMCipher {
 
 class SecureGCMCipherImpl extends SecureGCMCipher {
 
-  val IV_SIZE                       = 96
-  val TAG_BIT_LENGTH                = 128
+  private val IV_SIZE               = 96
+  private val TAG_BIT_LENGTH        = 128
   val ALGORITHM_TO_TRANSFORM_STRING = "AES/GCM/PKCS5Padding"
-  lazy val secureRandom             = new SecureRandom()
+  private lazy val secureRandom     = new SecureRandom()
   val ALGORITHM_KEY                 = "AES"
-  val METHOD_ENCRYPT                = "encrypt"
-  val METHOD_DECRYPT                = "decrypt"
+  private val METHOD_ENCRYPT        = "encrypt"
+  private val METHOD_DECRYPT        = "decrypt"
 
   def encrypt(valueToEncrypt: String, associatedText: String, aesKey: String): EncryptedValue = {
 
@@ -114,7 +113,7 @@ class SecureGCMCipherImpl extends SecureGCMCipher {
       case Failure(ex)              => throw processCipherTextFailure(ex, METHOD_ENCRYPT)
     }
 
-  def decryptCipherText(
+  private def decryptCipherText(
     valueToDecrypt: String,
     associatedText: Array[Byte],
     gcmParameterSpec: GCMParameterSpec,

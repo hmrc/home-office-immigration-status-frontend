@@ -16,7 +16,6 @@
 
 package connectors
 
-import com.kenshoo.play.metrics.Metrics
 import config.AppConfig
 import connectors.StatusCheckResponseHttpParser._
 import models.{MrzSearch, NinoSearch, StatusCheckResponseWithStatus}
@@ -28,7 +27,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class HomeOfficeImmigrationStatusProxyConnector @Inject() (appConfig: AppConfig, http: HttpClient, metrics: Metrics) {
+class HomeOfficeImmigrationStatusProxyConnector @Inject() (appConfig: AppConfig, http: HttpClient) {
 
   private val baseUrl: String       = appConfig.homeOfficeImmigrationStatusProxyBaseUrl
   private val publicFundsByNinoPath = "/v1/status/public-funds/nino"

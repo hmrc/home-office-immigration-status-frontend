@@ -22,7 +22,7 @@ import java.util.Locale
 
 object DateFormat {
 
-  val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
+  private val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
 
   def format(locale: Locale)(date: LocalDate): String =
     date.format(formatter.withLocale(locale))

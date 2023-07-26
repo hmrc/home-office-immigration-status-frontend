@@ -35,13 +35,13 @@ trait FormFieldMappings extends Constraints {
       .verifying(isValidNino)
       .transform(Nino.apply, (n: Nino) => n.nino)
 
-  protected def isValidNino: Constraint[String] =
+  private def isValidNino: Constraint[String] =
     cond("error.nino.invalid-format")(nino => Nino.isValid(nino))
 
   private def containsOnlyNumbersAndLetters: Constraint[String] =
     cond("error.nino.invalid-characters")(_.forall(Character.isLetterOrDigit))
 
-  protected val normaliseText: String => String = str => str.replaceAll("\\s", "")
+  private val normaliseText: String => String = str => str.replaceAll("\\s", "")
 
   val allowedNameCharacters: Set[Char] = Set('-', '\'', ' ')
 

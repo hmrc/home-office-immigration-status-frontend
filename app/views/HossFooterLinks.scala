@@ -22,12 +22,12 @@ import controllers.routes.AccessibilityStatementController
 
 object HossFooterLinks {
 
-  def govukHelpLink(implicit messages: Messages): FooterItem = FooterItem(
+  private def govukHelpLink(implicit messages: Messages): FooterItem = FooterItem(
     Some(messages("footer.links.help_page.text")),
     Some(messages("footer.links.help_page.url"))
   )
 
-  def accessibilityLink(implicit messages: Messages): FooterItem =
+  private def accessibilityLink(implicit messages: Messages): FooterItem =
     FooterItem(
       Some(messages("footer.links.accessibility.text")),
       Some(AccessibilityStatementController.showPage.url)

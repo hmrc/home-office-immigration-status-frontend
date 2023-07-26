@@ -28,8 +28,8 @@ class GovukWrapperViewSpec extends ViewSpec {
 
   private val viewViaApply: HtmlFormat.Appendable = sut.apply(pageTitle)(Html(""))(request, messages)
   private val viewViaRender: HtmlFormat.Appendable =
-    sut.render(pageTitle, None, Seq.empty, None, Html(""), request, messages)
-  private val viewViaF: HtmlFormat.Appendable = sut.f(pageTitle, None, Seq.empty, None)(Html(""))(request, messages)
+    sut.render(pageTitle, Seq.empty, None, Html(""), request, messages)
+  private val viewViaF: HtmlFormat.Appendable = sut.f(pageTitle, Seq.empty, None)(Html(""))(request, messages)
 
   "GovukWrapperView" when {
     def test(method: String, view: HtmlFormat.Appendable): Unit =

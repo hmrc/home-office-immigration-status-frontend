@@ -29,7 +29,7 @@
     appConfig: AppConfig
 )
 
-@(title: String, beforeContentHtml: Option[Html] = None, gaCode: Seq[String] = Seq.empty, js: Option[Html] = None)(mainContent: Html)(implicit request: Request[_], messages: Messages)
+@(title: String, gaCode: Seq[String] = Seq.empty, js: Option[Html] = None)(mainContent: Html)(implicit request: Request[_], messages: Messages)
 
 @head = {
     <link href='@controllers.routes.Assets.versioned("stylesheets/application.css")' media="all" rel="stylesheet" type="text/css" />
@@ -53,22 +53,6 @@
     @js
 }
 
-@feedbackBanner = {
-    @messages("feedback.before")
-    <a rel="noopener noreferrer" class='govuk-link' href="mailto:team-hoss2-aaaadxh2vg7pg2qf4idj7rmi2e@@hmrcdigital.slack.com">@messages("feedback.link")</a>
-    @messages("feedback.after")
-}
-
-@beforeContentBlock = {
-    @govukPhaseBanner(PhaseBanner(
-        tag = Some(Tag(content = Text("beta"))),
-        content = HtmlContent(feedbackBanner)
-        )
-    )
-
-    @beforeContentHtml
-}
-
 @titleWithSuffix = @{ title + " - " + messages("app.titleSuffix") }
 
 @content = {
@@ -86,7 +70,6 @@
         serviceName = Some(messages("app.name")),
         serviceUrl = "/check-immigration-status"
     ))),
-    beforeContentBlock = Some(beforeContentBlock),
     footerItems = HossFooterLinks.items,
     scriptsBlock = Some(scripts)
 )(content)

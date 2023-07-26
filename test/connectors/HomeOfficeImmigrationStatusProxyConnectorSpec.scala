@@ -94,7 +94,7 @@ class HomeOfficeImmigrationStatusProxyConnectorSpec
   trait Setup {
     val uuid = "123f4567-g89c-42c3-b456-557742330000"
     val connector: HomeOfficeImmigrationStatusProxyConnector =
-      new HomeOfficeImmigrationStatusProxyConnector(mockAppConfig, mockHttpClient, metrics) {
+      new HomeOfficeImmigrationStatusProxyConnector(mockAppConfig, mockHttpClient) {
         override def generateNewUUID: String = uuid
       }
   }
