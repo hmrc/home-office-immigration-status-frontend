@@ -66,6 +66,16 @@ For example, where the new status is non-EUS and the value is NEW, three message
  2) header content: `status-found.current.nonEUS.NEW=' has new status'`
  3) expired header content: `status-found.current.nonEUS.NEW.expired='’s new status has ended'`
 
+## Accessibility Tests
+
+### Prerequisites
+Have node installed on your machine
+
+### Execute tests
+To run the tests locally, simply run:
+```bash
+sbt clean A11y/test
+```
 
 ### License
 

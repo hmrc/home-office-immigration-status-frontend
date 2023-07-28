@@ -2,12 +2,12 @@ import sbt.*
 
 object AppDependencies {
 
-  private val bootstrapVersion = "7.19.0"
+  private val bootstrapVersion = "7.20.0"
 
   private val compile: Seq[ModuleID] = Seq(
     play.sbt.PlayImport.ws,
     "uk.gov.hmrc"       %% "bootstrap-frontend-play-28" % bootstrapVersion,
-    "uk.gov.hmrc"       %% "play-frontend-hmrc"         % "7.14.0-play-28",
+    "uk.gov.hmrc"       %% "play-frontend-hmrc"         % "7.16.0-play-28",
     "uk.gov.hmrc"       %% "play-partials"              % "8.4.0-play-28",
     "uk.gov.hmrc"       %% "domain"                     % "8.3.0-play-28",
     "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28"         % "1.3.0",

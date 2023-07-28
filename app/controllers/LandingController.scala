@@ -33,14 +33,12 @@ class LandingController @Inject() (
     extends FrontendController(controllerComponents) {
 
   val onPageLoad: Action[AnyContent] = access.async { implicit request =>
-    sessionCacheService.get.map { result =>
-      result match {
-        case Some(_: NinoSearchFormModel) =>
-          Redirect(routes.SearchByNinoController.onPageLoad(true))
-        case Some(_: MrzSearchFormModel) =>
-          Redirect(routes.SearchByMrzController.onPageLoad(true))
-        case _ => Redirect(routes.SearchByNinoController.onPageLoad(false))
-      }
+    sessionCacheService.get.map {
+      case Some(_: NinoSearchFormModel) =>
+        Redirect(routes.SearchByNinoController.onPageLoad(true))
+      case Some(_: MrzSearchFormModel) =>
+        Redirect(routes.SearchByMrzController.onPageLoad(true))
+      case _ => Redirect(routes.SearchByNinoController.onPageLoad())
     }
   }
 }

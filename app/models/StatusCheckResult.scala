@@ -29,7 +29,7 @@ case class StatusCheckResult(
   statuses: List[ImmigrationStatus]
 ) {
   def dobFormatted(locale: Locale): String        = DateFormat.format(locale)(dateOfBirth)
-  val statusesSortedByDate                        = statuses.sortBy(f = _.statusStartDate.toEpochDay * -1)
+  private val statusesSortedByDate                = statuses.sortBy(f = _.statusStartDate.toEpochDay * -1)
   val mostRecentStatus: Option[ImmigrationStatus] = statusesSortedByDate.headOption
   val previousStatuses: Seq[ImmigrationStatus]    = statusesSortedByDate.drop(1)
 }

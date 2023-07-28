@@ -99,10 +99,10 @@ object StatusFoundPageContext extends Logging {
       }
   }
 
-  def getImmigrationRouteLabel(productType: String)(implicit messages: Messages): String =
+  private def getImmigrationRouteLabel(productType: String)(implicit messages: Messages): String =
     messages.getOrElse(s"immigration.${productType.toLowerCase}", "NO_KEY", productType)
 
-  def getStatusLabel(status: ImmigrationStatus)(implicit messages: Messages): String = {
+  private def getStatusLabel(status: ImmigrationStatus)(implicit messages: Messages): String = {
     val prefix = if (status.isEUS) "immigration.EUS." else "immigration.nonEUS."
     messages.getOrElse(s"$prefix${status.immigrationStatus.toLowerCase}", "NO_KEY", status.immigrationStatus)
   }

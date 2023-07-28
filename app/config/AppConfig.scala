@@ -25,7 +25,6 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
 
   val appName: String                                 = servicesConfig.getString("appName")
   val shuttered: Boolean                              = servicesConfig.getBoolean("isShuttered")
-  val authBaseUrl: String                             = servicesConfig.baseUrl("auth")
   val homeOfficeImmigrationStatusProxyBaseUrl: String = servicesConfig.baseUrl("home-office-immigration-status-proxy")
   val mongoSessionExpiration: Int                     = servicesConfig.getInt("mongodb.ttl.seconds")
   val authorisedStrideGroup: String                   = servicesConfig.getString("authorisedStrideGroup")
@@ -35,7 +34,7 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
   val httpHeaderCacheControl: String                  = servicesConfig.getString("httpHeaders.cacheControl")
   val mongoEncryptionKey                              = servicesConfig.getString("mongodb.encryption.key")
 
-  val isDevEnv =
+  val isDevEnv: Boolean =
     if (env.mode.equals(Mode.Test)) {
       false
     } else {

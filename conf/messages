@@ -1,9 +1,3 @@
-# BETA Banner
-# ----------------------------------------------------------
-feedback.before='This is a new service. Your'
-feedback.link='feedback'
-feedback.after='will help us to improve it.'
-
 # Generic content
 generic.nino='National Insurance number'
 generic.givenName='First name'

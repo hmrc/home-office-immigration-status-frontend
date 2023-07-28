@@ -25,19 +25,11 @@
 
 @()(implicit request: Request[_], messages: Messages)
 
-@homelink = { <div class="govuk-breadcrumbs">
-    <ol class="govuk-breadcrumbs__list">
-        <li class="govuk-breadcrumbs__list-item">
-            <a class="govuk-breadcrumbs__link" href="@routes.LandingController.onPageLoad.url">Home</a>
-        </li>
-    </ol>
-</div> }
-
-@govukWrapper(title = messages("accessibility.title"), beforeContentHtml = Some(homelink)){
+@govukWrapper(title = messages("accessibility.title")){
 
 <h1 class="govuk-heading-xl">Accessibility statement for the Check Immigration Status service</h1>
 <p class="govuk-body">This accessibility statement explains how accessible this service is, what to do if you have difficulty using it, and how to report accessibility problems with the service.</p>
-<p class="govuk-body">This page only contains information about the Check Immigration Status service, available at <a href="https://admin.tax.service.gov.uk/check-immigration-status">https://admin.tax.service.gov.uk/check-immigration-status</a></p>
+<p class="govuk-body">This page only contains information about the <a href="/check-immigration-status">Check Immigration Status service</a>.</p>
 
 <h2 class="govuk-heading-m">Using the service</h2>
 <p class="govuk-body">You can use the Check Immigration Status service to view a customer's immigration status, as given by the Home Office. You can also view whether the customer has no recourse to public funds, their immigration route, and details on their previous nationality and immigration statuses from the past six months.</p>

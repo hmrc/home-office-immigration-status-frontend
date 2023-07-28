@@ -53,7 +53,7 @@ class StatusResultController @Inject() (
         case Some(query) =>
           homeOfficeService.search(query).map(handleResult(query, _))
         case None =>
-          Future.successful(Redirect(routes.SearchByNinoController.onPageLoad(false)))
+          Future.successful(Redirect(routes.SearchByNinoController.onPageLoad()))
       }
     }
 

@@ -18,7 +18,7 @@ package models
 
 object EEACountries {
 
-  val countries = Seq(
+  val countries: Seq[String] = Seq(
     "AUT",
     "BEL",
     "BGR",
