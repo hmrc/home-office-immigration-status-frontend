@@ -10,8 +10,8 @@ Web application providing internal HMRC staff with an interface to check custome
 
 ## Running the app locally
 
-    sm --start HOME_OFFICE_IMMIGRATION_STATUS_ALL -r
-    sm --stop HOME_OFFICE_IMMIGRATION_STATUS_FRONTEND 
+    sm2 --start HOME_OFFICE_IMMIGRATION_STATUS_ALL
+    sm2 --stop HOME_OFFICE_IMMIGRATION_STATUS_FRONTEND 
     sbt run
 
 It should then be listening on port 10210
