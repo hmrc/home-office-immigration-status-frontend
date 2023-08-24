@@ -16,14 +16,14 @@
 
 package crypto
 
-import java.security.{InvalidAlgorithmParameterException, InvalidKeyException, NoSuchAlgorithmException, SecureRandom}
-import java.util.Base64
-
-import javax.crypto.spec.{GCMParameterSpec, SecretKeySpec}
-import javax.crypto._
 import com.google.inject.ImplementedBy
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.crypto.SymmetricCryptoFactory
 
+import java.security.{InvalidAlgorithmParameterException, InvalidKeyException, NoSuchAlgorithmException, SecureRandom}
+import java.util.Base64
+import javax.crypto._
+import javax.crypto.spec.{GCMParameterSpec, SecretKeySpec}
 import scala.util.{Failure, Success, Try}
 
 case class EncryptedValue(value: String, nonce: String)
@@ -36,34 +36,41 @@ class EncryptionDecryptionException(method: String, reason: String, message: Str
   val failureReason = s"$reason for $method"
 }
 
+
 @ImplementedBy(classOf[SecureGCMCipherImpl])
 trait SecureGCMCipher {
+
   def encrypt(valueToEncrypt: String, associatedText: String, aesKey: String): EncryptedValue
+
   def decrypt(valueToDecrypt: EncryptedValue, associatedText: String, aesKey: String): String
 }
 
 class SecureGCMCipherImpl extends SecureGCMCipher {
 
-  private val IV_SIZE               = 96
-  private val TAG_BIT_LENGTH        = 128
+  private val IV_SIZE = 96
+  private val TAG_BIT_LENGTH = 128
   val ALGORITHM_TO_TRANSFORM_STRING = "AES/GCM/PKCS5Padding"
-  private lazy val secureRandom     = new SecureRandom()
-  val ALGORITHM_KEY                 = "AES"
-  private val METHOD_ENCRYPT        = "encrypt"
-  private val METHOD_DECRYPT        = "decrypt"
+  private lazy val secureRandom = new SecureRandom()
+  val ALGORITHM_KEY = "AES"
+  private val METHOD_ENCRYPT = "encrypt"
+  private val METHOD_DECRYPT = "decrypt"
 
   def encrypt(valueToEncrypt: String, associatedText: String, aesKey: String): EncryptedValue = {
 
     val initialisationVector = generateInitialisationVector
-    val nonce                = new String(Base64.getEncoder.encode(initialisationVector))
-    val gcmParameterSpec     = new GCMParameterSpec(TAG_BIT_LENGTH, initialisationVector)
-    val secretKey            = validateSecretKey(aesKey, METHOD_ENCRYPT)
-    val cipherText = generateCipherText(
-      valueToEncrypt,
-      validateAssociatedText(associatedText, METHOD_ENCRYPT),
-      gcmParameterSpec,
-      secretKey
-    )
+    val nonce = new String(Base64.getEncoder.encode(initialisationVector))
+    val gcmParameterSpec = new GCMParameterSpec(TAG_BIT_LENGTH, initialisationVector)
+    val secretKey = validateSecretKey(aesKey, METHOD_ENCRYPT)
+
+    SymmetricCryptoFactory.aesGcmCrypto(aesKey)
+
+    val cipherText =
+      generateCipherText(
+        valueToEncrypt,
+        validateAssociatedText(associatedText, METHOD_ENCRYPT),
+        gcmParameterSpec,
+        secretKey
+      )
 
     EncryptedValue(cipherText, nonce)
   }
@@ -71,8 +78,8 @@ class SecureGCMCipherImpl extends SecureGCMCipher {
   def decrypt(valueToDecrypt: EncryptedValue, associatedText: String, aesKey: String): String = {
 
     val initialisationVector = Base64.getDecoder.decode(valueToDecrypt.nonce)
-    val gcmParameterSpec     = new GCMParameterSpec(TAG_BIT_LENGTH, initialisationVector)
-    val secretKey            = validateSecretKey(aesKey, METHOD_DECRYPT)
+    val gcmParameterSpec = new GCMParameterSpec(TAG_BIT_LENGTH, initialisationVector)
+    val secretKey = validateSecretKey(aesKey, METHOD_DECRYPT)
 
     decryptCipherText(
       valueToDecrypt.value,
@@ -94,15 +101,15 @@ class SecureGCMCipherImpl extends SecureGCMCipher {
       new SecretKeySpec(decodedKey, 0, decodedKey.length, ALGORITHM_KEY)
     } match {
       case Success(secretKey) => secretKey
-      case Failure(ex)        => throw new EncryptionDecryptionException(method, "The key provided is invalid", ex.getMessage)
+      case Failure(ex) => throw new EncryptionDecryptionException(method, "The key provided is invalid", ex.getMessage)
     }
 
   def generateCipherText(
-    valueToEncrypt: String,
-    associatedText: Array[Byte],
-    gcmParameterSpec: GCMParameterSpec,
-    secretKey: SecretKey
-  ): String =
+                          valueToEncrypt: String,
+                          associatedText: Array[Byte],
+                          gcmParameterSpec: GCMParameterSpec,
+                          secretKey: SecretKey
+                        ): String =
     Try {
       val cipher = getCipherInstance
       cipher.init(Cipher.ENCRYPT_MODE, secretKey, gcmParameterSpec, new SecureRandom())
@@ -110,15 +117,15 @@ class SecureGCMCipherImpl extends SecureGCMCipher {
       cipher.doFinal(valueToEncrypt.getBytes)
     } match {
       case Success(cipherTextBytes) => new String(Base64.getEncoder.encode(cipherTextBytes))
-      case Failure(ex)              => throw processCipherTextFailure(ex, METHOD_ENCRYPT)
+      case Failure(ex) => throw processCipherTextFailure(ex, METHOD_ENCRYPT)
     }
 
   private def decryptCipherText(
-    valueToDecrypt: String,
-    associatedText: Array[Byte],
-    gcmParameterSpec: GCMParameterSpec,
-    secretKey: SecretKey
-  ): String =
+                                 valueToDecrypt: String,
+                                 associatedText: Array[Byte],
+                                 gcmParameterSpec: GCMParameterSpec,
+                                 secretKey: SecretKey
+                               ): String =
     Try {
       val cipher = getCipherInstance
       cipher.init(Cipher.DECRYPT_MODE, secretKey, gcmParameterSpec, new SecureRandom())
@@ -126,7 +133,7 @@ class SecureGCMCipherImpl extends SecureGCMCipher {
       cipher.doFinal(Base64.getDecoder.decode(valueToDecrypt))
     } match {
       case Success(value) => new String(value)
-      case Failure(ex)    => throw processCipherTextFailure(ex, METHOD_DECRYPT)
+      case Failure(ex) => throw processCipherTextFailure(ex, METHOD_DECRYPT)
     }
 
   private[crypto] def getCipherInstance: Cipher = Cipher.getInstance(ALGORITHM_TO_TRANSFORM_STRING)
