@@ -24,7 +24,7 @@ import java.time.LocalDate
 
 class FormModelEncrypterSpec extends PlaySpec {
 
-  private val cipher    = new SecureGCMCipherImpl
+  private val cipher    = new AesGCMCryptoImpl
   private val encrypter = new FormModelEncrypter(cipher)
   private val secretKey = "VqmXp7yigDFxbCUdDdNZVIvbW6RgPNJsliv6swQNCL8="
   private val sessionId = "1234567890"

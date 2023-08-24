@@ -36,13 +36,13 @@ class EncryptionDecryptionException(method: String, reason: String, message: Str
   val failureReason = s"$reason for $method"
 }
 
-@ImplementedBy(classOf[SecureGCMCipherImpl])
-trait SecureGCMCipher {
+@ImplementedBy(classOf[AesGCMCryptoImpl])
+trait AesGCMCrypto {
   def encrypt(valueToEncrypt: String, associatedText: String, aesKey: String): EncryptedValue
   def decrypt(valueToDecrypt: EncryptedValue, associatedText: String, aesKey: String): String
 }
 
-class SecureGCMCipherImpl extends SecureGCMCipher {
+class AesGCMCryptoImpl extends AesGCMCrypto {
 
   private val IV_SIZE               = 96
   private val TAG_BIT_LENGTH        = 128

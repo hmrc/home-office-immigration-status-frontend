@@ -16,7 +16,7 @@
 
 package crypto
 
-class TestGCMCipher extends SecureGCMCipher {
+class TestGCMCipher extends AesGCMCrypto {
   def encrypt(valueToEncrypt: String, associatedText: String, aesKey: String): EncryptedValue =
     EncryptedValue(valueToEncrypt, "")
   def decrypt(valueToDecrypt: EncryptedValue, associatedText: String, aesKey: String): String =

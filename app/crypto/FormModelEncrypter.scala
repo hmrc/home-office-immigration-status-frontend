@@ -23,7 +23,7 @@ import java.time.LocalDate
 import scala.util.Try
 
 @Singleton
-class FormModelEncrypter @Inject() (crypto: SecureGCMCipher) {
+class FormModelEncrypter @Inject() (crypto: AesGCMCrypto) {
 
   def encryptSearchFormModel(formModel: SearchFormModel, sessionId: String, key: String): EncryptedSearchFormModel =
     formModel match {
