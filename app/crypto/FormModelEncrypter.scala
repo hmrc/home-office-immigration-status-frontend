@@ -16,14 +16,17 @@
 
 package crypto
 
-import com.google.inject.{Inject, Singleton}
-import models._
-import uk.gov.hmrc.domain.Nino
 import java.time.LocalDate
+
+import com.google.inject.Singleton
+import models._
+import uk.gov.hmrc.crypto.{EncryptedValue, SymmetricCryptoFactory}
+import uk.gov.hmrc.domain.Nino
+
 import scala.util.Try
 
 @Singleton
-class FormModelEncrypter @Inject() (crypto: SecureGCMCipher) {
+class FormModelEncrypter {
 
   def encryptSearchFormModel(formModel: SearchFormModel, sessionId: String, key: String): EncryptedSearchFormModel =
     formModel match {
@@ -46,7 +49,7 @@ class FormModelEncrypter @Inject() (crypto: SecureGCMCipher) {
     sessionId: String,
     key: String
   ): EncryptedNinoSearchFormModel = {
-    def e(field: String): EncryptedValue = crypto.encrypt(field, sessionId, key)
+    def e(field: String): EncryptedValue = SymmetricCryptoFactory.aesGcmAdCrypto(key).encrypt(field, sessionId)
     EncryptedNinoSearchFormModel(
       e(formModel.nino.toString),
       e(formModel.givenName),
@@ -60,7 +63,7 @@ class FormModelEncrypter @Inject() (crypto: SecureGCMCipher) {
     sessionId: String,
     key: String
   ): Option[NinoSearchFormModel] = {
-    def d(field: EncryptedValue): String = crypto.decrypt(field, sessionId, key)
+    def d(field: EncryptedValue): String = SymmetricCryptoFactory.aesGcmAdCrypto(key).decrypt(field, sessionId)
 
     (for {
       nino      <- Try(Nino(d(formModel.nino)))
@@ -74,7 +77,7 @@ class FormModelEncrypter @Inject() (crypto: SecureGCMCipher) {
     sessionId: String,
     key: String
   ): EncryptedMrzSearchFormModel = {
-    def e(field: String): EncryptedValue = crypto.encrypt(field, sessionId, key)
+    def e(field: String): EncryptedValue = SymmetricCryptoFactory.aesGcmAdCrypto(key).encrypt(field, sessionId)
 
     EncryptedMrzSearchFormModel(
       e(formModel.documentType),
@@ -89,7 +92,7 @@ class FormModelEncrypter @Inject() (crypto: SecureGCMCipher) {
     sessionId: String,
     key: String
   ): Option[MrzSearchFormModel] = {
-    def d(field: EncryptedValue): String = crypto.decrypt(field, sessionId, key)
+    def d(field: EncryptedValue): String = SymmetricCryptoFactory.aesGcmAdCrypto(key).decrypt(field, sessionId)
 
     (for {
       dob <- Try(LocalDate.parse(d(formModel.dateOfBirth)))

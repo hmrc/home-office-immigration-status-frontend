@@ -17,8 +17,8 @@
 package services
 
 import config.AppConfig
-import crypto.{FormModelEncrypter, TestGCMCipher}
-import models.{EncryptedSearchFormModel, FormQueryModel, NinoSearchFormModel}
+import crypto.FormModelEncrypter
+import models.{EncryptedSearchFormModel, FormQueryModel, NinoSearchFormModel, SearchFormModel}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
@@ -33,8 +33,8 @@ import play.api.test.Injecting
 import repositories.SessionCacheRepository
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import utils.NinoGenerator
-
 import java.time.{Instant, LocalDate}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
@@ -58,8 +58,7 @@ class SessionCacheServiceSpec
   val now: Instant                                   = Instant.now()
   val mockRepo: SessionCacheRepository               = mock(classOf[SessionCacheRepository])
   val argumentCaptor: ArgumentCaptor[FormQueryModel] = ArgumentCaptor.forClass(classOf[FormQueryModel])
-  private val cipher                                 = new TestGCMCipher
-  private val encrypter                              = new FormModelEncrypter(cipher)
+  private val encrypter                              = new FormModelEncrypter
   lazy val appConfig: AppConfig                      = inject[AppConfig]
   val sut                                            = new SessionCacheServiceImpl(mockRepo, encrypter, appConfig)
 
@@ -114,7 +113,10 @@ class SessionCacheServiceSpec
       verify(mockRepo).set(argumentCaptor.capture())(any())
 
       val form = argumentCaptor.getValue.copy(lastUpdated = now)
-      form mustBe formQuery
+
+      val decryptedFormModel: Option[SearchFormModel] = encrypter.decryptSearchFormModel(form.data, "123", secretKey)
+
+      decryptedFormModel mustBe Some(formModel)
     }
 
     "return an error where the header carrier has no session id" in {

@@ -16,8 +16,9 @@
 
 package models
 
-import play.api.libs.json.{Json, OFormat}
-import crypto.EncryptedValue
+import play.api.libs.json.{Format, Json, OFormat}
+import uk.gov.hmrc.crypto.EncryptedValue
+import uk.gov.hmrc.crypto.json.CryptoFormats
 
 sealed trait EncryptedSearchFormModel
 
@@ -33,6 +34,7 @@ final case class EncryptedNinoSearchFormModel(
 ) extends EncryptedSearchFormModel
 
 object EncryptedNinoSearchFormModel {
+  implicit val encryptedValueFormat: Format[EncryptedValue]   = CryptoFormats.encryptedValueFormat
   implicit val formats: OFormat[EncryptedNinoSearchFormModel] = Json.format[EncryptedNinoSearchFormModel]
 }
 
@@ -44,5 +46,6 @@ final case class EncryptedMrzSearchFormModel(
 ) extends EncryptedSearchFormModel
 
 object EncryptedMrzSearchFormModel {
+  implicit val encryptedValueFormat: Format[EncryptedValue]  = CryptoFormats.encryptedValueFormat
   implicit val formats: OFormat[EncryptedMrzSearchFormModel] = Json.format[EncryptedMrzSearchFormModel]
 }
