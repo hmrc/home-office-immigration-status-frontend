@@ -16,12 +16,12 @@
 
 package models
 
-import play.api.libs.json.{Format, JsObject, Json, Reads, Writes}
+import play.api.i18n.Messages
+import play.api.libs.json._
 import uk.gov.hmrc.domain.Nino
+
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-
-import play.api.i18n.Messages
 
 sealed trait Search
 
@@ -62,6 +62,7 @@ final case class MrzSearch(
 ) extends Search
 
 object MrzSearch {
+
   implicit val formats: Format[MrzSearch] = Json.format[MrzSearch]
 
   val Passport                     = "PASSPORT"
@@ -69,11 +70,12 @@ object MrzSearch {
   val BiometricResidencyCard       = "BRC"
   val BiometricResidencyPermit     = "BRP"
 
-  def documentTypeToMessageKey(documentType: String)(implicit messages: Messages): String = documentType match {
-    case Passport                     => messages("lookup.passport")
-    case EuropeanNationalIdentityCard => messages("lookup.euni")
-    case BiometricResidencyCard       => messages("lookup.res.card")
-    case BiometricResidencyPermit     => messages("lookup.res.permit")
-    case docType                      => docType
-  }
+  def documentTypeToMessageKey(documentType: String)(implicit messages: Messages): String =
+    documentType match {
+      case Passport                     => messages("lookup.passport")
+      case EuropeanNationalIdentityCard => messages("lookup.euni")
+      case BiometricResidencyCard       => messages("lookup.res.card")
+      case BiometricResidencyPermit     => messages("lookup.res.permit")
+      case docType                      => docType
+    }
 }

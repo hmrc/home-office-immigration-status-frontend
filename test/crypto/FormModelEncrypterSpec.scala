@@ -32,7 +32,7 @@ class FormModelEncrypterSpec extends PlaySpec {
 
   "encryptNinoSearchFormModel" must {
 
-    "encrypt a nino form model such that it is decryptable with the same sessionId and secretKey" in {
+    "encrypt a nino form model such that it is decrypt-able with the same sessionId and secretKey" in {
       val nino: Nino                     = NinoGenerator.generateNino
       val dateOfBirth: LocalDate         = LocalDate.now().minusYears(1)
       val formModel: NinoSearchFormModel = NinoSearchFormModel(nino, "James", "Buchanan", dateOfBirth)
@@ -45,7 +45,7 @@ class FormModelEncrypterSpec extends PlaySpec {
       decryptedFormModel must be(Some(formModel))
     }
 
-    "encrypt an mrz form model such that it is decryptable with the same sessionId and secretKey" in {
+    "encrypt an mrz form model such that it is decrypt-able with the same sessionId and secretKey" in {
       val dateOfBirth: LocalDate = LocalDate.now().minusYears(1)
       val formModel: MrzSearchFormModel =
         MrzSearchFormModel("documentType", "documentNumber", dateOfBirth, "nationality")

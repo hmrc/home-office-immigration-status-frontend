@@ -29,7 +29,7 @@ object StatusCheckResponseHttpParser extends Logging {
     private val UNKNOWN_ERROR = "UNKNOWN_ERROR"
 
     override def read(method: String, url: String, response: HttpResponse): StatusCheckResponseWithStatus = {
-      val correlationId: Option[String] = response.header(Constants.HEADER_X_CORRELATION_ID)
+      val correlationId: Option[String] = response.header("X-Correlation-Id")
       response.status match {
         case OK =>
           Try(response.json.as[StatusCheckSuccessfulResponse]) match {

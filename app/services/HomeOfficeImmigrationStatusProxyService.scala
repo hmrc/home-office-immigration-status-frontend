@@ -22,7 +22,7 @@ import javax.inject.{Inject, Singleton}
 import models.{MrzSearch, NinoSearch, Search, SearchFormModel, StatusCheckResponseWithStatus}
 import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
-import connectors.{Constants, HomeOfficeImmigrationStatusProxyConnector}
+import connectors.HomeOfficeImmigrationStatusProxyConnector
 import config.AppConfig
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,7 +41,7 @@ class HomeOfficeImmigrationStatusProxyService @Inject() (
   ): Future[StatusCheckResponseWithStatus] = {
 
     val correlationId: String = UUID.randomUUID().toString
-    val headerCarrier         = hc.withExtraHeaders(Constants.HEADER_X_CORRELATION_ID -> correlationId)
+    val headerCarrier         = hc.withExtraHeaders("X-Correlation-Id" -> correlationId)
     val searchFromRequest     = query.toSearch(appConfig.defaultQueryTimeRangeInMonths)
 
     sendRequestAuditingResults(searchFromRequest) {
@@ -52,7 +52,7 @@ class HomeOfficeImmigrationStatusProxyService @Inject() (
     }
   }
 
-  private def sendRequestAuditingResults[A](search: Search)(
+  private def sendRequestAuditingResults(search: Search)(
     future: Future[StatusCheckResponseWithStatus]
   )(implicit hc: HeaderCarrier, ec: ExecutionContext, request: Request[Any]): Future[StatusCheckResponseWithStatus] =
     future.map { result =>
