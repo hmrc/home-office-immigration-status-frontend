@@ -7,11 +7,11 @@ object AppDependencies {
   private val compile: Seq[ModuleID] = Seq(
     play.sbt.PlayImport.ws,
     "uk.gov.hmrc"       %% "bootstrap-frontend-play-28" % bootstrapVersion,
-    "uk.gov.hmrc"       %% "play-frontend-hmrc"         % "7.17.0-play-28",
+    "uk.gov.hmrc"       %% "play-frontend-hmrc"         % "7.19.0-play-28",
     "uk.gov.hmrc"       %% "play-partials"              % "8.4.0-play-28",
     "uk.gov.hmrc"       %% "domain"                     % "8.3.0-play-28",
     "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28"         % "1.3.0",
-    "uk.gov.hmrc"       %% "json-encryption"            % "5.1.0-play-28"
+    "uk.gov.hmrc"       %% "crypto-json-play-28"        % "7.3.0"
   )
 
   private val test: Seq[ModuleID] = Seq(

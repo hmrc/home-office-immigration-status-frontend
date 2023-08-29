@@ -16,32 +16,25 @@
 
 package models
 
-import java.time.LocalDate
 import play.api.libs.json.{Format, Json}
-import models.ImmigrationStatus.EUS
+
+import java.time.LocalDate
 
 case class ImmigrationStatus(
-  // start date of this status
   statusStartDate: LocalDate,
-  // end date of this status
   statusEndDate: Option[LocalDate] = None,
-  // code representing the type of product that the status was associated with
   productType: String,
-  // code representing the immigration status that is held
   immigrationStatus: String,
-  // right to public funds status for this person
   noRecourseToPublicFunds: Boolean
 ) {
 
-  def isEUS: Boolean = productType.take(3) == EUS
+  def isEUS: Boolean = productType.take(3) == "EUS"
 
   private val hasExpired: Boolean = statusEndDate.exists(_.isBefore(LocalDate.now))
   val expiredMsg: String          = if (hasExpired) ".expired" else ""
 }
 
 object ImmigrationStatus {
-
-  val EUS = "EUS"
 
   implicit val formats: Format[ImmigrationStatus] = Json.format[ImmigrationStatus]
 }

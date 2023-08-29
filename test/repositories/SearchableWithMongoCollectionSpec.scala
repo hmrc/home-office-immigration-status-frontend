@@ -16,7 +16,7 @@
 
 package repositories
 
-import crypto.{FormModelEncrypter, TestGCMCipher}
+import crypto.FormModelEncrypter
 import models.{EncryptedSearchFormModel, FormQueryModel, NinoSearchFormModel}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito.{mock, reset, verify, when}
@@ -69,8 +69,7 @@ class SearchableWithMongoCollectionSpec
   }
 
   private val now       = Instant.now()
-  private val cipher    = new TestGCMCipher
-  private val encrypter = new FormModelEncrypter(cipher)
+  private val encrypter = new FormModelEncrypter
   private val secretKey = "VqmXp7yigDFxbCUdDdNZVIvbW6RgPNJsliv6swQNCL8="
   val formModel: NinoSearchFormModel = NinoSearchFormModel(
     nino = NinoGenerator.generateNino,

@@ -16,19 +16,21 @@
 
 package crypto
 
-import com.google.inject.{Inject, Singleton}
+import com.google.inject.Singleton
 import models._
+import uk.gov.hmrc.crypto.{EncryptedValue, SymmetricCryptoFactory}
 import uk.gov.hmrc.domain.Nino
+
 import java.time.LocalDate
 import scala.util.Try
 
 @Singleton
-class FormModelEncrypter @Inject() (crypto: SecureGCMCipher) {
+class FormModelEncrypter {
 
   def encryptSearchFormModel(formModel: SearchFormModel, sessionId: String, key: String): EncryptedSearchFormModel =
     formModel match {
-      case model: NinoSearchFormModel => encryptNinoSearchFormModel(model, sessionId, key)
-      case model: MrzSearchFormModel  => encryptMrzSearchFormModel(model, sessionId, key)
+      case model: NinoSearchFormModel => encryptNinoSearchFormModel(model, key)(sessionId)
+      case model: MrzSearchFormModel  => encryptMrzSearchFormModel(model, key)(sessionId)
     }
 
   def decryptSearchFormModel(
@@ -37,64 +39,63 @@ class FormModelEncrypter @Inject() (crypto: SecureGCMCipher) {
     key: String
   ): Option[SearchFormModel] =
     formModel match {
-      case model: EncryptedNinoSearchFormModel => decryptNinoSearchFormModel(model, sessionId, key)
-      case model: EncryptedMrzSearchFormModel  => decryptMrzSearchFormModel(model, sessionId, key)
+      case model: EncryptedNinoSearchFormModel => decryptNinoSearchFormModel(model, key)(sessionId)
+      case model: EncryptedMrzSearchFormModel  => decryptMrzSearchFormModel(model, key)(sessionId)
     }
 
   private def encryptNinoSearchFormModel(
     formModel: NinoSearchFormModel,
-    sessionId: String,
     key: String
-  ): EncryptedNinoSearchFormModel = {
-    def e(field: String): EncryptedValue = crypto.encrypt(field, sessionId, key)
+  )(implicit sessionId: String): EncryptedNinoSearchFormModel =
     EncryptedNinoSearchFormModel(
-      e(formModel.nino.toString),
-      e(formModel.givenName),
-      e(formModel.familyName),
-      e(formModel.dateOfBirth.toString)
+      encrypt(formModel.nino.toString, key),
+      encrypt(formModel.givenName, key),
+      encrypt(formModel.familyName, key),
+      encrypt(formModel.dateOfBirth.toString, key)
     )
-  }
 
   private def decryptNinoSearchFormModel(
     formModel: EncryptedNinoSearchFormModel,
-    sessionId: String,
     key: String
-  ): Option[NinoSearchFormModel] = {
-    def d(field: EncryptedValue): String = crypto.decrypt(field, sessionId, key)
-
+  )(implicit sessionId: String): Option[NinoSearchFormModel] =
     (for {
-      nino      <- Try(Nino(d(formModel.nino)))
-      dob       <- Try(LocalDate.parse(d(formModel.dateOfBirth)))
-      formModel <- Try(NinoSearchFormModel(nino, d(formModel.givenName), d(formModel.familyName), dob))
+      nino <- Try(Nino(decrypt(formModel.nino, key)))
+      dob  <- Try(LocalDate.parse(decrypt(formModel.dateOfBirth, key)))
+      formModel <-
+        Try(NinoSearchFormModel(nino, decrypt(formModel.givenName, key), decrypt(formModel.familyName, key), dob))
     } yield formModel).toOption
-  }
 
   private def encryptMrzSearchFormModel(
     formModel: MrzSearchFormModel,
-    sessionId: String,
     key: String
-  ): EncryptedMrzSearchFormModel = {
-    def e(field: String): EncryptedValue = crypto.encrypt(field, sessionId, key)
-
+  )(implicit sessionId: String): EncryptedMrzSearchFormModel =
     EncryptedMrzSearchFormModel(
-      e(formModel.documentType),
-      e(formModel.documentNumber),
-      e(formModel.dateOfBirth.toString),
-      e(formModel.nationality)
+      encrypt(formModel.documentType, key),
+      encrypt(formModel.documentNumber, key),
+      encrypt(formModel.dateOfBirth.toString, key),
+      encrypt(formModel.nationality, key)
     )
-  }
 
   private def decryptMrzSearchFormModel(
     formModel: EncryptedMrzSearchFormModel,
-    sessionId: String,
     key: String
-  ): Option[MrzSearchFormModel] = {
-    def d(field: EncryptedValue): String = crypto.decrypt(field, sessionId, key)
-
+  )(implicit sessionId: String): Option[MrzSearchFormModel] =
     (for {
-      dob <- Try(LocalDate.parse(d(formModel.dateOfBirth)))
+      dob <- Try(LocalDate.parse(decrypt(formModel.dateOfBirth, key)))
       formModel <-
-        Try(MrzSearchFormModel(d(formModel.documentType), d(formModel.documentNumber), dob, d(formModel.nationality)))
+        Try(
+          MrzSearchFormModel(
+            decrypt(formModel.documentType, key),
+            decrypt(formModel.documentNumber, key),
+            dob,
+            decrypt(formModel.nationality, key)
+          )
+        )
     } yield formModel).toOption
-  }
+
+  private def encrypt(field: String, key: String)(implicit sessionId: String): EncryptedValue =
+    SymmetricCryptoFactory.aesGcmAdCrypto(key).encrypt(field, sessionId)
+
+  private def decrypt(field: EncryptedValue, key: String)(implicit sessionId: String): String =
+    SymmetricCryptoFactory.aesGcmAdCrypto(key).decrypt(field, sessionId)
 }
