@@ -11,7 +11,6 @@ object AppDependencies {
     "uk.gov.hmrc"       %% "play-partials"              % "8.4.0-play-28",
     "uk.gov.hmrc"       %% "domain"                     % "8.3.0-play-28",
     "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28"         % "1.3.0",
-    "uk.gov.hmrc"       %% "json-encryption"            % "5.2.0-play-28",
     "uk.gov.hmrc"       %% "crypto-json-play-28"        % "7.3.0"
   )
 

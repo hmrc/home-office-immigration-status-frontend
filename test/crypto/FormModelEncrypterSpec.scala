@@ -18,17 +18,17 @@ package crypto
 
 import models._
 import org.scalatestplus.play.PlaySpec
-import utils.NinoGenerator
-import java.time.LocalDate
-
 import uk.gov.hmrc.crypto.{EncryptedValue, SymmetricCryptoFactory}
 import uk.gov.hmrc.domain.Nino
+import utils.NinoGenerator
+
+import java.time.LocalDate
 
 class FormModelEncrypterSpec extends PlaySpec {
 
-  private val encrypter = new FormModelEncrypter
-  private val secretKey = "VqmXp7yigDFxbCUdDdNZVIvbW6RgPNJsliv6swQNCL8="
-  private val sessionId = "1234567890"
+  private val encrypter: FormModelEncrypter = new FormModelEncrypter
+  private val secretKey: String             = "VqmXp7yigDFxbCUdDdNZVIvbW6RgPNJsliv6swQNCL8="
+  private val sessionId: String             = "1234567890"
 
   "encryptNinoSearchFormModel" must {
 
@@ -66,13 +66,11 @@ class FormModelEncrypterSpec extends PlaySpec {
       val dateOfBirth: LocalDate         = LocalDate.now().minusYears(1)
       val formModel: NinoSearchFormModel = NinoSearchFormModel(nino, "James", "Buchanan", dateOfBirth)
 
-      def e(field: String): EncryptedValue = SymmetricCryptoFactory.aesGcmAdCrypto(secretKey).encrypt(field, sessionId)
-
       val encryptedWithBadNino: EncryptedNinoSearchFormModel = EncryptedNinoSearchFormModel(
-        e("abc123"),
-        e(formModel.givenName),
-        e(formModel.familyName),
-        e(formModel.dateOfBirth.toString)
+        encrypt("abc123"),
+        encrypt(formModel.givenName),
+        encrypt(formModel.familyName),
+        encrypt(formModel.dateOfBirth.toString)
       )
 
       val decryptedFormModel: Option[SearchFormModel] =
@@ -86,14 +84,12 @@ class FormModelEncrypterSpec extends PlaySpec {
       val dateOfBirth: LocalDate         = LocalDate.now().minusYears(1)
       val formModel: NinoSearchFormModel = NinoSearchFormModel(nino, "James", "Buchanan", dateOfBirth)
 
-      def e(field: String): EncryptedValue = SymmetricCryptoFactory.aesGcmAdCrypto(secretKey).encrypt(field, sessionId)
-
       val encryptedWithBadDob: EncryptedNinoSearchFormModel =
         EncryptedNinoSearchFormModel(
-          e(formModel.nino.toString),
-          e(formModel.givenName),
-          e(formModel.familyName),
-          e("123456")
+          encrypt(formModel.nino.toString),
+          encrypt(formModel.givenName),
+          encrypt(formModel.familyName),
+          encrypt("123456")
         )
 
       val decryptedFormModel: Option[SearchFormModel] =
@@ -107,14 +103,12 @@ class FormModelEncrypterSpec extends PlaySpec {
       val formModel: MrzSearchFormModel =
         MrzSearchFormModel("documentType", "documentNumber", dateOfBirth, "nationality")
 
-      def e(field: String): EncryptedValue = SymmetricCryptoFactory.aesGcmAdCrypto(secretKey).encrypt(field, sessionId)
-
       val encryptedWithBadDob: EncryptedMrzSearchFormModel =
         EncryptedMrzSearchFormModel(
-          e(formModel.documentType),
-          e(formModel.documentNumber),
-          e("123456"),
-          e(formModel.nationality)
+          encrypt(formModel.documentType),
+          encrypt(formModel.documentNumber),
+          encrypt("123456"),
+          encrypt(formModel.nationality)
         )
 
       val decryptedFormModel: Option[SearchFormModel] =
@@ -123,4 +117,7 @@ class FormModelEncrypterSpec extends PlaySpec {
       decryptedFormModel must be(None)
     }
   }
+
+  private def encrypt(field: String): EncryptedValue =
+    SymmetricCryptoFactory.aesGcmAdCrypto(secretKey).encrypt(field, sessionId)
 }
