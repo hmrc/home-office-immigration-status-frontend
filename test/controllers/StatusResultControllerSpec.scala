@@ -139,7 +139,7 @@ class StatusResultControllerSpec extends ControllerSpec {
         val result = sut.onPageLoad()(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe inject[MultipleMatchesFoundPage]
+        contentAsString(result) mustBe inject[StatusCheckFailurePage]
           .apply(query)(request, messages)
           .toString
         verifyConnector()

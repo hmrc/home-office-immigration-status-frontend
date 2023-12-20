@@ -39,7 +39,6 @@ class StatusResultController @Inject() (
   statusFoundPage: StatusFoundPage,
   statusCheckFailurePage: StatusCheckFailurePage,
   statusNotAvailablePage: StatusNotAvailablePage,
-  multipleMatchesFoundPage: MultipleMatchesFoundPage,
   sessionCacheService: SessionCacheService,
   externalErrorPage: ExternalErrorPage
 )(implicit val appConfig: AppConfig, ec: ExecutionContext)
@@ -68,9 +67,8 @@ class StatusResultController @Inject() (
 
   private def handleError(query: SearchFormModel, status: Int)(implicit request: Request[AnyContent]): Result =
     status match {
-      case CONFLICT  => Ok(multipleMatchesFoundPage(query))
-      case NOT_FOUND => Ok(statusCheckFailurePage(query))
-      case _         => InternalServerError(externalErrorPage())
+      case CONFLICT | NOT_FOUND => Ok(statusCheckFailurePage(query))
+      case _                    => InternalServerError(externalErrorPage())
     }
 
   private def displaySuccessfulResult(query: SearchFormModel, response: StatusCheckSuccessfulResponse)(implicit

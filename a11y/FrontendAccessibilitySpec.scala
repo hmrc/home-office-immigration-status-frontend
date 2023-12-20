@@ -77,7 +77,6 @@ class FrontendAccessibilitySpec extends AutomaticAccessibilitySpec {
   override def renderViewByClass: PartialFunction[Any, Html] = {
     case accessibilityStatementPage: AccessibilityStatementPage => render(accessibilityStatementPage)
     case externalErrorPage: ExternalErrorPage                   => render(externalErrorPage)
-    case multipleMatchesFoundPage: MultipleMatchesFoundPage     => render(multipleMatchesFoundPage)
     case searchByMrzView: SearchByMrzView                       => render(searchByMrzView)
     case searchByNinoView: SearchByNinoView                     => render(searchByNinoView)
     case shutteringPage: ShutteringPage                         => render(shutteringPage)
