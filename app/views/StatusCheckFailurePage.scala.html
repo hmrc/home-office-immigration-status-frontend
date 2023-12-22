@@ -38,7 +38,12 @@
         <li id="item2">@messages("status-check-failure.list-item2")</li>
     </ul>
 
-    @alternateText(query.isInstanceOf[NinoSearchFormModel])
+    <p class="govuk-body">@messages("status-check-failure.listParagraph2")</p>
+
+    <ul class="govuk-list govuk-list--bullet">
+        <li id="item3">@messages("status-check-failure.list-item3")</li>
+        <li id="item4">@alternateText(query.isInstanceOf[NinoSearchFormModel])</li>
+    </ul>
 
     <h2 class="govuk-heading-m" id="personal-details">@messages("status-check-failure.heading2CustomerDetails")</h2>
 

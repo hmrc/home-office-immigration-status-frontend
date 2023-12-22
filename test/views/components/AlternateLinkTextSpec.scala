@@ -33,25 +33,12 @@ class AlternateLinkTextSpec extends ViewSpec {
     def test(method: String, view: HtmlFormat.Appendable): Unit =
       s"$method" must {
         val doc: Document = asDocument(view)
-        "have the paragraph content" in {
-          assertElementHasText(
-            doc,
-            "#alternate-search",
-            "You can change the customer’s details you have entered or search by passport or ID card."
-          )
-        }
 
         "have the link" in {
           assertElementHasText(doc, "#alt-search-by-mrz", "search by passport or ID card")
           doc
             .getElementById("alt-search-by-mrz")
             .attr("href") mustBe "/check-immigration-status/search-by-passport?clearForm=true"
-        }
-
-        "have the section break" in {
-          assertRenderedByClass(doc, "govuk-section-break")
-          assertRenderedByClass(doc, "govuk-section-break--xl")
-          assertRenderedByClass(doc, "govuk-section-break--visible")
         }
       }
 

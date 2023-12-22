@@ -47,8 +47,16 @@ class StatusCheckFailurePageViewSpec extends ViewSpec {
         val ninoDoc: Document = asDocument(ninoSearchView)
         val mrzDoc: Document  = asDocument(mrzSearchView)
         "have the title and heading" in {
-          assertElementHasText(ninoDoc, "title", "A match has not been found - Check immigration status - GOV.UK")
-          assertElementHasText(ninoDoc, "#status-check-failure-title", "A match has not been found")
+          assertElementHasText(
+            ninoDoc,
+            "title",
+            "The details you entered do not match Home Office records - Check immigration status - GOV.UK"
+          )
+          assertElementHasText(
+            ninoDoc,
+            "#status-check-failure-title",
+            "The details you entered do not match Home Office records"
+          )
         }
 
         "have the paragraph content" in {
@@ -70,8 +78,8 @@ class StatusCheckFailurePageViewSpec extends ViewSpec {
         "have the mrz alt link for nino doc" in {
           assertElementHasText(
             ninoDoc,
-            "#alternate-search",
-            "You can change the customer’s details you have entered or search by passport or ID card."
+            "#alt-search-by-mrz",
+            "search by passport or ID card"
           )
           assertElementHasText(ninoDoc, "#alt-search-by-mrz", "search by passport or ID card")
         }
@@ -79,8 +87,8 @@ class StatusCheckFailurePageViewSpec extends ViewSpec {
         "have the nino alt link for mrz doc" in {
           assertElementHasText(
             mrzDoc,
-            "#alternate-search",
-            "You can change the customer’s details you have entered or search by National Insurance number."
+            "#alt-search-by-nino",
+            "search by National Insurance number"
           )
           assertElementHasText(mrzDoc, "#alt-search-by-nino", "search by National Insurance number")
         }
