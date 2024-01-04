@@ -29,8 +29,8 @@ class StatusCheckFailurePageViewSpec extends ViewSpec {
   private lazy val sut: StatusCheckFailurePage = inject[StatusCheckFailurePage]
 
   private val bulletPointContent: List[(Int, String)] = List(
-    (1, "the details you have entered are incorrect"),
-    (2, "the Home Office has not updated the customer’s information")
+    (1, "the customer cannot be found"),
+    (2, "there are multiple matches with these details")
   )
 
   private val ninoSearchFormModel: NinoSearchFormModel =
