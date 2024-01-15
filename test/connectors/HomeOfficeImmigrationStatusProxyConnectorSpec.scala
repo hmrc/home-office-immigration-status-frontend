@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package connectors
 
-import com.kenshoo.play.metrics.Metrics
 import config.AppConfig
 import models._
 import org.mockito.ArgumentCaptor
@@ -32,7 +31,7 @@ import play.api.libs.json.Writes
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.{FakeRequest, Injecting}
 import repositories.SessionCacheRepository
-import uk.gov.hmrc.http.{HeaderCarrier, _}
+import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.NinoGenerator
 
@@ -88,8 +87,6 @@ class HomeOfficeImmigrationStatusProxyConnectorSpec
   )
 
   val correlationId: Some[String] = Some("some-correlation-id")
-
-  lazy val metrics: Metrics = mock(classOf[Metrics])
 
   trait Setup {
     val uuid = "123f4567-g89c-42c3-b456-557742330000"

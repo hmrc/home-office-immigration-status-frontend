@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,22 @@
 
 package endpoints
 
-import play.api.http.Status.SEE_OTHER
-import play.api.libs.ws.WSResponse
+import play.api.http.Status.NOT_FOUND
+import stubs.HomeOfficeImmigrationStatusStubs
 import support.ISpec
 
-class RootISpec extends ISpec {
+class ErrorHandlerISpec extends ISpec with HomeOfficeImmigrationStatusStubs {
 
-  "GET /check-immigration-status/" should {
-    "show the lookup page" in {
+  "GET /check-immigration-status/foo" should {
+    "return an error page not found" in {
       givenAuthorisedForStride("TBC", "StrideUserId")
 
-      val result: WSResponse = requestWithSession("/", "session-root").get().futureValue
-      result.status                 shouldBe SEE_OTHER
-      extractHeaderLocation(result) shouldBe Some(controllers.routes.SearchByNinoController.onPageLoad().url)
+      val result = request("/foo").get().futureValue
+
+      result.status                                       shouldBe NOT_FOUND
+      result.body                                           should include("This page can’t be found")
+      result.headers.get("Cache-Control").map(_.mkString) shouldBe Some("no-cache, no-store, must-revalidate")
     }
   }
+
 }
