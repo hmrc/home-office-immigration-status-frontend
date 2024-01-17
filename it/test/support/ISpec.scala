@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,11 @@
 package support
 
 import crypto.FormModelEncrypter
-import mocks.MockSessionCookie
 import models.{FormQueryModel, NinoSearchFormModel}
 import play.api.libs.ws.{WSClient, WSRequest, WSResponse}
 import play.api.test.Helpers.LOCATION
 import repositories.SessionCacheRepository
+import mocks.MockSessionCookie
 
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global

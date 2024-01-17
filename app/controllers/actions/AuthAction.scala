@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,20 +17,18 @@
 package controllers.actions
 
 import com.google.inject.{ImplementedBy, Inject}
-import play.api.{Configuration, Environment, Logger}
+import config.AppConfig
 import play.api.mvc.Results.Forbidden
 import play.api.mvc._
+import play.api.{Configuration, Environment, Logger}
+import support.CallOps
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.Credentials
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
+import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve._
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
-import config.AppConfig
-import support.CallOps
-import uk.gov.hmrc.auth.core.authorise.Predicate
 
 import scala.concurrent.{ExecutionContext, Future}
 

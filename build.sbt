@@ -1,22 +1,18 @@
-import uk.gov.hmrc.DefaultBuildSettings.*
+import uk.gov.hmrc.DefaultBuildSettings
 
 val appName = "home-office-immigration-status-frontend"
+
+ThisBuild / scalaVersion := "2.13.12"
+ThisBuild / majorVersion := 0
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .settings(
-    majorVersion := 0,
-    scalaVersion := "2.13.12",
-    PlayKeys.playDefaultPort := 10210
-  )
-  .settings(
-    // To resolve a bug with version 2.x.x of the scoverage plugin - https://github.com/sbt/sbt/issues/6997
-    libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,
-    // To resolve dependency clash between flexmark v0.64.4+ and play-language to run accessibility tests, remove when versions align
-    dependencyOverrides += "com.ibm.icu" % "icu4j" % "69.1",
+    PlayKeys.playDefaultPort := 10210,
     libraryDependencies ++= AppDependencies()
   )
+  .settings(CodeCoverageSettings.settings)
   .settings(
     TwirlKeys.templateImports ++= Seq(
       "play.twirl.api.HtmlFormat",
@@ -24,12 +20,6 @@ lazy val microservice = Project(appName, file("."))
       "uk.gov.hmrc.hmrcfrontend.views.html.components._",
       "uk.gov.hmrc.hmrcfrontend.views.html.helpers._"
     )
-  )
-  .settings(
-    coverageExcludedPackages := "<empty>;.*Routes.*",
-    coverageMinimumStmtTotal := 100,
-    coverageFailOnMinimum := true,
-    coverageHighlighting := true
   )
   .settings(
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
@@ -46,8 +36,6 @@ lazy val microservice = Project(appName, file("."))
     ),
     Assets / pipelineStages := Seq(concat)
   )
-  .configs(IntegrationTest)
-  .settings(integrationTestSettings())
   .settings(
     scalacOptions ++= Seq(
       "-Wconf:cat=unused-imports&src=views/.*:s",
@@ -56,5 +44,10 @@ lazy val microservice = Project(appName, file("."))
     )
   )
 
-addCommandAlias("scalafmtAll", "all scalafmtSbt scalafmt Test/scalafmt IntegrationTest/scalafmt A11y/scalafmt")
-addCommandAlias("scalastyleAll", "all scalastyle Test/scalastyle IntegrationTest/scalastyle A11y/scalastyle")
+lazy val it = project
+  .enablePlugins(PlayScala)
+  .dependsOn(microservice % "test->test")
+  .settings(DefaultBuildSettings.itSettings())
+
+addCommandAlias("scalafmtAll", "all scalafmtSbt scalafmt Test/scalafmt it/Test/scalafmt A11y/scalafmt")
+addCommandAlias("scalastyleAll", "all scalastyle Test/scalastyle it/Test/scalastyle A11y/scalastyle")

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@
 package support
 
 import com.codahale.metrics.MetricRegistry
-import com.kenshoo.play.metrics.Metrics
 import org.scalatest.Suite
 import org.scalatest.matchers.should.Matchers
 import play.api.Application
+import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 
 import scala.jdk.CollectionConverters._
 
@@ -41,8 +41,10 @@ trait MetricsTestSupport {
   def verifyTimerExistsAndBeenUpdated(metric: String): Unit = {
     val timers  = metricsRegistry.getTimers
     val metrics = timers.get(s"Timer-$metric")
-    if (metrics == null)
+    if (metrics == None.orNull) {
       throw new Exception(s"Metric [$metric] not found, try one of ${timers.keySet()}")
-    metrics.getCount should be >= 1L
+    } else {
+      metrics.getCount should be >= 1L
+    }
   }
 }
