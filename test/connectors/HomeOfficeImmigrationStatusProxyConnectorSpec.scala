@@ -117,7 +117,7 @@ class HomeOfficeImmigrationStatusProxyConnectorSpec
 
       val capturedCorrelationId: Option[String] =
         capture.getValue.extraHeaders.collectFirst {
-          case (key, value) if key == "CorrelationId" => value
+          case (headerName, headerValue) if headerName == "CorrelationId" => headerValue
         }
 
       verify(mockHttpClient).POST(refEq(url), refEq(ninoRequest), any())(any(), any(), any(), any())

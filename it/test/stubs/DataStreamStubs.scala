@@ -19,17 +19,20 @@ package stubs
 import com.github.tomakehurst.wiremock.client.WireMock._
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.{Millis, Seconds, Span}
+import play.api.http.Status.NO_CONTENT
 import support.WireMockSupport
 
 trait DataStreamStubs extends Eventually {
   me: WireMockSupport =>
 
+  private val (timeout: Int, interval: Int) = (5, 500)
+
   override implicit val patienceConfig: PatienceConfig =
-    PatienceConfig(scaled(Span(5, Seconds)), scaled(Span(500, Millis)))
+    PatienceConfig(scaled(Span(timeout, Seconds)), scaled(Span(interval, Millis)))
 
   def givenAuditConnector(): Unit = {
-    stubFor(post(urlPathEqualTo(auditUrl)).willReturn(aResponse().withStatus(204)))
-    stubFor(post(urlPathEqualTo(auditUrl + "/merged")).willReturn(aResponse().withStatus(204)))
+    stubFor(post(urlPathEqualTo(auditUrl)).willReturn(aResponse().withStatus(NO_CONTENT)))
+    stubFor(post(urlPathEqualTo(auditUrl + "/merged")).willReturn(aResponse().withStatus(NO_CONTENT)))
   }
 
   private def auditUrl = "/write/audit"

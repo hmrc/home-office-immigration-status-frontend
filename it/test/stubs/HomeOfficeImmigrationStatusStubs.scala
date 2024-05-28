@@ -19,6 +19,7 @@ package stubs
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.matching.AnythingPattern
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import play.api.http.Status._
 import play.mvc.Http.HeaderNames
 import support.WireMockSupport
 import utils.NinoGenerator
@@ -95,10 +96,10 @@ trait HomeOfficeImmigrationStatusStubs extends JourneyTestData {
        |}""".stripMargin
 
   def givenCheckByNinoSucceeds(): StubMapping =
-    givenStatusPublicFundsCheckStub("nino", 200, validByNinoRequestBody(), responseBodyWithStatus)
+    givenStatusPublicFundsCheckStub("nino", OK, validByNinoRequestBody(), responseBodyWithStatus)
 
   def givenCheckByMrzSucceeds(): StubMapping =
-    givenStatusPublicFundsCheckStub("mrz", 200, validByMrzRequestBody, responseBodyWithStatus)
+    givenStatusPublicFundsCheckStub("mrz", OK, validByMrzRequestBody, responseBodyWithStatus)
 
   def givenCheckByNinoErrorWhenMissingInputField(): StubMapping = {
 
@@ -110,7 +111,7 @@ trait HomeOfficeImmigrationStatusStubs extends JourneyTestData {
          |  }
          |}""".stripMargin
 
-    givenStatusPublicFundsCheckStub("nino", 400, validByNinoRequestBody(), errorResponseBody)
+    givenStatusPublicFundsCheckStub("nino", BAD_REQUEST, validByNinoRequestBody(), errorResponseBody)
   }
 
   def givenStatusCheckErrorWhenStatusNotFound(): StubMapping = {
@@ -123,11 +124,11 @@ trait HomeOfficeImmigrationStatusStubs extends JourneyTestData {
          |  }
          |}""".stripMargin
 
-    givenStatusPublicFundsCheckStub("nino", 404, validByNinoRequestBody(), errorResponseBody)
+    givenStatusPublicFundsCheckStub("nino", NOT_FOUND, validByNinoRequestBody(), errorResponseBody)
   }
 
   def givenAnExternalServiceErrorCheckByNino(): StubMapping =
-    givenStatusPublicFundsCheckStub("nino", 500, validByNinoRequestBody(), "", "some-correlation-id")
+    givenStatusPublicFundsCheckStub("nino", INTERNAL_SERVER_ERROR, validByNinoRequestBody(), "", "some-correlation-id")
 
   def givenStatusCheckErrorWhenDOBInvalid(): StubMapping = {
 
@@ -145,7 +146,7 @@ trait HomeOfficeImmigrationStatusStubs extends JourneyTestData {
          |  }
          |}""".stripMargin
 
-    givenStatusPublicFundsCheckStub("nino", 400, validByNinoRequestBody(), errorResponseBody)
+    givenStatusPublicFundsCheckStub("nino", BAD_REQUEST, validByNinoRequestBody(), errorResponseBody)
 
   }
 

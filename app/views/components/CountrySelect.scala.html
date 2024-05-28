@@ -16,6 +16,7 @@
 
 @import config.Country
 @import views.html.helper.CSPNonce
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.FormGroup
 
 @this(
     govukSelect: GovukSelect,
@@ -40,6 +41,6 @@
                 selected = form("nationality").value.contains(country.alpha3)
             )
         ),
-    formGroupClasses = "autocomplete-wrapper",
+    formGroup = FormGroup(classes = Some("autocomplete-wrapper")),
     attributes = Map("data-all-countries" -> "")
 ))

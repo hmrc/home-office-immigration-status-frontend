@@ -40,23 +40,27 @@ class StatusCheckFailurePageViewSpec extends ViewSpec {
   private def viewViaRender(query: SearchFormModel): HtmlFormat.Appendable = sut.render(query, request, messages)
   private def viewViaF(query: SearchFormModel): HtmlFormat.Appendable      = sut.f(query)(request, messages)
 
+  private def titleHeadingTest(doc: Document): Unit =
+    "have the title and heading" in {
+      assertElementHasText(
+        doc,
+        "title",
+        "The details you entered do not match Home Office records - Check immigration status - GOV.UK"
+      )
+      assertElementHasText(
+        doc,
+        "#status-check-failure-title",
+        "The details you entered do not match Home Office records"
+      )
+    }
+
   "StatusCheckFailurePageView" when {
     def test(method: String, ninoSearchView: HtmlFormat.Appendable, mrzSearchView: HtmlFormat.Appendable): Unit =
       s"$method" must {
         val ninoDoc: Document = asDocument(ninoSearchView)
         val mrzDoc: Document  = asDocument(mrzSearchView)
-        "have the title and heading" in {
-          assertElementHasText(
-            ninoDoc,
-            "title",
-            "The details you entered do not match Home Office records - Check immigration status - GOV.UK"
-          )
-          assertElementHasText(
-            ninoDoc,
-            "#status-check-failure-title",
-            "The details you entered do not match Home Office records"
-          )
-        }
+
+        titleHeadingTest(ninoDoc)
 
         "have the paragraph content" in {
           assertElementHasText(ninoDoc, ".govuk-body", "This may be because:")

@@ -69,13 +69,6 @@ class StatusFoundWarningsSpec extends ViewSpec {
 
           assertElementHasText(doc, "#zambrano-warning", message)
         }
-
-        "have the recourse warning message" in {
-          val message: String = "! Warning Child Benefit users only. This customer has no recourse to public funds, " +
-            "but there may be exceptions. Eligibility needs to be checked on Home Office systems (such as ATLAS)."
-
-          assertElementHasText(doc, "#recourse-warning", message)
-        }
       }
 
     val input: Seq[(String, HtmlFormat.Appendable)] = Seq(

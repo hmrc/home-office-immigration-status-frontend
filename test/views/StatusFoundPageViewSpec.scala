@@ -153,19 +153,6 @@ class StatusFoundPageViewSpec extends ViewSpec {
     s"$method" must {
       val docWithWarnings: Document    = asDocument(viewWithWarnings)
       val docWithoutWarnings: Document = asDocument(viewWithoutWarnings)
-      "have recourse warning message if noRecourseToPublicFunds is true" in {
-        val message: String = "! Warning Child Benefit users only. This customer has no recourse to public funds, " +
-          "but there may be exceptions. Eligibility needs to be checked on Home Office systems (such as ATLAS)."
-
-        assertElementHasText(docWithWarnings, "#recourse-text", "No")
-        assertElementHasText(docWithWarnings, "#recourse-warning", message)
-      }
-
-      "not have recourse warning message if noRecourseToPublicFunds is false" in {
-        assertNotRenderedById(docWithoutWarnings, "#recourse-text")
-        assertNotRenderedById(docWithoutWarnings, "recourse-warning")
-      }
-
       "have zambrano warning message if context.isZambrano is true" in {
         val message: String = "! Warning This is a rest of the world national with an EU Settlement Scheme status. " +
           "Eligibility needs to be checked on Home Office systems (such as ATLAS)."

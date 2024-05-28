@@ -145,7 +145,6 @@ status-found.current.nonEUS.ILE.expired='’s indefinite leave to enter has ende
 
 status-found.current.hasFBIS=' has '{0}' - '{1}'
 status-found.current.noStatus=' has no immigration status'
-status-found.warning='Child Benefit users only. This customer has no recourse to public funds, but there may be exceptions. Eligibility needs to be checked on Home Office systems (such as ATLAS).'
 status-found.zambrano='This is a rest of the world national with an EU Settlement Scheme status. Eligibility needs to be checked on Home Office systems (such as ATLAS).'
 status-found.yes='Yes'
 status-found.no='No'
