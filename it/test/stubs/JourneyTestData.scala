@@ -22,7 +22,7 @@ import java.time.LocalDate
 
 trait JourneyTestData {
 
-  val correlationId: String = scala.util.Random.alphanumeric.take(64).mkString
+  val correlationId: String = "c75f40a6-a3df-4429-a697-471eeec46435"
 
   val expectedResultWithSingleStatus: StatusCheckResult = StatusCheckResult(
     fullName = "Jane Doe",

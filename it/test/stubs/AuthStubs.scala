@@ -17,45 +17,44 @@
 package stubs
 
 import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import play.api.http.Status.{OK, UNAUTHORIZED}
 import support.WireMockSupport
 
 trait AuthStubs {
   me: WireMockSupport =>
 
-  def givenRequestIsNotAuthorised(mdtpDetail: String): AuthStubs = {
+  def givenRequestIsNotAuthorised(mdtpDetail: String): StubMapping =
     stubFor(
       post(urlEqualTo("/auth/authorise"))
         .willReturn(
           aResponse()
-            .withStatus(401)
+            .withStatus(UNAUTHORIZED)
             .withHeader("WWW-Authenticate", s"""MDTP detail="$mdtpDetail"""")
         )
     )
-    this
-  }
 
-  def givenAuthorisedForStride(strideGroup: String, strideUserId: String): AuthStubs = {
+  def givenAuthorisedForStride(strideGroup: String, strideUserId: String): StubMapping =
     stubFor(
       post(urlEqualTo("/auth/authorise"))
-        .atPriority(1)
         .withRequestBody(
           equalToJson(
             s"""
-             |{
-             |  "authorise": [
-             |    {
-             |      "identifiers": [],
-             |      "state": "Activated",
-             |      "enrolment": "$strideGroup"
-             |    },
-             |    {
-             |      "authProviders": [
-             |        "PrivilegedApplication"
-             |      ]
-             |    }
-             |  ],
-             |  "retrieve": ["optionalCredentials","allEnrolments"]
-             |}
+               |{
+               |  "authorise": [
+               |    {
+               |      "identifiers": [],
+               |      "state": "Activated",
+               |      "enrolment": "$strideGroup"
+               |    },
+               |    {
+               |      "authProviders": [
+               |        "PrivilegedApplication"
+               |      ]
+               |    }
+               |  ],
+               |  "retrieve": ["optionalCredentials","allEnrolments"]
+               |}
            """.stripMargin,
             true,
             true
@@ -63,32 +62,20 @@ trait AuthStubs {
         )
         .willReturn(
           aResponse()
-            .withStatus(200)
+            .withStatus(OK)
             .withBody(s"""
-                       |{
-                       |  "optionalCredentials":{
-                       |    "providerId": "$strideUserId",
-                       |    "providerType": "PrivilegedApplication"
-                       |  },
-                       |  "allEnrolments":[
-                       |    {"key":"$strideGroup"}
-                       |  ]
-                       |}
+                 |{
+                 |  "optionalCredentials":{
+                 |    "providerId": "$strideUserId",
+                 |    "providerType": "PrivilegedApplication"
+                 |  },
+                 |  "allEnrolments":[
+                 |    {"key":"$strideGroup"}
+                 |  ]
+                 |}
        """.stripMargin)
         )
     )
-
-    stubFor(
-      post(urlEqualTo("/auth/authorise"))
-        .atPriority(2)
-        .willReturn(
-          aResponse()
-            .withStatus(401)
-            .withHeader("WWW-Authenticate", "MDTP detail=\"InsufficientEnrolments\"")
-        )
-    )
-    this
-  }
 
   def verifyAuthoriseAttempt(): Unit =
     verify(1, postRequestedFor(urlEqualTo("/auth/authorise")))

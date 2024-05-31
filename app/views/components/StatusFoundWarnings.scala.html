@@ -30,11 +30,3 @@
         attributes = Map("id" -> "zambrano-warning")
     ))
 }
-
-@if(!context.hasRecourseToPublicFunds) {
-    @warning(WarningText(
-        iconFallbackText = Some(messages("generic.warning")),
-        content = Text(messages("status-found.warning")),
-        attributes = Map("id" -> "recourse-warning")
-    ))
-}

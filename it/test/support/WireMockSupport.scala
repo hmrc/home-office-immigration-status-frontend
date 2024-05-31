@@ -61,7 +61,6 @@ trait WireMockSupport extends BeforeAndAfterAll with BeforeAndAfterEach {
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    Thread.sleep(100)
     WireMock.reset()
     commonStubs()
   }

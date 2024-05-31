@@ -31,7 +31,7 @@ class StatusResultISpec extends ISpec with HomeOfficeImmigrationStatusStubs {
       givenAuthorisedForStride("TBC", "StrideUserId")
 
       val sessionId = "session-statusResultGet"
-      val query     = NinoSearchFormModel(nino, "Doe", "Jane", LocalDate.of(2001, 1, 31))
+      val query     = NinoSearchFormModel(nino, "Doe", "Jane", LocalDate.parse("2001-01-31"))
       setFormQuery(query, sessionId)
 
       val result = requestWithSession("/status-result", sessionId).get().futureValue
@@ -46,7 +46,7 @@ class StatusResultISpec extends ISpec with HomeOfficeImmigrationStatusStubs {
       givenAuthorisedForStride("TBC", "StrideUserId")
 
       val sessionId = "session-statusResultErrorPage"
-      val query     = NinoSearchFormModel(nino, "Doe", "Jane", LocalDate.of(2001, 1, 31))
+      val query     = NinoSearchFormModel(nino, "Doe", "Jane", LocalDate.parse("2001-01-31"))
       setFormQuery(query, sessionId)
 
       val result = requestWithSession("/status-result", sessionId).get().futureValue

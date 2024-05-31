@@ -23,7 +23,6 @@ import com.google.inject.{Inject, Singleton}
 @Singleton
 class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Configuration, env: Environment) {
 
-  val appName: String                                 = servicesConfig.getString("appName")
   val shuttered: Boolean                              = servicesConfig.getBoolean("isShuttered")
   val homeOfficeImmigrationStatusProxyBaseUrl: String = servicesConfig.baseUrl("home-office-immigration-status-proxy")
   val mongoSessionExpiration: Int                     = servicesConfig.getInt("mongodb.ttl.seconds")
@@ -32,7 +31,7 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Config
   val gtmId: String                                   = servicesConfig.getString("google-tag-manager.id")
   val helpdeskUrl: String                             = servicesConfig.getString("it.helpdesk.url")
   val httpHeaderCacheControl: String                  = servicesConfig.getString("httpHeaders.cacheControl")
-  val mongoEncryptionKey                              = servicesConfig.getString("mongodb.encryption.key")
+  val mongoEncryptionKey: String                      = servicesConfig.getString("mongodb.encryption.key")
 
   val isDevEnv: Boolean =
     if (env.mode.equals(Mode.Test)) {
