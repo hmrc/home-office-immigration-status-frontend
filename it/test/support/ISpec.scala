@@ -17,11 +17,11 @@
 package support
 
 import crypto.FormModelEncrypter
+import mocks.MockSessionCookie
 import models.{FormQueryModel, NinoSearchFormModel}
 import play.api.libs.ws.{WSClient, WSRequest, WSResponse}
 import play.api.test.Helpers.LOCATION
 import repositories.SessionCacheRepository
-import mocks.MockSessionCookie
 
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global

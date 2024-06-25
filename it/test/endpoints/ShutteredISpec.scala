@@ -19,6 +19,7 @@ package endpoints
 import play.api.Application
 import play.api.http.Status.SERVICE_UNAVAILABLE
 import play.api.libs.ws.WSResponse
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import support.ISpec
 
 import scala.concurrent.Future
@@ -42,7 +43,7 @@ class ShutteredISpec extends ISpec {
     ).foreach { case (path, request) =>
       s"path is $path and method is ${request.getClass.getName} and app is shuttered" should {
         "return the shutter page" in {
-          val result: WSResponse = request(path).futureValue
+          val result: WSResponse = await(request(path))
 
           result.status shouldBe SERVICE_UNAVAILABLE
           result.body     should include(htmlEscapedMessage("shuttering.title"))

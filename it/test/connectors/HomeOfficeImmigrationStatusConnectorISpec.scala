@@ -24,6 +24,7 @@ import repositories.SessionCacheRepository
 import stubs.HomeOfficeImmigrationStatusStubs
 import support.BaseISpec
 import uk.gov.hmrc.http._
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
 import java.time.{LocalDate, ZoneId}
 import java.util.UUID
@@ -38,7 +39,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
       "return status when successful" in {
         givenCheckByNinoSucceeds()
 
-        val result = connector.statusPublicFundsByNino(request).futureValue
+        val result = await(connector.statusPublicFundsByNino(request))
 
         val expectedResult = StatusCheckResult(
           fullName = "Jane Doe",
@@ -63,7 +64,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
       "return check error when 400 response ERR_REQUEST_INVALID" in {
         givenCheckByNinoErrorWhenMissingInputField()
 
-        val result = connector.statusPublicFundsByNino(request).futureValue
+        val result = await(connector.statusPublicFundsByNino(request))
 
         val expectedResult = StatusCheckResponseWithStatus(
           BAD_REQUEST,
@@ -76,7 +77,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
       "return check error when 404 response ERR_NOT_FOUND" in {
         givenStatusCheckErrorWhenStatusNotFound()
 
-        val result = connector.statusPublicFundsByNino(request).futureValue
+        val result = await(connector.statusPublicFundsByNino(request))
 
         val expectedResult = StatusCheckResponseWithStatus(
           NOT_FOUND,
@@ -89,7 +90,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
       "return check error when 400 response ERR_VALIDATION" in {
         givenStatusCheckErrorWhenDOBInvalid()
 
-        val result = connector.statusPublicFundsByNino(request).futureValue
+        val result = await(connector.statusPublicFundsByNino(request))
 
         val expectedResult = StatusCheckResponseWithStatus(
           BAD_REQUEST,
@@ -105,7 +106,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
       "return check error if invalid JSON body return" in {
         givenStatusPublicFundsCheckStub("nino", CONFLICT, validByNinoRequestBody(), "", "some-correlation-id")
 
-        val result = connector.statusPublicFundsByNino(request).futureValue
+        val result = await(connector.statusPublicFundsByNino(request))
 
         val expectedResult = StatusCheckResponseWithStatus(
           CONFLICT,
@@ -118,7 +119,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
       "throw exception if 5xx response" in {
         givenAnExternalServiceErrorCheckByNino()
 
-        val result = connector.statusPublicFundsByNino(request).futureValue
+        val result = await(connector.statusPublicFundsByNino(request))
 
         val expectedResult = StatusCheckResponseWithStatus(
           INTERNAL_SERVER_ERROR,

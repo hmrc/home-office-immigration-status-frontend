@@ -19,7 +19,6 @@ package support
 import models.{Search, StatusCheckResponseWithStatus}
 import org.apache.pekko.stream.Materializer
 import org.scalatest.OptionValues
-import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
@@ -32,29 +31,25 @@ import play.api.test.Helpers.{charset, contentAsString, contentType, defaultAwai
 import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.HtmlFormat
 import services.AuditService
-import stubs.{AuthStubs, DataStreamStubs}
+import stubs.AuthStubs
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
-import scala.language.postfixOps
 
 trait BaseISpec
     extends AnyWordSpecLike
     with Matchers
     with GuiceOneServerPerSuite
     with OptionValues
-    with ScalaFutures
     with WireMockSupport
     with AuthStubs
-    with DataStreamStubs
-    with MetricsTestSupport
     with Injecting {
 
   override def fakeApplication(): Application = appBuilder.build()
 
-  implicit val defaultTimeout: FiniteDuration = 5 seconds
+  implicit val defaultTimeout: FiniteDuration = 5.seconds
 
   object FakeAuditService extends AuditService {
     def auditStatusCheckEvent(search: Search, result: StatusCheckResponseWithStatus)(implicit
@@ -67,6 +62,8 @@ trait BaseISpec
   protected def appBuilder: GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .configure(
+        "auditing.enabled"                                                -> false,
+        "metrics.enabled"                                                 -> false,
         "isShuttered"                                                     -> false,
         "play.filters.csrf.header.bypassHeaders.Csrf-Token"               -> "nocheck",
         "microservice.services.auth.host"                                 -> wireMockHost,
@@ -77,11 +74,6 @@ trait BaseISpec
       .overrides(
         bind[AuditService].toInstance(FakeAuditService)
       )
-
-  override def commonStubs(): Unit = {
-    givenCleanMetricRegistry()
-    givenAuditConnector()
-  }
 
   protected implicit val materializer: Materializer = app.materializer
 

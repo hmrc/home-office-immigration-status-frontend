@@ -17,6 +17,7 @@
 package endpoints
 
 import play.api.http.Status.NOT_FOUND
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import stubs.HomeOfficeImmigrationStatusStubs
 import support.ISpec
 
@@ -26,7 +27,7 @@ class ErrorHandlerISpec extends ISpec with HomeOfficeImmigrationStatusStubs {
     "return an error page not found" in {
       givenAuthorisedForStride("TBC", "StrideUserId")
 
-      val result = request("/foo").get().futureValue
+      val result = await(request("/foo").get())
 
       result.status                                       shouldBe NOT_FOUND
       result.body                                           should include("This page can’t be found")
