@@ -18,6 +18,7 @@ package endpoints
 
 import play.api.http.Status.{OK, SEE_OTHER}
 import mocks.MockSessionCookie
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import stubs.HomeOfficeImmigrationStatusStubs
 import support.ISpec
 
@@ -27,7 +28,7 @@ class SearchByPassportISpec extends ISpec with HomeOfficeImmigrationStatusStubs 
     "show the lookup page" in {
       givenAuthorisedForStride("TBC", "StrideUserId")
 
-      val result = requestWithSession("/search-by-passport", "session-searchByPassportGet").get().futureValue
+      val result = await(requestWithSession("/search-by-passport", "session-searchByPassportGet").get())
 
       result.status                                       shouldBe OK
       result.body                                           should include(htmlEscapedMessage("lookup.mrz.title"))
@@ -49,7 +50,7 @@ class SearchByPassportISpec extends ISpec with HomeOfficeImmigrationStatusStubs 
         "nationality"       -> "AFG"
       )
 
-      val result = requestWithSession("/search-by-passport", "session-searchByPassportPost").post(payload).futureValue
+      val result = await(requestWithSession("/search-by-passport", "session-searchByPassportPost").post(payload))
 
       result.status                 shouldBe SEE_OTHER
       extractHeaderLocation(result) shouldBe Some(controllers.routes.StatusResultController.onPageLoad.url)

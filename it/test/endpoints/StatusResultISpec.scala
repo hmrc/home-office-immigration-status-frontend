@@ -18,6 +18,7 @@ package endpoints
 
 import models.NinoSearchFormModel
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import stubs.HomeOfficeImmigrationStatusStubs
 import support.ISpec
 
@@ -34,7 +35,7 @@ class StatusResultISpec extends ISpec with HomeOfficeImmigrationStatusStubs {
       val query     = NinoSearchFormModel(nino, "Doe", "Jane", LocalDate.parse("2001-01-31"))
       setFormQuery(query, sessionId)
 
-      val result = requestWithSession("/status-result", sessionId).get().futureValue
+      val result = await(requestWithSession("/status-result", sessionId).get())
 
       result.status                                       shouldBe OK
       result.body                                           should include(htmlEscapedMessage("status-found.title"))
@@ -49,7 +50,7 @@ class StatusResultISpec extends ISpec with HomeOfficeImmigrationStatusStubs {
       val query     = NinoSearchFormModel(nino, "Doe", "Jane", LocalDate.parse("2001-01-31"))
       setFormQuery(query, sessionId)
 
-      val result = requestWithSession("/status-result", sessionId).get().futureValue
+      val result = await(requestWithSession("/status-result", sessionId).get())
 
       result.status                                       shouldBe INTERNAL_SERVER_ERROR
       result.body                                           should include(htmlEscapedMessage("external.error.500.title"))

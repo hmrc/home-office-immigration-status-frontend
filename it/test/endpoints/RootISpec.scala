@@ -18,6 +18,7 @@ package endpoints
 
 import play.api.http.Status.SEE_OTHER
 import play.api.libs.ws.WSResponse
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import support.ISpec
 
 class RootISpec extends ISpec {
@@ -26,7 +27,8 @@ class RootISpec extends ISpec {
     "show the lookup page" in {
       givenAuthorisedForStride("TBC", "StrideUserId")
 
-      val result: WSResponse = requestWithSession("/", "session-root").get().futureValue
+      val result: WSResponse = await(requestWithSession("/", "session-root").get())
+
       result.status                 shouldBe SEE_OTHER
       extractHeaderLocation(result) shouldBe Some(controllers.routes.SearchByNinoController.onPageLoad().url)
     }
