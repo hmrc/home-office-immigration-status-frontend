@@ -19,7 +19,8 @@ package controllers
 import controllers.actions.AccessAction
 import forms.SearchByMRZForm
 import models.MrzSearchFormModel
-import org.mockito.ArgumentMatchers.{any, refEq, eq => is}
+import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
 import play.api.Application
 import play.api.data.FormBinding.Implicits.formBinding
@@ -68,7 +69,7 @@ class SearchByMrzControllerSpec extends ControllerSpec {
         status(result) mustBe OK
         contentAsString(result) mustBe fakeView.toString
         withClue("the form was prefilled with a previous query, how?") {
-          verify(mockView).apply(refEq(emptyForm, "mapping"))(is(request), any())
+          verify(mockView).apply(refEq(emptyForm, "mapping"))(ArgumentMatchers.eq(request), any())
         }
         verify(mockSessionCacheService).get(any(), any())
       }
@@ -81,7 +82,7 @@ class SearchByMrzControllerSpec extends ControllerSpec {
         status(result) mustBe OK
         contentAsString(result) mustBe fakeView.toString
         withClue("the form did not prepopulate with the defined query") {
-          verify(mockView).apply(refEq(prePopForm, "mapping"))(is(request), any())
+          verify(mockView).apply(refEq(prePopForm, "mapping"))(ArgumentMatchers.eq(request), any())
         }
         verify(mockSessionCacheService).get(any(), any())
       }
@@ -101,7 +102,7 @@ class SearchByMrzControllerSpec extends ControllerSpec {
         status(result) mustBe OK
         contentAsString(result) mustBe fakeView.toString
         withClue("the form was prefilled with a previous query, how?") {
-          verify(mockView).apply(refEq(emptyForm, "mapping"))(is(request), any())
+          verify(mockView).apply(refEq(emptyForm, "mapping"))(ArgumentMatchers.eq(request), any())
         }
         verify(mockSessionCacheService).delete(any(), any())
       }
@@ -127,7 +128,7 @@ class SearchByMrzControllerSpec extends ControllerSpec {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result).get mustBe routes.StatusResultController.onPageLoad.url
-        verify(mockSessionCacheService).set(refEq(query))(any(), any())
+        verify(mockSessionCacheService).set(ArgumentMatchers.eq(query))(any(), any())
       }
     }
 
@@ -140,7 +141,7 @@ class SearchByMrzControllerSpec extends ControllerSpec {
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe fakeView.toString
-        verify(mockView).apply(refEq(formWithErrors, "mapping"))(is(request), any())
+        verify(mockView).apply(refEq(formWithErrors, "mapping"))(ArgumentMatchers.eq(request), any())
         withClue("The session should contain the valid form answers") {
           val updatedSession = await(result).session(request)
           updatedSession.get("query") must not be defined
@@ -162,7 +163,7 @@ class SearchByMrzControllerSpec extends ControllerSpec {
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe fakeView.toString
-        verify(mockView).apply(refEq(formWithErrors, "mapping"))(is(requestWithForm), any())
+        verify(mockView).apply(refEq(formWithErrors, "mapping"))(ArgumentMatchers.eq(requestWithForm), any())
         withClue("The session should contain the valid form answers") {
           val updatedSession = await(result).session(request)
           updatedSession.get("query") must not be defined

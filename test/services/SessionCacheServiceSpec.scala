@@ -19,9 +19,9 @@ package services
 import config.AppConfig
 import crypto.FormModelEncrypter
 import models.{EncryptedSearchFormModel, FormQueryModel, NinoSearchFormModel, SearchFormModel}
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
+import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.play.PlaySpec
@@ -31,10 +31,10 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Injecting
 import repositories.SessionCacheRepository
-import utils.NinoGenerator
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
-import java.time.{Instant, LocalDate}
+import utils.NinoGenerator
 
+import java.time.{Instant, LocalDate}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
@@ -84,7 +84,7 @@ class SessionCacheServiceSpec
       val hc     = HeaderCarrier(sessionId = Some(SessionId("123")))
       val result = Await.result(sut.get(hc, implicitly), 5 seconds)
       result mustBe None
-      verify(mockRepo).get(refEq("123"))(any())
+      verify(mockRepo).get(ArgumentMatchers.eq("123"))(any())
     }
 
     "check the repository and return some where the header carrier has a session id" in {
@@ -92,7 +92,7 @@ class SessionCacheServiceSpec
       val hc     = HeaderCarrier(sessionId = Some(SessionId("123")))
       val result = Await.result(sut.get(hc, implicitly), 5 seconds)
       result mustBe Some(formModel)
-      verify(mockRepo).get(refEq("123"))(any())
+      verify(mockRepo).get(ArgumentMatchers.eq("123"))(any())
     }
 
     "return an error where the header carrier has no session id" in {
@@ -132,7 +132,7 @@ class SessionCacheServiceSpec
       when(mockRepo.delete(any())(any())).thenReturn(Future.unit)
       val hc = HeaderCarrier(sessionId = Some(SessionId("123")))
       Await.result(sut.delete(hc, implicitly), 5 seconds)
-      verify(mockRepo).delete(refEq("123"))(any())
+      verify(mockRepo).delete(ArgumentMatchers.eq("123"))(any())
     }
 
     "return an error where the header carrier has no session id" in {

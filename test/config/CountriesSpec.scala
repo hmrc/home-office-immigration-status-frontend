@@ -17,7 +17,7 @@
 package config
 
 import com.typesafe.config.ConfigException
-import org.mockito.ArgumentMatchers.refEq
+import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.BeforeAndAfterEach
@@ -54,7 +54,8 @@ class CountriesSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting wit
   "Countries" should {
     "throw an exception" when {
       "the canonical list file is not found" in {
-        when(mockEnv.resourceAsStream(refEq("location-autocomplete-canonical-list.json"))).thenReturn(None)
+        when(mockEnv.resourceAsStream(ArgumentMatchers.eq("location-autocomplete-canonical-list.json")))
+          .thenReturn(None)
 
         val caught = intercept[ConfigException.BadValue] {
           new Countries(mockEnv)
@@ -64,7 +65,7 @@ class CountriesSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting wit
       }
 
       "the iso3 file is not found" in {
-        when(mockEnv.resourceAsStream(refEq("ISO_3166-alpha3-alpha2-numeric.json"))).thenReturn(None)
+        when(mockEnv.resourceAsStream(ArgumentMatchers.eq("ISO_3166-alpha3-alpha2-numeric.json"))).thenReturn(None)
 
         val caught = intercept[ConfigException.BadValue] {
           new Countries(mockEnv)
@@ -76,6 +77,6 @@ class CountriesSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting wit
   }
 
   def mockActualEnvFile(filename: String): OngoingStubbing[Option[InputStream]] =
-    when(mockEnv.resourceAsStream(refEq(filename))).thenReturn(env.resourceAsStream(filename))
+    when(mockEnv.resourceAsStream(ArgumentMatchers.eq(filename))).thenReturn(env.resourceAsStream(filename))
 
 }
