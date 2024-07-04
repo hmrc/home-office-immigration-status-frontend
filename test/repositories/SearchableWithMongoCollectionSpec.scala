@@ -18,7 +18,8 @@ package repositories
 
 import crypto.FormModelEncrypter
 import models.{EncryptedSearchFormModel, FormQueryModel, NinoSearchFormModel}
-import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, verify, when}
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.{Filters, FindOneAndReplaceOptions}
@@ -93,7 +94,7 @@ class SearchableWithMongoCollectionSpec
       when(mockSingleObs.head()).thenReturn(Future.successful(Seq(formQuery)))
 
       TestSearchable.get("ID1").map { result =>
-        verify(mockCollection).find(refEq(filters))(any(), any())
+        verify(mockCollection).find(ArgumentMatchers.eq(filters))(any(), any())
         result must be(Some(formQuery))
       }
     }
@@ -102,7 +103,7 @@ class SearchableWithMongoCollectionSpec
       when(mockSingleObs.head()).thenReturn(Future.successful(Nil))
 
       TestSearchable.get("ID1").map { result =>
-        verify(mockCollection).find(refEq(filters))(any(), any())
+        verify(mockCollection).find(ArgumentMatchers.eq(filters))(any(), any())
         result must be(None)
       }
     }
@@ -118,7 +119,11 @@ class SearchableWithMongoCollectionSpec
 
       TestSearchable.set(formQuery).map { result =>
         verify(mockCollection)
-          .findOneAndReplace(refEq(filters), refEq(formQuery), refEq(FindOneAndReplaceOptions().upsert(true)))
+          .findOneAndReplace(
+            ArgumentMatchers.eq(filters),
+            ArgumentMatchers.eq(formQuery),
+            ArgumentMatchers.eq(FindOneAndReplaceOptions().upsert(true))
+          )
         result mustEqual unit
       }
     }
@@ -130,7 +135,7 @@ class SearchableWithMongoCollectionSpec
       when(mockSingleObsDelete.head()).thenReturn(Future.successful(mockDeleteResult))
 
       TestSearchable.delete("ID1").map { result =>
-        verify(mockCollection).deleteOne(refEq(filters))
+        verify(mockCollection).deleteOne(ArgumentMatchers.eq(filters))
         result mustEqual unit
       }
     }

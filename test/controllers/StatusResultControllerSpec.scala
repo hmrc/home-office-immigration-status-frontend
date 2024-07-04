@@ -18,7 +18,8 @@ package controllers
 
 import controllers.actions.AccessAction
 import models._
-import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.mockito.stubbing.OngoingStubbing
 import play.api.Application
@@ -81,7 +82,7 @@ class StatusResultControllerSpec extends ControllerSpec {
       ): OngoingStubbing[Future[StatusCheckResponseWithStatus]] =
         when(
           mockProxyService
-            .search(refEq(query))(any(), any(), any(), any())
+            .search(ArgumentMatchers.eq(query))(any(), any(), any(), any())
         )
           .thenReturn(Future.successful(hoResponse))
 

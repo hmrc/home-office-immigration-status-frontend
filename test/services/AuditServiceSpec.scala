@@ -17,7 +17,8 @@
 package services
 
 import models._
-import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatestplus.play.PlaySpec
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
@@ -66,7 +67,11 @@ class AuditServiceSpec extends PlaySpec {
         sut.auditStatusCheckEvent(search, responseWithStatus)
 
         verify(mockAuditConnector)
-          .sendExplicitAudit(refEq("StatusCheckRequest"), refEq(expectedDetails))(any(), any(), any())
+          .sendExplicitAudit(ArgumentMatchers.eq("StatusCheckRequest"), ArgumentMatchers.eq(expectedDetails))(
+            any(),
+            any(),
+            any()
+          )
       }
 
       "an error is passed in" in {
@@ -88,7 +93,11 @@ class AuditServiceSpec extends PlaySpec {
         sut.auditStatusCheckEvent(search, responseWithStatus)
 
         verify(mockAuditConnector)
-          .sendExplicitAudit(refEq("StatusCheckRequest"), refEq(expectedDetails))(any(), any(), any())
+          .sendExplicitAudit(ArgumentMatchers.eq("StatusCheckRequest"), ArgumentMatchers.eq(expectedDetails))(
+            any(),
+            any(),
+            any()
+          )
       }
     }
   }

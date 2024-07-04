@@ -18,9 +18,9 @@ package connectors
 
 import config.AppConfig
 import models._
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
+import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -120,7 +120,8 @@ class HomeOfficeImmigrationStatusProxyConnectorSpec
           case (headerName, headerValue) if headerName == "CorrelationId" => headerValue
         }
 
-      verify(mockHttpClient).POST(refEq(url), refEq(ninoRequest), any())(any(), any(), any(), any())
+      verify(mockHttpClient)
+        .POST(ArgumentMatchers.eq(url), ArgumentMatchers.eq(ninoRequest), any())(any(), any(), any(), any())
       capture.getValue.extraHeaders.size mustBe 1
       capturedCorrelationId mustNot be("")
 
@@ -145,7 +146,8 @@ class HomeOfficeImmigrationStatusProxyConnectorSpec
 
       sut.statusPublicFundsByMrz(mrzRequest)
 
-      verify(mockHttpClient).POST(refEq(url), refEq(mrzRequest), any())(any(), any(), any(), any())
+      verify(mockHttpClient)
+        .POST(ArgumentMatchers.eq(url), ArgumentMatchers.eq(mrzRequest), any())(any(), any(), any(), any())
 
     }
   }
