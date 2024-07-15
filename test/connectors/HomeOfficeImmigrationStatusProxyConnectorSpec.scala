@@ -17,78 +17,82 @@
 package connectors
 
 import config.AppConfig
+import connectors.Constants._
 import models._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatest.concurrent.ScalaFutures
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.Application
-import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.Writes
 import play.api.mvc.AnyContentAsEmpty
-import play.api.test.{FakeRequest, Injecting}
+import play.api.test.FakeRequest
 import repositories.SessionCacheRepository
 import uk.gov.hmrc.http._
+import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import utils.NinoGenerator
 
-import java.net.URL
-import java.time.{LocalDate, ZoneId}
+import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class HomeOfficeImmigrationStatusProxyConnectorSpec
     extends PlaySpec
-    with GuiceOneAppPerSuite
-    with Injecting
+    with MockitoSugar
+    with ScalaFutures
     with BeforeAndAfterEach {
 
-  val mockAppConfig: AppConfig = mock(classOf[AppConfig])
-  when(mockAppConfig.homeOfficeImmigrationStatusProxyBaseUrl).thenReturn("http://localhost:1234")
-  val mockHttpClient: HttpClient                      = mock(classOf[HttpClient])
-  val mockSessionCacheService: SessionCacheRepository = mock(classOf[SessionCacheRepository])
+  val mockAppConfig: AppConfig = mock[AppConfig]
 
-  override implicit lazy val app: Application = new GuiceApplicationBuilder()
-    .overrides(
-      bind[HttpClient].toInstance(mockHttpClient),
-      bind[AppConfig].toInstance(mockAppConfig),
-      bind[SessionCacheRepository].toInstance(mockSessionCacheService)
-    )
-    .build()
+  val mockRequestBuilder: RequestBuilder              = mock[RequestBuilder]
+  val mockHttpClient: HttpClientV2                    = mock[HttpClientV2]
+  val mockSessionCacheService: SessionCacheRepository = mock[SessionCacheRepository]
 
   override def beforeEach(): Unit = {
     reset(mockHttpClient)
     reset(mockAppConfig)
+    reset(mockRequestBuilder)
     super.beforeEach()
   }
 
-  implicit val fakeReq: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
-  implicit val hc: HeaderCarrier                            = HeaderCarrierConverter.fromRequest(fakeReq)
+  val mockBaseUrl = "http://localhost:1234"
+  val ninoUrl     = s"$mockBaseUrl/v1/status/public-funds/nino"
+  val mrzUrl      = s"$mockBaseUrl/v1/status/public-funds/mrz"
 
-  lazy val sut: HomeOfficeImmigrationStatusProxyConnector = inject[HomeOfficeImmigrationStatusProxyConnector]
+  private class EndpointTestSetup(url: String) {
 
-  val ninoRequest: NinoSearch = NinoSearch(
-    NinoGenerator.generateNino,
-    "Name",
-    "Full",
-    LocalDate.now.toString,
-    StatusCheckRange(Some(LocalDate.now(ZoneId.of("UTC")).minusMonths(1)), Some(LocalDate.now(ZoneId.of("UTC"))))
-  )
+    val now: LocalDate = LocalDate.now
 
-  val mrzRequest: MrzSearch = MrzSearch(
-    "documentType",
-    "documentNumber",
-    LocalDate.now,
-    "nationality",
-    StatusCheckRange(Some(LocalDate.now(ZoneId.of("UTC")).minusMonths(1)), Some(LocalDate.now(ZoneId.of("UTC"))))
-  )
+    val response: StatusCheckSuccessfulResponse =
+      StatusCheckSuccessfulResponse(Some(correlationId), StatusCheckResult("Full Name", now, "USA", Nil))
 
-  val correlationId: Some[String] = Some("some-correlation-id")
+    lazy val sut: HomeOfficeImmigrationStatusProxyConnector =
+      new HomeOfficeImmigrationStatusProxyConnector(mockAppConfig, mockHttpClient)
 
-  trait Setup {
+    val capture: ArgumentCaptor[HeaderCarrier] = ArgumentCaptor.forClass(classOf[HeaderCarrier])
+
+    when(mockRequestBuilder.setHeader(any()))
+      .thenReturn(mockRequestBuilder)
+
+    when(mockRequestBuilder.withBody(any())(any(), any(), any()))
+      .thenReturn(mockRequestBuilder)
+
+    when(mockRequestBuilder.execute(any[HttpReads[StatusCheckSuccessfulResponse]], any()))
+      .thenReturn(Future(response))
+
+    when(mockAppConfig.homeOfficeImmigrationStatusProxyBaseUrl)
+      .thenReturn(mockBaseUrl)
+
+    when(mockHttpClient.post(ArgumentMatchers.eq(url"$url"))(capture.capture()))
+      .thenReturn(mockRequestBuilder)
+
+    implicit val fakeReq: FakeRequest[AnyContentAsEmpty.type] =
+      FakeRequest().withHeaders("CorrelationId" -> correlationId)
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(fakeReq)
+  }
+
+  private trait CorrelationIdTestSetup {
     val uuid = "123f4567-g89c-42c3-b456-557742330000"
     val connector: HomeOfficeImmigrationStatusProxyConnector =
       new HomeOfficeImmigrationStatusProxyConnector(mockAppConfig, mockHttpClient) {
@@ -97,77 +101,51 @@ class HomeOfficeImmigrationStatusProxyConnectorSpec
   }
 
   "statusPublicFundsByNino" should {
-    "send a HTTP request with the correct body" in {
-      val url = new URL("http://localhost:1234/v1/status/public-funds/nino").toExternalForm
-      val response =
-        Right(StatusCheckSuccessfulResponse(correlationId, StatusCheckResult("Full Name", LocalDate.now, "USA", Nil)))
-      val capture: ArgumentCaptor[HeaderCarrier] = ArgumentCaptor.forClass(classOf[HeaderCarrier])
 
-      when(
-        mockHttpClient.POST(any(), any(), any[Seq[(String, String)]])(
-          any[Writes[NinoSearch]],
-          any[HttpReads[Either[StatusCheckError, StatusCheckSuccessfulResponse]]],
-          capture.capture(),
-          any[ExecutionContext]
-        )
-      )
-        .thenReturn(Future.successful(response))
+    "send a HTTP request with the correct body" in new EndpointTestSetup(ninoUrl) {
 
-      sut.statusPublicFundsByNino(ninoRequest)
+      val actual: Future[StatusCheckResponseWithStatus] = sut.statusPublicFundsByNino(ninoRequest)
 
-      val capturedCorrelationId: Option[String] =
-        capture.getValue.extraHeaders.collectFirst {
-          case (headerName, headerValue) if headerName == "CorrelationId" => headerValue
-        }
+      actual.futureValue mustBe response
 
-      verify(mockHttpClient)
-        .POST(ArgumentMatchers.eq(url), ArgumentMatchers.eq(ninoRequest), any())(any(), any(), any(), any())
-      capture.getValue.extraHeaders.size mustBe 1
-      capturedCorrelationId mustNot be("")
+      verify(mockRequestBuilder, times(1))
+        .execute(any(), any())
 
+      capture.getValue.headers(Seq("CorrelationId")) mustBe Seq("CorrelationId" -> "some-correlation-id")
     }
   }
 
   "statusPublicFundsByMrz" should {
-    "send a HTTP request with the correct body" in {
-      val url = new URL("http://localhost:1234/v1/status/public-funds/mrz").toExternalForm
-      val response =
-        Right(StatusCheckSuccessfulResponse(correlationId, StatusCheckResult("Full Name", LocalDate.now, "USA", Nil)))
 
-      when(
-        mockHttpClient.POST(any(), any(), any[Seq[(String, String)]])(
-          any[Writes[MrzSearch]],
-          any[HttpReads[Either[StatusCheckError, StatusCheckSuccessfulResponse]]],
-          any[HeaderCarrier],
-          any[ExecutionContext]
-        )
-      )
-        .thenReturn(Future.successful(response))
+    "send a HTTP request with the correct body" in new EndpointTestSetup(mrzUrl) {
 
-      sut.statusPublicFundsByMrz(mrzRequest)
+      val actual: Future[StatusCheckResponseWithStatus] = sut.statusPublicFundsByMrz(mrzRequest)
 
-      verify(mockHttpClient)
-        .POST(ArgumentMatchers.eq(url), ArgumentMatchers.eq(mrzRequest), any())(any(), any(), any(), any())
+      actual.futureValue mustBe response
 
+      verify(mockRequestBuilder, times(1))
+        .execute(any(), any())
+
+      capture.getValue.headers(Seq("CorrelationId")) mustBe Seq("CorrelationId" -> "some-correlation-id")
     }
   }
 
   "requestID is present in the headerCarrier" should {
-    "return new ID pre-appending the requestID when the requestID matches the format(8-4-4-4)" in new Setup {
+    "return new ID pre-appending the requestID when the requestID matches the format(8-4-4-4)" in new CorrelationIdTestSetup {
       val requestId  = "dcba0000-ij12-df34-jk56"
       val uuidLength = 24
       connector.correlationId(HeaderCarrier(requestId = Some(RequestId(requestId)))) mustBe
         s"$requestId-${uuid.substring(uuidLength)}"
     }
 
-    "return new ID when the requestID does not match the format(8-4-4-4)" in new Setup {
+    "return new ID when the requestID does not match the format(8-4-4-4)" in new CorrelationIdTestSetup {
       val requestId = "1a2b-ij12-df34-jk56"
       connector.correlationId(HeaderCarrier(requestId = Some(RequestId(requestId)))) mustBe uuid
     }
   }
 
   "requestID is not present in the headerCarrier should return a new ID" should {
-    "return the uuid" in new Setup {
+    "return the uuid" in new CorrelationIdTestSetup {
       connector.correlationId(HeaderCarrier()) mustBe uuid
     }
   }

@@ -47,14 +47,14 @@ class ErrorHandler @Inject() (
   @Named("appName") val appName: String,
   appConfig: AppConfig,
   val config: Configuration
-)(implicit ec: ExecutionContext)
+)(implicit executionContext: ExecutionContext)
     extends FrontendErrorHandler
     with AuthRedirects
     with ErrorAuditing
     with Logging {
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
-    auditClientError(request, statusCode, message)
+    auditClientError(request, statusCode, message)(ec)
     if (appConfig.shuttered) {
       implicit val r: Request[String] = Request(request, "")
       Future.successful(ServiceUnavailable(shutteringPage()))
@@ -63,24 +63,26 @@ class ErrorHandler @Inject() (
     }
   }
 
-  override def resolveError(request: RequestHeader, exception: Throwable): Result = {
-    auditServerError(request, exception)
+  override def resolveError(request: RequestHeader, exception: Throwable): Future[Result] = {
+    auditServerError(request, exception)(ec)
     implicit val r: Request[String] = Request(request, "")
     exception match {
       case _: NoActiveSession =>
-        toGGLogin(if (appConfig.isDevEnv) s"http://${request.host}${request.uri}" else s"${request.uri}")
-      case _: InsufficientEnrolments => Forbidden
+        Future(toGGLogin(if (appConfig.isDevEnv) s"http://${request.host}${request.uri}" else s"${request.uri}"))(ec)
+      case _: InsufficientEnrolments =>
+        Future(Forbidden)(ec)
       case e =>
         logger.error(e.getMessage, e)
-        InternalServerError(externalErrorPage())
+        Future(InternalServerError(externalErrorPage()))(ec)
     }
   }
 
-  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit
-    request: Request[_]
-  ): Html =
-    errorTemplate(pageTitle, heading, message, None)
+  override protected implicit val ec: ExecutionContext = executionContext
 
+  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit
+    request: RequestHeader
+  ): Future[Html] =
+    Future(errorTemplate(pageTitle, heading, message, None))(ec)
 }
 
 object EventTypes {
@@ -132,6 +134,6 @@ trait ErrorAuditing extends HttpAuditEvent {
             HeaderCarrierConverter.fromRequestAndSession(request, request.session)
           )
         )
-      case _ =>
+      case _ => ()
     }
 }
