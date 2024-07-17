@@ -47,14 +47,14 @@ class ErrorHandler @Inject() (
   @Named("appName") val appName: String,
   appConfig: AppConfig,
   val config: Configuration
-)(implicit executionContext: ExecutionContext)
+)(implicit val ec: ExecutionContext)
     extends FrontendErrorHandler
     with AuthRedirects
     with ErrorAuditing
     with Logging {
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
-    auditClientError(request, statusCode, message)(ec)
+    auditClientError(request, statusCode, message)
     if (appConfig.shuttered) {
       implicit val r: Request[String] = Request(request, "")
       Future.successful(ServiceUnavailable(shutteringPage()))
@@ -64,25 +64,23 @@ class ErrorHandler @Inject() (
   }
 
   override def resolveError(request: RequestHeader, exception: Throwable): Future[Result] = {
-    auditServerError(request, exception)(ec)
+    auditServerError(request, exception)
     implicit val r: Request[String] = Request(request, "")
     exception match {
       case _: NoActiveSession =>
-        Future(toGGLogin(if (appConfig.isDevEnv) s"http://${request.host}${request.uri}" else s"${request.uri}"))(ec)
+        Future(toGGLogin(if (appConfig.isDevEnv) s"http://${request.host}${request.uri}" else s"${request.uri}"))
       case _: InsufficientEnrolments =>
-        Future(Forbidden)(ec)
+        Future(Forbidden)
       case e =>
         logger.error(e.getMessage, e)
-        Future(InternalServerError(externalErrorPage()))(ec)
+        Future(InternalServerError(externalErrorPage()))
     }
   }
-
-  override protected implicit val ec: ExecutionContext = executionContext
 
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit
     request: RequestHeader
   ): Future[Html] =
-    Future(errorTemplate(pageTitle, heading, message, None))(ec)
+    Future(errorTemplate(pageTitle, heading, message, None))
 }
 
 object EventTypes {
