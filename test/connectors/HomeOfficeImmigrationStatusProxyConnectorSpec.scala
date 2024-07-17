@@ -38,15 +38,15 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class HomeOfficeImmigrationStatusProxyConnectorSpec
-    extends PlaySpec
+  extends PlaySpec
     with MockitoSugar
     with ScalaFutures
     with BeforeAndAfterEach {
 
   val mockAppConfig: AppConfig = mock[AppConfig]
 
-  val mockRequestBuilder: RequestBuilder              = mock[RequestBuilder]
-  val mockHttpClient: HttpClientV2                    = mock[HttpClientV2]
+  val mockRequestBuilder: RequestBuilder = mock[RequestBuilder]
+  val mockHttpClient: HttpClientV2 = mock[HttpClientV2]
   val mockSessionCacheService: SessionCacheRepository = mock[SessionCacheRepository]
 
   override def beforeEach(): Unit = {
@@ -57,15 +57,18 @@ class HomeOfficeImmigrationStatusProxyConnectorSpec
   }
 
   val mockBaseUrl = "http://localhost:1234"
-  val ninoUrl     = s"$mockBaseUrl/v1/status/public-funds/nino"
-  val mrzUrl      = s"$mockBaseUrl/v1/status/public-funds/mrz"
+  val ninoUrl = s"$mockBaseUrl/v1/status/public-funds/nino"
+  val mrzUrl = s"$mockBaseUrl/v1/status/public-funds/mrz"
 
   private class EndpointTestSetup(url: String) {
 
     val now: LocalDate = LocalDate.now
 
-    val response: StatusCheckSuccessfulResponse =
-      StatusCheckSuccessfulResponse(Some(correlationId), StatusCheckResult("Full Name", now, "USA", Nil))
+    val response: StatusCheckResponseWithStatus =
+      StatusCheckResponseWithStatus(
+        200,
+        StatusCheckSuccessfulResponse(Some(correlationId), StatusCheckResult("Full Name", now, "USA", Nil))
+      )
 
     lazy val sut: HomeOfficeImmigrationStatusProxyConnector =
       new HomeOfficeImmigrationStatusProxyConnector(mockAppConfig, mockHttpClient)
@@ -78,7 +81,7 @@ class HomeOfficeImmigrationStatusProxyConnectorSpec
     when(mockRequestBuilder.withBody(any())(any(), any(), any()))
       .thenReturn(mockRequestBuilder)
 
-    when(mockRequestBuilder.execute(any[HttpReads[StatusCheckSuccessfulResponse]], any()))
+    when(mockRequestBuilder.execute(any[HttpReads[StatusCheckResponseWithStatus]], any()))
       .thenReturn(Future(response))
 
     when(mockAppConfig.homeOfficeImmigrationStatusProxyBaseUrl)
@@ -132,7 +135,7 @@ class HomeOfficeImmigrationStatusProxyConnectorSpec
 
   "requestID is present in the headerCarrier" should {
     "return new ID pre-appending the requestID when the requestID matches the format(8-4-4-4)" in new CorrelationIdTestSetup {
-      val requestId  = "dcba0000-ij12-df34-jk56"
+      val requestId = "dcba0000-ij12-df34-jk56"
       val uuidLength = 24
       connector.correlationId(HeaderCarrier(requestId = Some(RequestId(requestId)))) mustBe
         s"$requestId-${uuid.substring(uuidLength)}"

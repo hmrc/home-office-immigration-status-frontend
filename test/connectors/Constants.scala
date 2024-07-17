@@ -16,7 +16,7 @@
 
 package connectors
 
-import models.{ImmigrationStatus, MrzSearch, NinoSearch, StatusCheckRange, StatusCheckResult}
+import models._
 import utils.NinoGenerator
 
 import java.time.{LocalDate, ZoneId}
@@ -25,12 +25,13 @@ object Constants {
 
   val correlationId = "some-correlation-id"
 
-  val hoResult = StatusCheckResult(
-    fullName = "fake full name",
-    dateOfBirth = java.time.LocalDate.now(),
-    nationality = "lit nation",
-    statuses = List(ImmigrationStatus(java.time.LocalDate.now(), None, "", "", noRecourseToPublicFunds = false))
-  )
+  val hoResult: StatusCheckResult =
+    StatusCheckResult(
+      fullName = "fake full name",
+      dateOfBirth = java.time.LocalDate.now(),
+      nationality = "lit nation",
+      statuses = List(ImmigrationStatus(java.time.LocalDate.now(), None, "", "", noRecourseToPublicFunds = false))
+    )
 
   val ninoRequest =
     NinoSearch(

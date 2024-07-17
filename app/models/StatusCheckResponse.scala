@@ -20,17 +20,11 @@ import play.api.libs.json.{Json, OFormat, Reads, Writes}
 
 final case class StatusCheckResponseWithStatus(statusCode: Int, statusCheckResponse: StatusCheckResponse)
 
-object StatusCheckResponseWithStatus {
-  implicit val format: OFormat[StatusCheckResponseWithStatus] = Json.format[StatusCheckResponseWithStatus]
-}
-
 sealed trait StatusCheckResponse {
   def correlationId: Option[String]
 }
 
 object StatusCheckResponse {
-
-  implicit val format: OFormat[StatusCheckResponse] = Json.format[StatusCheckResponse]
 
   val auditWrites: Writes[StatusCheckResponse] =
     Json.writes[StatusCheckResponse]
