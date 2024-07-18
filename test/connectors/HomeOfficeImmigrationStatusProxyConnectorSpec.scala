@@ -38,15 +38,15 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class HomeOfficeImmigrationStatusProxyConnectorSpec
-  extends PlaySpec
+    extends PlaySpec
     with MockitoSugar
     with ScalaFutures
     with BeforeAndAfterEach {
 
   val mockAppConfig: AppConfig = mock[AppConfig]
 
-  val mockRequestBuilder: RequestBuilder = mock[RequestBuilder]
-  val mockHttpClient: HttpClientV2 = mock[HttpClientV2]
+  val mockRequestBuilder: RequestBuilder              = mock[RequestBuilder]
+  val mockHttpClient: HttpClientV2                    = mock[HttpClientV2]
   val mockSessionCacheService: SessionCacheRepository = mock[SessionCacheRepository]
 
   override def beforeEach(): Unit = {
@@ -57,8 +57,8 @@ class HomeOfficeImmigrationStatusProxyConnectorSpec
   }
 
   val mockBaseUrl = "http://localhost:1234"
-  val ninoUrl = s"$mockBaseUrl/v1/status/public-funds/nino"
-  val mrzUrl = s"$mockBaseUrl/v1/status/public-funds/mrz"
+  val ninoUrl     = s"$mockBaseUrl/v1/status/public-funds/nino"
+  val mrzUrl      = s"$mockBaseUrl/v1/status/public-funds/mrz"
 
   private class EndpointTestSetup(url: String) {
 
@@ -135,7 +135,7 @@ class HomeOfficeImmigrationStatusProxyConnectorSpec
 
   "requestID is present in the headerCarrier" should {
     "return new ID pre-appending the requestID when the requestID matches the format(8-4-4-4)" in new CorrelationIdTestSetup {
-      val requestId = "dcba0000-ij12-df34-jk56"
+      val requestId  = "dcba0000-ij12-df34-jk56"
       val uuidLength = 24
       connector.correlationId(HeaderCarrier(requestId = Some(RequestId(requestId)))) mustBe
         s"$requestId-${uuid.substring(uuidLength)}"
