@@ -24,7 +24,6 @@ import org.mockito.Mockito._
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -37,17 +36,13 @@ import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class HomeOfficeImmigrationStatusProxyConnectorSpec
-    extends PlaySpec
-    with MockitoSugar
-    with ScalaFutures
-    with BeforeAndAfterEach {
+class HomeOfficeImmigrationStatusProxyConnectorSpec extends PlaySpec with ScalaFutures with BeforeAndAfterEach {
 
-  val mockAppConfig: AppConfig = mock[AppConfig]
+  val mockAppConfig: AppConfig = mock(classOf[AppConfig])
 
-  val mockRequestBuilder: RequestBuilder              = mock[RequestBuilder]
-  val mockHttpClient: HttpClientV2                    = mock[HttpClientV2]
-  val mockSessionCacheService: SessionCacheRepository = mock[SessionCacheRepository]
+  val mockRequestBuilder: RequestBuilder              = mock(classOf[RequestBuilder])
+  val mockHttpClient: HttpClientV2                    = mock(classOf[HttpClientV2])
+  val mockSessionCacheService: SessionCacheRepository = mock(classOf[SessionCacheRepository])
 
   override def beforeEach(): Unit = {
     reset(mockHttpClient)
@@ -62,7 +57,7 @@ class HomeOfficeImmigrationStatusProxyConnectorSpec
 
   private class EndpointTestSetup(url: String) {
 
-    val now: LocalDate = LocalDate.now
+    private val now: LocalDate = LocalDate.now
 
     val response: StatusCheckResponseWithStatus =
       StatusCheckResponseWithStatus(
