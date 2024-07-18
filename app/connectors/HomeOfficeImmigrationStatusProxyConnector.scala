@@ -19,15 +19,16 @@ package connectors
 import config.AppConfig
 import connectors.StatusCheckResponseHttpParser._
 import models.{MrzSearch, NinoSearch, StatusCheckResponseWithStatus}
+import play.api.libs.json.Json
 import uk.gov.hmrc.http._
+import uk.gov.hmrc.http.client.HttpClientV2
 
-import java.net.URL
 import java.util.UUID.randomUUID
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class HomeOfficeImmigrationStatusProxyConnector @Inject() (appConfig: AppConfig, http: HttpClient) {
+class HomeOfficeImmigrationStatusProxyConnector @Inject() (appConfig: AppConfig, http: HttpClientV2) {
 
   private val baseUrl: String       = appConfig.homeOfficeImmigrationStatusProxyBaseUrl
   private val publicFundsByNinoPath = "/v1/status/public-funds/nino"
@@ -51,28 +52,22 @@ class HomeOfficeImmigrationStatusProxyConnector @Inject() (appConfig: AppConfig,
   def statusPublicFundsByNino(
     request: NinoSearch
   )(implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[StatusCheckResponseWithStatus] = {
-    val hc: HeaderCarrier = addExtraHeaders(headerCarrier)
-    doPostByNino(request)(hc, ec)
-  }
-
-  private def doPostByNino(
-    request: NinoSearch
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[StatusCheckResponseWithStatus] =
+    val url = s"$baseUrl$publicFundsByNinoPath"
     http
-      .POST[NinoSearch, StatusCheckResponseWithStatus](new URL(baseUrl + publicFundsByNinoPath).toExternalForm, request)
+      .post(url"$url")
+      .setHeader("CorrelationId" -> correlationId(headerCarrier))
+      .withBody(Json.toJson(request))
+      .execute[StatusCheckResponseWithStatus]
+  }
 
   def statusPublicFundsByMrz(
     request: MrzSearch
   )(implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[StatusCheckResponseWithStatus] = {
-    val hc: HeaderCarrier = addExtraHeaders(headerCarrier)
-    doPostByMrz(request)(hc, ec)
+    val url = s"$baseUrl$publicFundsByMrzPath"
+    http
+      .post(url"$url")
+      .setHeader("CorrelationId" -> correlationId(headerCarrier))
+      .withBody(Json.toJson(request))
+      .execute[StatusCheckResponseWithStatus]
   }
-
-  private def doPostByMrz(
-    request: MrzSearch
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[StatusCheckResponseWithStatus] =
-    http.POST[MrzSearch, StatusCheckResponseWithStatus](new URL(baseUrl + publicFundsByMrzPath).toExternalForm, request)
-
-  private def addExtraHeaders(headerCarrier: HeaderCarrier): HeaderCarrier =
-    headerCarrier.withExtraHeaders("CorrelationId" -> correlationId(headerCarrier))
 }

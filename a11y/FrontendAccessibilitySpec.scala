@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-import java.time.LocalDate
-
 import forms._
 import models._
 import org.scalacheck.Arbitrary
 import play.api.data.Form
+import play.api.mvc.RequestHeader
+import play.api.test.CSRFTokenHelper._
+import play.api.test.FakeRequest
 import play.twirl.api.Html
 import uk.gov.hmrc.scalatestaccessibilitylinter.views.AutomaticAccessibilitySpec
 import utils.NinoGenerator.generateNino
-import views.html._
 import views._
+import views.html._
+
+import java.time.LocalDate
 
 class FrontendAccessibilitySpec extends AutomaticAccessibilitySpec {
 
@@ -61,14 +64,15 @@ class FrontendAccessibilitySpec extends AutomaticAccessibilitySpec {
   )
 
   private val searchByNinoForm: SearchByNinoForm = new SearchByNinoForm()
-  private val searchByMrzForm: SearchByMRZForm   = app.injector.instanceOf[SearchByMRZForm]
+  private val searchByMrzForm: SearchByMRZForm = app.injector.instanceOf[SearchByMRZForm]
 
-  override implicit val arbAsciiString: Arbitrary[String]                                 = fixed("/")
-  implicit val arbSearchByNinoForm: Arbitrary[Form[NinoSearchFormModel]]                  = fixed(searchByNinoForm())
-  implicit val arbSearchByMrzForm: Arbitrary[Form[MrzSearchFormModel]]                    = fixed(searchByMrzForm())
-  implicit val arbSearchFormModel: Arbitrary[SearchFormModel]                             = fixed(ninoSearchFormModel)
-  implicit val arbStatusFoundPageContext: Arbitrary[StatusFoundPageContext]               = fixed(statusFoundPageContext)
+  override implicit val arbAsciiString: Arbitrary[String] = fixed("/")
+  implicit val arbSearchByNinoForm: Arbitrary[Form[NinoSearchFormModel]] = fixed(searchByNinoForm())
+  implicit val arbSearchByMrzForm: Arbitrary[Form[MrzSearchFormModel]] = fixed(searchByMrzForm())
+  implicit val arbSearchFormModel: Arbitrary[SearchFormModel] = fixed(ninoSearchFormModel)
+  implicit val arbStatusFoundPageContext: Arbitrary[StatusFoundPageContext] = fixed(statusFoundPageContext)
   implicit val arbStatusNotAvailablePageContext: Arbitrary[StatusNotAvailablePageContext] = fixed(statusNotAvailablePageContext)
+  implicit val arbRequestHeader: Arbitrary[RequestHeader] = fixed(FakeRequest().withCSRFToken)
 
   override def viewPackageName: String = "views.html"
 
@@ -76,14 +80,14 @@ class FrontendAccessibilitySpec extends AutomaticAccessibilitySpec {
 
   override def renderViewByClass: PartialFunction[Any, Html] = {
     case accessibilityStatementPage: AccessibilityStatementPage => render(accessibilityStatementPage)
-    case externalErrorPage: ExternalErrorPage                   => render(externalErrorPage)
-    case searchByMrzView: SearchByMrzView                       => render(searchByMrzView)
-    case searchByNinoView: SearchByNinoView                     => render(searchByNinoView)
-    case shutteringPage: ShutteringPage                         => render(shutteringPage)
-    case statusCheckFailurePage: StatusCheckFailurePage         => render(statusCheckFailurePage)
-    case statusFoundPage: StatusFoundPage                       => render(statusFoundPage)
-    case statusNotAvailablePage: StatusNotAvailablePage         => render(statusNotAvailablePage)
-    case errorTemplate: error_template                          => render(errorTemplate)
+    case externalErrorPage: ExternalErrorPage => render(externalErrorPage)
+    case searchByMrzView: SearchByMrzView => render(searchByMrzView)
+    case searchByNinoView: SearchByNinoView => render(searchByNinoView)
+    case shutteringPage: ShutteringPage => render(shutteringPage)
+    case statusCheckFailurePage: StatusCheckFailurePage => render(statusCheckFailurePage)
+    case statusFoundPage: StatusFoundPage => render(statusFoundPage)
+    case statusNotAvailablePage: StatusNotAvailablePage => render(statusNotAvailablePage)
+    case errorTemplate: error_template => render(errorTemplate)
   }
 
   runAccessibilityTests()

@@ -52,11 +52,11 @@ class StatusResultISpec extends ISpec with HomeOfficeImmigrationStatusStubs {
 
       val result = await(requestWithSession("/status-result", sessionId).get())
 
-      result.status                                       shouldBe INTERNAL_SERVER_ERROR
-      result.body                                           should include(htmlEscapedMessage("external.error.500.title"))
-      result.body                                           should include(htmlEscapedMessage("external.error.500.message"))
-      result.body                                           should include(htmlEscapedMessage("external.error.500.helpdesk-link"))
-      result.body                                           should include(htmlEscapedMessage("external.error.500.helpdesk-text"))
+      result.status shouldBe INTERNAL_SERVER_ERROR
+      result.body     should include(htmlEscapedMessage("external.error.500.title"))
+      result.body     should include(htmlEscapedMessage("external.error.500.message"))
+      result.body     should include(htmlEscapedMessage("external.error.500.helpdesk-link"))
+      result.body     should include(htmlEscapedMessage("external.error.500.helpdesk-text"))
       result.headers.get("Cache-Control").map(_.mkString) shouldBe Some("no-cache, no-store, must-revalidate")
     }
   }

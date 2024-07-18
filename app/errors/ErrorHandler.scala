@@ -47,7 +47,7 @@ class ErrorHandler @Inject() (
   @Named("appName") val appName: String,
   appConfig: AppConfig,
   val config: Configuration
-)(implicit ec: ExecutionContext)
+)(implicit val ec: ExecutionContext)
     extends FrontendErrorHandler
     with AuthRedirects
     with ErrorAuditing
@@ -63,24 +63,24 @@ class ErrorHandler @Inject() (
     }
   }
 
-  override def resolveError(request: RequestHeader, exception: Throwable): Result = {
+  override def resolveError(request: RequestHeader, exception: Throwable): Future[Result] = {
     auditServerError(request, exception)
     implicit val r: Request[String] = Request(request, "")
     exception match {
       case _: NoActiveSession =>
-        toGGLogin(if (appConfig.isDevEnv) s"http://${request.host}${request.uri}" else s"${request.uri}")
-      case _: InsufficientEnrolments => Forbidden
+        Future(toGGLogin(if (appConfig.isDevEnv) s"http://${request.host}${request.uri}" else s"${request.uri}"))
+      case _: InsufficientEnrolments =>
+        Future(Forbidden)
       case e =>
         logger.error(e.getMessage, e)
-        InternalServerError(externalErrorPage())
+        Future(InternalServerError(externalErrorPage()))
     }
   }
 
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit
-    request: Request[_]
-  ): Html =
-    errorTemplate(pageTitle, heading, message, None)
-
+    request: RequestHeader
+  ): Future[Html] =
+    Future(errorTemplate(pageTitle, heading, message, None))
 }
 
 object EventTypes {
@@ -132,6 +132,6 @@ trait ErrorAuditing extends HttpAuditEvent {
             HeaderCarrierConverter.fromRequestAndSession(request, request.session)
           )
         )
-      case _ =>
+      case _ => ()
     }
 }

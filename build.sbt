@@ -50,4 +50,3 @@ lazy val it = project
   .settings(DefaultBuildSettings.itSettings())
 
 addCommandAlias("scalafmtAll", "all scalafmtSbt scalafmt Test/scalafmt it/Test/scalafmt A11y/scalafmt")
-addCommandAlias("scalastyleAll", "all scalastyle Test/scalastyle it/Test/scalastyle A11y/scalastyle")

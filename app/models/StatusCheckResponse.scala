@@ -25,10 +25,9 @@ sealed trait StatusCheckResponse {
 }
 
 object StatusCheckResponse {
-  val auditWrites: Writes[StatusCheckResponse] = {
-    implicit val successWrites = StatusCheckSuccessfulResponse.auditWrites
+
+  val auditWrites: Writes[StatusCheckResponse] =
     Json.writes[StatusCheckResponse]
-  }
 }
 
 final case class StatusCheckSuccessfulResponse(
@@ -38,7 +37,7 @@ final case class StatusCheckSuccessfulResponse(
 
 object StatusCheckSuccessfulResponse {
   implicit val reads: Reads[StatusCheckSuccessfulResponse] = Json.reads[StatusCheckSuccessfulResponse]
-  val auditWrites: Writes[StatusCheckSuccessfulResponse] = {
+  implicit val auditWrites: Writes[StatusCheckSuccessfulResponse] = {
     implicit val resultWrites = StatusCheckResult.auditWrites
     Json.writes[StatusCheckSuccessfulResponse]
   }

@@ -56,17 +56,18 @@ class ErrorHandlerSpec extends ControllerSpec {
     reset(mockConfiguration)
   }
 
-  private lazy val sut: ErrorHandler = new ErrorHandler(
-    env = mockEnvironment,
-    messagesApi = messagesApi,
-    auditConnector = mockAuditConnector,
-    externalErrorPage = externalErrorPage,
-    errorTemplate = errorTemplate,
-    shutteringPage = shutteringPage,
-    appName = "home-office-immigration-status-frontend",
-    appConfig = mockAppConfig,
-    config = mockConfiguration
-  )
+  private lazy val sut: ErrorHandler =
+    new ErrorHandler(
+      env = mockEnvironment,
+      messagesApi = messagesApi,
+      auditConnector = mockAuditConnector,
+      externalErrorPage = externalErrorPage,
+      errorTemplate = errorTemplate,
+      shutteringPage = shutteringPage,
+      appName = "home-office-immigration-status-frontend",
+      appConfig = mockAppConfig,
+      config = mockConfiguration
+    )
 
   "ErrorHandler" when {
     ".resolveError" must {
@@ -76,7 +77,7 @@ class ErrorHandlerSpec extends ControllerSpec {
           when(mockAppConfig.isDevEnv).thenReturn(false)
 
           val exception: Throwable   = BearerTokenExpired()
-          val result: Future[Result] = Future.successful(sut.resolveError(request, exception))
+          val result: Future[Result] = sut.resolveError(request, exception)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).get must include("/bas-gateway/sign-in")
@@ -88,7 +89,7 @@ class ErrorHandlerSpec extends ControllerSpec {
           when(mockAppConfig.isDevEnv).thenReturn(true)
 
           val exception: Throwable   = BearerTokenExpired()
-          val result: Future[Result] = Future.successful(sut.resolveError(request, exception))
+          val result: Future[Result] = sut.resolveError(request, exception)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).get must include("/bas-gateway/sign-in")
@@ -98,7 +99,7 @@ class ErrorHandlerSpec extends ControllerSpec {
 
       "return 403 FORBIDDEN when there are InsufficientEnrolments" in {
         val exception: Throwable   = InsufficientEnrolments()
-        val result: Future[Result] = Future.successful(sut.resolveError(request, exception))
+        val result: Future[Result] = sut.resolveError(request, exception)
 
         status(result) mustBe FORBIDDEN
       }
@@ -106,7 +107,7 @@ class ErrorHandlerSpec extends ControllerSpec {
       "return ExternalErrorPage with 500 INTERNAL_SERVER_ERROR" when {
         def test(exception: Throwable): Unit =
           s"$exception is thrown" in {
-            val result: Future[Result] = Future.successful(sut.resolveError(request, exception))
+            val result: Future[Result] = sut.resolveError(request, exception)
 
             status(result) mustBe INTERNAL_SERVER_ERROR
             contentAsString(result) mustBe externalErrorPage()(request, messages).toString
@@ -121,13 +122,16 @@ class ErrorHandlerSpec extends ControllerSpec {
     }
 
     ".standardErrorTemplate" must {
+
       "return error_template" in {
-        sut.standardErrorTemplate("pageTitle", "heading", "message") mustBe errorTemplate(
-          "pageTitle",
-          "heading",
-          "message",
-          None
-        )(request, messages)
+        await(sut.standardErrorTemplate("pageTitle", "heading", "message")) mustBe
+          errorTemplate(
+            "pageTitle",
+            "heading",
+            "message",
+            None
+          )(request, messages)
+
       }
     }
 
