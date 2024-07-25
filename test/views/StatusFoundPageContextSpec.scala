@@ -73,7 +73,7 @@ class StatusFoundPageContextSpec
   val ninoQuery: NinoSearchFormModel =
     NinoSearchFormModel(NinoGenerator.generateNino, "Surname", "Forename", LocalDate.now())
   val mrzQuery: MrzSearchFormModel =
-    MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA") //scalastyle:off magic.number
+    MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
   val call: Call = Call("GET", "/")
 
   def createNinoContext(
@@ -220,7 +220,7 @@ class StatusFoundPageContextSpec
       val fakeImmigrationStatus =
         ImmigrationStatus(LocalDate.now(), None, "TEST", "STATUS", noRecourseToPublicFunds = true)
       when(mockResult.mostRecentStatus).thenReturn(Some(fakeImmigrationStatus))
-      //scalastyle:off null
+
       StatusFoundPageContext(null, mockResult).mostRecentStatus shouldBe Some(fakeImmigrationStatus)
 
     }
