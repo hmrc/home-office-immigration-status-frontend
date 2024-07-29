@@ -88,7 +88,7 @@ class StatusCheckResultSpec extends PlaySpec {
     "write json with mostRecentStatus and previous status" in {
       val date             = LocalDate.now
       val mostRecentStatus = makeImmigrationStatus()
-      val previousStatuses = Seq(makeImmigrationStatus(100), makeImmigrationStatus(1000)) //scalastyle:off magic.number
+      val previousStatuses = Seq(makeImmigrationStatus(100), makeImmigrationStatus(1000))
       val result =
         StatusCheckResult("some name", date, "some nationality", (previousStatuses :+ mostRecentStatus).toList)
 

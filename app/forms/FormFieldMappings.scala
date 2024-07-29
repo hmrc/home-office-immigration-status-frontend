@@ -88,7 +88,7 @@ trait FormFieldMappings extends Constraints {
       .verifying(max(maxValue = maxValue, errorMessage = s"error.dateOfBirth.$field.max"))
 
   protected def dobFieldsMapping: Mapping[LocalDate] =
-    tuple( //scalastyle:off magic.number
+    tuple(
       "day"   -> dateComponent("day", 31),
       "month" -> dateComponent("month", 12),
       "year"  -> dateComponent("year", 3000, 1000)

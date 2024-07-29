@@ -120,7 +120,7 @@ class FormFieldMappingsSpec
       )
 
     }
-    //scalastyle:off magic.number
+
     val intGen: Gen[String] = Gen.numStr.suchThat(str => str.nonEmpty).map(_.take(9))
 
     "isInt" should {

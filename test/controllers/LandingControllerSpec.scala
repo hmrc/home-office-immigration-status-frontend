@@ -35,7 +35,7 @@ class LandingControllerSpec extends ControllerSpec {
     reset(mockSessionCacheService)
     super.beforeEach()
   }
-  //scalastyle:off magic.number
+
   val nino: Nino                               = NinoGenerator.generateNino
   val ninoSearchFormModel: NinoSearchFormModel = NinoSearchFormModel(nino, "Pan", "", LocalDate.now())
   val mrzSearchFormModel: MrzSearchFormModel =
