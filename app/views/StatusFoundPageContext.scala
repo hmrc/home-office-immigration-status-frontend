@@ -93,7 +93,7 @@ object StatusFoundPageContext extends Logging {
         messages(key)
       } else {
         logger.warn(
-          s"$key was not defined. Consider adding this to the messages file. Using default key '$defaultKey' placeholder text."
+          s"[StatusFoundPageContext] [RichMessages] $key was not defined. Consider adding this to the messages file. Using default key '$defaultKey' placeholder text."
         )
         defaultValue
       }
