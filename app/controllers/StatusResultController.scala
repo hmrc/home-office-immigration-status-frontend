@@ -77,7 +77,7 @@ class StatusResultController @Inject() (
     response.result.statuses match {
       case Nil =>
         logger.info(
-          s"[StatusResultController] [displaySuccessfulResult] Match found with no statuses - CorrelationId: ${response.correlationId}"
+          s"[StatusResultController][displaySuccessfulResult] Match found with no statuses - CorrelationId: ${response.correlationId}"
         )
         Ok(statusNotAvailablePage(StatusNotAvailablePageContext(query, response.result)))
       case _ =>

@@ -59,7 +59,7 @@ class SessionCacheServiceImpl @Inject() (
     hc.sessionId match {
       case Some(sessionId) => f(sessionId.value)
       case None =>
-        logger.error("[SessionCacheServiceImpl] [withSessionId] User has no session ID", NoSessionIdException)
+        logger.error("[SessionCacheServiceImpl][withSessionId] User has no session ID", NoSessionIdException)
         Future.failed(NoSessionIdException)
     }
 
