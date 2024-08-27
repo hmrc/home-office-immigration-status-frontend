@@ -54,7 +54,7 @@ class AuthActionImpl @Inject() (
       .retrieve(credentials and allEnrolments) {
         case Some(Credentials(authProviderId, _)) ~ enrollments =>
           val userRoles = enrollments.enrolments.map(_.key).mkString("[", ",", "]")
-          Logger(getClass).info(s"User $authProviderId has been authorized with $userRoles")
+          Logger(getClass).info(s"[AuthActionImpl][invokeBlock]User $authProviderId has been authorized with $userRoles")
           block(request)
 
         case None ~ _ =>
