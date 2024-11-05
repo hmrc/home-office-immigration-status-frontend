@@ -63,8 +63,8 @@ class SessionCacheServiceSpec
   val sut                                            = new SessionCacheServiceImpl(mockRepo, encrypter, appConfig)
 
   override def beforeEach(): Unit = {
-    reset(mockRepo)
     super.beforeEach()
+    reset(mockRepo)
   }
 
   private val secretKey = "VqmXp7yigDFxbCUdDdNZVIvbW6RgPNJsliv6swQNCL8="
