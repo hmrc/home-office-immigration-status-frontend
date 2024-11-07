@@ -50,10 +50,10 @@ class SearchByMrzControllerSpec extends ControllerSpec {
   val fakeView: Html                  = HtmlFormat.escape("Correct Form View")
 
   override def beforeEach(): Unit = {
+    super.beforeEach()
     reset(mockView)
     when(mockView(any())(any(), any())).thenReturn(fakeView)
     reset(mockSessionCacheService)
-    super.beforeEach()
   }
 
   "onPageLoad" must {

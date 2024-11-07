@@ -50,8 +50,8 @@ class ShutterActionSpec extends ControllerSpec {
   lazy val shutterAction: ShutterAction = inject[ShutterAction]
 
   override def beforeEach(): Unit = {
-    reset(mockAppConfig)
     super.beforeEach()
+    reset(mockAppConfig)
   }
   val block: Request[_] => Future[Result] = _ => Future.successful(Ok("Invoked"))
 

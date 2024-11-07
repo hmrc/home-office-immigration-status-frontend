@@ -59,6 +59,7 @@ class SearchableWithMongoCollectionSpec
   val mockCollection: MongoCollection[FormQueryModel]      = mock(classOf[MongoCollection[FormQueryModel]])
 
   override def beforeEach(): Unit = {
+    super.beforeEach()
     reset(mockFindObs)
     reset(mockSingleObs)
     reset(mockCollection)
@@ -66,7 +67,6 @@ class SearchableWithMongoCollectionSpec
     reset(mockDeleteResult)
     when(mockCollection.find[FormQueryModel](any(classOf[Bson]))(any(), any())).thenReturn(mockFindObs)
     when(mockFindObs.collect()).thenReturn(mockSingleObs)
-    super.beforeEach()
   }
 
   private val now       = Instant.now()

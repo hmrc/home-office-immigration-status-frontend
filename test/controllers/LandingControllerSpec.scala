@@ -32,8 +32,8 @@ class LandingControllerSpec extends ControllerSpec {
   val sut: LandingController = inject[LandingController]
 
   override def beforeEach(): Unit = {
-    reset(mockSessionCacheService)
     super.beforeEach()
+    reset(mockSessionCacheService)
   }
 
   val nino: Nino                               = NinoGenerator.generateNino

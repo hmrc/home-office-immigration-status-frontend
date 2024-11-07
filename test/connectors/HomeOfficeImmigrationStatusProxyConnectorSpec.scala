@@ -45,10 +45,10 @@ class HomeOfficeImmigrationStatusProxyConnectorSpec extends PlaySpec with ScalaF
   val mockSessionCacheService: SessionCacheRepository = mock(classOf[SessionCacheRepository])
 
   override def beforeEach(): Unit = {
+    super.beforeEach()
     reset(mockHttpClient)
     reset(mockAppConfig)
     reset(mockRequestBuilder)
-    super.beforeEach()
   }
 
   val mockBaseUrl = "http://localhost:1234"

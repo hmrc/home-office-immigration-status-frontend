@@ -17,18 +17,22 @@
 package endpoints
 
 import mocks.MockSessionCookie
+import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import stubs.HomeOfficeImmigrationStatusStubs
 import support.ISpec
 
-class SearchByNinoISpec extends ISpec with HomeOfficeImmigrationStatusStubs with MockSessionCookie {
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
+
+class SearchByNinoISpec extends ISpec with HomeOfficeImmigrationStatusStubs with MockSessionCookie with ScalaFutures {
 
   "GET /check-immigration-status/search-by-nino" should {
     "show the lookup page" in {
       givenAuthorisedForStride("TBC", "StrideUserId")
 
-      val result = await(requestWithSession("/search-by-nino", "session-searchByNinoGet").get())
+      val result = Await.result(requestWithSession("/search-by-nino", "session-searchByNinoGet").get(), Duration.Inf)
 
       result.status                                       shouldBe OK
       result.body                                           should include(htmlEscapedMessage("lookup.nino.title"))

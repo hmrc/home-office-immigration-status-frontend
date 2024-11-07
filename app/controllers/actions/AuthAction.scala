@@ -20,7 +20,7 @@ import com.google.inject.{ImplementedBy, Inject}
 import config.AppConfig
 import play.api.mvc.Results.Forbidden
 import play.api.mvc._
-import play.api.{Configuration, Environment, Logger}
+import play.api.{Configuration, Environment, Logging}
 import support.CallOps
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
 import uk.gov.hmrc.auth.core._
@@ -41,7 +41,8 @@ class AuthActionImpl @Inject() (
 )(implicit val executionContext: ExecutionContext)
     extends AuthAction
     with AuthorisedFunctions
-    with AuthRedirects {
+    with AuthRedirects
+    with Logging {
 
   override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] = {
 
@@ -54,7 +55,7 @@ class AuthActionImpl @Inject() (
       .retrieve(credentials and allEnrolments) {
         case Some(Credentials(authProviderId, _)) ~ enrollments =>
           val userRoles = enrollments.enrolments.map(_.key).mkString("[", ",", "]")
-          Logger(getClass).info(s"[AuthActionImpl][invokeBlock]User $authProviderId has been authorized with $userRoles")
+          logger.info(s"[AuthActionImpl][invokeBlock] User $authProviderId has been authorized with $userRoles")
           block(request)
 
         case None ~ _ =>

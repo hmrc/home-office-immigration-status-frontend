@@ -50,9 +50,9 @@ class StatusResultControllerSpec extends ControllerSpec {
     .build()
 
   override def beforeEach(): Unit = {
+    super.beforeEach()
     reset(mockProxyService)
     reset(mockSessionCacheService)
-    super.beforeEach()
   }
 
   val mockProxyService: HomeOfficeImmigrationStatusProxyService = mock(classOf[HomeOfficeImmigrationStatusProxyService])
