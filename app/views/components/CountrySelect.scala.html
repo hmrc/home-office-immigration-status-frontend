@@ -17,6 +17,7 @@
 @import config.Country
 @import views.html.helper.CSPNonce
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.FormGroup
+@import uk.gov.hmrc.govukfrontend.views.Implicits.RichSelect
 
 @this(
     govukSelect: GovukSelect,
@@ -41,6 +42,5 @@
                 selected = form("nationality").value.contains(country.alpha3)
             )
         ),
-    formGroup = FormGroup(classes = Some("autocomplete-wrapper")),
-    attributes = Map("data-all-countries" -> "")
-))
+    formGroup = FormGroup(classes = Some("autocomplete-wrapper"))
+).asAccessibleAutocomplete())
