@@ -17,13 +17,17 @@
 @import config.AppConfig
 @import views.HossFooterLinks
 @import views.html.helper.CSPNonce
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcAccessibleAutocompleteCss
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcAccessibleAutocompleteJavascript
 
 @this(
     govukLayout: GovukLayout,
     hmrcHead: HmrcHead,
     hmrcHeader: HmrcInternalHeader,
     hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
-    appConfig: AppConfig
+    appConfig: AppConfig,
+    autocompleteCss: HmrcAccessibleAutocompleteCss,
+    autocompleteJavascript: HmrcAccessibleAutocompleteJavascript
 )
 
 @(title: String, gaCode: Seq[String] = Seq.empty, js: Option[Html] = None)(mainContent: Html)(implicit request: RequestHeader, messages: Messages)
@@ -39,6 +43,8 @@
     </script>
 
     <meta name="format-detection" content="telephone=no" />
+
+    @autocompleteCss()
 }
 
 @scripts = {
@@ -48,6 +54,7 @@
 
     <script @{CSPNonce.attr} src='@routes.Assets.versioned("javascripts/immigrationstatus-app.js")'> </script>
     @js
+    @autocompleteJavascript()
 }
 
 @titleWithSuffix = @{ title + " - " + messages("app.titleSuffix") }
