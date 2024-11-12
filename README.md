@@ -2,10 +2,10 @@
 
 Web application providing internal HMRC staff with an interface to check customer's immigration status and rights to public funds.
 
-## Running the tests with coverage, A11y tests, scalafmt and dependency checks
+## Running the tests with coverage, scalafmt and dependency checks
 
 ```bash
-./run_all_tests
+./run_all_tests.sh
 ```
 
 ## Running the app locally
@@ -66,16 +66,6 @@ For example, where the new status is non-EUS and the value is NEW, three message
  2) header content: `status-found.current.nonEUS.NEW=' has new status'`
  3) expired header content: `status-found.current.nonEUS.NEW.expired='’s new status has ended'`
 
-## Accessibility Tests
-
-### Prerequisites
-Have node installed on your machine
-
-### Execute tests
-To run the tests locally, simply run:
-```bash
-sbt clean A11y/test
-```
 
 ### License
 
