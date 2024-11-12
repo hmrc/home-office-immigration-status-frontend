@@ -23,20 +23,6 @@ lazy val microservice = Project(appName, file("."))
   )
   .settings(
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
-    Concat.groups := Seq(
-      "javascripts/immigrationstatus-app.js" ->
-        group(
-          Seq(
-            "javascripts/jquery-3.6.0.min.js",
-            "javascripts/libraries/location-autocomplete.min.js",
-            "javascripts/autocomplete.js",
-            "javascripts/ga-events.js"
-          )
-        )
-    ),
-    Assets / pipelineStages := Seq(concat)
-  )
-  .settings(
     scalacOptions ++= Seq(
       "-Wconf:cat=unused-imports&src=views/.*:s",
       "-Wconf:src=routes/.*:s",
