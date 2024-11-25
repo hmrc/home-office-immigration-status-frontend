@@ -46,7 +46,7 @@ class AccessActionSpec extends ControllerSpec {
     .build()
 
   val expected: Result                        = Ok("Invoked")
-  val testBlock: Request[_] => Future[Result] = _ => Future.successful(expected)
+  val testBlock: Request[?] => Future[Result] = _ => Future.successful(expected)
 
   "invokeBlock" must {
     "compose the shutter and auth actions" in {

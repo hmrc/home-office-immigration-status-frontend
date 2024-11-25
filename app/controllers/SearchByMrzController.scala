@@ -20,12 +20,12 @@ import controllers.actions.AccessAction
 import forms.SearchByMRZForm
 import models.MrzSearchFormModel
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc._
+import play.api.mvc.*
 import services.SessionCacheService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.SearchByMrzView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 class SearchByMrzController @Inject() (

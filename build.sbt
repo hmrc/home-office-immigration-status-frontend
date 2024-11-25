@@ -27,8 +27,7 @@ lazy val microservice = Project(appName, file("."))
       "-Wconf:cat=unused-imports&src=views/.*:s",
       "-Wconf:src=routes/.*:s",
       "-feature",
-      "-explain",
-      "-cyclic"
+      "-rewrite -source 3.4-migration"
     )
   )
 

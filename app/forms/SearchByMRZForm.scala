@@ -26,7 +26,7 @@ import javax.inject.Singleton
 import models.MrzSearch.{BiometricResidencyCard, BiometricResidencyPermit, EuropeanNationalIdentityCard, Passport}
 
 @Singleton
-class SearchByMRZForm @Inject() (countries: Countries) extends FormFieldMappings {
+case class SearchByMRZForm @Inject() (countries: Countries) extends FormFieldMappings {
 
   private val allowedCountries = countries.countries.map(_.alpha3)
 

@@ -71,7 +71,7 @@ class IdentityDocumentTypeSpec extends ViewSpec {
       (".render", viewViaRender(emptyForm)),
       (".f", viewViaF(emptyForm))
     )
-    input.foreach(args => (test _).tupled(args))
+    input.foreach(args => test.tupled(args))
 
     ".apply" must {
       "preselect the selected" when {

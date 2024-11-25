@@ -129,7 +129,7 @@ class ShowChangeQuerySpec extends ViewSpec {
     }
 
   "ShowChangeQuery" when {
-    ninoInput.foreach(args => (ninoTest _).tupled(args))
-    mrzInput.foreach(args => (mrzTest _).tupled(args))
+    ninoInput.foreach(args => ninoTest.tupled(args))
+    mrzInput.foreach(args => mrzTest.tupled(args))
   }
 }
