@@ -33,7 +33,7 @@ object Constants {
       statuses = List(ImmigrationStatus(java.time.LocalDate.now(), None, "", "", noRecourseToPublicFunds = false))
     )
 
-  val ninoRequest =
+  val ninoRequest: NinoSearch =
     NinoSearch(
       NinoGenerator.generateNino,
       "Name",
@@ -42,7 +42,7 @@ object Constants {
       StatusCheckRange(Some(LocalDate.now(ZoneId.of("UTC")).minusMonths(1)), Some(LocalDate.now(ZoneId.of("UTC"))))
     )
 
-  val mrzRequest = MrzSearch(
+  val mrzRequest: MrzSearch = MrzSearch(
     "documentType",
     "documentNumber",
     LocalDate.now,

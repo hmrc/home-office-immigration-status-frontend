@@ -2,12 +2,12 @@ import uk.gov.hmrc.DefaultBuildSettings
 
 val appName = "home-office-immigration-status-frontend"
 
-ThisBuild / scalaVersion := "2.13.14"
+ThisBuild / scalaVersion := "3.5.1"
 ThisBuild / majorVersion := 0
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(PlayScala, SbtDistributablesPlugin)
-  .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
+  .disablePlugins(JUnitXmlReportPlugin) // Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .settings(
     PlayKeys.playDefaultPort := 10210,
     libraryDependencies ++= AppDependencies()
@@ -26,7 +26,9 @@ lazy val microservice = Project(appName, file("."))
     scalacOptions ++= Seq(
       "-Wconf:cat=unused-imports&src=views/.*:s",
       "-Wconf:src=routes/.*:s",
-      "-feature"
+      "-feature",
+      "-explain",
+      "-cyclic"
     )
   )
 

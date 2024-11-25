@@ -51,9 +51,9 @@ class HomeOfficeImmigrationStatusProxyConnectorSpec extends PlaySpec with ScalaF
     reset(mockRequestBuilder)
   }
 
-  val mockBaseUrl = "http://localhost:1234"
-  val ninoUrl     = s"$mockBaseUrl/v1/status/public-funds/nino"
-  val mrzUrl      = s"$mockBaseUrl/v1/status/public-funds/mrz"
+  val mockBaseUrl     = "http://localhost:1234"
+  val ninoUrl: String = s"$mockBaseUrl/v1/status/public-funds/nino"
+  val mrzUrl: String  = s"$mockBaseUrl/v1/status/public-funds/mrz"
 
   private class EndpointTestSetup(url: String) {
 

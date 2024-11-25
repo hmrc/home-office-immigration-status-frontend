@@ -30,7 +30,7 @@
     errorSummary: components.errorSummary
 )
 
-@(form: Form[MrzSearchFormModel])(implicit request: Request[_], messages: Messages)
+@(form: Form[MrzSearchFormModel])(implicit request: Request[?], messages: Messages)
 
 @govukWrapper(title = if(form.hasErrors) messages("lookup.mrz.title.Error") else messages("lookup.mrz.title")) {
 

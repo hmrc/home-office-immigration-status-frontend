@@ -21,7 +21,7 @@ import play.api.data.validation._
 object ValidateHelper extends Constraints {
 
   def cond[A](failure: String)(condition: A => Boolean): Constraint[A] =
-    Constraint[A] { data: A =>
+    Constraint[A] { (data: A) =>
       if (condition(data)) {
         Valid
       } else {

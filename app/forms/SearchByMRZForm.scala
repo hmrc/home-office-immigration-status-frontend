@@ -46,12 +46,12 @@ class SearchByMRZForm @Inject() (countries: Countries) extends FormFieldMappings
       "nationality" -> nonEmptyText("nationality")
         .transform[String](_.toUpperCase, identity)
         .verifying("error.nationality.invalid", allowedCountries.contains(_))
-    )(MrzSearchFormModel.apply)(MrzSearchFormModel.unapply)
+    )(MrzSearchFormModel.apply)(o => Some(Tuple.fromProductTyped(o)))
   }
 }
 
 object SearchByMRZForm {
-  final val AllowedDocumentTypes =
+  final val AllowedDocumentTypes: Seq[String] =
     Seq(Passport, EuropeanNationalIdentityCard, BiometricResidencyCard, BiometricResidencyPermit)
   val DocumentNumberMaxLength = 30
 }
