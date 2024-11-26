@@ -49,7 +49,7 @@ trait BaseISpec
 
   override def fakeApplication(): Application = appBuilder.build()
 
-  implicit val defaultTimeout: FiniteDuration = 5.seconds
+  given defaultTimeout: FiniteDuration = 5.seconds
 
   object FakeAuditService extends AuditService {
     def auditStatusCheckEvent(search: Search, result: StatusCheckResponseWithStatus)(implicit
@@ -75,7 +75,7 @@ trait BaseISpec
         bind[AuditService].toInstance(FakeAuditService)
       )
 
-  protected implicit val materializer: Materializer = app.materializer
+  protected given materializer: Materializer = app.materializer
 
   protected def checkHtmlResultWithBodyText(result: Future[Result], expectedSubstring: String): Unit = {
     status(result)        shouldBe 200

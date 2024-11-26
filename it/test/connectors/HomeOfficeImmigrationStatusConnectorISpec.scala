@@ -136,7 +136,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
 trait HomeOfficeImmigrationStatusConnectorISpecSetup extends BaseISpec with HomeOfficeImmigrationStatusStubs {
 
   private val HEADER_X_CORRELATION_ID = "X-Correlation-Id"
-  implicit val hc: HeaderCarrier =
+  given hc: HeaderCarrier =
     HeaderCarrier().withExtraHeaders(HEADER_X_CORRELATION_ID -> UUID.randomUUID().toString)
 
   val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])

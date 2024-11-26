@@ -21,7 +21,7 @@ import play.api.libs.json.{Json, Writes}
 case class StatusCheckAuditDetail(statusCode: Int, search: Search, response: StatusCheckResponse)
 
 object StatusCheckAuditDetail {
-  implicit val writes: Writes[StatusCheckAuditDetail] = {
+  given writes: Writes[StatusCheckAuditDetail] = {
     implicit val responseWrites = StatusCheckResponse.auditWrites
     Json.writes[StatusCheckAuditDetail]
   }
