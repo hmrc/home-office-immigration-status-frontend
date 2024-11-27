@@ -17,7 +17,7 @@
 package forms
 
 import config.Countries
-import models.MrzSearchFormModel
+import models.{MrzSearch, MrzSearchFormModel}
 import org.mockito.Mockito.mock
 import org.scalacheck.{Gen, Shrink}
 import org.scalatestplus.play.PlaySpec
@@ -90,7 +90,7 @@ class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecti
   "validate" must {
     "DocumentNumberMaxLength" must {
       "be 30" in {
-        SearchByMRZForm.DocumentNumberMaxLength mustBe 30
+        MrzSearch.DocumentNumberMaxLength mustBe 30
       }
     }
   }
@@ -99,10 +99,10 @@ class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecti
     "bind" when {
       "inputs are valid" in {
         val validGen = for {
-          docType <- Gen.oneOf(SearchByMRZForm.AllowedDocumentTypes)
+          docType <- Gen.oneOf(MrzSearch.AllowedDocumentTypes)
           docNum <- Gen
                       .listOfN(
-                        SearchByMRZForm.DocumentNumberMaxLength,
+                        MrzSearch.DocumentNumberMaxLength,
                         Gen.frequency((9, Gen.alphaNumChar), (1, Gen.const('-')))
                       )
                       .map(_.mkString.toUpperCase)
@@ -223,7 +223,7 @@ class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecti
     "documentType contains invalid chars" in {
       val invalidDocType: Gen[String] = Gen.asciiPrintableStr
         .suchThat(_.trim.nonEmpty)
-        .suchThat(sample => !SearchByMRZForm.AllowedDocumentTypes.contains(sample.toUpperCase))
+        .suchThat(sample => !MrzSearch.AllowedDocumentTypes.contains(sample.toUpperCase))
         .suchThat(_.trim.nonEmpty)
 
       forAll(invalidDocType) { documentType =>
@@ -244,7 +244,7 @@ class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecti
     "documentNumber is too long" in {
       val tooLongGen: Gen[String] = Gen
         .listOf(Gen.oneOf(Gen.alphaLowerChar, Gen.alphaUpperChar))
-        .suchThat(_.length > SearchByMRZForm.DocumentNumberMaxLength)
+        .suchThat(_.length > MrzSearch.DocumentNumberMaxLength)
         .map(_.mkString)
         .suchThat(_.trim.nonEmpty)
 
@@ -262,7 +262,7 @@ class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecti
           .atLeastOne(Range(32, 44).map(_.toChar))
           .map(_.mkString)
           .suchThat(_.trim.nonEmpty)
-          .suchThat(_.length <= SearchByMRZForm.DocumentNumberMaxLength)
+          .suchThat(_.length <= MrzSearch.DocumentNumberMaxLength)
 
       forAll(invalidDocNumber) { documentNumber =>
         val invalidInput = input(documentNumber = documentNumber)

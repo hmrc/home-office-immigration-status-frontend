@@ -18,8 +18,8 @@ package forms
 
 import com.google.inject.Inject
 import config.Countries
-import forms.SearchByMRZForm.*
-import models.MrzSearchFormModel
+import models.MrzSearch.{BiometricResidencyCard, BiometricResidencyPermit, EuropeanNationalIdentityCard, Passport}
+import models.{MrzSearch, MrzSearchFormModel}
 import play.api.data.Form
 import play.api.data.Forms.mapping
 import javax.inject.Singleton
@@ -34,10 +34,10 @@ class SearchByMRZForm @Inject() (countries: Countries) extends FormFieldMappings
     mapping(
       "documentType" -> nonEmptyText("documentType")
         .transform[String](_.toUpperCase, identity)
-        .verifying("error.documentType.invalid", AllowedDocumentTypes.contains(_)),
+        .verifying("error.documentType.invalid", MrzSearch.AllowedDocumentTypes.contains(_)),
       "documentNumber" -> nonEmptyText("documentNumber")
         .transform[String](_.replaceAll("\\s", "").toUpperCase, identity)
-        .verifying("error.documentNumber.length", dn => dn.length <= DocumentNumberMaxLength)
+        .verifying("error.documentNumber.length", dn => dn.length <= MrzSearch.DocumentNumberMaxLength)
         .verifying(
           "error.documentNumber.invalid-characters",
           dn => dn.forall(c => c.isDigit || c.isLetter || c == '-')
@@ -50,8 +50,8 @@ class SearchByMRZForm @Inject() (countries: Countries) extends FormFieldMappings
   }
 }
 
-object SearchByMRZForm {
-  final val AllowedDocumentTypes: Seq[String] =
-    Seq(Passport, EuropeanNationalIdentityCard, BiometricResidencyCard, BiometricResidencyPermit)
-  val DocumentNumberMaxLength = 30
-}
+//object SearchByMRZForm {
+//  final val AllowedDocumentTypes: Seq[String] =
+//    Seq(Passport, EuropeanNationalIdentityCard, BiometricResidencyCard, BiometricResidencyPermit)
+//  val DocumentNumberMaxLength = 30
+//}

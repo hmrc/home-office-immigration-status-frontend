@@ -70,6 +70,11 @@ object MrzSearch {
   val BiometricResidencyCard       = "BRC"
   val BiometricResidencyPermit     = "BRP"
 
+  val DocumentNumberMaxLength = 30
+
+  val AllowedDocumentTypes: Seq[String] =
+    Seq(Passport, EuropeanNationalIdentityCard, BiometricResidencyCard, BiometricResidencyPermit)
+
   def documentTypeToMessageKey(documentType: String)(implicit messages: Messages): String =
     documentType match {
       case Passport                     => messages("lookup.passport")
