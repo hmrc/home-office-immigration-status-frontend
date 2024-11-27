@@ -56,7 +56,7 @@ class ErrorHandler @Inject() (
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
     auditClientError(request, statusCode, message)
     if (appConfig.shuttered) {
-      implicit val r: Request[String] = Request(request, "")
+      given r: Request[String] = Request(request, "")
       Future.successful(ServiceUnavailable(shutteringPage()))
     } else {
       super.onClientError(request, statusCode, message)

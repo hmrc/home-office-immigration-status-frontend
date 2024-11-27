@@ -64,8 +64,8 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
     NinoSearchFormModel(NinoGenerator.generateNino, "Doe", "Jane", LocalDate.of(2001, 1, 31))
   val mrzSearchFormModel: MrzSearchFormModel =
     MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
-  val statusRequest: Search    = formModel.toSearch(6)
-  implicit val conf: AppConfig = appConfig
+  val statusRequest: Search = formModel.toSearch(6)
+  given conf: AppConfig     = appConfig
 
   val statusCheckResult: StatusCheckResult = StatusCheckResult("Damon Albarn", testDate, "GBR", Nil)
   val result: StatusCheckResponseWithStatus =

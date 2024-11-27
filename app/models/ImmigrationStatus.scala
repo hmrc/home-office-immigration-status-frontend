@@ -36,5 +36,5 @@ case class ImmigrationStatus(
 
 object ImmigrationStatus {
 
-  implicit val formats: Format[ImmigrationStatus] = Json.format[ImmigrationStatus]
+  given formats: Format[ImmigrationStatus] = Json.format[ImmigrationStatus]
 }

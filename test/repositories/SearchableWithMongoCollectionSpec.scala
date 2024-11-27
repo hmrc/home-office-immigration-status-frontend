@@ -112,7 +112,7 @@ class SearchableWithMongoCollectionSpec
   "set" must {
     "call collection.findOneAndReplace" in {
       when(mockCollection.findOneAndReplace(any(), any(), any(classOf[FindOneAndReplaceOptions])))
-        .thenReturn(mockFindObs)
+        .thenReturn(mockSingleObs)
       when(mockSingleObs.head()).thenReturn(Future.successful(Seq(formQuery)))
 
       val filters: Bson = Filters.equal("_id", "ID1")

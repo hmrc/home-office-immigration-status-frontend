@@ -20,6 +20,7 @@ import config.AppConfig
 import crypto.FormModelEncrypter
 import models.{EncryptedSearchFormModel, FormQueryModel, NinoSearchFormModel, SearchFormModel}
 import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{eq => eqTo}
 import org.mockito.Mockito._
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
@@ -84,7 +85,7 @@ class SessionCacheServiceSpec
       val hc     = HeaderCarrier(sessionId = Some(SessionId("123")))
       val result = Await.result(sut.get(hc, implicitly), 5 seconds)
       result mustBe None
-      verify(mockRepo).get(ArgumentMatchers.eq("123"))(any())
+      verify(mockRepo).get(eqTo("123"))(any())
     }
 
     "check the repository and return some where the header carrier has a session id" in {
