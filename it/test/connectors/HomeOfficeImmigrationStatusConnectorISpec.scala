@@ -141,7 +141,7 @@ trait HomeOfficeImmigrationStatusConnectorISpecSetup extends BaseISpec with Home
 
   val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
 
-  override implicit lazy val fakeApplication: Application = appBuilder.build()
+  override implicit def fakeApplication(): Application = appBuilder.build()
 
   lazy val connector: HomeOfficeImmigrationStatusProxyConnector =
     app.injector.instanceOf[HomeOfficeImmigrationStatusProxyConnector]

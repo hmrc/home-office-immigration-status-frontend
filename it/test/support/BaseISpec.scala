@@ -88,6 +88,6 @@ trait BaseISpec
 
   protected def htmlEscapedMessage(key: String): String = HtmlFormat.escape(messages(key)).toString
 
-  implicit def hc(implicit request: FakeRequest[_]): HeaderCarrier =
+  implicit def hc(implicit request: FakeRequest[?]): HeaderCarrier =
     HeaderCarrierConverter.fromRequest(request)
 }
