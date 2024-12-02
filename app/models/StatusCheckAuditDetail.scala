@@ -22,7 +22,7 @@ case class StatusCheckAuditDetail(statusCode: Int, search: Search, response: Sta
 
 object StatusCheckAuditDetail {
   given writes: Writes[StatusCheckAuditDetail] = {
-    implicit val responseWrites = StatusCheckResponse.auditWrites
+    implicit val responseWrites: Writes[StatusCheckResponse] = StatusCheckResponse.auditWrites
     Json.writes[StatusCheckAuditDetail]
   }
 }

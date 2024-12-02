@@ -16,11 +16,13 @@
 
 package models
 
+import org.scalatest.matchers.should.Matchers.shouldBe
 import org.scalatestplus.play.PlaySpec
-import play.api.libs.json.Json
+import play.api.libs.json.{JsError, JsSuccess, Json}
 import utils.NinoGenerator
 
 import java.time.LocalDate
+import scala.language.postfixOps
 
 class SearchSpec extends PlaySpec {
 
@@ -59,4 +61,57 @@ class SearchSpec extends PlaySpec {
     }
   }
 
+  "MrzSearch" should {
+    "serialize to JSON" when {
+      "all fields are defined" in {
+        val search: Search = MrzSearch(
+          "documentType",
+          "documentNumber",
+          date,
+          "nationality",
+          StatusCheckRange(Some(date), Some(date))
+        )
+
+        Json.toJson(search) shouldBe Json.obj(
+          "documentType"     -> "documentType",
+          "documentNumber"   -> "documentNumber",
+          "dateOfBirth"      -> date,
+          "nationality"      -> "nationality",
+          "statusCheckRange" -> StatusCheckRange(Some(date), Some(date))
+        )
+      }
+    }
+
+    "deserialize from JSON" when {
+      "all fields are defined" in {
+        val json = Json.obj(
+          "documentType"     -> "documentType",
+          "documentNumber"   -> "documentNumber",
+          "dateOfBirth"      -> date,
+          "nationality"      -> "nationality",
+          "statusCheckRange" -> StatusCheckRange(Some(date), Some(date))
+        )
+
+        json.validate[MrzSearch] shouldBe JsSuccess(
+          MrzSearch("documentType", "documentNumber", date, "nationality", StatusCheckRange(Some(date), Some(date)))
+        )
+      }
+
+      "fields are empty" in {
+        val json = Json.obj()
+        json.validate[MrzSearch] shouldBe a[JsError]
+      }
+
+      "invalid date format" in {
+        val json = Json.obj(
+          "documentType"     -> "documentType",
+          "documentNumber"   -> "documentNumber",
+          "dateOfBirth"      -> "invalid-date",
+          "nationality"      -> "nationality",
+          "statusCheckRange" -> StatusCheckRange(Some(date), Some(date))
+        )
+        json.validate[MrzSearch] shouldBe a[JsError]
+      }
+    }
+  }
 }
