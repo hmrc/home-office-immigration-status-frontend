@@ -16,14 +16,27 @@
 
 package models
 
+import org.scalatest.matchers.must.Matchers.mustEqual
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.data.validation.ValidationError
 import play.api.libs.json.{JsError, JsSuccess, Json}
 
+import java.time.LocalDate
+import java.time.LocalDate.now
+
 class StatusCheckResponseSpec extends AnyWordSpecLike with Matchers {
 
   private val error = StatusCheckError("ERR_CODE", Some(List(FieldError("error1", "field1"))))
+
+  def makeImmigrationStatus(daysAgo: Int = 0): ImmigrationStatus =
+    ImmigrationStatus(
+      LocalDate.now.minusDays(daysAgo),
+      None,
+      "some product type",
+      "some immigration status",
+      noRecourseToPublicFunds = true
+    )
 
   "StatusCheckErrorResponse" should {
     "serialize to JSON" when {
@@ -99,6 +112,5 @@ class StatusCheckResponseSpec extends AnyWordSpecLike with Matchers {
         json.validate[StatusCheckErrorResponse] shouldBe a[JsError]
       }
     }
-
   }
 }

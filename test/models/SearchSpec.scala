@@ -28,34 +28,76 @@ class SearchSpec extends PlaySpec {
 
   val date: LocalDate = LocalDate.now
 
-  "writes" should {
-    "Convert to json without the type" when {
-      "it's an MrzSearch" in {
-        val search: Search = MrzSearch(
+  "Search" when {
+    "writes" should {
+      "Convert to json without the type" when {
+        "it's an MrzSearch" in {
+          val search: Search = MrzSearch(
+            "documentType",
+            "documentNumber",
+            date,
+            "nationality",
+            StatusCheckRange(Some(date), Some(date))
+          )
+          Json.toJson(search) mustEqual Json.parse(
+            s"""{"documentType":"documentType","documentNumber":"documentNumber","dateOfBirth":"${date.toString}",
+               |"nationality":"nationality","statusCheckRange":{"startDate":"${date.toString}","endDate":"${date.toString}"}}""".stripMargin
+          )
+        }
+
+        "it's a NinoSearch" in {
+          val nino = NinoGenerator.generateNino
+          val search: Search = NinoSearch(
+            nino,
+            "given",
+            "family",
+            date.toString,
+            StatusCheckRange(Some(date), Some(date))
+          )
+          Json.toJson(search) mustEqual Json.parse(
+            s"""{"nino":"${nino.toString}","givenName":"given","familyName":"family","dateOfBirth":"${date.toString}",
+               |"statusCheckRange":{"startDate":"${date.toString}","endDate":"${date.toString}"}}""".stripMargin
+          )
+        }
+      }
+    }
+
+    "reads" should {
+      "deserialise a MrzSearch correctly" in {
+
+        val json = Json.parse(
+          s"""{"documentType":"documentType","documentNumber":"documentNumber","dateOfBirth":"${date.toString}",
+             |"nationality":"nationality","statusCheckRange":{"startDate":"${date.toString}","endDate":"${date.toString}"}}""".stripMargin
+        )
+        val result = json.validate[MrzSearch]
+
+        result.isSuccess shouldBe true
+        result.get shouldBe MrzSearch(
           "documentType",
           "documentNumber",
           date,
           "nationality",
           StatusCheckRange(Some(date), Some(date))
         )
-        Json.toJson(search) mustEqual Json.parse(
-          s"""{"documentType":"documentType","documentNumber":"documentNumber","dateOfBirth":"${date.toString}",
-             |"nationality":"nationality","statusCheckRange":{"startDate":"${date.toString}","endDate":"${date.toString}"}}""".stripMargin
-        )
       }
 
-      "it's a NinoSearch" in {
+      "deserialise a NinoSearch correctly" in {
+
         val nino = NinoGenerator.generateNino
-        val search: Search = NinoSearch(
+        val json = Json.parse(
+          s"""{"nino":"${nino.toString}","givenName":"given","familyName":"family","dateOfBirth":"${date.toString}",
+             |"statusCheckRange":{"startDate":"${date.toString}","endDate":"${date.toString}"}}""".stripMargin
+        )
+
+        val result = json.validate[NinoSearch]
+
+        result.isSuccess shouldBe true
+        result.get shouldBe NinoSearch(
           nino,
           "given",
           "family",
           date.toString,
           StatusCheckRange(Some(date), Some(date))
-        )
-        Json.toJson(search) mustEqual Json.parse(
-          s"""{"nino":"${nino.toString}","givenName":"given","familyName":"family","dateOfBirth":"${date.toString}",
-             |"statusCheckRange":{"startDate":"${date.toString}","endDate":"${date.toString}"}}""".stripMargin
         )
       }
     }
