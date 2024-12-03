@@ -56,23 +56,29 @@ class SearchFormModelSpec extends AnyWordSpecLike with Matchers {
       }
     }
 
-    "fields are empty" in {
-      val json = Json.obj(
-        "nino"        -> s"$nino",
-        "givenName"   -> "first",
-        "dateOfBirth" -> s"$dateOfBirth"
-      )
-      json.validate[NinoSearchFormModel] shouldBe a[JsError]
-    }
+      "when one field is missing" in {
+        val json = Json.obj(
+          "nino"        -> s"$nino",
+          "givenName"   -> "first",
+          "dateOfBirth" -> s"$dateOfBirth"
+        )
+        json.validate[NinoSearchFormModel] shouldBe a[JsError]
+      }
 
-    "invalid field types" in {
-      val json = Json.obj(
-        "nino"        -> 0,
-        "givenName"   -> 0,
-        "familyName"  -> 0,
-        "dateOfBirth" -> 0
-      )
-      json.validate[NinoSearchFormModel] shouldBe a[JsError]
+      "fields are empty" in {
+        val json = Json.obj()
+        json.validate[NinoSearchFormModel] shouldBe a[JsError]
+      }
+
+      "invalid field types" in {
+        val json = Json.obj(
+          "nino"        -> 0,
+          "givenName"   -> 0,
+          "familyName"  -> 0,
+          "dateOfBirth" -> 0
+        )
+        json.validate[NinoSearchFormModel] shouldBe a[JsError]
+      }
     }
   }
 
@@ -103,23 +109,29 @@ class SearchFormModelSpec extends AnyWordSpecLike with Matchers {
       }
     }
 
-    "fields are empty" in {
-      val json = Json.obj(
-        "documentType"   -> "DocType",
-        "documentNumber" -> "12345",
-        "nationality"    -> "nationality"
-      )
-      json.validate[MrzSearchFormModel] shouldBe a[JsError]
-    }
+      "when the document number is missing" in {
+        val json = Json.obj(
+          "documentType" -> "DocType",
+          "dateOfBirth"  -> s"$dateOfBirth",
+          "nationality"  -> "nationality"
+        )
+        json.validate[MrzSearchFormModel] shouldBe a[JsError]
+      }
 
-    "invalid field types" in {
-      val json = Json.obj(
-        "documentType"   -> 0,
-        "documentNumber" -> 12345,
-        "dateOfBirth"    -> 0,
-        "nationality"    -> 0
-      )
-      json.validate[MrzSearchFormModel] shouldBe a[JsError]
+      "fields are empty" in {
+        val json = Json.obj()
+        json.validate[MrzSearchFormModel] shouldBe a[JsError]
+      }
+
+      "invalid field types" in {
+        val json = Json.obj(
+          "documentType"   -> 0,
+          "documentNumber" -> 12345,
+          "dateOfBirth"    -> 0,
+          "nationality"    -> 0
+        )
+        json.validate[MrzSearchFormModel] shouldBe a[JsError]
+      }
     }
   }
 

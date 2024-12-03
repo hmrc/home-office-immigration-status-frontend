@@ -30,7 +30,7 @@ class SearchSpec extends PlaySpec {
   val nino            = NinoGenerator.generateNino
 
   "Search" when {
-    "writes" should {
+    ".writes" should {
       "Convert to json without the type" when {
         "it's an MrzSearch" in {
           val search: Search = MrzSearch(
@@ -60,9 +60,21 @@ class SearchSpec extends PlaySpec {
           )
         }
       }
+//
+//      "fails if JSON is invalid" in {
+//        val invalidSearchJson = NinoSearch(
+//          nino,
+//          "",
+//          "",
+//          date,
+//          StatusCheckRange(None, None)
+//        )
+//
+//        val result = Json.fromJson[Search](invalidSearch)
+//      }
     }
 
-    "reads" should {
+    ".reads" should {
       "deserialise a MrzSearch correctly" in {
 
         val json = Json.parse(
@@ -152,6 +164,60 @@ class SearchSpec extends PlaySpec {
           "statusCheckRange" -> 0
         )
         json.validate[MrzSearch] shouldBe a[JsError]
+      }
+    }
+
+    "NinoSearch" should {
+      "serialize to JSON" when {
+        "all fields are defined" in {
+          val search: Search = NinoSearch(
+            nino,
+            "given",
+            "family",
+            date.toString,
+            StatusCheckRange(Some(date), Some(date))
+          )
+
+          Json.toJson(search) shouldBe Json.obj(
+            "nino"             -> nino,
+            "givenName"        -> "given",
+            "familyName"       -> "family",
+            "dateOfBirth"      -> date.toString,
+            "statusCheckRange" -> StatusCheckRange(Some(date), Some(date))
+          )
+        }
+      }
+
+      "deserialize from JSON" when {
+        "all fields are defined" in {
+          val json = Json.obj(
+            "nino"             -> nino,
+            "givenName"        -> "given",
+            "familyName"       -> "family",
+            "dateOfBirth"      -> date.toString,
+            "statusCheckRange" -> StatusCheckRange(Some(date), Some(date))
+          )
+
+          json.validate[NinoSearch] shouldBe JsSuccess(
+            NinoSearch(nino, "given", "family", date.toString, StatusCheckRange(Some(date), Some(date)))
+          )
+        }
+
+        "fields are empty" in {
+          val json = Json.obj()
+          json.validate[NinoSearch] shouldBe a[JsError]
+        }
+
+        "invalid field types" in {
+          val json = Json.obj(
+            "nino"             -> 0,
+            "givenName"        -> 0,
+            "familyName"       -> 0,
+            "dateOfBirth"      -> 0,
+            "statusCheckRange" -> 0
+          )
+          json.validate[NinoSearch] shouldBe a[JsError]
+        }
       }
     }
   }
