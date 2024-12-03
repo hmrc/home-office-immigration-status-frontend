@@ -26,9 +26,7 @@ lazy val microservice = Project(appName, file("."))
     scalacOptions ++= List(
       "-Wconf:cat=unused-imports&src=views/.*:s",
       "-Wconf:src=routes/.*:s",
-      "-feature",
-      " -rewrite",
-      "-source 3.4-migration"
+      "-feature"
     )
   )
 

@@ -66,21 +66,21 @@ class AppConfigSpec extends PlaySpec {
         val configuration       = config(Some("Test"))
         val servicesConfig      = new ServicesConfig(configuration)
         lazy val sut: AppConfig = new AppConfig(servicesConfig, configuration, testEnv)
-        sut.isDevEnv mustEqual false
+        sut.isDevEnv mustBe false
       }
 
       "env.Mode is set to test and run mode in config is not test" in {
         val configuration       = config(Some("Dev"))
         val servicesConfig      = new ServicesConfig(configuration)
         lazy val sut: AppConfig = new AppConfig(servicesConfig, configuration, testEnv)
-        sut.isDevEnv mustEqual false
+        sut.isDevEnv mustBe false
       }
 
       "env.Mode is not set to test and run mode in config is not Dev" in {
         val configuration       = config(Some("Test"))
         val servicesConfig      = new ServicesConfig(configuration)
         lazy val sut: AppConfig = new AppConfig(servicesConfig, configuration, devEnv)
-        sut.isDevEnv mustEqual false
+        sut.isDevEnv mustBe false
       }
 
     }
@@ -91,14 +91,14 @@ class AppConfigSpec extends PlaySpec {
         val configuration       = config(Some("Dev"))
         val servicesConfig      = new ServicesConfig(configuration)
         lazy val sut: AppConfig = new AppConfig(servicesConfig, configuration, devEnv)
-        sut.isDevEnv mustEqual true
+        sut.isDevEnv mustBe true
       }
 
       "env.Mode is not set to test and run mode in config is not set" in {
         val configuration       = config(None)
         val servicesConfig      = new ServicesConfig(configuration)
         lazy val sut: AppConfig = new AppConfig(servicesConfig, configuration, prodEnv)
-        sut.isDevEnv mustEqual true
+        sut.isDevEnv mustBe true
       }
 
     }

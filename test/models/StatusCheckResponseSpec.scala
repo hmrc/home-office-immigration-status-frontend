@@ -16,14 +16,11 @@
 
 package models
 
-import org.scalatest.matchers.must.Matchers.mustEqual
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
-import play.api.data.validation.ValidationError
 import play.api.libs.json.{JsError, JsSuccess, Json}
 
 import java.time.LocalDate
-import java.time.LocalDate.now
 
 class StatusCheckResponseSpec extends AnyWordSpecLike with Matchers {
 
