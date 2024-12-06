@@ -27,6 +27,7 @@ import scala.language.postfixOps
 class SearchSpec extends PlaySpec {
 
   val date: LocalDate = LocalDate.now
+  val nino            = NinoGenerator.generateNino
 
   "Search" when {
     "writes" should {
@@ -46,7 +47,6 @@ class SearchSpec extends PlaySpec {
         }
 
         "it's a NinoSearch" in {
-          val nino = NinoGenerator.generateNino
           val search: Search = NinoSearch(
             nino,
             "given",
@@ -83,7 +83,6 @@ class SearchSpec extends PlaySpec {
 
       "deserialise a NinoSearch correctly" in {
 
-        val nino = NinoGenerator.generateNino
         val json = Json.parse(
           s"""{"nino":"${nino.toString}","givenName":"given","familyName":"family","dateOfBirth":"${date.toString}",
              |"statusCheckRange":{"startDate":"${date.toString}","endDate":"${date.toString}"}}""".stripMargin

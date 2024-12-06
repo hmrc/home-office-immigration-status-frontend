@@ -20,7 +20,7 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.matchers.must.Matchers.mustEqual
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.http.Status.OK
-import play.api.libs.json.{JsUndefined, Json}
+import play.api.libs.json.Json
 
 import java.time.{LocalDate, ZoneId}
 

@@ -18,12 +18,10 @@ package forms
 
 import com.google.inject.Inject
 import config.Countries
-import models.MrzSearch.{BiometricResidencyCard, BiometricResidencyPermit, EuropeanNationalIdentityCard, Passport}
 import models.{MrzSearch, MrzSearchFormModel}
 import play.api.data.Form
 import play.api.data.Forms.mapping
 import javax.inject.Singleton
-import models.MrzSearch.{BiometricResidencyCard, BiometricResidencyPermit, EuropeanNationalIdentityCard, Passport}
 
 @Singleton
 class SearchByMRZForm @Inject() (countries: Countries) extends FormFieldMappings {

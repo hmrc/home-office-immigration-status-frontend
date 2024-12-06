@@ -16,12 +16,15 @@
 
 package models
 
+import org.scalatest.matchers.should.Matchers.shouldBe
 import org.scalatestplus.play.PlaySpec
 import play.api.libs.json.{JsUndefined, Json}
 
 import java.time.LocalDate
 
 class StatusCheckResultSpec extends PlaySpec {
+
+  val date = LocalDate.parse("2001-01-31")
 
   def makeImmigrationStatus(daysAgo: Int = 0): ImmigrationStatus =
     ImmigrationStatus(
@@ -125,5 +128,4 @@ class StatusCheckResultSpec extends PlaySpec {
     }
 
   }
-
 }

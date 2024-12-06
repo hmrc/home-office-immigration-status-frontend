@@ -25,7 +25,7 @@ import services.SessionCacheService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.SearchByMrzView
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SearchByMrzController @Inject() (

@@ -29,7 +29,6 @@ import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import repositories.SessionCacheRepository.CollectionName
 import uk.gov.hmrc.mongo.MongoComponent
 import org.mongodb.scala.ObservableFuture
-import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.concurrent.{ExecutionContext, Future}
 

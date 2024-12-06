@@ -24,9 +24,10 @@ lazy val microservice = Project(appName, file("."))
   .settings(
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
     scalacOptions ++= List(
-      "-Wconf:cat=unused-imports&src=views/.*:s",
-      "-Wconf:src=routes/.*:s",
-      "-feature"
+      "-feature",
+      "-Wconf:msg=unused import&src=conf/.*:s",
+      "-Wconf:msg=unused import&src=views/.*:s",
+      "-Wconf:src=routes/.*:s"
     )
   )
 
