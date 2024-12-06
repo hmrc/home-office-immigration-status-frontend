@@ -27,7 +27,7 @@
     searchAgainButton: components.SearchAgainButton
 )
 
-@(context: StatusNotAvailablePageContext)(implicit request: Request[_], messages: Messages)
+@(context: StatusNotAvailablePageContext)(implicit request: Request[?], messages: Messages)
 
 @govukWrapper(title = messages("status-not-available.title")) {
 

@@ -45,7 +45,7 @@ class InputDateSpec extends ViewSpec {
       )
     )
 
-  private def viewViaApply(form: Form[_]): HtmlFormat.Appendable = sut.apply(
+  private def viewViaApply(form: Form[?]): HtmlFormat.Appendable = sut.apply(
     form = form,
     legendContent = messages("some.legend.content"),
     legendClasses = "govuk-label",
@@ -54,7 +54,7 @@ class InputDateSpec extends ViewSpec {
     hintHtml = Some(Html(messages("lookup.dateOfBirth.hint")))
   )(messages)
 
-  private def viewViaRender(form: Form[_]): HtmlFormat.Appendable = sut.render(
+  private def viewViaRender(form: Form[?]): HtmlFormat.Appendable = sut.render(
     form = form,
     legendContent = messages("some.legend.content"),
     legendClasses = "govuk-label",
@@ -65,7 +65,7 @@ class InputDateSpec extends ViewSpec {
     messages = messages
   )
 
-  private def viewViaF(form: Form[_]): HtmlFormat.Appendable = sut.f(
+  private def viewViaF(form: Form[?]): HtmlFormat.Appendable = sut.f(
     form,
     messages("some.legend.content"),
     "govuk-label",
@@ -133,6 +133,6 @@ class InputDateSpec extends ViewSpec {
       (".f", viewViaF(emptyForm), viewViaF(invalidForm))
     )
 
-    input.foreach(args => (test _).tupled(args))
+    input.foreach(args => test.tupled(args))
   }
 }

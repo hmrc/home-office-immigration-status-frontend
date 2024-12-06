@@ -20,11 +20,11 @@
 
 @this(govukSelect: GovukSelect)
 
-@(form: Form[_])(implicit messages: Messages)
+@(form: Form[?])(implicit messages: Messages)
 
 @docType = @{form("documentType").value}
 
-@errors = @{form("documentType").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))}
+@errors = @{form("documentType").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args*))))}
 
 @items = @{Seq(
   SelectItem(Some(Passport), messages("lookup.passport"), docType.forall(_ == "PASSPORT")),

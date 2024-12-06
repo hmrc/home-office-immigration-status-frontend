@@ -23,7 +23,7 @@ import uk.gov.hmrc.crypto.json.CryptoFormats
 sealed trait EncryptedSearchFormModel
 
 object EncryptedSearchFormModel {
-  implicit val formats: OFormat[EncryptedSearchFormModel] = Json.format[EncryptedSearchFormModel]
+  given formats: OFormat[EncryptedSearchFormModel] = Json.format[EncryptedSearchFormModel]
 }
 
 final case class EncryptedNinoSearchFormModel(
@@ -34,8 +34,8 @@ final case class EncryptedNinoSearchFormModel(
 ) extends EncryptedSearchFormModel
 
 object EncryptedNinoSearchFormModel {
-  implicit val encryptedValueFormat: Format[EncryptedValue]   = CryptoFormats.encryptedValueFormat
-  implicit val formats: OFormat[EncryptedNinoSearchFormModel] = Json.format[EncryptedNinoSearchFormModel]
+  given encryptedValueFormat: Format[EncryptedValue]   = CryptoFormats.encryptedValueFormat
+  given formats: OFormat[EncryptedNinoSearchFormModel] = Json.format[EncryptedNinoSearchFormModel]
 }
 
 final case class EncryptedMrzSearchFormModel(
@@ -46,6 +46,6 @@ final case class EncryptedMrzSearchFormModel(
 ) extends EncryptedSearchFormModel
 
 object EncryptedMrzSearchFormModel {
-  implicit val encryptedValueFormat: Format[EncryptedValue]  = CryptoFormats.encryptedValueFormat
-  implicit val formats: OFormat[EncryptedMrzSearchFormModel] = Json.format[EncryptedMrzSearchFormModel]
+  given encryptedValueFormat: Format[EncryptedValue]  = CryptoFormats.encryptedValueFormat
+  given formats: OFormat[EncryptedMrzSearchFormModel] = Json.format[EncryptedMrzSearchFormModel]
 }

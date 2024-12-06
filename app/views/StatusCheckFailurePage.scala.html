@@ -25,7 +25,7 @@
     appConfig: AppConfig
 )
 
-@(query: SearchFormModel)(implicit request: Request[_], messages: Messages)
+@(query: SearchFormModel)(implicit request: Request[?], messages: Messages)
 
 @govukWrapper(title = messages("status-check-failure.title")) {
 

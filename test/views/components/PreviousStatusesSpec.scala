@@ -210,9 +210,9 @@ class PreviousStatusesSpec extends ViewSpec {
     }
 
   "PreviousStatuses" when {
-    noStatusInput.foreach(args => (noStatusTest _).tupled(args))
-    singleStatusInput.foreach(args => (singleStatusTest _).tupled(args))
-    multipleStatusesInput.foreach(args => (multipleStatusesTest _).tupled(args))
-    immigrationStatusInput.foreach(args => (immigrationStatusTest _).tupled(args))
+    noStatusInput.foreach(args => noStatusTest.tupled(args))
+    singleStatusInput.foreach(args => singleStatusTest.tupled(args))
+    multipleStatusesInput.foreach(args => multipleStatusesTest.tupled(args))
+    immigrationStatusInput.foreach(args => immigrationStatusTest.tupled(args))
   }
 }

@@ -21,6 +21,7 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import stubs.HomeOfficeImmigrationStatusStubs
 import support.ISpec
+import play.api.libs.ws.DefaultBodyReadables.readableAsString
 
 import java.time.LocalDate
 

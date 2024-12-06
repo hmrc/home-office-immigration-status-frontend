@@ -36,8 +36,8 @@ final case class StatusCheckSuccessfulResponse(
 ) extends StatusCheckResponse
 
 object StatusCheckSuccessfulResponse {
-  implicit val reads: Reads[StatusCheckSuccessfulResponse] = Json.reads[StatusCheckSuccessfulResponse]
-  implicit val auditWrites: Writes[StatusCheckSuccessfulResponse] = {
+  given reads: Reads[StatusCheckSuccessfulResponse] = Json.reads[StatusCheckSuccessfulResponse]
+  given auditWrites: Writes[StatusCheckSuccessfulResponse] = {
     implicit val resultWrites = StatusCheckResult.auditWrites
     Json.writes[StatusCheckSuccessfulResponse]
   }

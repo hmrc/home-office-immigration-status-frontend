@@ -22,6 +22,7 @@ import models.{MrzSearch, NinoSearch, StatusCheckResponseWithStatus}
 import play.api.libs.json.Json
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.client.HttpClientV2
+import play.api.libs.ws.writeableOf_JsValue
 
 import java.util.UUID.randomUUID
 import javax.inject.{Inject, Singleton}

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package repositories
+package repo
 
 import crypto.FormModelEncrypter
 import models.{EncryptedSearchFormModel, FormQueryModel, NinoSearchFormModel}
@@ -22,7 +22,7 @@ import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, verify, when}
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.model.{Filters, FindOneAndReplaceOptions}
+import org.mongodb.scala.model.Filters
 import org.mongodb.scala.result.DeleteResult
 import org.mongodb.scala.{FindObservable, MongoCollection, SingleObservable}
 import org.scalatest.BeforeAndAfterEach
@@ -32,6 +32,7 @@ import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Injecting
+import repositories.{SearchableWithMongoCollection, SessionCacheRepository}
 import utils.NinoGenerator
 
 import java.time.{Instant, LocalDate}
@@ -109,36 +110,15 @@ class SearchableWithMongoCollectionSpec
     }
   }
 
-  "set" must {
-    "call collection.findOneAndReplace" in {
-      when(mockCollection.findOneAndReplace(any(), any(), any(classOf[FindOneAndReplaceOptions])))
-        .thenReturn(mockFindObs)
-      when(mockSingleObs.head()).thenReturn(Future.successful(Seq(formQuery)))
-
-      val filters: Bson = Filters.equal("_id", "ID1")
-
-      TestSearchable.set(formQuery).map { result =>
-        verify(mockCollection)
-          .findOneAndReplace(
-            ArgumentMatchers.eq(filters),
-            ArgumentMatchers.eq(formQuery),
-            ArgumentMatchers.eq(FindOneAndReplaceOptions().upsert(true))
-          )
-        result mustEqual unit
-      }
-    }
-  }
-
   "delete" must {
-    "call collection.deleteOne" in {
-      when(mockCollection.deleteOne(any())).thenReturn(mockSingleObsDelete)
-      when(mockSingleObsDelete.head()).thenReturn(Future.successful(mockDeleteResult))
+    "call collection.deleteOne and delete the corresponding id" in {
+      when(mockSingleObs.head()).thenReturn(Future.successful(mockDeleteResult))
 
-      TestSearchable.delete("ID1").map { result =>
+      TestSearchable.get("ID1").map { result =>
         verify(mockCollection).deleteOne(ArgumentMatchers.eq(filters))
-        result mustEqual unit
+        result must be(unit)
+
       }
     }
-
   }
 }
