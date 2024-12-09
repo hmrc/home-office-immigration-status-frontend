@@ -22,7 +22,8 @@ import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, verify, when}
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.model.Filters
+import org.mongodb.scala.model.Filters.equal
+import org.mongodb.scala.model.{Filters, FindOneAndReplaceOptions}
 import org.mongodb.scala.result.DeleteResult
 import org.mongodb.scala.{FindObservable, MongoCollection, SingleObservable}
 import org.scalatest.BeforeAndAfterEach

@@ -143,13 +143,13 @@ class SearchSpec extends PlaySpec {
         json.validate[MrzSearch] shouldBe a[JsError]
       }
 
-      "invalid date format" in {
+      "invalid field types" in {
         val json = Json.obj(
-          "documentType"     -> "documentType",
-          "documentNumber"   -> "documentNumber",
-          "dateOfBirth"      -> "invalid-date",
-          "nationality"      -> "nationality",
-          "statusCheckRange" -> StatusCheckRange(Some(date), Some(date))
+          "documentType"     -> 0,
+          "documentNumber"   -> 0,
+          "dateOfBirth"      -> 0,
+          "nationality"      -> 0,
+          "statusCheckRange" -> 0
         )
         json.validate[MrzSearch] shouldBe a[JsError]
       }

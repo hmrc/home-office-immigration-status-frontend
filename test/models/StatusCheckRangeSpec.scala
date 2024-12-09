@@ -63,6 +63,14 @@ class StatusCheckRangeSpec extends AnyWordSpecLike with Matchers {
         )
         json.validate[StatusCheckRange] shouldBe a[JsError]
       }
+
+      "invalid field types" in {
+        val json = Json.obj(
+          "endDate"   -> false,
+          "startDate" -> false
+        )
+        json.validate[StatusCheckRange] shouldBe a[JsError]
+      }
     }
   }
 }

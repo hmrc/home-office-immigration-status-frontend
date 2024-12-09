@@ -60,10 +60,13 @@ class ImmigrationStatusSpec extends AnyWordSpecLike with Matchers {
         json.validate[ImmigrationStatus] shouldBe a[JsError]
       }
 
-      "invalid date format" in {
+      "invalid field types" in {
         val json = Json.obj(
-          "statusStartDate" -> "invalid-date",
-          "statusEndDate"   -> "2023-01-01"
+          "statusStartDate"         -> 0,
+          "statusEndDate"           -> 0,
+          "productType"             -> 0,
+          "immigrationStatus"       -> 0,
+          "noRecourseToPublicFunds" -> 0
         )
         json.validate[ImmigrationStatus] shouldBe a[JsError]
       }

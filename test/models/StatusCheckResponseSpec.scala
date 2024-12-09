@@ -110,4 +110,5 @@ class StatusCheckResponseSpec extends AnyWordSpecLike with Matchers {
       }
     }
   }
+
 }

@@ -67,10 +67,10 @@ class SearchFormModelSpec extends AnyWordSpecLike with Matchers {
 
     "invalid field types" in {
       val json = Json.obj(
-        "nino"        -> s"$nino",
-        "givenName"   -> "first",
+        "nino"        -> 0,
+        "givenName"   -> 0,
         "familyName"  -> 0,
-        "dateOfBirth" -> s"$dateOfBirth"
+        "dateOfBirth" -> 0
       )
       json.validate[NinoSearchFormModel] shouldBe a[JsError]
     }
@@ -114,10 +114,10 @@ class SearchFormModelSpec extends AnyWordSpecLike with Matchers {
 
     "invalid field types" in {
       val json = Json.obj(
-        "documentType"   -> "DocType",
+        "documentType"   -> 0,
         "documentNumber" -> 12345,
-        "dateOfBirth"    -> s"$dateOfBirth",
-        "nationality"    -> "nationality"
+        "dateOfBirth"    -> 0,
+        "nationality"    -> 0
       )
       json.validate[MrzSearchFormModel] shouldBe a[JsError]
     }

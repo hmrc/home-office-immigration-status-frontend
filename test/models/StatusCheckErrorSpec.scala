@@ -69,9 +69,9 @@ class StatusCheckErrorSpec extends AnyWordSpecLike with Matchers {
 
       "fields are empty" in {
         val json = Json.obj(
-          "errCode" -> "404"
+          "errCode" -> ""
         )
-        json.validate[StatusCheckError] shouldBe JsSuccess(StatusCheckError("404", None))
+        json.validate[StatusCheckError] shouldBe JsSuccess(StatusCheckError("", None))
       }
 
       "invalid field types" in {
