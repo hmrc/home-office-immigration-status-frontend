@@ -17,15 +17,16 @@
 package views.components
 
 import forms.SearchByMRZForm
+import models.MrzSearch
 import org.jsoup.nodes.Document
 import play.api.data.Forms.mapping
-import play.api.data.format.Formats._
-import play.api.data._
+import play.api.data.format.Formats.*
+import play.api.data.*
 import play.twirl.api.HtmlFormat
 import views.ViewSpec
 import views.html.components.identityDocumentType
 
-import scala.jdk.CollectionConverters._
+import scala.jdk.CollectionConverters.*
 
 class IdentityDocumentTypeSpec extends ViewSpec {
 
@@ -48,7 +49,7 @@ class IdentityDocumentTypeSpec extends ViewSpec {
         "have all 4 options, in the correct order" in {
           val options = doc.select("option").asScala.toList.map(option => option.attr("value"))
 
-          options mustBe SearchByMRZForm.AllowedDocumentTypes
+          options mustBe MrzSearch.AllowedDocumentTypes
         }
 
         "default select passport" when {
@@ -71,11 +72,11 @@ class IdentityDocumentTypeSpec extends ViewSpec {
       (".render", viewViaRender(emptyForm)),
       (".f", viewViaF(emptyForm))
     )
-    input.foreach(args => (test _).tupled(args))
+    input.foreach(args => test.tupled(args))
 
     ".apply" must {
       "preselect the selected" when {
-        SearchByMRZForm.AllowedDocumentTypes
+        MrzSearch.AllowedDocumentTypes
           .foreach { selected =>
             s"selected is $selected" in {
               val doc: Document = asDocument(viewViaApply(testForm.bind(Map("documentType" -> selected))))
@@ -84,7 +85,7 @@ class IdentityDocumentTypeSpec extends ViewSpec {
                 doc.select("option").asScala.toList.map(option => (option.attr("value"), option.hasAttr("selected")))
 
               optionsWithSelected.find(_._2) mustBe Some((selected, true))
-              optionsWithSelected.filterNot(_._2).length mustBe SearchByMRZForm.AllowedDocumentTypes.length - 1
+              optionsWithSelected.filterNot(_._2).length mustBe MrzSearch.AllowedDocumentTypes.length - 1
             }
           }
       }

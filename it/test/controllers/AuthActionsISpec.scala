@@ -64,7 +64,7 @@ trait AuthActionISpecSetup extends BaseISpec with Injecting {
 
   override def fakeApplication(): Application = appBuilder.build()
 
-  implicit val request: FakeRequest[AnyContentAsEmpty.type] =
+  given request: FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest().withSession(SessionKeys.authToken -> "Bearer XYZ")
 
   object TestController {

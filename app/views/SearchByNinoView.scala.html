@@ -29,7 +29,7 @@
     appConfig: AppConfig
 )
 
-@(form: Form[NinoSearchFormModel])(implicit request: Request[_], messages: Messages)
+@(form: Form[NinoSearchFormModel])(implicit request: Request[?], messages: Messages)
 
 @govukWrapper(title = if(form.hasErrors) messages("lookup.nino.title.Error") else messages("lookup.nino.title")) {
 

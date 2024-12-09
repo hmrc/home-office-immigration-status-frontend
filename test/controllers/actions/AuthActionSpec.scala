@@ -67,7 +67,7 @@ class AuthActionSpec extends ControllerSpec with AuthRedirects {
     type RetrievalType = Option[Credentials] ~ Enrolments
 
     when(mockAuthConnector.authorise[RetrievalType](any(), any())(any(), any()))
-      .thenReturn(Future.successful(credentials composeRetrievals enrolments))
+      .thenReturn(Future.successful(credentials.composeRetrievals(enrolments)))
 
     val result: Future[Result] = sut(_ => Ok)(request)
   }

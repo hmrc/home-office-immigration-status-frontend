@@ -24,9 +24,9 @@
     countries: config.Countries
 )
 
-@(form: Form[_])(implicit messages: Messages)
+@(form: Form[?])(implicit messages: Messages)
 
-@errors = @{form("nationality").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))}
+@errors = @{form("nationality").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args*))))}
 
 @govukSelect(Select(
     id = "nationality",

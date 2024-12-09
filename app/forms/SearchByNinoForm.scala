@@ -31,6 +31,6 @@ class SearchByNinoForm extends FormFieldMappings {
       "givenName"   -> validName("givenName", 1),
       "familyName"  -> validName("familyName", 2),
       "dateOfBirth" -> dobFieldsMapping
-    )(NinoSearchFormModel.apply)(NinoSearchFormModel.unapply)
+    )(NinoSearchFormModel.apply)(o => Some(Tuple.fromProductTyped(o)))
   }
 }

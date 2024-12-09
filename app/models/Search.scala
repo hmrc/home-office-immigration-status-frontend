@@ -26,8 +26,8 @@ import java.time.format.DateTimeFormatter
 sealed trait Search
 
 object Search {
-  implicit val reads: Reads[Search]   = Json.reads[Search]
-  implicit val writes: Writes[Search] = (o: Search) => Json.toJson(o)(Json.writes[Search]).as[JsObject] - "_type"
+  given reads: Reads[Search]   = Json.reads[Search]
+  given writes: Writes[Search] = (o: Search) => Json.toJson(o)(Json.writes[Search]).as[JsObject] - "_type"
 }
 
 final case class NinoSearch(
@@ -50,7 +50,7 @@ object NinoSearch {
   ): NinoSearch =
     new NinoSearch(nino, givenName, familyName, dateOfBirth.format(ISO8601), statusCheckRange)
 
-  implicit val formats: Format[NinoSearch] = Json.format[NinoSearch]
+  given formats: Format[NinoSearch] = Json.format[NinoSearch]
 }
 
 final case class MrzSearch(
@@ -69,6 +69,11 @@ object MrzSearch {
   val EuropeanNationalIdentityCard = "NAT"
   val BiometricResidencyCard       = "BRC"
   val BiometricResidencyPermit     = "BRP"
+
+  val DocumentNumberMaxLength = 30
+
+  val AllowedDocumentTypes: Seq[String] =
+    Seq(Passport, EuropeanNationalIdentityCard, BiometricResidencyCard, BiometricResidencyPermit)
 
   def documentTypeToMessageKey(documentType: String)(implicit messages: Messages): String =
     documentType match {

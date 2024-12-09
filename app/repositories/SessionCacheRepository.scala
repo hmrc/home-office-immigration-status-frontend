@@ -28,6 +28,7 @@ import org.mongodb.scala.model.Indexes.ascending
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import repositories.SessionCacheRepository.CollectionName
 import uk.gov.hmrc.mongo.MongoComponent
+import org.mongodb.scala.ObservableFuture
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -45,7 +46,7 @@ class SessionCacheRepository @Inject() (
           ascending("lastUpdated"),
           IndexOptions()
             .name("lastUpdatedTTL")
-            .expireAfter(appConfig.mongoSessionExpiration, TimeUnit.SECONDS)
+            .expireAfter(appConfig.mongoSessionExpiration.toLong, TimeUnit.SECONDS)
         )
       )
     )

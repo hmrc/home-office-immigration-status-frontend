@@ -108,6 +108,6 @@ class StatusCheckFailurePageViewSpec extends ViewSpec {
       (".f", viewViaF(ninoSearchFormModel), viewViaF(mrzSearchFormModel))
     )
 
-    input.foreach(args => (test _).tupled(args))
+    input.foreach(args => test.tupled(args))
   }
 }

@@ -21,6 +21,8 @@ import play.api.http.Status.SERVICE_UNAVAILABLE
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import support.ISpec
+import play.api.libs.ws.DefaultBodyReadables.readableAsString
+import play.api.libs.ws.WSBodyWritables.writeableOf_urlEncodedSimpleForm
 
 import scala.concurrent.Future
 
