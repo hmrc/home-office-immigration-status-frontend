@@ -23,6 +23,8 @@ import java.time.LocalDate
 
 class StatusCheckResultSpec extends PlaySpec {
 
+  val date = LocalDate.parse("2001-01-31")
+
   def makeImmigrationStatus(daysAgo: Int = 0): ImmigrationStatus =
     ImmigrationStatus(
       LocalDate.now.minusDays(daysAgo),

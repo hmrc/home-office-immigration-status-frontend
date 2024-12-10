@@ -174,8 +174,8 @@ class StatusFoundPageViewSpec extends ViewSpec {
     }
 
   "StatusFoundPageView" when {
-    standardContentInput.foreach(args => (standardContentTest _).tupled(args))
-    warningContentInput.foreach(args => (warningContentTest _).tupled(args))
-    immigrationRouteInput.foreach(args => (immigrationRouteTest _).tupled(args))
+    standardContentInput.foreach(args => standardContentTest.tupled(args))
+    warningContentInput.foreach(args => warningContentTest.tupled(args))
+    immigrationRouteInput.foreach(args => immigrationRouteTest.tupled(args))
   }
 }

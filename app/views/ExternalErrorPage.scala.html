@@ -21,7 +21,7 @@
     appConfig: AppConfig
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@()(implicit request: Request[?], messages: Messages)
 
 @govukWrapper(title = messages("external.error.500.title")) {
 

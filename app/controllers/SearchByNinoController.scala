@@ -49,7 +49,7 @@ class SearchByNinoController @Inject() (
       }
     }
 
-  private def composeFormWithStoredRequest(implicit request: Request[_]): Future[Result] = sessionCacheService.get.map {
+  private def composeFormWithStoredRequest(implicit request: Request[?]): Future[Result] = sessionCacheService.get.map {
     result =>
       val form = result match {
         case Some(formModel: NinoSearchFormModel) => formProvider().fill(formModel)
@@ -59,7 +59,7 @@ class SearchByNinoController @Inject() (
       Ok(searchByNinoView(form))
   }
 
-  private def clearStoredRequestAndShowEmptyForm(implicit request: Request[_]): Future[Result] =
+  private def clearStoredRequestAndShowEmptyForm(implicit request: Request[?]): Future[Result] =
     for {
       _ <- sessionCacheService.delete
     } yield Ok(searchByNinoView(formProvider()))
