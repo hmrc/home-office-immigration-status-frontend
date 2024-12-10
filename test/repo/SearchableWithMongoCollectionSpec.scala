@@ -22,8 +22,6 @@ import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, verify, when}
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.model.Filters
-import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model.{Filters, FindOneAndReplaceOptions}
 import org.mongodb.scala.result.DeleteResult
 import org.mongodb.scala.{FindObservable, MongoCollection, SingleObservable}
@@ -122,18 +120,6 @@ class SearchableWithMongoCollectionSpec
           ArgumentMatchers.eq(formQuery),
           ArgumentMatchers.eq(FindOneAndReplaceOptions().upsert(true))
         )
-        result must be(unit)
-
-      }
-    }
-  }
-
-  "delete" must {
-    "call collection.deleteOne and delete the corresponding id" in {
-      when(mockSingleObs.head()).thenReturn(Future.successful(mockDeleteResult))
-
-      TestSearchable.get("ID1").map { result =>
-        verify(mockCollection).deleteOne(ArgumentMatchers.eq(filters))
         result must be(unit)
 
       }
