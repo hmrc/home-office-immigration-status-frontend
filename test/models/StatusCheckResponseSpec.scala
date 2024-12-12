@@ -114,15 +114,16 @@ class StatusCheckResponseSpec extends AnyWordSpecLike with Matchers {
   "StatusCheckSuccessfulResponse.writes" should {
     "Convert to json without the type" in {
       val expected = makeImmigrationStatus()
-      val result   = StatusCheckResult("some name", LocalDate.now, "some nationality", List(expected))
+      val date     = LocalDate.now
+      val result   = StatusCheckResult("some name", date, "some nationality", List(expected))
       val search: StatusCheckSuccessfulResponse = StatusCheckSuccessfulResponse(
         Some("correlationId"),
         result
       )
 
       Json.toJson(search) shouldEqual Json.parse(
-        s"""{"result":{"fullName":"some name","dateOfBirth":"2024-12-10","nationality":"some nationality","mostRecentStatus":
-           |{"statusStartDate":"2024-12-10","productType":"some product type","immigrationStatus":"some immigration status","noRecourseToPublicFunds":true},"previousStatuses":[]},"correlationId":"correlationId"}""".stripMargin
+        s"""{"result":{"fullName":"some name","dateOfBirth":"$date","nationality":"some nationality","mostRecentStatus":
+           |{"statusStartDate":"$date","productType":"some product type","immigrationStatus":"some immigration status","noRecourseToPublicFunds":true},"previousStatuses":[]},"correlationId":"correlationId"}""".stripMargin
       )
     }
   }
