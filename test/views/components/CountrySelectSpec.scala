@@ -96,6 +96,6 @@ class CountrySelectSpec extends ViewSpec {
       (".f", viewViaF(emptyForm), viewViaF(filledForm))
     )
 
-    input.foreach(args => (test _).tupled(args))
+    input.foreach(args => test.tupled(args))
   }
 }

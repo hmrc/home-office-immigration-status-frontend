@@ -25,7 +25,7 @@ sealed trait SearchFormModel {
 }
 
 object SearchFormModel {
-  implicit val formats: OFormat[SearchFormModel] = Json.format[SearchFormModel]
+  given formats: OFormat[SearchFormModel] = Json.format[SearchFormModel]
 }
 
 final case class NinoSearchFormModel(

@@ -20,7 +20,7 @@
     govukWrapper: govuk_wrapper
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@()(implicit request: Request[?], messages: Messages)
 
 @govukWrapper(title = messages("shuttering.title")) {
 

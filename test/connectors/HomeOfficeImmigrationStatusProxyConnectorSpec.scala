@@ -51,9 +51,9 @@ class HomeOfficeImmigrationStatusProxyConnectorSpec extends PlaySpec with ScalaF
     reset(mockRequestBuilder)
   }
 
-  val mockBaseUrl = "http://localhost:1234"
-  val ninoUrl     = s"$mockBaseUrl/v1/status/public-funds/nino"
-  val mrzUrl      = s"$mockBaseUrl/v1/status/public-funds/mrz"
+  val mockBaseUrl     = "http://localhost:1234"
+  val ninoUrl: String = s"$mockBaseUrl/v1/status/public-funds/nino"
+  val mrzUrl: String  = s"$mockBaseUrl/v1/status/public-funds/mrz"
 
   private class EndpointTestSetup(url: String) {
 
@@ -73,10 +73,10 @@ class HomeOfficeImmigrationStatusProxyConnectorSpec extends PlaySpec with ScalaF
     when(mockRequestBuilder.setHeader(any()))
       .thenReturn(mockRequestBuilder)
 
-    when(mockRequestBuilder.withBody(any())(any(), any(), any()))
+    when(mockRequestBuilder.withBody(any())(using any(), any(), any()))
       .thenReturn(mockRequestBuilder)
 
-    when(mockRequestBuilder.execute(any[HttpReads[StatusCheckResponseWithStatus]], any()))
+    when(mockRequestBuilder.execute(using any[HttpReads[StatusCheckResponseWithStatus]], any()))
       .thenReturn(Future(response))
 
     when(mockAppConfig.homeOfficeImmigrationStatusProxyBaseUrl)
@@ -107,7 +107,7 @@ class HomeOfficeImmigrationStatusProxyConnectorSpec extends PlaySpec with ScalaF
       actual.futureValue mustBe response
 
       verify(mockRequestBuilder, times(1))
-        .execute(any(), any())
+        .execute(using any(), any())
 
       capture.getValue.headers(Seq("CorrelationId")) mustBe Seq("CorrelationId" -> "some-correlation-id")
     }
@@ -122,7 +122,7 @@ class HomeOfficeImmigrationStatusProxyConnectorSpec extends PlaySpec with ScalaF
       actual.futureValue mustBe response
 
       verify(mockRequestBuilder, times(1))
-        .execute(any(), any())
+        .execute(using any(), any())
 
       capture.getValue.headers(Seq("CorrelationId")) mustBe Seq("CorrelationId" -> "some-correlation-id")
     }

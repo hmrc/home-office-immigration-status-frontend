@@ -20,7 +20,7 @@ import controllers.actions.AccessAction
 import forms.SearchByMRZForm
 import models.MrzSearchFormModel
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc._
+import play.api.mvc.*
 import services.SessionCacheService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.SearchByMrzView
@@ -48,7 +48,7 @@ class SearchByMrzController @Inject() (
       }
     }
 
-  private def composeFormWithStoredRequest(implicit request: Request[_]): Future[Result] = sessionCacheService.get.map {
+  private def composeFormWithStoredRequest(implicit request: Request[?]): Future[Result] = sessionCacheService.get.map {
     result =>
       val form = result match {
         case Some(formModel: MrzSearchFormModel) => formProvider().fill(formModel)
@@ -57,7 +57,7 @@ class SearchByMrzController @Inject() (
       Ok(view(form))
   }
 
-  private def clearStoredRequestAndShowEmptyForm(implicit request: Request[_]): Future[Result] =
+  private def clearStoredRequestAndShowEmptyForm(implicit request: Request[?]): Future[Result] =
     for {
       _ <- sessionCacheService.delete
     } yield Ok(view(formProvider()))

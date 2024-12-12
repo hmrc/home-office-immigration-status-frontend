@@ -53,7 +53,7 @@ class ShutterActionSpec extends ControllerSpec {
     super.beforeEach()
     reset(mockAppConfig)
   }
-  val block: Request[_] => Future[Result] = _ => Future.successful(Ok("Invoked"))
+  val block: Request[?] => Future[Result] = _ => Future.successful(Ok("Invoked"))
 
   "applyFiltering" must {
 

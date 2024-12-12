@@ -32,7 +32,7 @@
     searchAgainButton: components.SearchAgainButton
 )
 
-@(context: StatusFoundPageContext)(implicit request: Request[_], messages: Messages)
+@(context: StatusFoundPageContext)(implicit request: Request[?], messages: Messages)
 
 @govukWrapper(title = messages("status-found.title") + context.currentStatusLabel) {
 
