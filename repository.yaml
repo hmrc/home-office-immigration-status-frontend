@@ -1,5 +1,8 @@
+digital-service: Check Immigration Status - CIS  (HOSS 2)
+description: Web application providing internal HMRC staff with an interface to check customer's immigration status and rights to public funds.
 repoVisibility: public_0C3F0CE3E6E6448FAD341E7BFA50FCD333E06A20CFF05FCACE61154DDBBADF71
-type: service
+type: Service
+service-type: Frontend
 test-repositories:
   - home-office-immigration-status-perf-tests
   - home-office-immigration-status-acceptance-tests
