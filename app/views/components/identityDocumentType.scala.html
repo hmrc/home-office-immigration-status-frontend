@@ -16,6 +16,8 @@
 
 @import viewmodels.RowViewModel
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.select.{Select, SelectItem}
+@import uk.gov.hmrc.govukfrontend.views.Implicits.RichSelect
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.accessibleautocomplete.AccessibleAutocomplete
 @import models.MrzSearch.{BiometricResidencyCard, BiometricResidencyPermit, EuropeanNationalIdentityCard, Passport}
 
 @this(govukSelect: GovukSelect)
@@ -39,4 +41,4 @@
   items = items,
   errorMessage = errors,
   label = Label(content = Text(messages("lookup.identity.label")))
-))
+).asAccessibleAutocomplete())
