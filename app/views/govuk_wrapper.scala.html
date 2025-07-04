@@ -52,7 +52,6 @@
         <iframe src="https://www.googletagmanager.com/ns.html?id=@{appConfig.gtmId}" height="0" width="0" style="display:none;visibility:hidden"></iframe>
     </noscript>
 
-    <script @{CSPNonce.attr} src='@routes.Assets.versioned("javascripts/_autocomplete.js")'> </script>
     @js
     @autocompleteJavascript()
 }
