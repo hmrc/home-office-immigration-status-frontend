@@ -10,7 +10,7 @@ object AppDependencies {
     "uk.gov.hmrc"       %% "play-frontend-hmrc-play-30" % "12.8.0",
     "uk.gov.hmrc"       %% "domain-play-30"             % "12.1.0",
     "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-30"         % hmrcMongoVersion,
-    "uk.gov.hmrc"       %% "crypto-json-play-30"        % "8.2.0"
+    "uk.gov.hmrc"       %% "crypto-json-play-30"        % "8.3.0"
   )
 
   private val test: Seq[ModuleID] = Seq(
