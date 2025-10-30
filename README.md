@@ -16,9 +16,9 @@ Web application providing internal HMRC staff with an interface to check custome
 
 It should then be listening on port 10210
 
-    browse http://localhost:10210/check-immigration-status
+    http://localhost:10210/check-immigration-status
     
-When signing in with the auth stub, the test user must have an enrolment of `TBC`
+When signing in with the auth stub, the test user must have a role of `TBC`
 
 ## Shuttering
 
@@ -34,7 +34,7 @@ When the Home Office adds new product types or immigration statuses to the value
 until content is added to the messages file this service will display the values as returned by the API.
 
 #### Product Type
-To add a new product type, add an entry under the `#Immigration Route` header in `/conf/messages` 
+To add a new product type, add an entry under the `Immigration Route` header in `/conf/messages` 
 where the message key is `immigration.` followed by the new product type key in lower case. 
 
 For example, if the new product type is NEW, the message might be: `immigration.new='New Route'`
@@ -44,13 +44,13 @@ To add a new immigration status, three entries need to be added to `/conf/messag
 
 ##### Previous status
 
-A message needs adding under the `#Immigration Status` header with the prefix `immigration.` followed by `EUS.` 
+A message needs adding under the `Immigration Status` header with the prefix `immigration.` followed by `EUS.` 
 where the status is related to the EUS product types, or `nonEUS.` 
 where the status is related to non EUS product types. Following the prefix, the immigration status should be in lower case. 
 
 ##### Header content
 
-Then two messages need to be added under the `## current statuses` header to ensure that the Status Found page headers are correct 
+Then two messages need to be added under the `current statuses` header to ensure that the Status Found page headers are correct 
 for the new statuses. 
 
 These keys need the prefix `status-found.current.` followed by `EUS.` 
