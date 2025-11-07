@@ -82,6 +82,7 @@ trait BaseISpec
     contentType(result)   shouldBe Some("text/html")
     charset(result)       shouldBe Some("utf-8")
     contentAsString(result) should include(expectedSubstring)
+    ()
   }
 
   implicit lazy val messages: Messages = inject[MessagesApi].preferred(Seq.empty[Lang])

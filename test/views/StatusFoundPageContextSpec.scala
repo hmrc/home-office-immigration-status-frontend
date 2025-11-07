@@ -63,6 +63,7 @@ class StatusFoundPageContextSpec
     super.beforeEach()
     reset(mockMessages)
     when(mockMessages(matches("status-found\\.current.*"), any())).thenReturn(currentStatusLabelMsg)
+    ()
   }
 
   def checkMessagesFile(key: String): Assertion =

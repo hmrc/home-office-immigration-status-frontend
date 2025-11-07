@@ -68,6 +68,7 @@ class SearchableWithMongoCollectionSpec
     reset(mockDeleteResult)
     when(mockCollection.find[FormQueryModel](any(classOf[Bson]))(any(), any())).thenReturn(mockFindObs)
     when(mockFindObs.collect()).thenReturn(mockSingleObs)
+    ()
   }
 
   private val now       = Instant.now()
