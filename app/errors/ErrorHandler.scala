@@ -116,9 +116,10 @@ trait ErrorAuditing extends HttpAuditEvent {
         HeaderCarrierConverter.fromRequestAndSession(request, request.session)
       )
     )
+    ()
   }
 
-  def auditClientError(request: RequestHeader, statusCode: Int, message: String)(implicit ec: ExecutionContext): Unit =
+  def auditClientError(request: RequestHeader, statusCode: Int, message: String)(implicit ec: ExecutionContext): Unit = {
     statusCode match {
       case NOT_FOUND =>
         auditConnector.sendEvent(
@@ -134,4 +135,6 @@ trait ErrorAuditing extends HttpAuditEvent {
         )
       case _ => ()
     }
+    ()
+  }
 }

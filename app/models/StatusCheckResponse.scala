@@ -18,14 +18,16 @@ package models
 
 import play.api.libs.json.{Json, OFormat, Reads, Writes}
 
+import scala.annotation.nowarn
+
 final case class StatusCheckResponseWithStatus(statusCode: Int, statusCheckResponse: StatusCheckResponse)
 
 sealed trait StatusCheckResponse {
   def correlationId: Option[String]
 }
 
+@nowarn("msg=Unreachable case except for null")
 object StatusCheckResponse {
-
   val auditWrites: Writes[StatusCheckResponse] =
     Json.writes[StatusCheckResponse]
 }
@@ -38,7 +40,7 @@ final case class StatusCheckSuccessfulResponse(
 object StatusCheckSuccessfulResponse {
   given reads: Reads[StatusCheckSuccessfulResponse] = Json.reads[StatusCheckSuccessfulResponse]
   given auditWrites: Writes[StatusCheckSuccessfulResponse] = {
-    implicit val resultWrites = StatusCheckResult.auditWrites
+    implicit val resultWrites: Writes[StatusCheckResult] = StatusCheckResult.auditWrites
     Json.writes[StatusCheckSuccessfulResponse]
   }
 }

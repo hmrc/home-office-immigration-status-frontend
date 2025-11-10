@@ -62,6 +62,7 @@ class StatusNotAvailablePageContextSpec
     super.beforeEach()
     reset(mockMessages)
     when(mockMessages(matches("status-not-available\\.current.*"), any())).thenReturn(currentStatusLabelMsg)
+    ()
   }
 
   "notAvailablePersonalData" should {

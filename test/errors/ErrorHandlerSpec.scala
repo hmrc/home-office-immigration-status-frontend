@@ -46,6 +46,7 @@ class ErrorHandlerSpec extends ControllerSpec {
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     when(mockConfiguration.getOptional(any())(any())).thenReturn(None)
+    ()
   }
 
   override protected def afterEach(): Unit = {
