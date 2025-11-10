@@ -18,12 +18,15 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.domain.Nino
+
 import java.time.{LocalDate, ZoneId}
+import scala.annotation.nowarn
 
 sealed trait SearchFormModel {
   def toSearch(timeRangeInMonths: Int): Search
 }
 
+@nowarn("msg=Unreachable case except for null")
 object SearchFormModel {
   given formats: OFormat[SearchFormModel] = Json.format[SearchFormModel]
 }

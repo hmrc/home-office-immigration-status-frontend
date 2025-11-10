@@ -24,7 +24,7 @@ import scala.annotation.nowarn
 
 sealed trait EncryptedSearchFormModel
 
-@nowarn
+@nowarn("msg=Unreachable case except for null")
 object EncryptedSearchFormModel {
   given formats: OFormat[EncryptedSearchFormModel] = Json.format[EncryptedSearchFormModel]
 }
