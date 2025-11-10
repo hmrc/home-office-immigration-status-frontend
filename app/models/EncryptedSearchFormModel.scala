@@ -20,8 +20,11 @@ import play.api.libs.json.{Format, Json, OFormat}
 import uk.gov.hmrc.crypto.EncryptedValue
 import uk.gov.hmrc.crypto.json.CryptoFormats
 
+import scala.annotation.nowarn
+
 sealed trait EncryptedSearchFormModel
 
+@nowarn
 object EncryptedSearchFormModel {
   given formats: OFormat[EncryptedSearchFormModel] = Json.format[EncryptedSearchFormModel]
 }
