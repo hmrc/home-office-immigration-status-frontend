@@ -19,6 +19,7 @@ package support
 import models.{Search, StatusCheckResponseWithStatus}
 import org.apache.pekko.stream.Materializer
 import org.scalatest.OptionValues
+import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
@@ -45,7 +46,9 @@ trait BaseISpec
     with OptionValues
     with WireMockSupport
     with AuthStubs
-    with Injecting {
+    with Injecting
+    with ScalaFutures
+    with IntegrationPatience {
 
   override def fakeApplication(): Application = appBuilder.build()
 

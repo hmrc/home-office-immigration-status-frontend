@@ -119,7 +119,9 @@ trait ErrorAuditing extends HttpAuditEvent {
     ()
   }
 
-  def auditClientError(request: RequestHeader, statusCode: Int, message: String)(implicit ec: ExecutionContext): Unit = {
+  def auditClientError(request: RequestHeader, statusCode: Int, message: String)(implicit
+    ec: ExecutionContext
+  ): Unit = {
     statusCode match {
       case NOT_FOUND =>
         auditConnector.sendEvent(

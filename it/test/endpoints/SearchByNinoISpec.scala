@@ -17,7 +17,6 @@
 package endpoints
 
 import mocks.MockSessionCookie
-import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import stubs.HomeOfficeImmigrationStatusStubs
@@ -28,7 +27,7 @@ import play.api.libs.ws.WSBodyWritables.writeableOf_urlEncodedSimpleForm
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
-class SearchByNinoISpec extends ISpec with HomeOfficeImmigrationStatusStubs with MockSessionCookie with ScalaFutures {
+class SearchByNinoISpec extends ISpec with HomeOfficeImmigrationStatusStubs with MockSessionCookie {
 
   "GET /check-immigration-status/search-by-nino" should {
     "show the lookup page" in {
