@@ -22,5 +22,5 @@ import play.api.libs.json.{Format, Json}
 case class StatusCheckRange(startDate: Option[LocalDate] = None, endDate: Option[LocalDate] = None)
 
 object StatusCheckRange {
-  given formats: Format[StatusCheckRange] = Json.format[StatusCheckRange]
+  given statusCheckRangeFormat: Format[StatusCheckRange] = Json.format[StatusCheckRange]
 }

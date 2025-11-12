@@ -30,19 +30,19 @@ final case class FormQueryModel(
 
 object FormQueryModel {
 
-  implicit lazy val format: Format[FormQueryModel] = Format(reads, writes)
-
-  implicit lazy val reads: Reads[FormQueryModel] =
+  private val formQueryModelReads: Reads[FormQueryModel] =
     (
       (__ \ "_id").read[String] and
         (__ \ "data").read[EncryptedSearchFormModel] and
         (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat)
     )(FormQueryModel.apply)
 
-  implicit lazy val writes: Writes[FormQueryModel] =
+  private val formQueryModelWrites: Writes[FormQueryModel] =
     (
       (__ \ "_id").write[String] and
         (__ \ "data").write[EncryptedSearchFormModel] and
         (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat)
     )(o => Tuple.fromProductTyped(o))
+
+  given formQueryModelFormat: Format[FormQueryModel] = Format(formQueryModelReads, formQueryModelWrites)
 }

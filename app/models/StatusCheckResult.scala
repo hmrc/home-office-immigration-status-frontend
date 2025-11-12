@@ -18,7 +18,7 @@ package models
 
 import java.time.LocalDate
 
-import play.api.libs.json.{JsNull, JsObject, Json, Reads, Writes}
+import play.api.libs.json.{Format, JsNull, JsObject, Json, Reads, Writes}
 import views.DateFormat
 import java.util.Locale
 
@@ -35,8 +35,8 @@ case class StatusCheckResult(
 }
 
 object StatusCheckResult {
-  given reads: Reads[StatusCheckResult] = Json.reads[StatusCheckResult]
-  val auditWrites: Writes[StatusCheckResult] = Writes { models =>
+  val statusCheckResultReads: Reads[StatusCheckResult] = Json.reads[StatusCheckResult]
+  val statusCheckResultWrites: Writes[StatusCheckResult] = Writes { models =>
     JsObject(
       Json
         .obj(
@@ -50,4 +50,6 @@ object StatusCheckResult {
         .filterNot(_._2 == JsNull)
     )
   }
+
+  given statusCheckResultFormat: Format[StatusCheckResult] = Format(statusCheckResultReads, statusCheckResultWrites)
 }
