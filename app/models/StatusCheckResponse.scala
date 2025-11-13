@@ -26,10 +26,9 @@ sealed trait StatusCheckResponse {
   def correlationId: Option[String]
 }
 
-@nowarn("msg=Unreachable case except for null")
 object StatusCheckResponse {
-  val auditWrites: Writes[StatusCheckResponse] =
-    Json.writes[StatusCheckResponse]
+  @nowarn("msg=Unreachable case except for null")
+  given statusCheckResponseWrites: OFormat[StatusCheckResponse] = Json.format[StatusCheckResponse]
 }
 
 final case class StatusCheckSuccessfulResponse(
@@ -38,11 +37,8 @@ final case class StatusCheckSuccessfulResponse(
 ) extends StatusCheckResponse
 
 object StatusCheckSuccessfulResponse {
-  given reads: Reads[StatusCheckSuccessfulResponse] = Json.reads[StatusCheckSuccessfulResponse]
-  given auditWrites: Writes[StatusCheckSuccessfulResponse] = {
-    implicit val resultWrites: Writes[StatusCheckResult] = StatusCheckResult.auditWrites
-    Json.writes[StatusCheckSuccessfulResponse]
-  }
+  given statusCheckSuccessfulResponseFormat: OFormat[StatusCheckSuccessfulResponse] =
+    Json.format[StatusCheckSuccessfulResponse]
 }
 
 final case class StatusCheckErrorResponse(
@@ -51,5 +47,5 @@ final case class StatusCheckErrorResponse(
 ) extends StatusCheckResponse
 
 object StatusCheckErrorResponse {
-  implicit val formats: OFormat[StatusCheckErrorResponse] = Json.format[StatusCheckErrorResponse]
+  given StatusCheckErrorResponseFormat: OFormat[StatusCheckErrorResponse] = Json.format[StatusCheckErrorResponse]
 }

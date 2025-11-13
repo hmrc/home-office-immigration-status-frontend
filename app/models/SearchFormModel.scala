@@ -26,9 +26,9 @@ sealed trait SearchFormModel {
   def toSearch(timeRangeInMonths: Int): Search
 }
 
-@nowarn("msg=Unreachable case except for null")
 object SearchFormModel {
-  given formats: OFormat[SearchFormModel] = Json.format[SearchFormModel]
+  @nowarn("msg=Unreachable case except for null")
+  given searchFormModelFormat: OFormat[SearchFormModel] = Json.format[SearchFormModel]
 }
 
 final case class NinoSearchFormModel(
@@ -44,7 +44,7 @@ final case class NinoSearchFormModel(
 }
 
 object NinoSearchFormModel {
-  implicit val formats: OFormat[NinoSearchFormModel] = Json.format[NinoSearchFormModel]
+  implicit val ninoSearchFormModelFormat: OFormat[NinoSearchFormModel] = Json.format[NinoSearchFormModel]
 
   private def statusCheckRange(timeRangeInMonths: Int): StatusCheckRange = {
     val startDate = LocalDate.now(ZoneId.of("UTC")).minusMonths(timeRangeInMonths)

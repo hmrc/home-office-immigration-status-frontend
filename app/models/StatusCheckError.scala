@@ -21,11 +21,11 @@ import play.api.libs.json.{Format, Json}
 final case class StatusCheckError(errCode: String, fields: Option[Seq[FieldError]] = None)
 
 object StatusCheckError {
-  given formats: Format[StatusCheckError] = Json.format[StatusCheckError]
+  given statusCheckErrorFormat: Format[StatusCheckError] = Json.format[StatusCheckError]
 }
 
 final case class FieldError(code: String, name: String)
 
 object FieldError {
-  given formats: Format[FieldError] = Json.format[FieldError]
+  given fieldErrorFormat: Format[FieldError] = Json.format[FieldError]
 }

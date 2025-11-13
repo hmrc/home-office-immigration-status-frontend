@@ -24,9 +24,9 @@ import scala.annotation.nowarn
 
 sealed trait EncryptedSearchFormModel
 
-@nowarn("msg=Unreachable case except for null")
 object EncryptedSearchFormModel {
-  given formats: OFormat[EncryptedSearchFormModel] = Json.format[EncryptedSearchFormModel]
+  @nowarn("msg=Unreachable case except for null")
+  given encryptedSearchFormModelFormat: OFormat[EncryptedSearchFormModel] = Json.format[EncryptedSearchFormModel]
 }
 
 final case class EncryptedNinoSearchFormModel(
@@ -37,8 +37,9 @@ final case class EncryptedNinoSearchFormModel(
 ) extends EncryptedSearchFormModel
 
 object EncryptedNinoSearchFormModel {
-  given encryptedValueFormat: Format[EncryptedValue]   = CryptoFormats.encryptedValueFormat
-  given formats: OFormat[EncryptedNinoSearchFormModel] = Json.format[EncryptedNinoSearchFormModel]
+  given encryptedValueFormat: Format[EncryptedValue] = CryptoFormats.encryptedValueFormat
+  given encryptedSearchFormModelFormat: OFormat[EncryptedNinoSearchFormModel] =
+    Json.format[EncryptedNinoSearchFormModel]
 }
 
 final case class EncryptedMrzSearchFormModel(
@@ -49,6 +50,7 @@ final case class EncryptedMrzSearchFormModel(
 ) extends EncryptedSearchFormModel
 
 object EncryptedMrzSearchFormModel {
-  given encryptedValueFormat: Format[EncryptedValue]  = CryptoFormats.encryptedValueFormat
-  given formats: OFormat[EncryptedMrzSearchFormModel] = Json.format[EncryptedMrzSearchFormModel]
+  given encryptedValueFormat: Format[EncryptedValue] = CryptoFormats.encryptedValueFormat
+  given encryptedMrzSearchFormModelFormat: OFormat[EncryptedMrzSearchFormModel] =
+    Json.format[EncryptedMrzSearchFormModel]
 }

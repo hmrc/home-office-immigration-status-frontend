@@ -35,6 +35,5 @@ case class ImmigrationStatus(
 }
 
 object ImmigrationStatus {
-
-  given formats: Format[ImmigrationStatus] = Json.format[ImmigrationStatus]
+  given ImmigrationStatusFormat: Format[ImmigrationStatus] = Json.format[ImmigrationStatus]
 }
