@@ -40,7 +40,7 @@ class SessionCacheRepository @Inject() (
     extends PlayMongoRepository[FormQueryModel](
       collectionName = CollectionName,
       mongoComponent = mongoComponent,
-      domainFormat = FormQueryModel.format,
+      domainFormat = FormQueryModel.formQueryModelFormat,
       indexes = Seq(
         IndexModel(
           ascending("lastUpdated"),

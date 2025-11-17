@@ -26,8 +26,9 @@ import java.time.format.DateTimeFormatter
 sealed trait Search
 
 object Search {
-  given reads: Reads[Search]   = Json.reads[Search]
-  given writes: Writes[Search] = (o: Search) => Json.toJson(o)(Json.writes[Search]).as[JsObject] - "_type"
+  private val searchReads: Reads[Search]   = Json.reads[Search]
+  private val searchWrites: Writes[Search] = (o: Search) => Json.toJson(o)(Json.writes[Search]).as[JsObject] - "_type"
+  given searchFormat: Format[Search]       = Format(searchReads, searchWrites)
 }
 
 final case class NinoSearch(
@@ -50,7 +51,7 @@ object NinoSearch {
   ): NinoSearch =
     new NinoSearch(nino, givenName, familyName, dateOfBirth.format(ISO8601), statusCheckRange)
 
-  given formats: Format[NinoSearch] = Json.format[NinoSearch]
+  given ninoSearchFormat: Format[NinoSearch] = Json.format[NinoSearch]
 }
 
 final case class MrzSearch(

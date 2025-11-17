@@ -40,7 +40,7 @@ class StatusCheckAuditDetailSpec extends AnyWordSpecLike with Matchers {
       val response          = StatusCheckSuccessfulResponse(Some("correlationId"), statusCheckResult)
       val result            = StatusCheckAuditDetail(OK, search, response)
 
-      val resultJson = Json.toJson(result)(StatusCheckAuditDetail.writes)
+      val resultJson = Json.toJson(result)
 
       (resultJson \ "statusCode").get mustEqual Json.toJson(OK)
       (resultJson \ "search").get mustEqual Json.toJson(search)
