@@ -13,5 +13,4 @@ POST  /search-by-passport           controllers.SearchByMrzController.onSubmit
 
 GET   /status-result                controllers.StatusResultController.onPageLoad
 
-GET   /accessibility-statement      controllers.AccessibilityStatementController.showPage
 

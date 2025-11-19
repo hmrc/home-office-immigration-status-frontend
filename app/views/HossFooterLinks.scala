@@ -18,7 +18,6 @@ package views
 
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.footer.FooterItem
-import controllers.routes.AccessibilityStatementController
 
 object HossFooterLinks {
 
@@ -27,14 +26,7 @@ object HossFooterLinks {
     Some(messages("footer.links.help_page.url"))
   )
 
-  private def accessibilityLink(implicit messages: Messages): FooterItem =
-    FooterItem(
-      Some(messages("footer.links.accessibility.text")),
-      Some(AccessibilityStatementController.showPage.url)
-    )
-
   def items(implicit messages: Messages): Seq[FooterItem] = Seq(
-    accessibilityLink,
     govukHelpLink
   )
 }
