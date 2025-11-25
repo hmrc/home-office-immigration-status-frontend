@@ -54,27 +54,27 @@ class FormFieldMappingsSpec
         )
         val result = collateDOBErrors(testForm)
 
-        result.errors shouldBe Seq(FormError("dateOfBirth", "error.dateOfBirth.required"))
+        result.errors shouldBe Seq(FormError("dateOfBirth.day", "error.dateOfBirth.required"))
       }
       "there are less than 3 required errors" in {
         val testForm =
           formWithErrors(("test.dateOfBirth", "other.required"), ("other.error.dateOfBirth", "autre.required"))
         val result = collateDOBErrors(testForm)
 
-        result.errors shouldBe Seq(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
+        result.errors shouldBe Seq(FormError("dateOfBirth.day", "error.dateOfBirth.invalid-format"))
       }
       "there are 2 mixed errors" in {
         val testForm =
           formWithErrors(("test.dateOfBirth", "other.required"), ("other.error.dateOfBirth", "autre.erreur"))
         val result = collateDOBErrors(testForm)
 
-        result.errors shouldBe Seq(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
+        result.errors shouldBe Seq(FormError("dateOfBirth.day", "error.dateOfBirth.invalid-format"))
       }
       "there are 2 other errors" in {
         val testForm = formWithErrors(("test.dateOfBirth", "other.error"), ("other.error.dateOfBirth", "autre.erreur"))
         val result   = collateDOBErrors(testForm)
 
-        result.errors shouldBe Seq(FormError("dateOfBirth", "error.dateOfBirth.invalid-format"))
+        result.errors shouldBe Seq(FormError("dateOfBirth.day", "error.dateOfBirth.invalid-format"))
       }
     }
 
@@ -133,16 +133,6 @@ class FormFieldMappingsSpec
       }
     }
 
-    "isNotZero" should {
-      "return true for a number over zero" in {
-        forAll(intGen.suchThat(_.toInt > 0))(n => isNotZero(n.toInt) shouldBe true)
-      }
-
-      "return false for zero" in {
-        isNotZero(0) shouldBe false
-      }
-    }
-
     "dateComponent" should {
 
       def form(max: Int, min: Int): Form[Int]            = Form(single("myField" -> dateComponent("myField", max, min)))
@@ -162,33 +152,27 @@ class FormFieldMappingsSpec
         )
       }
 
-      "check that the string is not zero" in {
-        form(10, 0).bind(testFormFill("0")).errors shouldBe List(
-          FormError("myField", List("error.dateOfBirth.myField.zero"))
-        )
-      }
-
       "check that the string meets a minimum value" in {
         form(10, 2).bind(testFormFill("1")).errors shouldBe List(
-          FormError("myField", List("error.dateOfBirth.myField.min"), Seq(2))
+          FormError("myField", List("error.dateOfBirth.invalid-format"), Seq(2))
         )
       }
 
       "check that the string is a minimum value for 4 digits" in {
         form(2000, 1000).bind(testFormFill("999")).errors shouldBe List(
-          FormError("myField", List("error.dateOfBirth.myField.min"), Seq(1000))
+          FormError("myField", List("error.dateOfBirth.invalid-format"), Seq(1000))
         )
       }
 
       "check that the string meets a maximum value" in {
         form(10, 2).bind(testFormFill("11")).errors shouldBe List(
-          FormError("myField", List("error.dateOfBirth.myField.max"), Seq(10))
+          FormError("myField", List("error.dateOfBirth.invalid-format"), Seq(10))
         )
       }
 
       "check that the string is a maximum value for 4 digits" in {
         form(2000, 1000).bind(testFormFill("2001")).errors shouldBe List(
-          FormError("myField", List("error.dateOfBirth.myField.max"), Seq(2000))
+          FormError("myField", List("error.dateOfBirth.invalid-format"), Seq(2000))
         )
       }
 
