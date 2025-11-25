@@ -16,10 +16,12 @@
 
 package utils
 
-import uk.gov.hmrc.domain.{NinoGenerator, Nino}
+import uk.gov.hmrc.domain.{Generator, Nino}
 
 import scala.util.Random
 
 object NinoGenerator {
-  def generateNino: Nino = new NinoGenerator().nextNino
+  private val ninoGenerator = new Generator(new Random())
+
+  def generateNino: Nino = ninoGenerator.nextNino
 }
