@@ -67,10 +67,7 @@ class SearchByMrzController @Inject() (
       formProvider()
         .bindFromRequest()
         .fold(
-          form => {
-            val dobErrorsCollated = formProvider.collateDOBErrors(form)
-            Future.successful(BadRequest(view(dobErrorsCollated)))
-          },
+          form => Future.successful(BadRequest(view(form))),
           query =>
             for {
               _ <- sessionCacheService.set(query)

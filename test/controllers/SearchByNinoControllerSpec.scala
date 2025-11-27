@@ -138,7 +138,7 @@ class SearchByNinoControllerSpec extends ControllerSpec {
       val form         = formProvider.apply()
       "the submitted form is empty" in {
         val result         = sut.onSubmit(request)
-        val formWithErrors = formProvider.collateDOBErrors(form.bindFromRequest()(request, implicitly))
+        val formWithErrors = form.bindFromRequest()(request, implicitly)
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe fakeView.toString
@@ -160,7 +160,7 @@ class SearchByNinoControllerSpec extends ControllerSpec {
           "nino"              -> "blah"
         )
         val result         = sut.onSubmit(requestWithForm)
-        val formWithErrors = formProvider.collateDOBErrors(form.bindFromRequest()(requestWithForm, implicitly))
+        val formWithErrors = form.bindFromRequest()(requestWithForm, implicitly)
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe fakeView.toString

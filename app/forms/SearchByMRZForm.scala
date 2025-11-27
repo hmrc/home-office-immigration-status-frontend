@@ -18,7 +18,6 @@ package forms
 
 import com.google.inject.Inject
 import config.Countries
-import models.MrzSearch.{BiometricResidencyCard, BiometricResidencyPermit, EuropeanNationalIdentityCard, Passport}
 import models.{MrzSearch, MrzSearchFormModel}
 import play.api.data.Form
 import play.api.data.Forms.mapping
@@ -30,28 +29,25 @@ class SearchByMRZForm @Inject() (countries: Countries) extends FormFieldMappings
 
   private val allowedCountries = countries.countries.map(_.alpha3)
 
-  def apply(): Form[MrzSearchFormModel] = Form[MrzSearchFormModel] {
-    mapping(
-      "documentType" -> nonEmptyText("documentType")
-        .transform[String](_.toUpperCase, identity)
-        .verifying("error.documentType.invalid", MrzSearch.AllowedDocumentTypes.contains(_)),
-      "documentNumber" -> nonEmptyText("documentNumber")
-        .transform[String](_.replaceAll("\\s", "").toUpperCase, identity)
-        .verifying("error.documentNumber.length", dn => dn.length <= MrzSearch.DocumentNumberMaxLength)
-        .verifying(
-          "error.documentNumber.invalid-characters",
-          dn => dn.forall(c => c.isDigit || c.isLetter || c == '-')
-        ),
-      "dateOfBirth" -> dobFieldsMapping,
-      "nationality" -> nonEmptyText("nationality")
-        .transform[String](_.toUpperCase, identity)
-        .verifying("error.nationality.invalid", allowedCountries.contains(_))
-    )(MrzSearchFormModel.apply)(o => Some(Tuple.fromProductTyped(o)))
+  def apply(): Form[MrzSearchFormModel] = {
+    val form = Form[MrzSearchFormModel] {
+      mapping(
+        "documentType" -> nonEmptyText("documentType")
+          .transform[String](_.toUpperCase, identity)
+          .verifying("error.documentType.invalid", MrzSearch.AllowedDocumentTypes.contains(_)),
+        "documentNumber" -> nonEmptyText("documentNumber")
+          .transform[String](_.replaceAll("\\s", "").toUpperCase, identity)
+          .verifying("error.documentNumber.length", dn => dn.length <= MrzSearch.DocumentNumberMaxLength)
+          .verifying(
+            "error.documentNumber.invalid-characters",
+            dn => dn.forall(c => c.isDigit || c.isLetter || c == '-')
+          ),
+        "dateOfBirth" -> dobFieldsMapping,
+        "nationality" -> nonEmptyText("nationality")
+          .transform[String](_.toUpperCase, identity)
+          .verifying("error.nationality.invalid", allowedCountries.contains(_))
+      )(MrzSearchFormModel.apply)(o => Some(Tuple.fromProductTyped(o)))
+    }
+    collateDOBErrors(form)
   }
-}
-
-object SearchByMRZForm {
-  final val AllowedDocumentTypes: Seq[String] =
-    Seq(Passport, EuropeanNationalIdentityCard, BiometricResidencyCard, BiometricResidencyPermit)
-  val DocumentNumberMaxLength = 30
 }

@@ -69,10 +69,7 @@ class SearchByNinoController @Inject() (
       formProvider()
         .bindFromRequest()
         .fold(
-          form => {
-            val dobErrorsCollated = formProvider.collateDOBErrors(form)
-            Future.successful(BadRequest(searchByNinoView(dobErrorsCollated)))
-          },
+          form => Future.successful(BadRequest(searchByNinoView(form))),
           query =>
             for {
               _ <- sessionCacheService.set(query)

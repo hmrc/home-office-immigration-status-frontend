@@ -21,7 +21,7 @@ import forms.SearchByMRZForm
 import models.MrzSearchFormModel
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import play.api.Application
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -137,7 +137,7 @@ class SearchByMrzControllerSpec extends ControllerSpec {
       val form         = formProvider.apply()
       "the submitted form is empty" in {
         val result         = sut.onSubmit(request)
-        val formWithErrors = formProvider.collateDOBErrors(form.bindFromRequest()(request, implicitly))
+        val formWithErrors = form.bindFromRequest()(request, implicitly)
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe fakeView.toString
@@ -159,7 +159,7 @@ class SearchByMrzControllerSpec extends ControllerSpec {
           "documentNumber"    -> "blah"
         )
         val result         = sut.onSubmit(requestWithForm)
-        val formWithErrors = formProvider.collateDOBErrors(form.bindFromRequest()(requestWithForm, implicitly))
+        val formWithErrors = form.bindFromRequest()(requestWithForm, implicitly)
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe fakeView.toString
