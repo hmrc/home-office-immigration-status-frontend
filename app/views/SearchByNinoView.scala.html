@@ -16,7 +16,6 @@
 
 @import models.NinoSearchFormModel
 @import config.AppConfig
-@import forms.helpers.FormHelper
 
 @this(
     govukWrapper: govuk_wrapper,
@@ -34,7 +33,7 @@
 
     @formHelper(controllers.routes.SearchByNinoController.onSubmit) {
 
-        @errorSummary(FormHelper.updateDateOfBirthErrors(form.errors))
+        @errorSummary(form.errors)
 
         <h1 class="govuk-heading-xl" id="nino-search-title">@messages("lookup.nino.title")</h1>
 

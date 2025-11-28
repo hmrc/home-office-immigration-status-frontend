@@ -165,7 +165,7 @@ class NinoSearchFormSpec extends PlaySpec with OptionValues with ScalaCheckDrive
         form.bind(invalidInput).value must not be defined
         form.bind(invalidInput).errors.length mustBe 1
         form.bind(invalidInput).errors.head.key mustBe "dateOfBirth.day"
-        form.bind(invalidInput).errors.head.messages mustBe List("error.dateOfBirth.day.max")
+        form.bind(invalidInput).errors.head.messages mustBe List("error.dateOfBirth.invalid-format")
       }
 
       "dob is today" in {

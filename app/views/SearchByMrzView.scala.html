@@ -16,7 +16,6 @@
 
 @import config.Countries
 @import views.html.helper.CSPNonce
-@import forms.helpers.FormHelper
 
 @this(
     govukWrapper: govuk_wrapper,
@@ -36,7 +35,7 @@
 
     @formHelper(controllers.routes.SearchByMrzController.onSubmit) {
 
-        @errorSummary(FormHelper.updateDateOfBirthErrors(form.errors))
+        @errorSummary(form.errors)
 
         <h1 class="govuk-heading-xl" id="mrz-search-title">@messages("lookup.mrz.title")</h1>
 
