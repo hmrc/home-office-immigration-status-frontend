@@ -92,7 +92,7 @@ trait FormFieldMappings extends Constraints {
       .transform(asDate.tupled, asTuple)
       .verifying(validateInThePast)
 
-  protected def collateDOBErrors[A](form: Form[A]): Form[A] = {
+  def collateDOBErrors[A](form: Form[A]): Form[A] = {
     val errors = form.errors
     val consolidatedErrors = if (errors.count(_.key.contains("dateOfBirth")) > 1) {
       val required = errors.count(_.message.matches(""".*dateOfBirth.*\.required""")) == 3

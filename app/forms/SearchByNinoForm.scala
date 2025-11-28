@@ -25,15 +25,12 @@ import javax.inject.Singleton
 @Singleton
 class SearchByNinoForm extends FormFieldMappings {
 
-  def apply(): Form[NinoSearchFormModel] = {
-    val form = Form[NinoSearchFormModel] {
-      mapping(
-        "nino"        -> validNino,
-        "givenName"   -> validName("givenName", 1),
-        "familyName"  -> validName("familyName", 2),
-        "dateOfBirth" -> dobFieldsMapping
-      )(NinoSearchFormModel.apply)(o => Some(Tuple.fromProductTyped(o)))
-    }
-    collateDOBErrors(form)
+  def apply(): Form[NinoSearchFormModel] = Form[NinoSearchFormModel] {
+    mapping(
+      "nino"        -> validNino,
+      "givenName"   -> validName("givenName", 1),
+      "familyName"  -> validName("familyName", 2),
+      "dateOfBirth" -> dobFieldsMapping
+    )(NinoSearchFormModel.apply)(o => Some(Tuple.fromProductTyped(o)))
   }
 }
