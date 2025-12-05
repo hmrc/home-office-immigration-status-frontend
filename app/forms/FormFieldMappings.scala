@@ -76,16 +76,12 @@ trait FormFieldMappings extends Constraints {
 
   def isInt(str: String): Boolean = Try(str.trim.toInt).isSuccess
 
-  def isNotZero(int: Int): Boolean = int != 0
-
-  protected def dateComponent(field: String, maxValue: Int, minValue: Int = 0): Mapping[Int] =
+  protected def dateComponent(field: String, maxValue: Int, minValue: Int = 1): Mapping[Int] =
     nonEmptyText(s"dateOfBirth.$field")
       .verifying(cond[String](s"error.dateOfBirth.$field.invalid")(isInt))
       .transform[Int](_.toInt, _.toString)
-      .verifying(cond[Int](s"error.dateOfBirth.$field.zero")(isNotZero))
-      .transform[Int](identity, identity)
-      .verifying(min(minValue = minValue, errorMessage = s"error.dateOfBirth.$field.min"))
-      .verifying(max(maxValue = maxValue, errorMessage = s"error.dateOfBirth.$field.max"))
+      .verifying(min(minValue = minValue, errorMessage = "error.dateOfBirth.invalid-format"))
+      .verifying(max(maxValue = maxValue, errorMessage = "error.dateOfBirth.invalid-format"))
 
   protected def dobFieldsMapping: Mapping[LocalDate] =
     tuple(
@@ -96,17 +92,24 @@ trait FormFieldMappings extends Constraints {
       .transform(asDate.tupled, asTuple)
       .verifying(validateInThePast)
 
-  def collateDOBErrors[A](form: Form[A]): Form[A] =
-    if (form.errors.count(_.key.contains("dateOfBirth")) > 1) {
-      val required = form.errors.count(_.message.matches(""".*dateOfBirth.*\.required""")) == 3
-      (form.errors.filterNot(_.key.contains("dateOfBirth")) :+ FormError(
+  def collateDOBErrors[A](form: Form[A]): Form[A] = {
+    val errors = form.errors
+    val consolidatedErrors = if (errors.count(_.key.contains("dateOfBirth")) > 1) {
+      val required = errors.count(_.message.matches(""".*dateOfBirth.*\.required""")) == 3
+      errors.filterNot(_.key.contains("dateOfBirth")) :+ FormError(
         "dateOfBirth",
-        "error.dateOfBirth." + (if (required) { "required" }
-                                else { "invalid-format" })
-      ))
-        .foldLeft(form.discardingErrors)((form, error) => form.withError(error))
-    } else {
-      form
+        "error.dateOfBirth." + (if (required) {
+                                  "required"
+                                } else {
+                                  "invalid-format"
+                                })
+      )
+    } else errors
+    val updatedErrors = consolidatedErrors.map {
+      case FormError("dateOfBirth", m, a) => FormError("dateOfBirth.day", m, a)
+      case f                              => f
     }
+    updatedErrors.foldLeft(form.discardingErrors)((form, error) => form.withError(error))
+  }
 
 }
