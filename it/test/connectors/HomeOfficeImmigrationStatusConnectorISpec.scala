@@ -16,14 +16,14 @@
 
 package connectors
 
-import models._
+import models.*
+import support.BaseISpec
 import org.mockito.Mockito.mock
-import play.api.Application
-import play.api.http.Status._
 import repositories.SessionCacheRepository
 import stubs.HomeOfficeImmigrationStatusStubs
-import support.BaseISpec
-import uk.gov.hmrc.http._
+import uk.gov.hmrc.http.*
+import play.api.Application
+import play.api.http.Status.*
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
 import java.time.{LocalDate, ZoneId}
@@ -34,12 +34,40 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
 
   "HomeOfficeImmigrationStatusProxyConnector" when {
 
+    "statusPublicFundsByMrz" should {
+
+      "return status when mrz request successful" in {
+        givenCheckByMrzSucceeds()
+
+        val result = await(connector.statusPublicFundsByMrz(mrzRequest))
+
+        val expectedResult = StatusCheckResult(
+          fullName = "Jane Doe",
+          dateOfBirth = LocalDate.parse("2001-01-31"),
+          nationality = "IRL",
+          statuses = List(
+            ImmigrationStatus(
+              productType = "EUS",
+              immigrationStatus = "ILR",
+              noRecourseToPublicFunds = true,
+              statusEndDate = Some(LocalDate.parse("2018-01-31")),
+              statusStartDate = LocalDate.parse("2018-12-12")
+            )
+          )
+        )
+        val expectedResponse =
+          StatusCheckResponseWithStatus(OK, StatusCheckSuccessfulResponse(Some(correlationId), expectedResult))
+
+        result shouldBe expectedResponse
+      }
+    }
+
     "statusPublicFundsByNino" should {
 
-      "return status when successful" in {
+      "return status when nino successful" in {
         givenCheckByNinoSucceeds()
 
-        val result = await(connector.statusPublicFundsByNino(request))
+        val result = await(connector.statusPublicFundsByNino(ninoRequest))
 
         val expectedResult = StatusCheckResult(
           fullName = "Jane Doe",
@@ -64,7 +92,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
       "return check error when 400 response ERR_REQUEST_INVALID" in {
         givenCheckByNinoErrorWhenMissingInputField()
 
-        val result = await(connector.statusPublicFundsByNino(request))
+        val result = await(connector.statusPublicFundsByNino(ninoRequest))
 
         val expectedResult = StatusCheckResponseWithStatus(
           BAD_REQUEST,
@@ -77,7 +105,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
       "return check error when 404 response ERR_NOT_FOUND" in {
         givenStatusCheckErrorWhenStatusNotFound()
 
-        val result = await(connector.statusPublicFundsByNino(request))
+        val result = await(connector.statusPublicFundsByNino(ninoRequest))
 
         val expectedResult = StatusCheckResponseWithStatus(
           NOT_FOUND,
@@ -90,7 +118,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
       "return check error when 400 response ERR_VALIDATION" in {
         givenStatusCheckErrorWhenDOBInvalid()
 
-        val result = await(connector.statusPublicFundsByNino(request))
+        val result = await(connector.statusPublicFundsByNino(ninoRequest))
 
         val expectedResult = StatusCheckResponseWithStatus(
           BAD_REQUEST,
@@ -106,7 +134,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
       "return check error if invalid JSON body return" in {
         givenStatusPublicFundsCheckStub("nino", CONFLICT, validByNinoRequestBody(), "", "some-correlation-id")
 
-        val result = await(connector.statusPublicFundsByNino(request))
+        val result = await(connector.statusPublicFundsByNino(ninoRequest))
 
         val expectedResult = StatusCheckResponseWithStatus(
           CONFLICT,
@@ -119,7 +147,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
       "throw exception if 5xx response" in {
         givenAnExternalServiceErrorCheckByNino()
 
-        val result = await(connector.statusPublicFundsByNino(request))
+        val result = await(connector.statusPublicFundsByNino(ninoRequest))
 
         val expectedResult = StatusCheckResponseWithStatus(
           INTERNAL_SERVER_ERROR,
@@ -146,11 +174,27 @@ trait HomeOfficeImmigrationStatusConnectorISpecSetup extends BaseISpec with Home
   lazy val connector: HomeOfficeImmigrationStatusProxyConnector =
     app.injector.instanceOf[HomeOfficeImmigrationStatusProxyConnector]
 
-  val request: NinoSearch = NinoSearch(
+  val firstName      = "Doe"
+  val lastName       = "Jane"
+  val dobStr         = "2001-01-31"
+  val dob: LocalDate = LocalDate.parse(dobStr)
+
+  val ninoRequest: NinoSearch = NinoSearch(
     nino,
-    "Doe",
-    "Jane",
-    "2001-01-31",
+    firstName,
+    lastName,
+    dobStr,
+    StatusCheckRange(
+      Some(LocalDate.now(ZoneId.of("UTC")).minusMonths(queryMonths)),
+      Some(LocalDate.now(ZoneId.of("UTC")))
+    )
+  )
+
+  val mrzRequest: MrzSearch = MrzSearch(
+    "PASSPORT",
+    "123456789",
+    dob,
+    "AFG",
     StatusCheckRange(
       Some(LocalDate.now(ZoneId.of("UTC")).minusMonths(queryMonths)),
       Some(LocalDate.now(ZoneId.of("UTC")))

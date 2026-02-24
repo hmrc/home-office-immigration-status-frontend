@@ -16,14 +16,14 @@
 
 package stubs
 
-import com.github.tomakehurst.wiremock.client.WireMock._
+import utils.NinoGenerator
+import support.WireMockSupport
+import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.matching.AnythingPattern
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import play.api.http.Status._
-import play.mvc.Http.HeaderNames
-import support.WireMockSupport
-import utils.NinoGenerator
 import uk.gov.hmrc.domain.Nino
+import play.api.http.Status.*
+import play.mvc.Http.HeaderNames
 
 import java.time.{LocalDate, ZoneId}
 
@@ -42,13 +42,14 @@ trait HomeOfficeImmigrationStatusStubs extends JourneyTestData {
     byMrzBodyWithRange(date.minusMonths(queryMonths).toString, date.toString)
   }
 
-  val nino: Nino = NinoGenerator.generateNino
+  val nino: Nino       = NinoGenerator.generateNino
+  val passport: String = "123456789"
 
   def byMrzBodyWithRange(startDate: String, endDate: String): String =
     s"""{
        |  "dateOfBirth": "2001-01-31",
        |  "nationality": "AFG",
-       |  "documentNumber": "123456789",
+       |  "documentNumber": "$passport",
        |  "documentType": "PASSPORT",
        |  "statusCheckRange": {
        |    "startDate": "$startDate",
