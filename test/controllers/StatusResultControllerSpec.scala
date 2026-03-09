@@ -27,7 +27,7 @@ import play.api.http.Status._
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
-import repositories.SessionCacheRepository
+import repositories.SessionCacheRepositoryImpl
 import services.{HomeOfficeImmigrationStatusProxyService, SessionCacheService}
 import utils.NinoGenerator.generateNino
 import views.html._
@@ -44,7 +44,7 @@ class StatusResultControllerSpec extends ControllerSpec {
     .overrides(
       bind[AccessAction].to[FakeAccessAction],
       bind[HomeOfficeImmigrationStatusProxyService].toInstance(mockProxyService),
-      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository),
+      bind[SessionCacheRepositoryImpl].toInstance(mockSessionCacheRepository),
       bind[SessionCacheService].toInstance(mockSessionCacheService)
     )
     .build()

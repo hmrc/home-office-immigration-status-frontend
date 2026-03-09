@@ -24,15 +24,15 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Injecting
-import repositories.SessionCacheRepository
+import repositories.SessionCacheRepositoryImpl
 
 class MrzSearchSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
 
-  val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
+  val mockSessionCacheRepository: SessionCacheRepositoryImpl = mock(classOf[SessionCacheRepositoryImpl])
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
-      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
+      bind[SessionCacheRepositoryImpl].toInstance(mockSessionCacheRepository)
     )
     .build()
 

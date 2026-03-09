@@ -28,7 +28,7 @@ import play.api.data.{Form, FormError}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Injecting
-import repositories.SessionCacheRepository
+import repositories.SessionCacheRepositoryImpl
 import utils.NinoGenerator
 import uk.gov.hmrc.domain.Nino
 
@@ -38,11 +38,11 @@ class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecti
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
-      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
+      bind[SessionCacheRepositoryImpl].toInstance(mockSessionCacheRepository)
     )
     .build()
 
-  val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
+  val mockSessionCacheRepository: SessionCacheRepositoryImpl = mock(classOf[SessionCacheRepositoryImpl])
 
   implicit def noShrink[T]: Shrink[T] = Shrink.shrinkAny
 

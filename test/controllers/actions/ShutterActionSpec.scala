@@ -27,7 +27,7 @@ import play.api.mvc.Results._
 import play.api.mvc.{AnyContentAsEmpty, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.contentAsString
-import repositories.SessionCacheRepository
+import repositories.SessionCacheRepositoryImpl
 import views.html.ShutteringPage
 
 import scala.concurrent.Future
@@ -39,7 +39,7 @@ class ShutterActionSpec extends ControllerSpec {
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
       bind[AppConfig].toInstance(mockAppConfig),
-      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
+      bind[SessionCacheRepositoryImpl].toInstance(mockSessionCacheRepository)
     )
     .build()
 

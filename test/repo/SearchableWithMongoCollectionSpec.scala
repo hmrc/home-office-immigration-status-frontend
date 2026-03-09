@@ -32,7 +32,7 @@ import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Injecting
-import repositories.{SearchableWithMongoCollection, SessionCacheRepository}
+import repositories.{SearchableWithMongoCollection, SessionCacheRepositoryImpl}
 import utils.NinoGenerator
 
 import java.time.{Instant, LocalDate}
@@ -47,11 +47,11 @@ class SearchableWithMongoCollectionSpec
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
-      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
+      bind[SessionCacheRepositoryImpl].toInstance(mockSessionCacheRepository)
     )
     .build()
 
-  val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
+  val mockSessionCacheRepository: SessionCacheRepositoryImpl = mock(classOf[SessionCacheRepositoryImpl])
 
   val mockFindObs: FindObservable[FormQueryModel]          = mock(classOf[FindObservable[FormQueryModel]])
   val mockSingleObs: SingleObservable[Seq[FormQueryModel]] = mock(classOf[SingleObservable[Seq[FormQueryModel]]])

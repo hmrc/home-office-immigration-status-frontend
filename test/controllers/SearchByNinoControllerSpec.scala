@@ -29,7 +29,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.{Html, HtmlFormat}
-import repositories.SessionCacheRepository
+import repositories.SessionCacheRepositoryImpl
 import services.SessionCacheService
 import utils.NinoGenerator.generateNino
 import views.html.SearchByNinoView
@@ -43,7 +43,7 @@ class SearchByNinoControllerSpec extends ControllerSpec {
     .overrides(
       bind[AccessAction].to[FakeAccessAction],
       bind[SearchByNinoView].toInstance(mockView),
-      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository),
+      bind[SessionCacheRepositoryImpl].toInstance(mockSessionCacheRepository),
       bind[SessionCacheService].toInstance(mockSessionCacheService)
     )
     .build()

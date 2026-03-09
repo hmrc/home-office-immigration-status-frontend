@@ -25,7 +25,7 @@ import org.mockito.Mockito._
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import repositories.SessionCacheRepository
+import repositories.SessionCacheRepositoryImpl
 import utils.NinoGenerator
 
 import java.time.LocalDate
@@ -52,7 +52,7 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
     .overrides(
       bind[AuditService].toInstance(mockAuditService),
       bind[HomeOfficeImmigrationStatusProxyConnector].toInstance(mockConnector),
-      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
+      bind[SessionCacheRepositoryImpl].toInstance(mockSessionCacheRepository)
     )
     .build()
 

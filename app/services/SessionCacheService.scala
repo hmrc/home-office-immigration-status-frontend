@@ -21,16 +21,16 @@ import config.AppConfig
 import crypto.FormModelEncrypter
 import models.{FormQueryModel, SearchFormModel}
 import play.api.Logging
-import repositories.SessionCacheRepository
+import repositories.SessionCacheRepositoryImpl
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SessionCacheServiceImpl @Inject() (
-  sessionCacheRepository: SessionCacheRepository,
-  encrypter: FormModelEncrypter,
-  appConfig: AppConfig
+                                          sessionCacheRepository: SessionCacheRepositoryImpl,
+                                          encrypter: FormModelEncrypter,
+                                          appConfig: AppConfig
 ) extends SessionCacheService
     with Logging {
 

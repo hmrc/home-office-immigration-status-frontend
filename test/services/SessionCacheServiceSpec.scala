@@ -31,7 +31,7 @@ import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Injecting
-import repositories.SessionCacheRepository
+import repositories.SessionCacheRepositoryImpl
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import utils.NinoGenerator
 
@@ -50,14 +50,14 @@ class SessionCacheServiceSpec
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
-      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
+      bind[SessionCacheRepositoryImpl].toInstance(mockSessionCacheRepository)
     )
     .build()
 
-  val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
+  val mockSessionCacheRepository: SessionCacheRepositoryImpl = mock(classOf[SessionCacheRepositoryImpl])
 
   val now: Instant                                   = Instant.now()
-  val mockRepo: SessionCacheRepository               = mock(classOf[SessionCacheRepository])
+  val mockRepo: SessionCacheRepositoryImpl               = mock(classOf[SessionCacheRepositoryImpl])
   val argumentCaptor: ArgumentCaptor[FormQueryModel] = ArgumentCaptor.forClass(classOf[FormQueryModel])
   private val encrypter                              = new FormModelEncrypter
   lazy val appConfig: AppConfig                      = inject[AppConfig]

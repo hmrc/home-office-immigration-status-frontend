@@ -26,14 +26,14 @@ import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model.{FindOneAndReplaceOptions, IndexModel, IndexOptions}
 import org.mongodb.scala.model.Indexes.ascending
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
-import repositories.SessionCacheRepository.CollectionName
+import repositories.SessionCacheRepositoryImpl.CollectionName
 import uk.gov.hmrc.mongo.MongoComponent
 import org.mongodb.scala.ObservableFuture
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SessionCacheRepository @Inject() (
+class SessionCacheRepositoryImpl @Inject()(
   mongoComponent: MongoComponent,
   appConfig: AppConfig
 )(implicit ec: ExecutionContext)
@@ -52,7 +52,7 @@ class SessionCacheRepository @Inject() (
     )
     with SearchableWithMongoCollection
 
-object SessionCacheRepository {
+object SessionCacheRepositoryImpl {
   val CollectionName = "form-query"
 }
 

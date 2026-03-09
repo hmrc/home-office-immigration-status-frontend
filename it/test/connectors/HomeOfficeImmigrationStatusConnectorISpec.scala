@@ -19,7 +19,7 @@ package connectors
 import models.*
 import support.BaseISpec
 import org.mockito.Mockito.mock
-import repositories.SessionCacheRepository
+import repositories.SessionCacheRepositoryImpl
 import stubs.HomeOfficeImmigrationStatusStubs
 import uk.gov.hmrc.http.*
 import play.api.Application
@@ -167,7 +167,7 @@ trait HomeOfficeImmigrationStatusConnectorISpecSetup extends BaseISpec with Home
   given hc: HeaderCarrier =
     HeaderCarrier().withExtraHeaders(HEADER_X_CORRELATION_ID -> UUID.randomUUID().toString)
 
-  val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
+  val mockSessionCacheRepository: SessionCacheRepositoryImpl = mock(classOf[SessionCacheRepositoryImpl])
 
   override implicit def fakeApplication(): Application = appBuilder.build()
 
