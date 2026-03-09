@@ -29,7 +29,7 @@ import uk.gov.hmrc.mongo.MongoComponent
 
 import scala.concurrent.{ExecutionContext, Future}
 
-//@ImplementedBy(classOf[SessionCacheRepositoryImpl])
+@ImplementedBy(classOf[SessionCacheRepositoryImpl])
 trait SessionCacheRepository {
   def get(id: String)(implicit ec: ExecutionContext): Future[Option[FormQueryModel]] 
 

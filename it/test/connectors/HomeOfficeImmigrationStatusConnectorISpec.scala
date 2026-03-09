@@ -18,8 +18,6 @@ package connectors
 
 import models.*
 import support.BaseISpec
-import org.mockito.Mockito.mock
-import repositories.SessionCacheRepository
 import stubs.HomeOfficeImmigrationStatusStubs
 import uk.gov.hmrc.http.*
 import play.api.Application
@@ -29,7 +27,6 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import java.time.{LocalDate, ZoneId}
 import java.util.UUID
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationStatusConnectorISpecSetup {
 
