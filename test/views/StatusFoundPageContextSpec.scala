@@ -17,20 +17,21 @@
 package views
 
 import config.Countries
-import models._
+import models.*
 import org.mockito.ArgumentMatchers.{any, matches}
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatest.{Assertion, BeforeAndAfterEach, OptionValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
-import play.api.i18n._
+import play.api.i18n.*
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Call
 import play.api.test.Injecting
-import repositories.SessionCacheRepositoryImpl
+import repositories.SessionCacheRepository
+import uk.gov.hmrc.mongo.play.PlayMongoModule
 import utils.NinoGenerator
 import viewmodels.RowViewModel
 
@@ -44,17 +45,18 @@ class StatusFoundPageContextSpec
     with GuiceOneAppPerSuite
     with Injecting {
 
-  val mockSessionCacheRepository: SessionCacheRepositoryImpl = mock(classOf[SessionCacheRepositoryImpl])
+  val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
-      bind[SessionCacheRepositoryImpl].toInstance(mockSessionCacheRepository)
+      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
     )
+    .disable[PlayMongoModule]
     .build()
 
-  lazy val realMessages: Messages = inject[MessagesApi].preferred(Seq.empty)
-  lazy val countries: Countries   = inject[Countries]
-  val allCountries: Countries     = inject[Countries]
+  lazy val realMessages: Messages = app.injector.instanceOf[MessagesApi].preferred(Seq.empty)
+  lazy val countries: Countries   = app.injector.instanceOf[Countries]
+  val allCountries: Countries     = app.injector.instanceOf[Countries]
 
   val mockMessages: Messages = mock(classOf[MessagesImpl], RETURNS_DEEP_STUBS)
   val currentStatusLabelMsg  = "current status label msg"

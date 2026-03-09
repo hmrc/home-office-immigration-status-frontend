@@ -28,7 +28,7 @@ import java.time.LocalDate
 
 class SearchByNinoViewSpec extends ViewSpec {
 
-  private lazy val sut: SearchByNinoView = inject[SearchByNinoView]
+  private lazy val sut: SearchByNinoView = app.injector.instanceOf[SearchByNinoView]
 
   private val ninoSearchFormModel: NinoSearchFormModel = NinoSearchFormModel(
     nino = generateNino,

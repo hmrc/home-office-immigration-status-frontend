@@ -30,8 +30,8 @@ import scala.jdk.CollectionConverters._
 
 class CountrySelectSpec extends ViewSpec {
 
-  private val sut: CountrySelect   = inject[CountrySelect]
-  private val countries: Countries = inject[Countries]
+  private val sut: CountrySelect   = app.injector.instanceOf[CountrySelect]
+  private val countries: Countries = app.injector.instanceOf[Countries]
 
   private val testForm: Form[String] = Form[String] {
     mapping("documentType" -> Forms.of[String])(identity)(Some.apply)

@@ -16,17 +16,41 @@
 
 package endpoints
 
-import models.NinoSearchFormModel
+import crypto.FormModelEncrypter
+import models.{EncryptedSearchFormModel, FormQueryModel, NinoSearchFormModel}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, when}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import play.api.libs.ws.DefaultBodyReadables.readableAsString
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import stubs.HomeOfficeImmigrationStatusStubs
 import support.ISpec
-import play.api.libs.ws.DefaultBodyReadables.readableAsString
 
-import java.time.LocalDate
+import java.time.{Instant, LocalDate}
+import scala.concurrent.Future
 
 class StatusResultISpec extends ISpec with HomeOfficeImmigrationStatusStubs {
+  private val formModel: NinoSearchFormModel = NinoSearchFormModel(
+    nino = nino,
+    givenName = "Doe",
+    familyName = "Jane",
+    dateOfBirth = LocalDate.parse("2001-01-31")
+  )
+  private val now       = Instant.now()
+  private val secretKey = "VqmXp7yigDFxbCUdDdNZVIvbW6RgPNJsliv6swQNCL8="
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+    val encrypter = new FormModelEncrypter
+    val encryptedFormModel: EncryptedSearchFormModel =
+      encrypter.encryptSearchFormModel(formModel, "session-statusResultGet", secretKey)
+    val formQuery: FormQueryModel = FormQueryModel(id = "ID1", data = encryptedFormModel, now)
 
+    reset(mockSessionCacheRepository)
+    when(mockSessionCacheRepository.get(any())(any())).thenReturn(Future.successful(Some(formQuery)))
+    when(mockSessionCacheRepository.set(any())(any())).thenReturn(Future.successful((): Unit))
+    ()
+  }
+  
   "GET /check-immigration-status/status-result" should {
     "POST to the HO and show match found" in {
       givenCheckByNinoSucceeds()
@@ -35,7 +59,7 @@ class StatusResultISpec extends ISpec with HomeOfficeImmigrationStatusStubs {
       val sessionId = "session-statusResultGet"
       val query     = NinoSearchFormModel(nino, "Doe", "Jane", LocalDate.parse("2001-01-31"))
       setFormQuery(query, sessionId)
-
+      
       val result = await(requestWithSession("/status-result", sessionId).get())
 
       result.status                                       shouldBe OK
@@ -47,7 +71,7 @@ class StatusResultISpec extends ISpec with HomeOfficeImmigrationStatusStubs {
       givenAnExternalServiceErrorCheckByNino()
       givenAuthorisedForStride("TBC", "StrideUserId")
 
-      val sessionId = "session-statusResultErrorPage"
+      val sessionId = "session-statusResultGet"
       val query     = NinoSearchFormModel(nino, "Doe", "Jane", LocalDate.parse("2001-01-31"))
       setFormQuery(query, sessionId)
 

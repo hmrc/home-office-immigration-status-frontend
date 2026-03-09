@@ -28,7 +28,7 @@ class LookupDescriptionSpec extends ViewSpec {
   private val url: String      = "/some/url"
   private val id: String       = "link-id"
 
-  private val sut: LookupDescription = inject[LookupDescription]
+  private val sut: LookupDescription = app.injector.instanceOf[LookupDescription]
 
   private val viewViaApply: HtmlFormat.Appendable  = sut.apply(message, linkText, url, id)(messages)
   private val viewViaRender: HtmlFormat.Appendable = sut.render(message, linkText, url, id, messages)

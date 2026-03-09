@@ -19,7 +19,7 @@ package connectors
 import models.*
 import support.BaseISpec
 import org.mockito.Mockito.mock
-import repositories.SessionCacheRepositoryImpl
+import repositories.SessionCacheRepository
 import stubs.HomeOfficeImmigrationStatusStubs
 import uk.gov.hmrc.http.*
 import play.api.Application
@@ -29,6 +29,7 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import java.time.{LocalDate, ZoneId}
 import java.util.UUID
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationStatusConnectorISpecSetup {
 
@@ -166,13 +167,11 @@ trait HomeOfficeImmigrationStatusConnectorISpecSetup extends BaseISpec with Home
   private val HEADER_X_CORRELATION_ID = "X-Correlation-Id"
   given hc: HeaderCarrier =
     HeaderCarrier().withExtraHeaders(HEADER_X_CORRELATION_ID -> UUID.randomUUID().toString)
-
-  val mockSessionCacheRepository: SessionCacheRepositoryImpl = mock(classOf[SessionCacheRepositoryImpl])
-
+ 
   override implicit def fakeApplication(): Application = appBuilder.build()
 
   lazy val connector: HomeOfficeImmigrationStatusProxyConnector =
-    app.injector.instanceOf[HomeOfficeImmigrationStatusProxyConnector]
+    fakeApplication().injector.instanceOf[HomeOfficeImmigrationStatusProxyConnector]
 
   val firstName      = "Doe"
   val lastName       = "Jane"

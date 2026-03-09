@@ -30,19 +30,21 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.Html
-import repositories.SessionCacheRepositoryImpl
+import repositories.SessionCacheRepository
+import uk.gov.hmrc.mongo.play.PlayMongoModule
 
 trait ViewSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
-      bind[SessionCacheRepositoryImpl].toInstance(mockSessionCacheRepository)
+      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
     )
+    .disable[PlayMongoModule]
     .build()
 
-  val mockSessionCacheRepository: SessionCacheRepositoryImpl = mock(classOf[SessionCacheRepositoryImpl])
+  val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
 
-  lazy val messages: Messages                      = inject[MessagesApi].preferred(Seq.empty[Lang])
+  lazy val messages: Messages                      = app.injector.instanceOf[MessagesApi].preferred(Seq.empty[Lang])
   val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
 
   def asDocument(html: Html): Document = Jsoup.parse(html.toString())

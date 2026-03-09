@@ -19,13 +19,14 @@ package services
 import config.AppConfig
 import connectors.HomeOfficeImmigrationStatusProxyConnector
 import controllers.ControllerSpec
-import models._
+import models.*
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import repositories.SessionCacheRepositoryImpl
+import repositories.SessionCacheRepository
+import uk.gov.hmrc.mongo.play.PlayMongoModule
 import utils.NinoGenerator
 
 import java.time.LocalDate
@@ -52,8 +53,9 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
     .overrides(
       bind[AuditService].toInstance(mockAuditService),
       bind[HomeOfficeImmigrationStatusProxyConnector].toInstance(mockConnector),
-      bind[SessionCacheRepositoryImpl].toInstance(mockSessionCacheRepository)
+      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
     )
+    .disable[PlayMongoModule]
     .build()
 
   lazy val sut: HomeOfficeImmigrationStatusProxyService =

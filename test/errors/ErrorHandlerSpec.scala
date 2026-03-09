@@ -39,9 +39,9 @@ class ErrorHandlerSpec extends ControllerSpec {
   private val mockAppConfig: AppConfig           = mock(classOf[AppConfig])
   private val mockConfiguration: Configuration   = mock(classOf[Configuration])
 
-  private lazy val externalErrorPage: ExternalErrorPage = inject[ExternalErrorPage]
-  private lazy val errorTemplate: error_template        = inject[error_template]
-  private lazy val shutteringPage: ShutteringPage       = inject[ShutteringPage]
+  private lazy val externalErrorPage: ExternalErrorPage = app.injector.instanceOf[ExternalErrorPage]
+  private lazy val errorTemplate: error_template        = app.injector.instanceOf[error_template]
+  private lazy val shutteringPage: ShutteringPage       = app.injector.instanceOf[ShutteringPage]
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()

@@ -18,7 +18,7 @@ package config
 
 import com.typesafe.config.ConfigException
 import org.mockito.ArgumentMatchers
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
@@ -27,22 +27,24 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Injecting
 import play.api.{Application, Environment}
-import repositories.SessionCacheRepositoryImpl
+import repositories.SessionCacheRepository
+import uk.gov.hmrc.mongo.play.PlayMongoModule
 
 import java.io.InputStream
 
 class CountriesSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with BeforeAndAfterEach {
 
-  val mockSessionCacheRepository: SessionCacheRepositoryImpl = mock(classOf[SessionCacheRepositoryImpl])
+  val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
-      bind[SessionCacheRepositoryImpl].toInstance(mockSessionCacheRepository)
+      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
     )
+    .disable[PlayMongoModule]
     .build()
 
   val mockEnv: Environment  = mock(classOf[Environment])
-  lazy val env: Environment = inject[Environment]
+  lazy val env: Environment = app.injector.instanceOf[Environment]
 
   override protected def beforeEach(): Unit = {
     reset(mockEnv)

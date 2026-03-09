@@ -30,7 +30,7 @@ import scala.jdk.CollectionConverters.*
 
 class IdentityDocumentTypeSpec extends ViewSpec {
 
-  private val sut: identityDocumentType = inject[identityDocumentType]
+  private val sut: identityDocumentType = app.injector.instanceOf[identityDocumentType]
 
   private val testForm: Form[String] = Form[String] {
     mapping("documentType" -> Forms.of[String])(identity)(Some.apply)

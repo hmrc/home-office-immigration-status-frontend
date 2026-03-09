@@ -21,7 +21,7 @@ import mocks.MockSessionCookie
 import models.{FormQueryModel, NinoSearchFormModel}
 import play.api.libs.ws.{WSClient, WSRequest, WSResponse}
 import play.api.test.Helpers.LOCATION
-import repositories.SessionCacheRepositoryImpl
+import repositories.SessionCacheRepository
 
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -30,9 +30,9 @@ import scala.concurrent.duration.DurationInt
 trait ISpec extends BaseISpec with MockSessionCookie {
   val baseUrl: String = s"http://localhost:$port/check-immigration-status"
 
-  lazy val wsClient: WSClient                     = app.injector.instanceOf[WSClient]
-  lazy val cacheRepo: SessionCacheRepositoryImpl      = inject[SessionCacheRepositoryImpl]
-  lazy val formModelEncrypter: FormModelEncrypter = inject[FormModelEncrypter]
+  lazy val wsClient: WSClient                     = fakeApplication().injector.instanceOf[WSClient]
+  lazy val cacheRepo: SessionCacheRepository      = fakeApplication().injector.instanceOf[SessionCacheRepository]
+  lazy val formModelEncrypter: FormModelEncrypter = fakeApplication().injector.instanceOf[FormModelEncrypter]
 
   def setFormQuery(formModel: NinoSearchFormModel, sessionId: String): Unit = {
     val encryptedFormModel =

@@ -29,7 +29,8 @@ import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Injecting
-import repositories.SessionCacheRepositoryImpl
+import repositories.SessionCacheRepository
+import uk.gov.hmrc.mongo.play.PlayMongoModule
 import utils.NinoGenerator
 import viewmodels.RowViewModel
 
@@ -44,19 +45,20 @@ class StatusNotAvailablePageContextSpec
     with GuiceOneAppPerSuite
     with Injecting {
 
-  val mockSessionCacheRepository: SessionCacheRepositoryImpl = mock(classOf[SessionCacheRepositoryImpl])
+  val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
-      bind[SessionCacheRepositoryImpl].toInstance(mockSessionCacheRepository)
+      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
     )
+    .disable[PlayMongoModule]
     .build()
 
-  lazy val realMessages: Messages = inject[MessagesApi].preferred(Seq.empty[Lang])
+  lazy val realMessages: Messages = app.injector.instanceOf[MessagesApi].preferred(Seq.empty[Lang])
   val mockMessages: Messages      = mock(classOf[MessagesImpl], RETURNS_DEEP_STUBS)
   val currentStatusLabelMsg       = "current status label msg"
 
-  lazy val countries: Countries = inject[Countries]
+  lazy val countries: Countries = app.injector.instanceOf[Countries]
 
   override def beforeEach(): Unit = {
     super.beforeEach()

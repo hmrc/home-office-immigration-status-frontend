@@ -18,14 +18,24 @@ package endpoints
 
 import play.api.http.Status.{OK, SEE_OTHER}
 import mocks.MockSessionCookie
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, when}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import stubs.HomeOfficeImmigrationStatusStubs
 import support.ISpec
 import play.api.libs.ws.DefaultBodyReadables.readableAsString
 import play.api.libs.ws.WSBodyWritables.writeableOf_urlEncodedSimpleForm
 
-class SearchByPassportISpec extends ISpec with HomeOfficeImmigrationStatusStubs with MockSessionCookie {
+import scala.concurrent.Future
 
+class SearchByPassportISpec extends ISpec with HomeOfficeImmigrationStatusStubs with MockSessionCookie {
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockSessionCacheRepository)
+    when(mockSessionCacheRepository.get(any())(any())).thenReturn(Future.successful(None))
+    when(mockSessionCacheRepository.set(any())(any())).thenReturn(Future.successful(():Unit))
+    ()
+  }
   "GET /check-immigration-status/search-by-passport" should {
     "show the lookup page" in {
       givenAuthorisedForStride("TBC", "StrideUserId")

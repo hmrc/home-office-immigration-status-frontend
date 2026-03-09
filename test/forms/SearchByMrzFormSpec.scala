@@ -28,9 +28,10 @@ import play.api.data.{Form, FormError}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Injecting
-import repositories.SessionCacheRepositoryImpl
+import repositories.SessionCacheRepository
 import utils.NinoGenerator
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.mongo.play.PlayMongoModule
 
 import java.time.LocalDate
 
@@ -38,16 +39,17 @@ class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecti
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
-      bind[SessionCacheRepositoryImpl].toInstance(mockSessionCacheRepository)
+      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
     )
+    .disable[PlayMongoModule]
     .build()
 
-  val mockSessionCacheRepository: SessionCacheRepositoryImpl = mock(classOf[SessionCacheRepositoryImpl])
+  val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
 
   implicit def noShrink[T]: Shrink[T] = Shrink.shrinkAny
 
-  lazy val formProvider: SearchByMRZForm  = inject[SearchByMRZForm]
-  lazy val countriesValues: Seq[String]   = inject[Countries].countries.map(_.alpha3)
+  lazy val formProvider: SearchByMRZForm  = app.injector.instanceOf[SearchByMRZForm]
+  lazy val countriesValues: Seq[String]   = app.injector.instanceOf[Countries].countries.map(_.alpha3)
   lazy val form: Form[MrzSearchFormModel] = formProvider()
 
   val now: LocalDate       = LocalDate.now()

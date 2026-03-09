@@ -29,12 +29,13 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.{FakeRequest, Injecting}
-import repositories.SessionCacheRepositoryImpl
+import repositories.SessionCacheRepository
 import services.SessionCacheService
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.mongo.play.PlayMongoModule
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 import scala.concurrent.{Await, Awaitable}
 import scala.language.postfixOps
 
@@ -43,20 +44,21 @@ trait ControllerSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting wi
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
       bind[AccessAction].to[FakeAccessAction],
-      bind[SessionCacheRepositoryImpl].toInstance(mockSessionCacheRepository),
+      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository),
       bind[SessionCacheService].toInstance(mockSessionCacheService)
     )
+    .disable[PlayMongoModule]
     .build()
 
   val timeoutDuration: FiniteDuration                       = 5 seconds
   implicit val timeout: Timeout                             = Timeout(timeoutDuration)
   def await[T](future: Awaitable[T]): T                     = Await.result(future, timeoutDuration)
-  lazy val messagesApi: MessagesApi                         = inject[MessagesApi]
+  lazy val messagesApi: MessagesApi                         = app.injector.instanceOf[MessagesApi]
   lazy val messages: Messages                               = messagesApi.preferred(Seq.empty)
-  lazy val appConfig: AppConfig                             = inject[AppConfig]
+  lazy val appConfig: AppConfig                             = app.injector.instanceOf[AppConfig]
   implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
   val fakePostRequest: FakeRequest[AnyContentAsEmpty.type]  = FakeRequest("POST", "/")
-  val mockSessionCacheRepository: SessionCacheRepositoryImpl    = mock(classOf[SessionCacheRepositoryImpl])
+  val mockSessionCacheRepository: SessionCacheRepository    = mock(classOf[SessionCacheRepository])
   val mockSessionCacheService: SessionCacheService          = mock(classOf[SessionCacheService])
   implicit val hc: HeaderCarrier                            = HeaderCarrierConverter.fromRequest(request)
 }

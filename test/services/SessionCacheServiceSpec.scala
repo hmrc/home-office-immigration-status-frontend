@@ -20,8 +20,8 @@ import config.AppConfig
 import crypto.FormModelEncrypter
 import models.{EncryptedSearchFormModel, FormQueryModel, NinoSearchFormModel, SearchFormModel}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchers.{eq => eqTo}
-import org.mockito.Mockito._
+import org.mockito.ArgumentMatchers.eq as eqTo
+import org.mockito.Mockito.*
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
@@ -31,13 +31,14 @@ import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Injecting
-import repositories.SessionCacheRepositoryImpl
+import repositories.SessionCacheRepository
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
+import uk.gov.hmrc.mongo.play.PlayMongoModule
 import utils.NinoGenerator
 
 import java.time.{Instant, LocalDate}
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 import scala.concurrent.{Await, Future}
 import scala.language.postfixOps
 
@@ -50,17 +51,18 @@ class SessionCacheServiceSpec
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
-      bind[SessionCacheRepositoryImpl].toInstance(mockSessionCacheRepository)
+      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
     )
+    .disable[PlayMongoModule]
     .build()
 
-  val mockSessionCacheRepository: SessionCacheRepositoryImpl = mock(classOf[SessionCacheRepositoryImpl])
+  val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
 
   val now: Instant                                   = Instant.now()
-  val mockRepo: SessionCacheRepositoryImpl               = mock(classOf[SessionCacheRepositoryImpl])
+  val mockRepo: SessionCacheRepository               = mock(classOf[SessionCacheRepository])
   val argumentCaptor: ArgumentCaptor[FormQueryModel] = ArgumentCaptor.forClass(classOf[FormQueryModel])
   private val encrypter                              = new FormModelEncrypter
-  lazy val appConfig: AppConfig                      = inject[AppConfig]
+  lazy val appConfig: AppConfig                      = app.injector.instanceOf[AppConfig]
   val sut                                            = new SessionCacheServiceImpl(mockRepo, encrypter, appConfig)
 
   override def beforeEach(): Unit = {

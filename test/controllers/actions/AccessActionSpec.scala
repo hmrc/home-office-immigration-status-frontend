@@ -17,13 +17,14 @@
 package controllers.actions
 
 import controllers.ControllerSpec
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Results.Ok
 import play.api.mvc.{ActionFunction, Request, Result}
-import repositories.SessionCacheRepositoryImpl
+import repositories.SessionCacheRepository
+import uk.gov.hmrc.mongo.play.PlayMongoModule
 
 import scala.concurrent.Future
 
@@ -41,8 +42,9 @@ class AccessActionSpec extends ControllerSpec {
     .overrides(
       bind[AuthAction].toInstance(mockAuthAction),
       bind[ShutterAction].toInstance(mockShutterAction),
-      bind[SessionCacheRepositoryImpl].toInstance(mockSessionCacheRepository)
+      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
     )
+    .disable[PlayMongoModule]
     .build()
 
   val expected: Result                        = Ok("Invoked")
@@ -54,7 +56,7 @@ class AccessActionSpec extends ControllerSpec {
       when(mockShutterAction.andThen(mockAuthAction)).thenReturn(mockComposed)
       when(mockComposed.invokeBlock(request, testBlock)).thenReturn(Future.successful(expected))
 
-      val result = await(inject[AccessAction].async(testBlock)(request))
+      val result = await(app.injector.instanceOf[AccessAction].async(testBlock)(request))
 
       result mustBe expected
       verify(mockComposed).invokeBlock(request, testBlock)

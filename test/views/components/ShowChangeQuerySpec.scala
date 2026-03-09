@@ -27,7 +27,7 @@ import views._
 
 class ShowChangeQuerySpec extends ViewSpec {
 
-  private val sut: ShowChangeQuery = inject[ShowChangeQuery]
+  private val sut: ShowChangeQuery = app.injector.instanceOf[ShowChangeQuery]
 
   private val dateOfBirth: LocalDate                   = LocalDate.now().minusYears(1)
   private val ninoSearchFormModel: NinoSearchFormModel = NinoSearchFormModel(generateNino, "Pan", "", LocalDate.now())

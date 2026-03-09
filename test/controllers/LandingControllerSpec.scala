@@ -29,7 +29,7 @@ import scala.concurrent.Future
 
 class LandingControllerSpec extends ControllerSpec {
 
-  val sut: LandingController = inject[LandingController]
+  val sut: LandingController = app.injector.instanceOf[LandingController]
 
   override def beforeEach(): Unit = {
     super.beforeEach()

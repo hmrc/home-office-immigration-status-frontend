@@ -24,19 +24,21 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Injecting
-import repositories.SessionCacheRepositoryImpl
+import repositories.SessionCacheRepository
+import uk.gov.hmrc.mongo.play.PlayMongoModule
 
 class MrzSearchSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
 
-  val mockSessionCacheRepository: SessionCacheRepositoryImpl = mock(classOf[SessionCacheRepositoryImpl])
+  val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
-      bind[SessionCacheRepositoryImpl].toInstance(mockSessionCacheRepository)
+      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
     )
+    .disable[PlayMongoModule]
     .build()
 
-  lazy implicit val messages: Messages = inject[MessagesApi].preferred(Seq.empty)
+  lazy implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(Seq.empty)
 
   "MrzSearch.documentTypeToMessageKey" should {
     "return the relevant message" when {
