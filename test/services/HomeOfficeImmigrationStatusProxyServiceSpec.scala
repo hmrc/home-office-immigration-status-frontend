@@ -18,28 +18,27 @@ package services
 
 import config.AppConfig
 import connectors.HomeOfficeImmigrationStatusProxyConnector
-import controllers.ControllerSpec
 import models.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.mvc.AnyContentAsEmpty
 import repositories.SessionCacheRepository
+import support.BaseSpec
 import uk.gov.hmrc.mongo.play.PlayMongoModule
 import utils.NinoGenerator
-
+import play.api.test.FakeRequest
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
-class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
-
-  val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d/MM/yyyy")
-
-  val mockAuditService: AuditService = mock(classOf[AuditService])
-  val mockConnector: HomeOfficeImmigrationStatusProxyConnector = mock(
+class HomeOfficeImmigrationStatusProxyServiceSpec extends BaseSpec {
+  private val mockAuditService: AuditService = mock(classOf[AuditService])
+  private val mockConnector: HomeOfficeImmigrationStatusProxyConnector = mock(
     classOf[HomeOfficeImmigrationStatusProxyConnector]
   )
 
@@ -58,19 +57,21 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
     .disable[PlayMongoModule]
     .build()
 
-  lazy val sut: HomeOfficeImmigrationStatusProxyService =
+  private lazy val sut: HomeOfficeImmigrationStatusProxyService =
     app.injector.instanceOf[HomeOfficeImmigrationStatusProxyService]
 
-  val testDate: LocalDate = LocalDate.now
-  val formModel: NinoSearchFormModel =
+  private val testDate: LocalDate = LocalDate.now
+  private val formModel: NinoSearchFormModel =
     NinoSearchFormModel(NinoGenerator.generateNino, "Doe", "Jane", LocalDate.of(2001, 1, 31))
-  val mrzSearchFormModel: MrzSearchFormModel =
+  private val mrzSearchFormModel: MrzSearchFormModel =
     MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
-  val statusRequest: Search = formModel.toSearch(6)
+  private implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+  private implicit def hc(implicit request: FakeRequest[?]): HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
+  private lazy val appConfig: AppConfig                             = app.injector.instanceOf[AppConfig]  
   given conf: AppConfig     = appConfig
 
-  val statusCheckResult: StatusCheckResult = StatusCheckResult("Damon Albarn", testDate, "GBR", Nil)
-  val result: StatusCheckResponseWithStatus =
+  private val statusCheckResult: StatusCheckResult = StatusCheckResult("Damon Albarn", testDate, "GBR", Nil)
+  private val result: StatusCheckResponseWithStatus =
     StatusCheckResponseWithStatus(200, StatusCheckSuccessfulResponse(Some("CorrelationId"), statusCheckResult))
 
   "statusPublicFundsByNino" must {

@@ -16,6 +16,7 @@
 
 package support
 
+import org.apache.pekko.util.Timeout
 import org.mockito.Mockito.mock
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
@@ -24,11 +25,13 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
-import play.api.test.{FakeRequest, Injecting}
+import play.api.test.Injecting
 import repositories.SessionCacheRepository
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongo.play.PlayMongoModule
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import scala.concurrent.duration.*
+import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.{Await, Awaitable}
+import scala.language.postfixOps
 
 trait BaseSpec
     extends PlaySpec
@@ -37,6 +40,10 @@ trait BaseSpec
     with BeforeAndAfterEach
     with Matchers
     with OptionValues {
+
+  private val timeoutDuration: FiniteDuration                         = 5 seconds
+  protected implicit val timeout: Timeout                             = Timeout(timeoutDuration)
+  protected def await[T](future: Awaitable[T]): T                     = Await.result(future, timeoutDuration)
     
   protected val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
 
@@ -50,7 +57,4 @@ trait BaseSpec
       .disable[PlayMongoModule]
 
   override implicit lazy val app: Application = appBuilder.build()
-
-  implicit def hc(implicit request: FakeRequest[?]): HeaderCarrier =
-    HeaderCarrierConverter.fromRequest(request)
 }

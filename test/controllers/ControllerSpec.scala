@@ -16,9 +16,7 @@
 
 package controllers
 
-import config.AppConfig
 import controllers.actions.AccessAction
-import org.apache.pekko.util.Timeout
 import org.mockito.Mockito.mock
 import org.scalatestplus.play.PlaySpec
 import play.api.i18n.{Messages, MessagesApi}
@@ -29,24 +27,14 @@ import play.api.test.FakeRequest
 import repositories.SessionCacheRepository
 import services.SessionCacheService
 import support.BaseSpec
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
-
-import scala.concurrent.duration.*
-import scala.concurrent.{Await, Awaitable}
-import scala.language.postfixOps
 
 trait ControllerSpec extends BaseSpec {
-  private val timeoutDuration: FiniteDuration                       = 5 seconds
-  protected implicit val timeout: Timeout                             = Timeout(timeoutDuration)
-  protected def await[T](future: Awaitable[T]): T                     = Await.result(future, timeoutDuration)
   protected lazy val messagesApi: MessagesApi                         = app.injector.instanceOf[MessagesApi]
   protected lazy val messages: Messages                               = messagesApi.preferred(Seq.empty)
-  protected lazy val appConfig: AppConfig                             = app.injector.instanceOf[AppConfig]
+  
   protected implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
   protected val fakePostRequest: FakeRequest[AnyContentAsEmpty.type]  = FakeRequest("POST", "/")
   protected val mockSessionCacheService: SessionCacheService          = mock(classOf[SessionCacheService])
-  protected implicit val hc: HeaderCarrier                            = HeaderCarrierConverter.fromRequest(request)
 
   override protected val modules: Seq[GuiceableModule] = Seq(
     bind[SessionCacheRepository].toInstance(mockSessionCacheRepository),
