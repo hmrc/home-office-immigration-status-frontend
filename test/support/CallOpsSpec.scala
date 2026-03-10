@@ -18,14 +18,12 @@ package support
 
 import com.typesafe.config._
 import org.scalatest.OptionValues
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.{Configuration, Environment, Mode}
 import support.CallOps.localFriendlyUrl
 
 import java.io.File
 
-class CallOpsSpec extends AnyWordSpecLike with Matchers with OptionValues {
+class CallOpsSpec extends BaseSpec with OptionValues {
 
   val testEnv: Environment    = Environment(new File(""), classOf[CallOpsSpec].getClassLoader, Mode.Test)
   val prodEnv: Environment    = Environment(new File(""), classOf[CallOpsSpec].getClassLoader, Mode.Prod)

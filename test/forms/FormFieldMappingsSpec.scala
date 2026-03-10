@@ -17,19 +17,15 @@
 package forms
 
 import org.scalacheck.Gen
-import org.scalatest.OptionValues
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.data.Forms.single
 import play.api.data.format.Formats.stringFormat
 import play.api.data.validation.Invalid
 import play.api.data.{Form, FormError, Forms, Mapping}
+import support.BaseSpec
 
 class FormFieldMappingsSpec
-    extends AnyWordSpecLike
-    with Matchers
-    with OptionValues
+    extends BaseSpec
     with FormFieldMappings
     with ScalaCheckDrivenPropertyChecks {
 

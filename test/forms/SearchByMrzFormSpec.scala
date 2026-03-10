@@ -18,33 +18,15 @@ package forms
 
 import config.Countries
 import models.{MrzSearch, MrzSearchFormModel}
-import org.mockito.Mockito.mock
 import org.scalacheck.{Gen, Shrink}
-import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
-import play.api.Application
 import play.api.data.{Form, FormError}
-import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.test.Injecting
-import repositories.SessionCacheRepository
+import support.BaseSpec
 import utils.NinoGenerator
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.mongo.play.PlayMongoModule
-
 import java.time.LocalDate
 
-class SearchByMrzFormSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with ScalaCheckDrivenPropertyChecks {
-
-  override implicit lazy val app: Application = new GuiceApplicationBuilder()
-    .overrides(
-      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
-    )
-    .disable[PlayMongoModule]
-    .build()
-
-  val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
+class SearchByMrzFormSpec extends BaseSpec with ScalaCheckDrivenPropertyChecks {
 
   implicit def noShrink[T]: Shrink[T] = Shrink.shrinkAny
 

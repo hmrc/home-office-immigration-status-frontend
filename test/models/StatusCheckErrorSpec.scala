@@ -16,11 +16,10 @@
 
 package models
 
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsError, JsSuccess, Json}
+import support.BaseSpec
 
-class StatusCheckErrorSpec extends AnyWordSpecLike with Matchers {
+class StatusCheckErrorSpec extends BaseSpec {
   "StatusCheckError" must {
     "serialize to JSON" when {
       "all fields are defined" in {

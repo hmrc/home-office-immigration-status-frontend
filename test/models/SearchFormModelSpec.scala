@@ -16,15 +16,14 @@
 
 package models
 
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsError, JsSuccess, Json}
+import support.BaseSpec
 import uk.gov.hmrc.domain.Nino
 import utils.NinoGenerator
 
 import java.time.LocalDate
 
-class SearchFormModelSpec extends AnyWordSpecLike with Matchers {
+class SearchFormModelSpec extends BaseSpec {
 
   val nino: Nino             = NinoGenerator.generateNino
   val dateOfBirth: LocalDate = LocalDate.now().minusDays(1)

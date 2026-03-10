@@ -16,13 +16,12 @@
 
 package models
 
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsError, JsSuccess, Json}
+import support.BaseSpec
 
 import java.time.LocalDate
 
-class ImmigrationStatusSpec extends AnyWordSpecLike with Matchers {
+class ImmigrationStatusSpec extends BaseSpec {
 
   val startDate: LocalDate = LocalDate.parse("2012-01-01")
   val endDate: LocalDate   = LocalDate.parse("2013-01-01")

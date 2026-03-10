@@ -16,13 +16,12 @@
 
 package models
 
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsError, JsSuccess, Json}
+import support.BaseSpec
 
 import java.time.LocalDate
 
-class StatusCheckResponseSpec extends AnyWordSpecLike with Matchers {
+class StatusCheckResponseSpec extends BaseSpec {
 
   private val error = StatusCheckError("ERR_CODE", Some(List(FieldError("error1", "field1"))))
 

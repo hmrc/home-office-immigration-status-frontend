@@ -31,18 +31,10 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.Html
 import repositories.SessionCacheRepository
+import support.BaseSpec
 import uk.gov.hmrc.mongo.play.PlayMongoModule
 
-trait ViewSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
-
-  override implicit lazy val app: Application = new GuiceApplicationBuilder()
-    .overrides(
-      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
-    )
-    .disable[PlayMongoModule]
-    .build()
-
-  val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
+trait ViewSpec extends BaseSpec {
 
   lazy val messages: Messages                      = app.injector.instanceOf[MessagesApi].preferred(Seq.empty[Lang])
   val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()

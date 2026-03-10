@@ -16,15 +16,14 @@
 
 package models
 
-import org.scalatest.matchers.must.Matchers.mustBe
-import org.scalatestplus.play.PlaySpec
 import play.api.libs.json.{JsError, JsSuccess, Json}
+import support.BaseSpec
 import utils.NinoGenerator
 
 import java.time.LocalDate
 import scala.language.postfixOps
 
-class SearchSpec extends PlaySpec {
+class SearchSpec extends BaseSpec {
 
   val date: LocalDate = LocalDate.now
   val nino            = NinoGenerator.generateNino

@@ -16,17 +16,16 @@
 
 package connectors
 
-import connectors.StatusCheckResponseHttpParser._
-import models._
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AnyWordSpecLike
-import play.api.http.Status._
+import connectors.StatusCheckResponseHttpParser.*
+import models.*
+import play.api.http.Status.*
 import play.api.libs.json.{Json, OWrites}
+import support.BaseSpec
 import uk.gov.hmrc.http.HttpResponse
 
 import java.time.LocalDate
 
-class StatusCheckResponseHttpParserSpec extends AnyWordSpecLike with Matchers {
+class StatusCheckResponseHttpParserSpec extends BaseSpec {
 
   "StatusCheckResponseReads.read" must {
 

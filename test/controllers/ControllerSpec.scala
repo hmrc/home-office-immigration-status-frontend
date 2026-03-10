@@ -20,17 +20,16 @@ import config.AppConfig
 import controllers.actions.AccessAction
 import org.apache.pekko.util.Timeout
 import org.mockito.Mockito.mock
-import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.AnyContentAsEmpty
-import play.api.test.{FakeRequest, Injecting}
+import play.api.test. FakeRequest
 import repositories.SessionCacheRepository
 import services.SessionCacheService
+import support.BaseSpec
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongo.play.PlayMongoModule
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -39,7 +38,7 @@ import scala.concurrent.duration.*
 import scala.concurrent.{Await, Awaitable}
 import scala.language.postfixOps
 
-trait ControllerSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with BeforeAndAfterEach {
+trait ControllerSpec extends BaseSpec {
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
@@ -58,7 +57,6 @@ trait ControllerSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting wi
   lazy val appConfig: AppConfig                             = app.injector.instanceOf[AppConfig]
   implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
   val fakePostRequest: FakeRequest[AnyContentAsEmpty.type]  = FakeRequest("POST", "/")
-  val mockSessionCacheRepository: SessionCacheRepository    = mock(classOf[SessionCacheRepository])
   val mockSessionCacheService: SessionCacheService          = mock(classOf[SessionCacheService])
   implicit val hc: HeaderCarrier                            = HeaderCarrierConverter.fromRequest(request)
 }

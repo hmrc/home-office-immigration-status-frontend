@@ -16,13 +16,12 @@
 
 package models
 
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsError, JsSuccess, Json}
+import support.BaseSpec
 
 import java.time.LocalDate
 
-class StatusCheckRangeSpec extends AnyWordSpecLike with Matchers {
+class StatusCheckRangeSpec extends BaseSpec {
 
   "StatusCheckRange" must {
     "serialize to JSON" when {
