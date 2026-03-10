@@ -68,7 +68,7 @@ trait AuthActionISpecSetup extends BaseISpec with Injecting {
     FakeRequest().withSession(SessionKeys.authToken -> "Bearer XYZ")
 
   object TestController {
-    val sut: AuthAction = fakeApplication().injector.instanceOf[AuthAction]
+    val sut: AuthAction = inject[AuthAction]
 
     def test(): Action[AnyContent] = sut(Ok("Passed Auth"))
   }

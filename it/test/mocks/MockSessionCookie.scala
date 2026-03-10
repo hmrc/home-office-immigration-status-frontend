@@ -26,8 +26,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
 trait MockSessionCookie {
   this: BaseISpec =>
 
-  lazy val cookieCrypto: SessionCookieCrypto = fakeApplication().injector.instanceOf[SessionCookieCrypto]
-  lazy val cookieBaker: SessionCookieBaker   = fakeApplication().injector.instanceOf[SessionCookieBaker]
+  lazy val cookieCrypto: SessionCookieCrypto = inject[SessionCookieCrypto]
+  lazy val cookieBaker: SessionCookieBaker   = inject[SessionCookieBaker]
 
   def mockSessionCookie(sessionId: String): WSCookie = {
 

@@ -20,18 +20,8 @@ import play.api.http.Status.SEE_OTHER
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import support.ISpec
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
-import scala.concurrent.Future
 
 class RootISpec extends ISpec {
-
-  override protected def beforeEach(): Unit = {
-    super.beforeEach()
-    reset(mockSessionCacheRepository)
-    when(mockSessionCacheRepository.get(any())(any())).thenReturn(Future.successful(None))
-    ()
-  }
 
   "GET /check-immigration-status/" should {
     "show the lookup page" in {

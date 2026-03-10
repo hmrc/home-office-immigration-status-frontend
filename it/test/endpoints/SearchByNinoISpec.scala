@@ -17,28 +17,28 @@
 package endpoints
 
 import mocks.MockSessionCookie
+//import models.FormQueryModel
+//import org.mockito.Mockito.reset
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import stubs.HomeOfficeImmigrationStatusStubs
 import support.ISpec
 import play.api.libs.ws.DefaultBodyReadables.readableAsString
 import play.api.libs.ws.WSBodyWritables.writeableOf_urlEncodedSimpleForm
+//import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
-import scala.concurrent.Future
+//import repositories.SessionCacheRepositoryImpl
 
-class SearchByNinoISpec extends ISpec with HomeOfficeImmigrationStatusStubs with MockSessionCookie {
+class SearchByNinoISpec extends ISpec with HomeOfficeImmigrationStatusStubs with MockSessionCookie /*with DefaultPlayMongoRepositorySupport[FormQueryModel] */{
 
-  override protected def beforeEach(): Unit = {
-    super.beforeEach()
-    reset(mockSessionCacheRepository)
-    when(mockSessionCacheRepository.get(any())(any())).thenReturn(Future.successful(None))
-    when(mockSessionCacheRepository.set(any())(any())).thenReturn(Future.successful(():Unit))
-    ()
-  }
+ // override lazy val repository = new SessionCacheRepositoryImpl(mongoComponent)
+
+//  override protected def beforeEach(): Unit = {
+//    super.beforeEach()
+//    repository.delete("session-searchByNinoGet")
+//  }
 
   "GET /check-immigration-status/search-by-nino" should {
     "show the lookup page" in {

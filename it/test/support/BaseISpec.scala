@@ -18,7 +18,6 @@ package support
 
 import models.{Search, StatusCheckResponseWithStatus}
 import org.apache.pekko.stream.Materializer
-import org.mockito.Mockito.mock
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
@@ -32,14 +31,12 @@ import play.api.mvc.{Request, Result}
 import play.api.test.Helpers.{charset, contentAsString, contentType, defaultAwaitTimeout, status}
 import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.HtmlFormat
-import repositories.SessionCacheRepository
 import services.AuditService
 import stubs.AuthStubs
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.mongo.play.PlayMongoModule
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
-import scala.concurrent.duration.*
+import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 
 trait BaseISpec
@@ -64,7 +61,7 @@ trait BaseISpec
       ec: ExecutionContext
     ): Unit = ()
   }
-  protected val mockSessionCacheRepository: SessionCacheRepository    = mock(classOf[SessionCacheRepository])
+
   protected def appBuilder: GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .configure(
@@ -78,10 +75,8 @@ trait BaseISpec
         "microservice.services.home-office-immigration-status-proxy.port" -> wireMockPort
       )
       .overrides(
-        bind[AuditService].toInstance(FakeAuditService),
-          bind[SessionCacheRepository].toInstance(mockSessionCacheRepository),
+        bind[AuditService].toInstance(FakeAuditService)
       )
-      .disable[PlayMongoModule]
 
   protected given materializer: Materializer = app.materializer
 
@@ -93,7 +88,7 @@ trait BaseISpec
     ()
   }
 
-  implicit lazy val messages: Messages = fakeApplication().injector.instanceOf[MessagesApi].preferred(Seq.empty[Lang])
+  implicit lazy val messages: Messages = inject[MessagesApi].preferred(Seq.empty[Lang])
 
   protected def htmlEscapedMessage(key: String): String = HtmlFormat.escape(messages(key)).toString
 

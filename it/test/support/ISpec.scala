@@ -30,9 +30,9 @@ import scala.concurrent.duration.DurationInt
 trait ISpec extends BaseISpec with MockSessionCookie {
   val baseUrl: String = s"http://localhost:$port/check-immigration-status"
 
-  lazy val wsClient: WSClient                     = fakeApplication().injector.instanceOf[WSClient]
-  lazy val cacheRepo: SessionCacheRepository      = fakeApplication().injector.instanceOf[SessionCacheRepository]
-  lazy val formModelEncrypter: FormModelEncrypter = fakeApplication().injector.instanceOf[FormModelEncrypter]
+  lazy val wsClient: WSClient                     = app.injector.instanceOf[WSClient]
+  lazy val cacheRepo: SessionCacheRepository      = inject[SessionCacheRepository]
+  lazy val formModelEncrypter: FormModelEncrypter = inject[FormModelEncrypter]
 
   def setFormQuery(formModel: NinoSearchFormModel, sessionId: String): Unit = {
     val encryptedFormModel =

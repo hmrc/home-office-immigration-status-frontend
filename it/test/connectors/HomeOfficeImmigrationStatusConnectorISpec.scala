@@ -18,6 +18,8 @@ package connectors
 
 import models.*
 import support.BaseISpec
+import org.mockito.Mockito.mock
+import repositories.SessionCacheRepository
 import stubs.HomeOfficeImmigrationStatusStubs
 import uk.gov.hmrc.http.*
 import play.api.Application
@@ -164,11 +166,13 @@ trait HomeOfficeImmigrationStatusConnectorISpecSetup extends BaseISpec with Home
   private val HEADER_X_CORRELATION_ID = "X-Correlation-Id"
   given hc: HeaderCarrier =
     HeaderCarrier().withExtraHeaders(HEADER_X_CORRELATION_ID -> UUID.randomUUID().toString)
- 
+
+  val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
+
   override implicit def fakeApplication(): Application = appBuilder.build()
 
   lazy val connector: HomeOfficeImmigrationStatusProxyConnector =
-    fakeApplication().injector.instanceOf[HomeOfficeImmigrationStatusProxyConnector]
+    app.injector.instanceOf[HomeOfficeImmigrationStatusProxyConnector]
 
   val firstName      = "Doe"
   val lastName       = "Jane"
