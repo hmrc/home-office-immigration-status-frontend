@@ -17,8 +17,8 @@
 package support
 
 import org.mockito.Mockito.mock
-import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
@@ -30,43 +30,26 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongo.play.PlayMongoModule
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
-trait BaseSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with BeforeAndAfterEach with Matchers with OptionValues {
- // given defaultTimeout: FiniteDuration = 5.seconds
-
-//  object FakeAuditService extends AuditService {
-//    def auditStatusCheckEvent(search: Search, result: StatusCheckResponseWithStatus)(implicit
-//      hc: HeaderCarrier,
-//      request: Request[Any],
-//      ec: ExecutionContext
-//    ): Unit = ()
-//  }
-  protected val mockSessionCacheRepository: SessionCacheRepository    = mock(classOf[SessionCacheRepository])
+trait BaseSpec
+    extends PlaySpec
+    with GuiceOneAppPerSuite
+    with Injecting
+    with BeforeAndAfterEach
+    with Matchers
+    with OptionValues {
+    
+  protected val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
 
   protected val modules: Seq[GuiceableModule] = Seq(
     bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
   )
-  
-  protected def appBuilder: GuiceApplicationBuilder = {
+
+  protected def appBuilder: GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(modules*)
       .disable[PlayMongoModule]
-  }
 
   override implicit lazy val app: Application = appBuilder.build()
-
-  //protected given materializer: Materializer = app.materializer
-
-//  protected def checkHtmlResultWithBodyText(result: Future[Result], expectedSubstring: String): Unit = {
-//    status(result)        mustBe 200
-//    contentType(result)   mustBe Some("text/html")
-//    charset(result)       mustBe Some("utf-8")
-//    contentAsString(result) must include(expectedSubstring)
-//    ()
-//  }
-
-//  implicit lazy val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(Seq.empty[Lang])
-
-//  protected def htmlEscapedMessage(key: String): String = HtmlFormat.escape(messages(key)).toString
 
   implicit def hc(implicit request: FakeRequest[?]): HeaderCarrier =
     HeaderCarrierConverter.fromRequest(request)
