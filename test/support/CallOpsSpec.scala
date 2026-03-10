@@ -18,7 +18,7 @@ package support
 
 import com.typesafe.config._
 import org.scalatest.OptionValues
-import org.scalatest.matchers.should.Matchers
+import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.{Configuration, Environment, Mode}
 import support.CallOps.localFriendlyUrl
@@ -33,22 +33,22 @@ class CallOpsSpec extends AnyWordSpecLike with Matchers with OptionValues {
   val devConf: Configuration  = Configuration(ConfigFactory.parseString(""" run.mode = "Dev" """))
   val prodConf: Configuration = Configuration(ConfigFactory.parseString(""" run.mode = "Prod" """))
 
-  "CallOps" should {
+  "CallOps" must {
 
     "return the original url if it is in the test environment" in {
-      localFriendlyUrl(testEnv, devConf)("A", "B") shouldBe "A"
+      localFriendlyUrl(testEnv, devConf)("A", "B") mustBe "A"
     }
 
     "return url string with localhost and port if is in development environment" in {
-      localFriendlyUrl(devEnv, devConf)("A", "B") shouldBe "http://BA"
+      localFriendlyUrl(devEnv, devConf)("A", "B") mustBe "http://BA"
     }
 
     "return the original url if it is in the production environment" in {
-      localFriendlyUrl(prodEnv, prodConf)("A", "B") shouldBe "A"
+      localFriendlyUrl(prodEnv, prodConf)("A", "B") mustBe "A"
     }
 
     "if url is not absolute then return the url regardless of environment" in {
-      localFriendlyUrl(devEnv, devConf)("http://A", "B") shouldBe "http://A"
+      localFriendlyUrl(devEnv, devConf)("http://A", "B") mustBe "http://A"
     }
   }
 }

@@ -73,7 +73,7 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
   val result: StatusCheckResponseWithStatus =
     StatusCheckResponseWithStatus(200, StatusCheckSuccessfulResponse(Some("CorrelationId"), statusCheckResult))
 
-  "statusPublicFundsByNino" should {
+  "statusPublicFundsByNino" must {
     "only access the audit service when the call downstream was successful" in {
       doNothing().when(mockAuditService).auditStatusCheckEvent(any(), any())(any(), any(), any())
       when(mockConnector.statusPublicFundsByNino(any())(any(), any())).thenReturn(Future.successful(result))
@@ -93,7 +93,7 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends ControllerSpec {
 
   }
 
-  "statusPublicFundsByMrz" should {
+  "statusPublicFundsByMrz" must {
     "only access the audit service when the call downstream was successful" in {
       doNothing().when(mockAuditService).auditStatusCheckEvent(any(), any())(any(), any(), any())
       when(mockConnector.statusPublicFundsByMrz(any())(any(), any())).thenReturn(Future.successful(result))

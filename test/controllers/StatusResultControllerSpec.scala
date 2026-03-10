@@ -69,7 +69,7 @@ class StatusResultControllerSpec extends ControllerSpec {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result).get mustBe routes.SearchByNinoController.onPageLoad().url
-        withClue("Connector should not be called") {
+        withClue("Connector must not be called") {
           verify(mockProxyService, times(0)).search(any())(any(), any(), any(), any())
         }
         verify(mockSessionCacheService).get(any(), any())

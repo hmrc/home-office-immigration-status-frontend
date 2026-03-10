@@ -59,7 +59,7 @@ class IdentityDocumentTypeSpec extends ViewSpec {
 
             optionsWithSelected.headOption mustBe Some(("PASSPORT", true))
             optionsWithSelected.tail.foreach { case (option, selected) =>
-              withClue(s"$option was selected when it should not be.") {
+              withClue(s"$option was selected when it must not be.") {
                 selected mustBe false
               }
             }

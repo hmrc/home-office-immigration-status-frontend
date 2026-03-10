@@ -20,17 +20,9 @@ import com.typesafe.config.ConfigException
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.*
 import org.mockito.stubbing.OngoingStubbing
-import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.inject.bind
-import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
-import play.api.test.Injecting
-import play.api.{Application, Environment}
-import repositories.SessionCacheRepository
+import play.api.Environment
 import support.BaseSpec
-import uk.gov.hmrc.mongo.play.PlayMongoModule
-
 import java.io.InputStream
 
 class CountriesSpec extends BaseSpec {
@@ -44,7 +36,7 @@ class CountriesSpec extends BaseSpec {
     super.beforeEach()
   }
 
-  "Countries" should {
+  "Countries" must {
     "throw an exception" when {
       "the canonical list file is not found" in {
         when(mockEnv.resourceAsStream(ArgumentMatchers.eq("location-autocomplete-canonical-list.json")))

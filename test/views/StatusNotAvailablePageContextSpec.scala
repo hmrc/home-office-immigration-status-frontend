@@ -20,7 +20,7 @@ import config.Countries
 import models.{MrzSearchFormModel, NinoSearchFormModel, StatusCheckResult}
 import org.mockito.ArgumentMatchers.{any, matches}
 import org.mockito.Mockito.{RETURNS_DEEP_STUBS, mock, reset, when}
-import org.scalatest.matchers.should.Matchers
+import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -67,7 +67,7 @@ class StatusNotAvailablePageContextSpec
     ()
   }
 
-  "notAvailablePersonalData" should {
+  "notAvailablePersonalData" must {
     "populate the row objects correctly for a nino search" when {
       val dob    = LocalDate.now()
       val query  = NinoSearchFormModel(NinoGenerator.generateNino, "Surname", "Forename", dob)

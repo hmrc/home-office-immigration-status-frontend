@@ -16,7 +16,7 @@
 
 package models
 
-import org.scalatest.matchers.should.Matchers
+import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsError, JsSuccess, Json}
 
@@ -35,14 +35,14 @@ class StatusCheckResponseSpec extends AnyWordSpecLike with Matchers {
       noRecourseToPublicFunds = true
     )
 
-  "StatusCheckErrorResponse" should {
+  "StatusCheckErrorResponse" must {
     "serialize to JSON" when {
       "all fields are defined" in {
         val response = StatusCheckErrorResponse(
           Some("correlationId123"),
           error
         )
-        Json.toJson(response) shouldBe Json.obj(
+        Json.toJson(response) mustBe Json.obj(
           "correlationId" -> "correlationId123",
           "error"         -> Json.toJson(error)
         )
@@ -53,7 +53,7 @@ class StatusCheckResponseSpec extends AnyWordSpecLike with Matchers {
           None,
           error
         )
-        Json.toJson(response) shouldBe Json.obj(
+        Json.toJson(response) mustBe Json.obj(
           "error" -> Json.toJson(error)
         )
       }
@@ -73,7 +73,7 @@ class StatusCheckResponseSpec extends AnyWordSpecLike with Matchers {
             )
           )
         )
-        json.validate[StatusCheckErrorResponse] shouldBe JsSuccess(
+        json.validate[StatusCheckErrorResponse] mustBe JsSuccess(
           StatusCheckErrorResponse(
             Some("correlationId123"),
             error
@@ -93,7 +93,7 @@ class StatusCheckResponseSpec extends AnyWordSpecLike with Matchers {
             )
           )
         )
-        json.validate[StatusCheckErrorResponse] shouldBe JsSuccess(
+        json.validate[StatusCheckErrorResponse] mustBe JsSuccess(
           StatusCheckErrorResponse(
             None,
             error
@@ -106,12 +106,12 @@ class StatusCheckResponseSpec extends AnyWordSpecLike with Matchers {
           "correlationId" -> 12345,
           "error"         -> "Invalid"
         )
-        json.validate[StatusCheckErrorResponse] shouldBe a[JsError]
+        json.validate[StatusCheckErrorResponse] mustBe a[JsError]
       }
     }
   }
 
-  "StatusCheckSuccessfulResponse.writes" should {
+  "StatusCheckSuccessfulResponse.writes" must {
     "Convert to json without the type" in {
       val expected = makeImmigrationStatus()
       val date     = LocalDate.now
@@ -121,7 +121,7 @@ class StatusCheckResponseSpec extends AnyWordSpecLike with Matchers {
         result
       )
 
-      Json.toJson(search) shouldEqual Json.parse(
+      Json.toJson(search) mustEqual Json.parse(
         s"""{"result":{"fullName":"some name","dateOfBirth":"$date","nationality":"some nationality","mostRecentStatus":
            |{"statusStartDate":"$date","productType":"some product type","immigrationStatus":"some immigration status","noRecourseToPublicFunds":true},"previousStatuses":[]},"correlationId":"correlationId"}""".stripMargin
       )

@@ -40,7 +40,7 @@ class MrzSearchSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
 
   lazy implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(Seq.empty)
 
-  "MrzSearch.documentTypeToMessageKey" should {
+  "MrzSearch.documentTypeToMessageKey" must {
     "return the relevant message" when {
 
       Seq(

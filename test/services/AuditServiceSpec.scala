@@ -44,7 +44,7 @@ class AuditServiceSpec extends PlaySpec {
 
   val correlationId: Some[String] = Some("correlationId")
 
-  "auditStatusCheckEvent" should {
+  "auditStatusCheckEvent" must {
 
     "call auditConnector.send" when {
 

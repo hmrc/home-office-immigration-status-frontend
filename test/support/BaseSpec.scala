@@ -57,10 +57,10 @@ trait BaseSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with Bef
   //protected given materializer: Materializer = app.materializer
 
 //  protected def checkHtmlResultWithBodyText(result: Future[Result], expectedSubstring: String): Unit = {
-//    status(result)        shouldBe 200
-//    contentType(result)   shouldBe Some("text/html")
-//    charset(result)       shouldBe Some("utf-8")
-//    contentAsString(result) should include(expectedSubstring)
+//    status(result)        mustBe 200
+//    contentType(result)   mustBe Some("text/html")
+//    charset(result)       mustBe Some("utf-8")
+//    contentAsString(result) must include(expectedSubstring)
 //    ()
 //  }
 

@@ -146,7 +146,7 @@ class SearchByMrzControllerSpec extends ControllerSpec {
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe fakeView.toString
         verify(mockView).apply(refEq(formWithErrors, "mapping"))(ArgumentMatchers.eq(request), any())
-        withClue("The session should contain the valid form answers") {
+        withClue("The session must contain the valid form answers") {
           val updatedSession = await(result).session(request)
           updatedSession.get("query") must not be defined
         }
@@ -168,7 +168,7 @@ class SearchByMrzControllerSpec extends ControllerSpec {
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe fakeView.toString
         verify(mockView).apply(refEq(formWithErrors, "mapping"))(ArgumentMatchers.eq(requestWithForm), any())
-        withClue("The session should contain the valid form answers") {
+        withClue("The session must contain the valid form answers") {
           val updatedSession = await(result).session(request)
           updatedSession.get("query") must not be defined
         }
