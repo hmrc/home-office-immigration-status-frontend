@@ -26,17 +26,19 @@ import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.Application
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.mvc.{Request, Result}
 import play.api.test.Helpers.{charset, contentAsString, contentType, defaultAwaitTimeout, status}
 import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.HtmlFormat
+import repositories.SessionCacheRepository
 import services.AuditService
 import stubs.AuthStubs
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.mongo.play.PlayMongoModule
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 import scala.concurrent.{ExecutionContext, Future}
 
 trait BaseISpec
@@ -50,7 +52,7 @@ trait BaseISpec
     with ScalaFutures
     with IntegrationPatience {
 
-  override def fakeApplication(): Application = appBuilder.build()
+  override lazy val app: Application = appBuilder.build()
 
   given defaultTimeout: FiniteDuration = 5.seconds
 
@@ -61,6 +63,10 @@ trait BaseISpec
       ec: ExecutionContext
     ): Unit = ()
   }
+
+  protected val modules: Seq[GuiceableModule] = Seq(
+    bind[AuditService].toInstance(FakeAuditService)
+  )
 
   protected def appBuilder: GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
@@ -73,10 +79,10 @@ trait BaseISpec
         "microservice.services.auth.port"                                 -> wireMockPort,
         "microservice.services.home-office-immigration-status-proxy.host" -> wireMockHost,
         "microservice.services.home-office-immigration-status-proxy.port" -> wireMockPort
-      )
-      .overrides(
-        bind[AuditService].toInstance(FakeAuditService)
-      )
+      )    
+      .overrides(modules*)
+
+
 
   protected given materializer: Materializer = app.materializer
 

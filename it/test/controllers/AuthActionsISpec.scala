@@ -62,7 +62,7 @@ class AuthActionsISpec extends AuthActionISpecSetup {
 
 trait AuthActionISpecSetup extends BaseISpec with Injecting {
 
-  override def fakeApplication(): Application = appBuilder.build()
+  override lazy val app: Application = appBuilder.build()
 
   given request: FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest().withSession(SessionKeys.authToken -> "Bearer XYZ")
