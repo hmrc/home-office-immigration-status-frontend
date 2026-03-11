@@ -24,15 +24,15 @@ import play.api.libs.ws.DefaultBodyReadables.readableAsString
 
 class ErrorHandlerISpec extends ISpec with HomeOfficeImmigrationStatusStubs {
 
-  "GET /check-immigration-status/foo" should {
+  "GET /check-immigration-status/foo" must {
     "return an error page not found" in {
       givenAuthorisedForStride("TBC", "StrideUserId")
 
       val result = await(request("/foo").get())
 
-      result.status                                       shouldBe NOT_FOUND
-      result.body                                           should include("This page can’t be found")
-      result.headers.get("Cache-Control").map(_.mkString) shouldBe Some("no-cache, no-store, must-revalidate")
+      result.status                                       mustBe NOT_FOUND
+      result.body                                           must include("This page can’t be found")
+      result.headers.get("Cache-Control").map(_.mkString) mustBe Some("no-cache, no-store, must-revalidate")
     }
   }
 

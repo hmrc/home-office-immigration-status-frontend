@@ -34,7 +34,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
 
   "HomeOfficeImmigrationStatusProxyConnector" when {
 
-    "statusPublicFundsByMrz" should {
+    "statusPublicFundsByMrz" must {
 
       "return status when mrz request successful" in {
         givenCheckByMrzSucceeds()
@@ -58,11 +58,11 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
         val expectedResponse =
           StatusCheckResponseWithStatus(OK, StatusCheckSuccessfulResponse(Some(correlationId), expectedResult))
 
-        result shouldBe expectedResponse
+        result mustBe expectedResponse
       }
     }
 
-    "statusPublicFundsByNino" should {
+    "statusPublicFundsByNino" must {
 
       "return status when nino successful" in {
         givenCheckByNinoSucceeds()
@@ -86,7 +86,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
         val expectedResponse =
           StatusCheckResponseWithStatus(OK, StatusCheckSuccessfulResponse(Some(correlationId), expectedResult))
 
-        result shouldBe expectedResponse
+        result mustBe expectedResponse
       }
 
       "return check error when 400 response ERR_REQUEST_INVALID" in {
@@ -99,7 +99,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
           StatusCheckErrorResponse(Some(correlationId), StatusCheckError("ERR_REQUEST_INVALID"))
         )
 
-        result shouldBe expectedResult
+        result mustBe expectedResult
       }
 
       "return check error when 404 response ERR_NOT_FOUND" in {
@@ -112,7 +112,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
           StatusCheckErrorResponse(Some(correlationId), StatusCheckError("ERR_NOT_FOUND"))
         )
 
-        result shouldBe expectedResult
+        result mustBe expectedResult
       }
 
       "return check error when 400 response ERR_VALIDATION" in {
@@ -128,7 +128,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
           )
         )
 
-        result shouldBe expectedResult
+        result mustBe expectedResult
       }
 
       "return check error if invalid JSON body return" in {
@@ -141,7 +141,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
           StatusCheckErrorResponse(Some("some-correlation-id"), StatusCheckError("UNKNOWN_ERROR"))
         )
 
-        result shouldBe expectedResult
+        result mustBe expectedResult
       }
 
       "throw exception if 5xx response" in {
@@ -154,7 +154,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
           StatusCheckErrorResponse(Some("some-correlation-id"), StatusCheckError("UNKNOWN_ERROR"))
         )
 
-        result shouldBe expectedResult
+        result mustBe expectedResult
       }
     }
   }
