@@ -20,6 +20,6 @@
 
 @(id: String, rows: Seq[RowHtml])(implicit messages: Messages)
 
-<dl class="govuk-summary-list" id=@id>
+<dl aria-label="@messages(s"summary.list.aria.label.$id")" class="govuk-summary-list" id=@id>
     @rows.map(_.html)
 </dl>

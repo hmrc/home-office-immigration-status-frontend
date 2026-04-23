@@ -32,4 +32,3 @@ bin
 project/metals.sbt
 .metals/
 /.bsp/
-sm2
