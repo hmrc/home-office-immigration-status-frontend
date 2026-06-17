@@ -17,20 +17,21 @@
 package controllers
 
 import controllers.actions.AccessAction
-import models._
+import models.*
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.mockito.stubbing.OngoingStubbing
 import play.api.Application
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import repositories.SessionCacheRepository
 import services.{HomeOfficeImmigrationStatusProxyService, SessionCacheService}
+import uk.gov.hmrc.mongo.play.PlayMongoModule
 import utils.NinoGenerator.generateNino
-import views.html._
+import views.html.*
 import views.{StatusFoundPageContext, StatusNotAvailablePageContext}
 
 import java.time.LocalDate
@@ -38,7 +39,7 @@ import scala.concurrent.Future
 
 class StatusResultControllerSpec extends ControllerSpec {
 
-  lazy val sut: StatusResultController = inject[StatusResultController]
+  lazy val sut: StatusResultController = app.injector.instanceOf[StatusResultController]
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
@@ -47,6 +48,7 @@ class StatusResultControllerSpec extends ControllerSpec {
       bind[SessionCacheRepository].toInstance(mockSessionCacheRepository),
       bind[SessionCacheService].toInstance(mockSessionCacheService)
     )
+    .disable[PlayMongoModule]
     .build()
 
   override def beforeEach(): Unit = {
@@ -67,7 +69,7 @@ class StatusResultControllerSpec extends ControllerSpec {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result).get mustBe routes.SearchByNinoController.onPageLoad().url
-        withClue("Connector should not be called") {
+        withClue("Connector must not be called") {
           verify(mockProxyService, times(0)).search(any())(any(), any(), any(), any())
         }
         verify(mockSessionCacheService).get(any(), any())
@@ -104,7 +106,7 @@ class StatusResultControllerSpec extends ControllerSpec {
         val result = sut.onPageLoad()(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe inject[StatusFoundPage]
+        contentAsString(result) mustBe app.injector.instanceOf[StatusFoundPage]
           .apply(StatusFoundPageContext(query, hoResult))(request, messages)
           .toString
         verifyConnector()
@@ -121,7 +123,7 @@ class StatusResultControllerSpec extends ControllerSpec {
         val result = sut.onPageLoad()(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe inject[StatusNotAvailablePage]
+        contentAsString(result) mustBe app.injector.instanceOf[StatusNotAvailablePage]
           .apply(StatusNotAvailablePageContext(query, hoResult))(request, messages)
           .toString
         verifyConnector()
@@ -140,7 +142,7 @@ class StatusResultControllerSpec extends ControllerSpec {
         val result = sut.onPageLoad()(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe inject[StatusCheckFailurePage]
+        contentAsString(result) mustBe app.injector.instanceOf[StatusCheckFailurePage]
           .apply(query)(request, messages)
           .toString
         verifyConnector()
@@ -159,7 +161,7 @@ class StatusResultControllerSpec extends ControllerSpec {
         val result = sut.onPageLoad()(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe inject[StatusCheckFailurePage]
+        contentAsString(result) mustBe app.injector.instanceOf[StatusCheckFailurePage]
           .apply(query)(request, messages)
           .toString
         verifyConnector()
@@ -179,7 +181,7 @@ class StatusResultControllerSpec extends ControllerSpec {
         val result = sut.onPageLoad()(request)
 
         status(result) mustBe INTERNAL_SERVER_ERROR
-        contentAsString(result) mustBe inject[ExternalErrorPage]
+        contentAsString(result) mustBe app.injector.instanceOf[ExternalErrorPage]
           .apply()(request, messages)
           .toString
         verifyConnector()

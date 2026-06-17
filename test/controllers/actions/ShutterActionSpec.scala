@@ -23,11 +23,12 @@ import play.api.Application
 import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.Results._
+import play.api.mvc.Results.*
 import play.api.mvc.{AnyContentAsEmpty, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.contentAsString
 import repositories.SessionCacheRepository
+import uk.gov.hmrc.mongo.play.PlayMongoModule
 import views.html.ShutteringPage
 
 import scala.concurrent.Future
@@ -41,13 +42,14 @@ class ShutterActionSpec extends ControllerSpec {
       bind[AppConfig].toInstance(mockAppConfig),
       bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
     )
+    .disable[PlayMongoModule]
     .build()
 
   implicit val req: FakeRequest[AnyContentAsEmpty.type] = request
   implicit val mess: Messages                           = messages
-  lazy val shutteringPage: ShutteringPage               = inject[ShutteringPage]
+  lazy val shutteringPage: ShutteringPage               = app.injector.instanceOf[ShutteringPage]
 
-  lazy val shutterAction: ShutterAction = inject[ShutterAction]
+  lazy val shutterAction: ShutterAction = app.injector.instanceOf[ShutterAction]
 
   override def beforeEach(): Unit = {
     super.beforeEach()

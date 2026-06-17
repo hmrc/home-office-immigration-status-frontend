@@ -16,22 +16,21 @@
 
 package models
 
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsError, JsSuccess, Json}
+import support.BaseSpec
 
 import java.time.LocalDate
 
-class ImmigrationStatusSpec extends AnyWordSpecLike with Matchers {
+class ImmigrationStatusSpec extends BaseSpec {
 
   val startDate: LocalDate = LocalDate.parse("2012-01-01")
   val endDate: LocalDate   = LocalDate.parse("2013-01-01")
 
-  "ImmigrationStatus" should {
+  "ImmigrationStatus" must {
     "serialize to JSON" when {
       "all fields are defined" in {
         val status = ImmigrationStatus(startDate, Some(endDate), "product", "status", true)
-        Json.toJson(status) shouldBe Json.obj(
+        Json.toJson(status) mustBe Json.obj(
           "productType"             -> "product",
           "statusEndDate"           -> "2013-01-01",
           "statusStartDate"         -> "2012-01-01",
@@ -50,14 +49,14 @@ class ImmigrationStatusSpec extends AnyWordSpecLike with Matchers {
           "immigrationStatus"       -> "status",
           "noRecourseToPublicFunds" -> true
         )
-        json.validate[ImmigrationStatus] shouldBe JsSuccess(
+        json.validate[ImmigrationStatus] mustBe JsSuccess(
           ImmigrationStatus(startDate, Some(endDate), "product", "status", true)
         )
       }
 
       "fields are empty" in {
         val json = Json.obj()
-        json.validate[ImmigrationStatus] shouldBe a[JsError]
+        json.validate[ImmigrationStatus] mustBe a[JsError]
       }
 
       "invalid field types" in {
@@ -68,7 +67,7 @@ class ImmigrationStatusSpec extends AnyWordSpecLike with Matchers {
           "immigrationStatus"       -> 0,
           "noRecourseToPublicFunds" -> 0
         )
-        json.validate[ImmigrationStatus] shouldBe a[JsError]
+        json.validate[ImmigrationStatus] mustBe a[JsError]
       }
     }
   }

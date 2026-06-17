@@ -17,7 +17,7 @@
 package controllers.actions
 
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.matchers.should.Matchers
+import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.HeaderNames
 import play.api.mvc.Result
@@ -65,14 +65,14 @@ class AuthRedirectsSpec extends AnyWordSpec with ScalaFutures with Matchers {
     object Redirect extends TestRedirects
 
     def validate(redirect: Result)(expectedLocation: String): Unit = {
-      redirect.header.status                        shouldBe 303
-      redirect.header.headers(HeaderNames.LOCATION) shouldBe expectedLocation
+      redirect.header.status                        mustBe 303
+      redirect.header.headers(HeaderNames.LOCATION) mustBe expectedLocation
       ()
     }
   }
 
   "AuthRedirects" when {
-    "redirecting with defaults from config" should {
+    "redirecting with defaults from config" must {
       "redirect to GG login in Dev" in new Setup with Dev {
         validate(Redirect.toGGLogin("/continue"))(
           expectedLocation = s"$ggLoginService$ggLoginPath?continue_url=%2Fcontinue&origin=app"

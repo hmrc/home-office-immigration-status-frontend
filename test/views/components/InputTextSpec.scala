@@ -32,7 +32,7 @@ class InputTextSpec extends ViewSpec {
 
   private val form: Form[NinoSearchFormModel] = new SearchByNinoForm()()
 
-  private val sut: inputText = inject[inputText]
+  private val sut: inputText = app.injector.instanceOf[inputText]
 
   private val viewViaApply: HtmlFormat.Appendable = sut.apply(
     form = form,

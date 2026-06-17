@@ -16,7 +16,6 @@
 
 package views
 
-import java.time.LocalDate
 import forms.SearchByNinoForm
 import models.NinoSearchFormModel
 import org.jsoup.nodes.Document
@@ -25,9 +24,11 @@ import play.twirl.api.HtmlFormat
 import utils.NinoGenerator.generateNino
 import views.html.SearchByNinoView
 
+import java.time.LocalDate
+
 class SearchByNinoViewSpec extends ViewSpec {
 
-  private lazy val sut: SearchByNinoView = inject[SearchByNinoView]
+  private lazy val sut: SearchByNinoView = app.injector.instanceOf[SearchByNinoView]
 
   private val ninoSearchFormModel: NinoSearchFormModel = NinoSearchFormModel(
     nino = generateNino,
@@ -37,14 +38,16 @@ class SearchByNinoViewSpec extends ViewSpec {
   )
 
   private val form: Form[NinoSearchFormModel] = new SearchByNinoForm()().fill(ninoSearchFormModel)
+  private val formWithErrors: Form[NinoSearchFormModel] = new SearchByNinoForm()().bind(Map.empty)
 
-  private val viewViaApply: HtmlFormat.Appendable  = sut.apply(form)(request, messages)
-  private val viewViaRender: HtmlFormat.Appendable = sut.render(form, request, messages)
-  private val viewViaF: HtmlFormat.Appendable      = sut.f(form)(request, messages)
+  private def viewViaApply(form: Form[NinoSearchFormModel]): HtmlFormat.Appendable = sut.apply(form)(request, messages)
+  private def viewViaRender(form: Form[NinoSearchFormModel]): HtmlFormat.Appendable =
+    sut.render(form, request, messages)
+  private def viewViaF(form: Form[NinoSearchFormModel]): HtmlFormat.Appendable = sut.f(form)(request, messages)
 
   "SearchByNinoView" when {
     def test(method: String, view: HtmlFormat.Appendable): Unit =
-      s"$method" must {
+      s"$method when no errors" must {
         val doc: Document = asDocument(view)
         "have the title and heading" in {
           assertElementHasText(doc, "title", "Search by National Insurance number - Check immigration status - GOV.UK")
@@ -89,12 +92,27 @@ class SearchByNinoViewSpec extends ViewSpec {
         }
       }
 
-    val input: Seq[(String, HtmlFormat.Appendable)] = Seq(
-      (".apply", viewViaApply),
-      (".render", viewViaRender),
-      (".f", viewViaF)
-    )
+    Seq(
+      (".apply", viewViaApply(form)),
+      (".render", viewViaRender(form)),
+      (".f", viewViaF(form))
+    ).foreach(args => test.tupled(args))
 
-    input.foreach(args => test.tupled(args))
+    Seq(
+      (".apply", viewViaApply(formWithErrors)),
+      (".render", viewViaRender(formWithErrors)),
+      (".f", viewViaF(formWithErrors))
+    ).foreach { case (method, view) =>
+      s"$method when errors" must {
+        val doc: Document = asDocument(view)
+        "have the title and heading indicating errors" in {
+          assertElementHasText(
+            doc,
+            "title",
+            "Error: Search by National Insurance number - Check immigration status - GOV.UK"
+          )
+        }
+      }
+    }
   }
 }

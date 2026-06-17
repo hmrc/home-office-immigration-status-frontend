@@ -16,16 +16,15 @@
 
 package models
 
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsError, JsSuccess, Json}
+import support.BaseSpec
 
-class StatusCheckErrorSpec extends AnyWordSpecLike with Matchers {
-  "StatusCheckError" should {
+class StatusCheckErrorSpec extends BaseSpec {
+  "StatusCheckError" must {
     "serialize to JSON" when {
       "all fields are defined" in {
         val error = StatusCheckError("404", Some(List(FieldError("error1", "field1"))))
-        Json.toJson(error) shouldBe Json.obj(
+        Json.toJson(error) mustBe Json.obj(
           "errCode" -> "404",
           "fields" -> Json.arr(
             Json.obj(
@@ -38,14 +37,14 @@ class StatusCheckErrorSpec extends AnyWordSpecLike with Matchers {
 
       "fields are empty" in {
         val error = StatusCheckError("404", None)
-        Json.toJson(error) shouldBe Json.obj(
+        Json.toJson(error) mustBe Json.obj(
           "errCode" -> "404"
         )
       }
 
       "fields are empty2" in {
         val error = StatusCheckError("404")
-        Json.toJson(error) shouldBe Json.obj(
+        Json.toJson(error) mustBe Json.obj(
           "errCode" -> "404"
         )
       }
@@ -62,7 +61,7 @@ class StatusCheckErrorSpec extends AnyWordSpecLike with Matchers {
             )
           )
         )
-        json.validate[StatusCheckError] shouldBe JsSuccess(
+        json.validate[StatusCheckError] mustBe JsSuccess(
           StatusCheckError("404", Some(List(FieldError("error1", "field1"))))
         )
       }
@@ -71,7 +70,7 @@ class StatusCheckErrorSpec extends AnyWordSpecLike with Matchers {
         val json = Json.obj(
           "errCode" -> ""
         )
-        json.validate[StatusCheckError] shouldBe JsSuccess(StatusCheckError("", None))
+        json.validate[StatusCheckError] mustBe JsSuccess(StatusCheckError("", None))
       }
 
       "invalid field types" in {
@@ -84,7 +83,7 @@ class StatusCheckErrorSpec extends AnyWordSpecLike with Matchers {
             )
           )
         )
-        json.validate[StatusCheckError] shouldBe a[JsError]
+        json.validate[StatusCheckError] mustBe a[JsError]
       }
     }
   }

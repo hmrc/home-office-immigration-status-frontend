@@ -24,7 +24,7 @@ import views.ViewSpec
 
 class ErrorSummarySpec extends ViewSpec {
 
-  private val sut: errorSummary = inject[errorSummary]
+  private val sut: errorSummary = app.injector.instanceOf[errorSummary]
 
   private val errors: Seq[FormError] = Seq(FormError("nino", List("error.nino.required")))
 

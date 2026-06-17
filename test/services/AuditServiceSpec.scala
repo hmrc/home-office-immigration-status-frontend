@@ -16,15 +16,16 @@
 
 package services
 
-import models._
+import models.*
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.scalatestplus.play.PlaySpec
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.JsObject
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
+import support.BaseSpec
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 
@@ -32,7 +33,7 @@ import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, ZoneId}
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class AuditServiceSpec extends PlaySpec {
+class AuditServiceSpec extends BaseSpec {
 
   val mockAuditConnector: AuditConnector                    = mock(classOf[AuditConnector])
   val sut                                                   = new AuditServiceImpl(mockAuditConnector)
@@ -44,7 +45,7 @@ class AuditServiceSpec extends PlaySpec {
 
   val correlationId: Some[String] = Some("correlationId")
 
-  "auditStatusCheckEvent" should {
+  "auditStatusCheckEvent" must {
 
     "call auditConnector.send" when {
 

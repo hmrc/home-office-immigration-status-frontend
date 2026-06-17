@@ -25,7 +25,7 @@ import views.html.components.HossSummaryList
 
 class HossSummaryListSpec extends ViewSpec {
 
-  private val sut: HossSummaryList = inject[HossSummaryList]
+  private val sut: HossSummaryList = app.injector.instanceOf[HossSummaryList]
 
   private def mkRow(i: Int): RowViewModel = RowViewModel(i.toString, s"message.$i", s"data$i")
 

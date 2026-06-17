@@ -36,12 +36,12 @@ import scala.concurrent.Future
 
 class AuthActionSpec extends ControllerSpec with AuthRedirects {
 
-  def config: Configuration = inject[Configuration]
-  def env: Environment      = inject[Environment]
+  def config: Configuration = app.injector.instanceOf[Configuration]
+  def env: Environment      = app.injector.instanceOf[Environment]
 
   private lazy val mockAuthConnector: AuthConnector = mock(classOf[AuthConnector])
   private lazy val mockAppConfig: AppConfig         = mock(classOf[AppConfig])
-  private lazy val parser: BodyParsers.Default      = inject[BodyParsers.Default]
+  private lazy val parser: BodyParsers.Default      = app.injector.instanceOf[BodyParsers.Default]
 
   private lazy val sut: AuthActionImpl = new AuthActionImpl(
     env = env,

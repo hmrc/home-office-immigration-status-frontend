@@ -25,7 +25,7 @@ import views.html.StatusNotAvailablePage
 
 class StatusNotAvailablePageViewSpec extends ViewSpec {
 
-  private lazy val sut: StatusNotAvailablePage = inject[StatusNotAvailablePage]
+  private lazy val sut: StatusNotAvailablePage = app.injector.instanceOf[StatusNotAvailablePage]
 
   private val bulletPointContent: List[(Int, String)] = List(
     (1, "their status expired more than six months ago"),

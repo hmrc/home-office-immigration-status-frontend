@@ -16,31 +16,33 @@
 
 package support
 
-import models.{Search, StatusCheckResponseWithStatus}
+import models.{FormQueryModel, Search, StatusCheckResponseWithStatus}
 import org.apache.pekko.stream.Materializer
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpecLike
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
-import play.api.Application
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.mvc.{Request, Result}
 import play.api.test.Helpers.{charset, contentAsString, contentType, defaultAwaitTimeout, status}
 import play.api.test.{FakeRequest, Injecting}
+import play.api.{Application, Environment}
 import play.twirl.api.HtmlFormat
+import repositories.*
 import services.AuditService
 import stubs.AuthStubs
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.mongo.MongoComponent
+import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 import scala.concurrent.{ExecutionContext, Future}
-
 trait BaseISpec
-    extends AnyWordSpecLike
+    extends AnyWordSpec
     with Matchers
     with GuiceOneServerPerSuite
     with OptionValues
@@ -48,9 +50,14 @@ trait BaseISpec
     with AuthStubs
     with Injecting
     with ScalaFutures
-    with IntegrationPatience {
+    with IntegrationPatience
+    with DefaultPlayMongoRepositorySupport[FormQueryModel] {
 
-  override def fakeApplication(): Application = appBuilder.build()
+  override protected def checkIndexedQueries = false
+
+  override lazy val app: Application = appBuilder.build()
+
+  override val repository: SessionCacheRepositoryImpl = app.injector.instanceOf[SessionCacheRepositoryImpl]
 
   given defaultTimeout: FiniteDuration = 5.seconds
 
@@ -63,28 +70,30 @@ trait BaseISpec
   }
 
   protected def appBuilder: GuiceApplicationBuilder =
-    new GuiceApplicationBuilder()
-      .configure(
-        "auditing.enabled"                                                -> false,
-        "metrics.enabled"                                                 -> false,
-        "isShuttered"                                                     -> false,
-        "play.filters.csrf.header.bypassHeaders.Csrf-Token"               -> "nocheck",
-        "microservice.services.auth.host"                                 -> wireMockHost,
-        "microservice.services.auth.port"                                 -> wireMockPort,
-        "microservice.services.home-office-immigration-status-proxy.host" -> wireMockHost,
-        "microservice.services.home-office-immigration-status-proxy.port" -> wireMockPort
+    GuiceApplicationBuilder(
+      environment = Environment.simple(),
+      overrides = Seq(
+        bind[AuditService].toInstance(FakeAuditService),
+        bind[MongoComponent].toInstance(mongoComponent)
       )
-      .overrides(
-        bind[AuditService].toInstance(FakeAuditService)
-      )
+    ).configure(
+      "auditing.enabled"                                                -> false,
+      "metrics.enabled"                                                 -> false,
+      "isShuttered"                                                     -> false,
+      "play.filters.csrf.header.bypassHeaders.Csrf-Token"               -> "nocheck",
+      "microservice.services.auth.host"                                 -> wireMockHost,
+      "microservice.services.auth.port"                                 -> wireMockPort,
+      "microservice.services.home-office-immigration-status-proxy.host" -> wireMockHost,
+      "microservice.services.home-office-immigration-status-proxy.port" -> wireMockPort
+    )
 
   protected given materializer: Materializer = app.materializer
 
   protected def checkHtmlResultWithBodyText(result: Future[Result], expectedSubstring: String): Unit = {
-    status(result)        shouldBe 200
-    contentType(result)   shouldBe Some("text/html")
-    charset(result)       shouldBe Some("utf-8")
-    contentAsString(result) should include(expectedSubstring)
+    status(result) mustBe 200
+    contentType(result) mustBe Some("text/html")
+    charset(result) mustBe Some("utf-8")
+    contentAsString(result) must include(expectedSubstring)
     ()
   }
 

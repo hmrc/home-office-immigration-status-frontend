@@ -22,7 +22,7 @@ import views.html.error_template
 
 class ErrorTemplateViewSpec extends ViewSpec {
 
-  private val sut: error_template = inject[error_template]
+  private val sut: error_template = app.injector.instanceOf[error_template]
 
   private val pageTitle: String = "Sorry, there is a problem with the service"
   private val heading: String   = "Sorry, there is a problem with the service"

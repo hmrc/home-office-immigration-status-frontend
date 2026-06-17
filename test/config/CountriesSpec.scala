@@ -18,31 +18,16 @@ package config
 
 import com.typesafe.config.ConfigException
 import org.mockito.ArgumentMatchers
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.mockito.stubbing.OngoingStubbing
-import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.test.Injecting
-import play.api.{Application, Environment}
-import repositories.SessionCacheRepository
-
+import play.api.Environment
+import support.BaseSpec
 import java.io.InputStream
 
-class CountriesSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with BeforeAndAfterEach {
-
-  val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
-
-  override implicit lazy val app: Application = new GuiceApplicationBuilder()
-    .overrides(
-      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
-    )
-    .build()
-
-  val mockEnv: Environment  = mock(classOf[Environment])
-  lazy val env: Environment = inject[Environment]
+class CountriesSpec extends BaseSpec {
+  private val mockEnv: Environment  = mock(classOf[Environment])
+  private lazy val env: Environment = app.injector.instanceOf[Environment]
 
   override protected def beforeEach(): Unit = {
     reset(mockEnv)
@@ -51,7 +36,7 @@ class CountriesSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting wit
     super.beforeEach()
   }
 
-  "Countries" should {
+  "Countries" must {
     "throw an exception" when {
       "the canonical list file is not found" in {
         when(mockEnv.resourceAsStream(ArgumentMatchers.eq("location-autocomplete-canonical-list.json")))

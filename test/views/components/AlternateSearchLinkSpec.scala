@@ -27,7 +27,7 @@ class AlternateSearchLinkSpec extends ViewSpec {
   private val url: String     = "/some/url"
   private val id: String      = "link-id"
 
-  private val sut: AlternateSearchLink = inject[AlternateSearchLink]
+  private val sut: AlternateSearchLink = app.injector.instanceOf[AlternateSearchLink]
 
   private val viewViaApply: HtmlFormat.Appendable  = sut.apply(message, url, id)(messages)
   private val viewViaRender: HtmlFormat.Appendable = sut.render(message, url, id, messages)

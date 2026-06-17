@@ -27,7 +27,7 @@ import java.time.LocalDate
 
 class StatusResultISpec extends ISpec with HomeOfficeImmigrationStatusStubs {
 
-  "GET /check-immigration-status/status-result" should {
+  "GET /check-immigration-status/status-result" must {
     "POST to the HO and show match found" in {
       givenCheckByNinoSucceeds()
       givenAuthorisedForStride("TBC", "StrideUserId")
@@ -38,9 +38,9 @@ class StatusResultISpec extends ISpec with HomeOfficeImmigrationStatusStubs {
 
       val result = await(requestWithSession("/status-result", sessionId).get())
 
-      result.status                                       shouldBe OK
-      result.body                                           should include(htmlEscapedMessage("status-found.title"))
-      result.headers.get("Cache-Control").map(_.mkString) shouldBe Some("no-cache, no-store, must-revalidate")
+      result.status                                       mustBe OK
+      result.body                                           must include(htmlEscapedMessage("status-found.title"))
+      result.headers.get("Cache-Control").map(_.mkString) mustBe Some("no-cache, no-store, must-revalidate")
     }
 
     "POST to the HO and show error page" in {
@@ -53,12 +53,12 @@ class StatusResultISpec extends ISpec with HomeOfficeImmigrationStatusStubs {
 
       val result = await(requestWithSession("/status-result", sessionId).get())
 
-      result.status shouldBe INTERNAL_SERVER_ERROR
-      result.body     should include(htmlEscapedMessage("external.error.500.title"))
-      result.body     should include(htmlEscapedMessage("external.error.500.message"))
-      result.body     should include(htmlEscapedMessage("external.error.500.helpdesk-link"))
-      result.body     should include(htmlEscapedMessage("external.error.500.helpdesk-text"))
-      result.headers.get("Cache-Control").map(_.mkString) shouldBe Some("no-cache, no-store, must-revalidate")
+      result.status mustBe INTERNAL_SERVER_ERROR
+      result.body     must include(htmlEscapedMessage("external.error.500.title"))
+      result.body     must include(htmlEscapedMessage("external.error.500.message"))
+      result.body     must include(htmlEscapedMessage("external.error.500.helpdesk-link"))
+      result.body     must include(htmlEscapedMessage("external.error.500.helpdesk-text"))
+      result.headers.get("Cache-Control").map(_.mkString) mustBe Some("no-cache, no-store, must-revalidate")
     }
   }
 }

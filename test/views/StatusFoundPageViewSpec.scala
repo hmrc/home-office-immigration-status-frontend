@@ -25,7 +25,7 @@ import views.html.StatusFoundPage
 
 class StatusFoundPageViewSpec extends ViewSpec {
 
-  private val sut: StatusFoundPage = inject[StatusFoundPage]
+  private val sut: StatusFoundPage = app.injector.instanceOf[StatusFoundPage]
 
   private def statusList(
     fillNumber: Int = 1,

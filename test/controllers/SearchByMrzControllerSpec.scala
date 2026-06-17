@@ -21,7 +21,7 @@ import forms.SearchByMRZForm
 import models.MrzSearchFormModel
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import play.api.Application
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -29,7 +29,9 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.{Html, HtmlFormat}
+import repositories.SessionCacheRepository
 import services.SessionCacheService
+import uk.gov.hmrc.mongo.play.PlayMongoModule
 import views.html.SearchByMrzView
 
 import java.time.LocalDate
@@ -41,11 +43,13 @@ class SearchByMrzControllerSpec extends ControllerSpec {
     .overrides(
       bind[AccessAction].to[FakeAccessAction],
       bind[SearchByMrzView].toInstance(mockView),
+      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository),
       bind[SessionCacheService].toInstance(mockSessionCacheService)
     )
+    .disable[PlayMongoModule]
     .build()
 
-  lazy val sut: SearchByMrzController = inject[SearchByMrzController]
+  lazy val sut: SearchByMrzController = app.injector.instanceOf[SearchByMrzController]
   val mockView: SearchByMrzView       = mock(classOf[SearchByMrzView])
   val fakeView: Html                  = HtmlFormat.escape("Correct Form View")
 
@@ -58,7 +62,7 @@ class SearchByMrzControllerSpec extends ControllerSpec {
 
   "onPageLoad" must {
     val query      = MrzSearchFormModel("docType", "docNum", LocalDate.now(), "nationality")
-    val emptyForm  = inject[SearchByMRZForm].apply()
+    val emptyForm  = app.injector.instanceOf[SearchByMRZForm].apply()
     val prePopForm = emptyForm.fill(query)
 
     "display the search by mrz form view" when {
@@ -133,7 +137,7 @@ class SearchByMrzControllerSpec extends ControllerSpec {
     }
 
     "return the errored form" when {
-      val formProvider = inject[SearchByMRZForm]
+      val formProvider = app.injector.instanceOf[SearchByMRZForm]
       val form         = formProvider.apply()
       "the submitted form is empty" in {
         val result         = sut.onSubmit(request)
@@ -142,7 +146,7 @@ class SearchByMrzControllerSpec extends ControllerSpec {
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe fakeView.toString
         verify(mockView).apply(refEq(formWithErrors, "mapping"))(ArgumentMatchers.eq(request), any())
-        withClue("The session should contain the valid form answers") {
+        withClue("The session must contain the valid form answers") {
           val updatedSession = await(result).session(request)
           updatedSession.get("query") must not be defined
         }
@@ -164,7 +168,7 @@ class SearchByMrzControllerSpec extends ControllerSpec {
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe fakeView.toString
         verify(mockView).apply(refEq(formWithErrors, "mapping"))(ArgumentMatchers.eq(requestWithForm), any())
-        withClue("The session should contain the valid form answers") {
+        withClue("The session must contain the valid form answers") {
           val updatedSession = await(result).session(request)
           updatedSession.get("query") must not be defined
         }

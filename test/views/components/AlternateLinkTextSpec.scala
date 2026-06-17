@@ -23,7 +23,7 @@ import views.html.components.AlternateLinkText
 
 class AlternateLinkTextSpec extends ViewSpec {
 
-  private val sut: AlternateLinkText = inject[AlternateLinkText]
+  private val sut: AlternateLinkText = app.injector.instanceOf[AlternateLinkText]
 
   private val viewViaApply: HtmlFormat.Appendable  = sut.apply(isNinoSearch = true)(messages)
   private val viewViaRender: HtmlFormat.Appendable = sut.render(isNinoSearch = true, messages)
