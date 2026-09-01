@@ -4,7 +4,7 @@ import scala.collection.immutable.Seq
 
 val appName = "home-office-immigration-status-frontend"
 
-ThisBuild / scalaVersion := "3.5.1"
+ThisBuild / scalaVersion := "3.3.6"
 ThisBuild / majorVersion := 0
 
 val commonSettings: Seq[String] = Seq(

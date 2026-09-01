@@ -111,19 +111,25 @@ class InputDateSpec extends ViewSpec {
         "have the error class for day" in {
           docWithInvalidForm
             .getElementById("dateOfBirth.day")
-            .attr("class") mustBe "govuk-input govuk-date-input__input govuk-input--width-2 govuk-input--error"
+            .attr("class")
+            .split(" +")
+            .toSeq mustBe Seq("govuk-input", "govuk-date-input__input", "govuk-input--width-2", "govuk-input--error")
         }
 
         "have the error class for month" in {
           docWithInvalidForm
             .getElementById("dateOfBirth.month")
-            .attr("class") mustBe "govuk-input govuk-date-input__input govuk-input--width-2 govuk-input--error"
+            .attr("class")
+            .split(" +")
+            .toSeq mustBe Seq("govuk-input", "govuk-date-input__input", "govuk-input--width-2", "govuk-input--error")
         }
 
         "have the error class for year" in {
           docWithInvalidForm
             .getElementById("dateOfBirth.year")
-            .attr("class") mustBe "govuk-input govuk-date-input__input govuk-input--width-4 govuk-input--error"
+            .attr("class")
+            .split(" +")
+            .toSeq mustBe Seq("govuk-input", "govuk-date-input__input", "govuk-input--width-4", "govuk-input--error")
         }
       }
 
