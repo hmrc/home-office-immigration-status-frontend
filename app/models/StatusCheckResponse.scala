@@ -18,6 +18,8 @@ package models
 
 import play.api.libs.json.{Json, OFormat, Reads, Writes}
 
+import scala.annotation.nowarn
+
 
 final case class StatusCheckResponseWithStatus(statusCode: Int, statusCheckResponse: StatusCheckResponse)
 
@@ -26,6 +28,7 @@ sealed trait StatusCheckResponse {
 }
 
 object StatusCheckResponse {
+  @nowarn("msg=Unreachable case except for null")
   given statusCheckResponseWrites: OFormat[StatusCheckResponse] = Json.format[StatusCheckResponse]
 }
 
