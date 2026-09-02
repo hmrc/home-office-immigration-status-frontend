@@ -4,7 +4,7 @@ import scala.collection.immutable.Seq
 
 val appName = "home-office-immigration-status-frontend"
 
-ThisBuild / scalaVersion := "3.5.1"
+ThisBuild / scalaVersion := "3.3.6"
 ThisBuild / majorVersion := 0
 
 val commonSettings: Seq[String] = Seq(
@@ -18,6 +18,7 @@ val commonSettings: Seq[String] = Seq(
   "-Wconf:src=views/.*txt.*:s",
   "-Wconf:msg=unused import&src=conf/.*:s",
   "-Wconf:msg=unused import&src=views/.*:s",
+  "-Wconf:msg=Unreachable case except for null&src=models/.*:s",
   "-Wconf:msg=Flag.*repeatedly:s",
   "-Wunused:unsafe-warn-patvars"
 )
