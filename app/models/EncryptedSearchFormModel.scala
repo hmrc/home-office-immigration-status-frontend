@@ -20,12 +20,9 @@ import play.api.libs.json.{Format, Json, OFormat}
 import uk.gov.hmrc.crypto.EncryptedValue
 import uk.gov.hmrc.crypto.json.CryptoFormats
 
-import scala.annotation.nowarn
-
 sealed trait EncryptedSearchFormModel
 
 object EncryptedSearchFormModel {
-  @nowarn("msg=Unreachable case except for null")
   given encryptedSearchFormModelFormat: OFormat[EncryptedSearchFormModel] = Json.format[EncryptedSearchFormModel]
 }
 
