@@ -68,8 +68,8 @@ class SearchByMrzController @Inject() (
         .bindFromRequest()
         .fold(
           form => {
-            val dobErrorsCollated = formProvider.collateDOBErrors(form)
-            Future.successful(BadRequest(view(dobErrorsCollated)))
+            val collatedErrors = formProvider.collateDOBErrors(form)
+            Future.successful(BadRequest(view(collatedErrors)))
           },
           query =>
             for {
