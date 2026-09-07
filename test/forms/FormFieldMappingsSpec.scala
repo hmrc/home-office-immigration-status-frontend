@@ -24,10 +24,7 @@ import play.api.data.validation.Invalid
 import play.api.data.{Form, FormError, Forms, Mapping}
 import support.BaseSpec
 
-class FormFieldMappingsSpec
-    extends BaseSpec
-    with FormFieldMappings
-    with ScalaCheckDrivenPropertyChecks {
+class FormFieldMappingsSpec extends BaseSpec with FormFieldMappings with ScalaCheckDrivenPropertyChecks {
 
   def validateName(errorName: String, len: Int): Mapping[String] = validName(fieldName = errorName, minLenInc = len)
   val invalid: Invalid                                           = Invalid("error.bar.invalid-format")
@@ -101,8 +98,8 @@ class FormFieldMappingsSpec
       form("foo", 2).bind(testFormFill("")).errors mustBe List(FormError("foo", List("error.foo.required"), Seq()))
       form("foo", 1).bind(testFormFill("")).errors mustBe List(FormError("foo", List("error.foo.required"), Seq()))
 
-      form("1", 2).bind(testFormFill("")).errors  mustBe List(FormError("1", List("error.1.required"), Seq()))
-      form("1", 1).bind(testFormFill("")).errors  mustBe List(FormError("1", List("error.1.required"), Seq()))
+      form("1", 2).bind(testFormFill("")).errors mustBe List(FormError("1", List("error.1.required"), Seq()))
+      form("1", 1).bind(testFormFill("")).errors mustBe List(FormError("1", List("error.1.required"), Seq()))
       form("a1", 2).bind(testFormFill("")).errors mustBe List(FormError("a1", List("error.a1.required"), Seq()))
       form("a1", 1).bind(testFormFill("")).errors mustBe List(FormError("a1", List("error.a1.required"), Seq()))
       form("1a", 2).bind(testFormFill("")).errors mustBe List(FormError("1a", List("error.1a.required"), Seq()))

@@ -65,7 +65,7 @@ class AuthRedirectsSpec extends AnyWordSpec with ScalaFutures with Matchers {
     object Redirect extends TestRedirects
 
     def validate(redirect: Result)(expectedLocation: String): Unit = {
-      redirect.header.status                        mustBe 303
+      redirect.header.status mustBe 303
       redirect.header.headers(HeaderNames.LOCATION) mustBe expectedLocation
       ()
     }

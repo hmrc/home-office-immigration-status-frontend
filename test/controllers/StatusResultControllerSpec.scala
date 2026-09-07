@@ -106,7 +106,8 @@ class StatusResultControllerSpec extends ControllerSpec {
         val result = sut.onPageLoad()(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe app.injector.instanceOf[StatusFoundPage]
+        contentAsString(result) mustBe app.injector
+          .instanceOf[StatusFoundPage]
           .apply(StatusFoundPageContext(query, hoResult))(request, messages)
           .toString
         verifyConnector()
@@ -123,7 +124,8 @@ class StatusResultControllerSpec extends ControllerSpec {
         val result = sut.onPageLoad()(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe app.injector.instanceOf[StatusNotAvailablePage]
+        contentAsString(result) mustBe app.injector
+          .instanceOf[StatusNotAvailablePage]
           .apply(StatusNotAvailablePageContext(query, hoResult))(request, messages)
           .toString
         verifyConnector()
@@ -142,7 +144,8 @@ class StatusResultControllerSpec extends ControllerSpec {
         val result = sut.onPageLoad()(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe app.injector.instanceOf[StatusCheckFailurePage]
+        contentAsString(result) mustBe app.injector
+          .instanceOf[StatusCheckFailurePage]
           .apply(query)(request, messages)
           .toString
         verifyConnector()
@@ -161,7 +164,8 @@ class StatusResultControllerSpec extends ControllerSpec {
         val result = sut.onPageLoad()(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe app.injector.instanceOf[StatusCheckFailurePage]
+        contentAsString(result) mustBe app.injector
+          .instanceOf[StatusCheckFailurePage]
           .apply(query)(request, messages)
           .toString
         verifyConnector()
@@ -181,7 +185,8 @@ class StatusResultControllerSpec extends ControllerSpec {
         val result = sut.onPageLoad()(request)
 
         status(result) mustBe INTERNAL_SERVER_ERROR
-        contentAsString(result) mustBe app.injector.instanceOf[ExternalErrorPage]
+        contentAsString(result) mustBe app.injector
+          .instanceOf[ExternalErrorPage]
           .apply()(request, messages)
           .toString
         verifyConnector()

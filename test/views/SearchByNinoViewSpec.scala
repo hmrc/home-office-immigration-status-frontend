@@ -37,7 +37,7 @@ class SearchByNinoViewSpec extends ViewSpec {
     dateOfBirth = LocalDate.parse("1990-10-11")
   )
 
-  private val form: Form[NinoSearchFormModel] = new SearchByNinoForm()().fill(ninoSearchFormModel)
+  private val form: Form[NinoSearchFormModel]           = new SearchByNinoForm()().fill(ninoSearchFormModel)
   private val formWithErrors: Form[NinoSearchFormModel] = new SearchByNinoForm()().bind(Map.empty)
 
   private def viewViaApply(form: Form[NinoSearchFormModel]): HtmlFormat.Appendable = sut.apply(form)(request, messages)

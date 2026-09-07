@@ -65,10 +65,10 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends BaseSpec {
     NinoSearchFormModel(NinoGenerator.generateNino, "Doe", "Jane", LocalDate.of(2001, 1, 31))
   private val mrzSearchFormModel: MrzSearchFormModel =
     MrzSearchFormModel("PASSPORT", "123456", LocalDate.of(2001, 1, 31), "USA")
-  private implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+  private implicit val request: FakeRequest[AnyContentAsEmpty.type]        = FakeRequest()
   private implicit def hc(implicit request: FakeRequest[?]): HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
-  private lazy val appConfig: AppConfig                             = app.injector.instanceOf[AppConfig]  
-  given conf: AppConfig     = appConfig
+  private lazy val appConfig: AppConfig                                    = app.injector.instanceOf[AppConfig]
+  given conf: AppConfig                                                    = appConfig
 
   private val statusCheckResult: StatusCheckResult = StatusCheckResult("Damon Albarn", testDate, "GBR", Nil)
   private val result: StatusCheckResponseWithStatus =

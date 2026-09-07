@@ -41,10 +41,10 @@ trait BaseSpec
     with Matchers
     with OptionValues {
 
-  private val timeoutDuration: FiniteDuration                         = 5 seconds
-  protected implicit val timeout: Timeout                             = Timeout(timeoutDuration)
-  protected def await[T](future: Awaitable[T]): T                     = Await.result(future, timeoutDuration)
-    
+  private val timeoutDuration: FiniteDuration     = 5 seconds
+  protected implicit val timeout: Timeout         = Timeout(timeoutDuration)
+  protected def await[T](future: Awaitable[T]): T = Await.result(future, timeoutDuration)
+
   protected val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
 
   protected val modules: Seq[GuiceableModule] = Seq(

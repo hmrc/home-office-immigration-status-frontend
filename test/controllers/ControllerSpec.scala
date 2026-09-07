@@ -29,9 +29,9 @@ import services.SessionCacheService
 import support.BaseSpec
 
 trait ControllerSpec extends BaseSpec {
-  protected lazy val messagesApi: MessagesApi                         = app.injector.instanceOf[MessagesApi]
-  protected lazy val messages: Messages                               = messagesApi.preferred(Seq.empty)
-  
+  protected lazy val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  protected lazy val messages: Messages       = messagesApi.preferred(Seq.empty)
+
   protected implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
   protected val fakePostRequest: FakeRequest[AnyContentAsEmpty.type]  = FakeRequest("POST", "/")
   protected val mockSessionCacheService: SessionCacheService          = mock(classOf[SessionCacheService])
@@ -40,5 +40,5 @@ trait ControllerSpec extends BaseSpec {
     bind[SessionCacheRepository].toInstance(mockSessionCacheRepository),
     bind[AccessAction].to[FakeAccessAction],
     bind[SessionCacheService].toInstance(mockSessionCacheService)
-  )  
+  )
 }
