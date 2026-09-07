@@ -16,15 +16,14 @@
 
 package models
 
-import org.scalatest.matchers.must.Matchers
 import org.scalatest.matchers.must.Matchers.mustEqual
-import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.http.Status.OK
 import play.api.libs.json.Json
+import support.BaseSpec
 
 import java.time.{LocalDate, ZoneId}
 
-class StatusCheckAuditDetailSpec extends AnyWordSpecLike with Matchers {
+class StatusCheckAuditDetailSpec extends BaseSpec {
 
   "writes" must {
 

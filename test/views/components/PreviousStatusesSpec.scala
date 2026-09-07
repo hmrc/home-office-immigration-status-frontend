@@ -27,7 +27,7 @@ import views.html.components.PreviousStatuses
 
 class PreviousStatusesSpec extends ViewSpec {
 
-  private val sut: PreviousStatuses = inject[PreviousStatuses]
+  private val sut: PreviousStatuses = app.injector.instanceOf[PreviousStatuses]
 
   private def viewViaApply(previousStatuses: Seq[ImmigrationStatus]): HtmlFormat.Appendable =
     sut.apply(previousStatuses)(messages)

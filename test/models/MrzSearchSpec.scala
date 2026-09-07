@@ -16,29 +16,13 @@
 
 package models
 
-import org.mockito.Mockito.mock
-import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.Application
 import play.api.i18n.{Messages, MessagesApi}
-import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.test.Injecting
-import repositories.SessionCacheRepository
+import support.BaseSpec
 
-class MrzSearchSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
+class MrzSearchSpec extends BaseSpec {
+  lazy implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(Seq.empty)
 
-  val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
-
-  override implicit lazy val app: Application = new GuiceApplicationBuilder()
-    .overrides(
-      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
-    )
-    .build()
-
-  lazy implicit val messages: Messages = inject[MessagesApi].preferred(Seq.empty)
-
-  "MrzSearch.documentTypeToMessageKey" should {
+  "MrzSearch.documentTypeToMessageKey" must {
     "return the relevant message" when {
 
       Seq(

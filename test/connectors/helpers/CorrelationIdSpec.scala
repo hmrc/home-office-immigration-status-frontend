@@ -30,7 +30,7 @@ class CorrelationIdSpec extends PlaySpec with Matchers {
       }
   }
 
-  "requestID is present in the headerCarrier" should {
+  "requestID is present in the headerCarrier" must {
     "return new ID pre-appending the requestID when the requestID matches the format(8-4-4-4)" in new CorrelationIdTestSetup {
       val requestId  = "dcba0000-ij12-df34-jk56"
       val uuidLength = 24
@@ -44,13 +44,13 @@ class CorrelationIdSpec extends PlaySpec with Matchers {
     }
   }
 
-  "requestID is not present in the headerCarrier should return a new ID" should {
+  "requestID is not present in the headerCarrier must return a new ID" must {
     "return the uuid" in new CorrelationIdTestSetup {
       correlationId.id(HeaderCarrier()) mustBe uuid
     }
   }
 
-  "generateNewUUID" should {
+  "generateNewUUID" must {
     "return a valid UUID string" in {
       val correlationId = new CorrelationId
 

@@ -16,12 +16,12 @@
 
 package models
 
-import org.scalatestplus.play.PlaySpec
 import play.api.libs.json.{JsUndefined, Json}
+import support.BaseSpec
 
 import java.time.LocalDate
 
-class StatusCheckResultSpec extends PlaySpec {
+class StatusCheckResultSpec extends BaseSpec {
 
   val date = LocalDate.parse("2001-01-31")
 

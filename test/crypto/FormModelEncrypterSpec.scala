@@ -21,10 +21,11 @@ import org.scalatestplus.play.PlaySpec
 import utils.NinoGenerator
 import uk.gov.hmrc.crypto.{EncryptedValue, SymmetricCryptoFactory}
 import uk.gov.hmrc.domain.Nino
+import support.BaseSpec
 
 import java.time.LocalDate
 
-class FormModelEncrypterSpec extends PlaySpec {
+class FormModelEncrypterSpec extends BaseSpec {
 
   private val encrypter: FormModelEncrypter = new FormModelEncrypter
   private val secretKey: String             = "VqmXp7yigDFxbCUdDdNZVIvbW6RgPNJsliv6swQNCL8="

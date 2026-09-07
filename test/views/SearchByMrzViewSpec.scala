@@ -27,7 +27,7 @@ import views.html.SearchByMrzView
 
 class SearchByMrzViewSpec extends ViewSpec {
 
-  private lazy val sut: SearchByMrzView = inject[SearchByMrzView]
+  private lazy val sut: SearchByMrzView = app.injector.instanceOf[SearchByMrzView]
 
   private val titleAndHeading: String = "Search by passport or ID card"
 
@@ -38,8 +38,8 @@ class SearchByMrzViewSpec extends ViewSpec {
     nationality = "AFG"
   )
 
-  private val validForm: Form[MrzSearchFormModel]   = inject[SearchByMRZForm].apply().fill(mrzSearchFormModel)
-  private val invalidForm: Form[MrzSearchFormModel] = inject[SearchByMRZForm].apply().bind(Map("" -> ""))
+  private val validForm: Form[MrzSearchFormModel]   = app.injector.instanceOf[SearchByMRZForm].apply().fill(mrzSearchFormModel)
+  private val invalidForm: Form[MrzSearchFormModel] = app.injector.instanceOf[SearchByMRZForm].apply().bind(Map("" -> ""))
 
   private def viewViaApply(form: Form[MrzSearchFormModel]): HtmlFormat.Appendable  = sut.apply(form)(request, messages)
   private def viewViaRender(form: Form[MrzSearchFormModel]): HtmlFormat.Appendable = sut.render(form, request, messages)

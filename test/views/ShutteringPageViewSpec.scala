@@ -22,7 +22,7 @@ import views.html.ShutteringPage
 
 class ShutteringPageViewSpec extends ViewSpec {
 
-  private val sut: ShutteringPage = inject[ShutteringPage]
+  private val sut: ShutteringPage = app.injector.instanceOf[ShutteringPage]
 
   private val viewViaApply: HtmlFormat.Appendable  = sut.apply()(request, messages)
   private val viewViaRender: HtmlFormat.Appendable = sut.render(request, messages)

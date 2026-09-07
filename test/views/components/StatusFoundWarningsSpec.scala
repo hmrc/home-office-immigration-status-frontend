@@ -53,7 +53,7 @@ class StatusFoundWarningsSpec extends ViewSpec {
     result = statusCheckResult
   )
 
-  private val sut: StatusFoundWarnings = inject[StatusFoundWarnings]
+  private val sut: StatusFoundWarnings = app.injector.instanceOf[StatusFoundWarnings]
 
   private val viewViaApply: HtmlFormat.Appendable  = sut.apply(statusFoundPageContext)(messages)
   private val viewViaRender: HtmlFormat.Appendable = sut.render(statusFoundPageContext, messages)

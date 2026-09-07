@@ -18,16 +18,15 @@ package forms
 
 import models.NinoSearchFormModel
 import org.scalacheck.{Gen, Shrink}
-import org.scalatest.OptionValues
-import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.data.{Form, FormError}
+import support.BaseSpec
 import utils.NinoGenerator
 import uk.gov.hmrc.domain.Nino
 
 import java.time.LocalDate
 
-class NinoSearchFormSpec extends PlaySpec with OptionValues with ScalaCheckDrivenPropertyChecks {
+class NinoSearchFormSpec extends BaseSpec with ScalaCheckDrivenPropertyChecks {
 
   implicit def noShrink[T]: Shrink[T] = Shrink.shrinkAny
 

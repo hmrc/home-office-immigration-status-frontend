@@ -25,7 +25,7 @@ import views.html.StatusCheckFailurePage
 
 class StatusCheckFailurePageViewSpec extends ViewSpec {
 
-  private lazy val sut: StatusCheckFailurePage = inject[StatusCheckFailurePage]
+  private lazy val sut: StatusCheckFailurePage = app.injector.instanceOf[StatusCheckFailurePage]
 
   private val bulletPointContent: List[(Int, String)] = List(
     (1, "the customer cannot be found"),
