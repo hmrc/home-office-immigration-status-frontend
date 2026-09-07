@@ -23,14 +23,14 @@ import support.ISpec
 
 class RootISpec extends ISpec {
 
-  "GET /check-immigration-status/" should {
+  "GET /check-immigration-status/" must {
     "show the lookup page" in {
       givenAuthorisedForStride("TBC", "StrideUserId")
 
       val result: WSResponse = await(requestWithSession("/", "session-root").get())
 
-      result.status                 shouldBe SEE_OTHER
-      extractHeaderLocation(result) shouldBe Some(controllers.routes.SearchByNinoController.onPageLoad().url)
+      result.status                 mustBe SEE_OTHER
+      extractHeaderLocation(result) mustBe Some(controllers.routes.SearchByNinoController.onPageLoad().url)
     }
   }
 }

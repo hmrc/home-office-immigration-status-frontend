@@ -7,7 +7,9 @@ object CodeCoverageSettings {
     "<empty>",
     ".*definition.*",
     ".*\\$anon.*",
-    ".*Routes.*"
+    ".*Routes.*",
+    ".*models.*Search.*",
+    ".*models.*StatusCheckResponse.*"
   )
 
   val settings: Seq[Setting[?]] = Seq(

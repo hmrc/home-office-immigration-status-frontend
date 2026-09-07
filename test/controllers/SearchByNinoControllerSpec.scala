@@ -21,7 +21,7 @@ import forms.SearchByNinoForm
 import models.NinoSearchFormModel
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import play.api.Application
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -31,6 +31,7 @@ import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.{Html, HtmlFormat}
 import repositories.SessionCacheRepository
 import services.SessionCacheService
+import uk.gov.hmrc.mongo.play.PlayMongoModule
 import utils.NinoGenerator.generateNino
 import views.html.SearchByNinoView
 
@@ -46,9 +47,10 @@ class SearchByNinoControllerSpec extends ControllerSpec {
       bind[SessionCacheRepository].toInstance(mockSessionCacheRepository),
       bind[SessionCacheService].toInstance(mockSessionCacheService)
     )
+    .disable[PlayMongoModule]
     .build()
 
-  lazy val sut: SearchByNinoController = inject[SearchByNinoController]
+  lazy val sut: SearchByNinoController = app.injector.instanceOf[SearchByNinoController]
   val mockView: SearchByNinoView       = mock(classOf[SearchByNinoView])
   val fakeView: Html                   = HtmlFormat.escape("Correct Form View")
 
@@ -61,7 +63,7 @@ class SearchByNinoControllerSpec extends ControllerSpec {
 
   "onPageLoad" must {
     val query      = NinoSearchFormModel(generateNino, "pan", "peter", LocalDate.now())
-    val emptyForm  = inject[SearchByNinoForm].apply()
+    val emptyForm  = app.injector.instanceOf[SearchByNinoForm].apply()
     val prePopForm = emptyForm.fill(query)
 
     "display the check by nino form view" when {
@@ -134,7 +136,7 @@ class SearchByNinoControllerSpec extends ControllerSpec {
     }
 
     "return the errored form" when {
-      val formProvider = inject[SearchByNinoForm]
+      val formProvider = app.injector.instanceOf[SearchByNinoForm]
       val form         = formProvider.apply()
       "the submitted form is empty" in {
         val result         = sut.onSubmit(request)
@@ -143,7 +145,7 @@ class SearchByNinoControllerSpec extends ControllerSpec {
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe fakeView.toString
         verify(mockView).apply(refEq(formWithErrors, "mapping"))(ArgumentMatchers.eq(request), any())
-        withClue("The session should contain the valid form answers") {
+        withClue("The session must contain the valid form answers") {
           val updatedSession = await(result).session(request)
           updatedSession.get("query") must not be defined
         }
@@ -165,7 +167,7 @@ class SearchByNinoControllerSpec extends ControllerSpec {
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe fakeView.toString
         verify(mockView).apply(refEq(formWithErrors, "mapping"))(ArgumentMatchers.eq(requestWithForm), any())
-        withClue("The session should contain the valid form answers") {
+        withClue("The session must contain the valid form answers") {
           val updatedSession = await(result).session(request)
           updatedSession.get("query") must not be defined
         }

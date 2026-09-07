@@ -22,7 +22,7 @@ import views.html.govuk_wrapper
 
 class GovukWrapperViewSpec extends ViewSpec {
 
-  private lazy val sut: govuk_wrapper = inject[govuk_wrapper]
+  private lazy val sut: govuk_wrapper = app.injector.instanceOf[govuk_wrapper]
 
   private val pageTitle: String = "Sorry, there is a problem with the service"
 

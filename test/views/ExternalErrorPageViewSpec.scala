@@ -22,7 +22,7 @@ import views.html.ExternalErrorPage
 
 class ExternalErrorPageViewSpec extends ViewSpec {
 
-  private val sut: ExternalErrorPage = inject[ExternalErrorPage]
+  private val sut: ExternalErrorPage = app.injector.instanceOf[ExternalErrorPage]
 
   private val titleAndHeading: String = "Sorry, there is a problem with the service"
 

@@ -16,19 +16,18 @@
 
 package connectors
 
-import connectors.StatusCheckResponseHttpParser._
-import models._
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpecLike
-import play.api.http.Status._
+import connectors.StatusCheckResponseHttpParser.*
+import models.*
+import play.api.http.Status.*
 import play.api.libs.json.{Json, OWrites}
+import support.BaseSpec
 import uk.gov.hmrc.http.HttpResponse
 
 import java.time.LocalDate
 
-class StatusCheckResponseHttpParserSpec extends AnyWordSpecLike with Matchers {
+class StatusCheckResponseHttpParserSpec extends BaseSpec {
 
-  "StatusCheckResponseReads.read" should {
+  "StatusCheckResponseReads.read" must {
 
     implicit val resultWrites: OWrites[StatusCheckResult] = Json.writes[StatusCheckResult]
     val responseWrites                                    = Json.writes[StatusCheckSuccessfulResponse]
@@ -42,7 +41,7 @@ class StatusCheckResponseHttpParserSpec extends AnyWordSpecLike with Matchers {
       val expectedResponse = StatusCheckResponseWithStatus(OK, statusCheckResponse)
 
       val result = StatusCheckResponseReads.read("POST", "some url", response)
-      result shouldBe expectedResponse
+      result mustBe expectedResponse
 
     }
 
@@ -58,7 +57,7 @@ class StatusCheckResponseHttpParserSpec extends AnyWordSpecLike with Matchers {
         val response     = HttpResponse(OK, responseBody, Map("X-Correlation-Id" -> Seq("correlationId")))
 
         val result = StatusCheckResponseReads.read("POST", "some url", response)
-        result shouldBe unknownErrorResponse
+        result mustBe unknownErrorResponse
       }
 
       "a 200 is returned with an invalid json response" in {
@@ -66,7 +65,7 @@ class StatusCheckResponseHttpParserSpec extends AnyWordSpecLike with Matchers {
         val response     = HttpResponse(OK, responseBody, Map("X-Correlation-Id" -> Seq("correlationId")))
 
         val result = StatusCheckResponseReads.read("POST", "some url", response)
-        result shouldBe unknownErrorResponse
+        result mustBe unknownErrorResponse
       }
 
       "a non-200 is returned without json" in {
@@ -74,7 +73,7 @@ class StatusCheckResponseHttpParserSpec extends AnyWordSpecLike with Matchers {
         val response     = HttpResponse(OK, responseBody, Map("X-Correlation-Id" -> Seq("correlationId")))
 
         val result = StatusCheckResponseReads.read("POST", "some url", response)
-        result shouldBe unknownErrorResponse
+        result mustBe unknownErrorResponse
       }
 
       "a non-200 is returned with an invalid json response" in {
@@ -83,7 +82,7 @@ class StatusCheckResponseHttpParserSpec extends AnyWordSpecLike with Matchers {
           HttpResponse(INTERNAL_SERVER_ERROR, responseBody, Map("X-Correlation-Id" -> Seq("correlationId")))
 
         val result = StatusCheckResponseReads.read("POST", "some url", response)
-        result shouldBe unknownErrorResponse
+        result mustBe unknownErrorResponse
       }
     }
 
@@ -98,7 +97,7 @@ class StatusCheckResponseHttpParserSpec extends AnyWordSpecLike with Matchers {
         val expectedResponse = StatusCheckResponseWithStatus(INTERNAL_SERVER_ERROR, statusCheckResponse)
 
         val result = StatusCheckResponseReads.read("POST", "some url", response)
-        result shouldBe expectedResponse
+        result mustBe expectedResponse
       }
 
       "a 404 status code is returned with a valid error response" in {
@@ -110,7 +109,7 @@ class StatusCheckResponseHttpParserSpec extends AnyWordSpecLike with Matchers {
         val expectedResponse = StatusCheckResponseWithStatus(NOT_FOUND, statusCheckResponse)
 
         val result = StatusCheckResponseReads.read("POST", "some url", response)
-        result shouldBe expectedResponse
+        result mustBe expectedResponse
       }
     }
 

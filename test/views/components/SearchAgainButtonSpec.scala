@@ -23,7 +23,7 @@ import views.html.components.SearchAgainButton
 
 class SearchAgainButtonSpec extends ViewSpec {
 
-  private val sut: SearchAgainButton = inject[SearchAgainButton]
+  private val sut: SearchAgainButton = app.injector.instanceOf[SearchAgainButton]
 
   private val viewViaApply: HtmlFormat.Appendable  = sut.apply()(messages)
   private val viewViaRender: HtmlFormat.Appendable = sut.render(messages)
