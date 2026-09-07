@@ -27,7 +27,7 @@ import uk.gov.hmrc.http.SessionKeys
 
 class AuthActionsISpec extends AuthActionISpecSetup {
 
-  "withAuthorisedWithStrideGroup" should {
+  "withAuthorisedWithStrideGroup" must {
 
     "call body with a valid authProviderId" in {
 
@@ -35,8 +35,8 @@ class AuthActionsISpec extends AuthActionISpecSetup {
 
       val result = TestController.test()(request)
 
-      status(result)          shouldBe 200
-      contentAsString(result) shouldBe "Passed Auth"
+      status(result)          mustBe 200
+      contentAsString(result) mustBe "Passed Auth"
       verifyAuthoriseAttempt()
     }
 
@@ -44,8 +44,8 @@ class AuthActionsISpec extends AuthActionISpecSetup {
       givenRequestIsNotAuthorised("SessionRecordNotFound")
 
       val result = TestController.test()(request)
-      status(result)             shouldBe 303
-      redirectLocation(result).get should include("/stride/sign-in")
+      status(result)             mustBe 303
+      redirectLocation(result).get must include("/stride/sign-in")
       verifyAuthoriseAttempt()
     }
 
@@ -53,8 +53,8 @@ class AuthActionsISpec extends AuthActionISpecSetup {
       givenRequestIsNotAuthorised("UnsupportedAuthProvider")
 
       val result = TestController.test()(request)
-      status(result)             shouldBe 303
-      redirectLocation(result).get should include("/stride/sign-in")
+      status(result)             mustBe 303
+      redirectLocation(result).get must include("/stride/sign-in")
       verifyAuthoriseAttempt()
     }
   }
@@ -62,7 +62,7 @@ class AuthActionsISpec extends AuthActionISpecSetup {
 
 trait AuthActionISpecSetup extends BaseISpec with Injecting {
 
-  override def fakeApplication(): Application = appBuilder.build()
+  override lazy val app: Application = appBuilder.build()
 
   given request: FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest().withSession(SessionKeys.authToken -> "Bearer XYZ")

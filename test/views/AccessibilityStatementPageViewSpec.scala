@@ -22,7 +22,7 @@ import views.html.AccessibilityStatementPage
 
 class AccessibilityStatementPageViewSpec extends ViewSpec {
 
-  private val sut: AccessibilityStatementPage = inject[AccessibilityStatementPage]
+  private val sut: AccessibilityStatementPage = app.injector.instanceOf[AccessibilityStatementPage]
 
   private val viewViaApply: HtmlFormat.Appendable  = sut.apply()(request, messages)
   private val viewViaRender: HtmlFormat.Appendable = sut.render(request, messages)

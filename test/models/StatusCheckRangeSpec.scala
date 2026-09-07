@@ -16,19 +16,18 @@
 
 package models
 
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsError, JsSuccess, Json}
+import support.BaseSpec
 
 import java.time.LocalDate
 
-class StatusCheckRangeSpec extends AnyWordSpecLike with Matchers {
+class StatusCheckRangeSpec extends BaseSpec {
 
-  "StatusCheckRange" should {
+  "StatusCheckRange" must {
     "serialize to JSON" when {
       "all fields are defined" in {
         val range = StatusCheckRange(Some(LocalDate.of(2023, 12, 31)), Some(LocalDate.of(2023, 1, 1)))
-        Json.toJson(range) shouldBe Json.obj(
+        Json.toJson(range) mustBe Json.obj(
           "endDate"   -> "2023-01-01",
           "startDate" -> "2023-12-31"
         )
@@ -36,7 +35,7 @@ class StatusCheckRangeSpec extends AnyWordSpecLike with Matchers {
 
       "fields are empty" in {
         val range = StatusCheckRange(None, None)
-        Json.toJson(range) shouldBe Json.obj()
+        Json.toJson(range) mustBe Json.obj()
       }
     }
 
@@ -46,14 +45,14 @@ class StatusCheckRangeSpec extends AnyWordSpecLike with Matchers {
           "endDate"   -> "2023-01-01",
           "startDate" -> "2023-12-31"
         )
-        json.validate[StatusCheckRange] shouldBe JsSuccess(
+        json.validate[StatusCheckRange] mustBe JsSuccess(
           StatusCheckRange(Some(LocalDate.of(2023, 12, 31)), Some(LocalDate.of(2023, 1, 1)))
         )
       }
 
       "fields are empty" in {
         val json = Json.obj()
-        json.validate[StatusCheckRange] shouldBe JsSuccess(StatusCheckRange(None, None))
+        json.validate[StatusCheckRange] mustBe JsSuccess(StatusCheckRange(None, None))
       }
 
       "invalid date format" in {
@@ -61,7 +60,7 @@ class StatusCheckRangeSpec extends AnyWordSpecLike with Matchers {
           "endDate"   -> "invalid-date",
           "startDate" -> "2023-12-31"
         )
-        json.validate[StatusCheckRange] shouldBe a[JsError]
+        json.validate[StatusCheckRange] mustBe a[JsError]
       }
 
       "invalid field types" in {
@@ -69,7 +68,7 @@ class StatusCheckRangeSpec extends AnyWordSpecLike with Matchers {
           "endDate"   -> false,
           "startDate" -> false
         )
-        json.validate[StatusCheckRange] shouldBe a[JsError]
+        json.validate[StatusCheckRange] mustBe a[JsError]
       }
     }
   }

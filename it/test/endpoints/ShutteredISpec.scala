@@ -28,7 +28,7 @@ import scala.concurrent.Future
 
 class ShutteredISpec extends ISpec {
 
-  override def fakeApplication(): Application = appBuilder.configure("isShuttered" -> true).build()
+  override lazy val app: Application = appBuilder.configure("isShuttered" -> true).build()
 
   val get: String => Future[WSResponse]  = request(_).get()
   val post: String => Future[WSResponse] = request(_).post(Map.empty[String, String])
@@ -43,12 +43,12 @@ class ShutteredISpec extends ISpec {
       "/status-result"      -> get,
       "/foo"                -> get
     ).foreach { case (path, request) =>
-      s"path is $path and method is ${request.getClass.getName} and app is shuttered" should {
+      s"path is $path and method is ${request.getClass.getName} and app is shuttered" must {
         "return the shutter page" in {
           val result: WSResponse = await(request(path))
 
-          result.status shouldBe SERVICE_UNAVAILABLE
-          result.body     should include(htmlEscapedMessage("shuttering.title"))
+          result.status mustBe SERVICE_UNAVAILABLE
+          result.body     must include(htmlEscapedMessage("shuttering.title"))
         }
       }
     }

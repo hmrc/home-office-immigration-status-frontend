@@ -16,24 +16,23 @@
 
 package models
 
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsError, JsSuccess, Json}
+import support.BaseSpec
 import uk.gov.hmrc.domain.Nino
 import utils.NinoGenerator
 
 import java.time.LocalDate
 
-class SearchFormModelSpec extends AnyWordSpecLike with Matchers {
+class SearchFormModelSpec extends BaseSpec {
 
   val nino: Nino             = NinoGenerator.generateNino
   val dateOfBirth: LocalDate = LocalDate.now().minusDays(1)
 
-  "NinoSearchFormModel" should {
+  "NinoSearchFormModel" must {
     "serialize to JSON" when {
       "all fields are defined" in {
         val form = NinoSearchFormModel(nino, "first", "last", dateOfBirth)
-        Json.toJson(form) shouldBe Json.obj(
+        Json.toJson(form) mustBe Json.obj(
           "nino"        -> s"$nino",
           "givenName"   -> "first",
           "familyName"  -> "last",
@@ -50,7 +49,7 @@ class SearchFormModelSpec extends AnyWordSpecLike with Matchers {
           "familyName"  -> "last",
           "dateOfBirth" -> s"$dateOfBirth"
         )
-        json.validate[NinoSearchFormModel] shouldBe JsSuccess(
+        json.validate[NinoSearchFormModel] mustBe JsSuccess(
           NinoSearchFormModel(nino, "first", "last", dateOfBirth)
         )
       }
@@ -62,12 +61,12 @@ class SearchFormModelSpec extends AnyWordSpecLike with Matchers {
         "givenName"   -> "first",
         "dateOfBirth" -> s"$dateOfBirth"
       )
-      json.validate[NinoSearchFormModel] shouldBe a[JsError]
+      json.validate[NinoSearchFormModel] mustBe a[JsError]
     }
 
     "fields are empty" in {
       val json = Json.obj()
-      json.validate[NinoSearchFormModel] shouldBe a[JsError]
+      json.validate[NinoSearchFormModel] mustBe a[JsError]
     }
 
     "invalid field types" in {
@@ -77,15 +76,15 @@ class SearchFormModelSpec extends AnyWordSpecLike with Matchers {
         "familyName"  -> 0,
         "dateOfBirth" -> 0
       )
-      json.validate[NinoSearchFormModel] shouldBe a[JsError]
+      json.validate[NinoSearchFormModel] mustBe a[JsError]
     }
   }
 
-  "MrzSearchFormModel" should {
+  "MrzSearchFormModel" must {
     "serialize to JSON" when {
       "all fields are defined" in {
         val form = MrzSearchFormModel("DocType", "12345", dateOfBirth, "nationality")
-        Json.toJson(form) shouldBe Json.obj(
+        Json.toJson(form) mustBe Json.obj(
           "documentType"   -> "DocType",
           "documentNumber" -> "12345",
           "dateOfBirth"    -> s"$dateOfBirth",
@@ -102,7 +101,7 @@ class SearchFormModelSpec extends AnyWordSpecLike with Matchers {
           "dateOfBirth"    -> s"$dateOfBirth",
           "nationality"    -> "nationality"
         )
-        json.validate[MrzSearchFormModel] shouldBe JsSuccess(
+        json.validate[MrzSearchFormModel] mustBe JsSuccess(
           MrzSearchFormModel("DocType", "12345", dateOfBirth, "nationality")
         )
       }
@@ -114,12 +113,12 @@ class SearchFormModelSpec extends AnyWordSpecLike with Matchers {
         "dateOfBirth"  -> s"$dateOfBirth",
         "nationality"  -> "nationality"
       )
-      json.validate[MrzSearchFormModel] shouldBe a[JsError]
+      json.validate[MrzSearchFormModel] mustBe a[JsError]
     }
 
     "fields are empty" in {
       val json = Json.obj()
-      json.validate[MrzSearchFormModel] shouldBe a[JsError]
+      json.validate[MrzSearchFormModel] mustBe a[JsError]
     }
 
     "invalid field types" in {
@@ -129,7 +128,7 @@ class SearchFormModelSpec extends AnyWordSpecLike with Matchers {
         "dateOfBirth"    -> 0,
         "nationality"    -> 0
       )
-      json.validate[MrzSearchFormModel] shouldBe a[JsError]
+      json.validate[MrzSearchFormModel] mustBe a[JsError]
     }
   }
 }

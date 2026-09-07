@@ -28,14 +28,14 @@ import views.html.components.inputDate
 
 class InputDateSpec extends ViewSpec {
 
-  private val sut: inputDate = inject[inputDate]
+  private val sut: inputDate = app.injector.instanceOf[inputDate]
 
   private val testForm: Form[String] = Form[String] {
     mapping("documentType" -> Forms.of[String])(identity)(Some.apply)
   }
 
   private val emptyForm: Form[String] = testForm.bind(Map.empty[String, String])
-  private val invalidForm: Form[MrzSearchFormModel] = inject[SearchByMRZForm]
+  private val invalidForm: Form[MrzSearchFormModel] = app.injector.instanceOf[SearchByMRZForm]
     .apply()
     .bind(
       Map(

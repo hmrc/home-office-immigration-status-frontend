@@ -16,21 +16,20 @@
 
 package models
 
-import org.scalatest.matchers.should.Matchers.shouldBe
-import org.scalatestplus.play.PlaySpec
 import play.api.libs.json.{JsError, JsSuccess, Json}
+import support.BaseSpec
 import utils.NinoGenerator
 
 import java.time.LocalDate
 import scala.language.postfixOps
 
-class SearchSpec extends PlaySpec {
+class SearchSpec extends BaseSpec {
 
   val date: LocalDate = LocalDate.now
   val nino            = NinoGenerator.generateNino
 
   "Search" when {
-    ".writes" should {
+    ".writes" must {
       "Convert to json without the type" when {
         "it's an MrzSearch" in {
           val search: Search = MrzSearch(
@@ -74,7 +73,7 @@ class SearchSpec extends PlaySpec {
 //      }
     }
 
-    ".reads" should {
+    ".reads" must {
       "deserialise a MrzSearch correctly" in {
 
         val json = Json.parse(
@@ -83,8 +82,8 @@ class SearchSpec extends PlaySpec {
         )
         val result = json.validate[MrzSearch]
 
-        result.isSuccess shouldBe true
-        result.get shouldBe MrzSearch(
+        result.isSuccess mustBe true
+        result.get mustBe MrzSearch(
           "documentType",
           "documentNumber",
           date,
@@ -102,8 +101,8 @@ class SearchSpec extends PlaySpec {
 
         val result = json.validate[NinoSearch]
 
-        result.isSuccess shouldBe true
-        result.get shouldBe NinoSearch(
+        result.isSuccess mustBe true
+        result.get mustBe NinoSearch(
           nino,
           "given",
           "family",
@@ -114,7 +113,7 @@ class SearchSpec extends PlaySpec {
     }
   }
 
-  "MrzSearch" should {
+  "MrzSearch" must {
     "serialize to JSON" when {
       "all fields are defined" in {
         val search: Search = MrzSearch(
@@ -125,7 +124,7 @@ class SearchSpec extends PlaySpec {
           StatusCheckRange(Some(date), Some(date))
         )
 
-        Json.toJson(search) shouldBe Json.obj(
+        Json.toJson(search) mustBe Json.obj(
           "documentType"     -> "documentType",
           "documentNumber"   -> "documentNumber",
           "dateOfBirth"      -> date,
@@ -145,14 +144,14 @@ class SearchSpec extends PlaySpec {
           "statusCheckRange" -> StatusCheckRange(Some(date), Some(date))
         )
 
-        json.validate[MrzSearch] shouldBe JsSuccess(
+        json.validate[MrzSearch] mustBe JsSuccess(
           MrzSearch("documentType", "documentNumber", date, "nationality", StatusCheckRange(Some(date), Some(date)))
         )
       }
 
       "fields are empty" in {
         val json = Json.obj()
-        json.validate[MrzSearch] shouldBe a[JsError]
+        json.validate[MrzSearch] mustBe a[JsError]
       }
 
       "invalid field types" in {
@@ -163,11 +162,11 @@ class SearchSpec extends PlaySpec {
           "nationality"      -> 0,
           "statusCheckRange" -> 0
         )
-        json.validate[MrzSearch] shouldBe a[JsError]
+        json.validate[MrzSearch] mustBe a[JsError]
       }
     }
 
-    "NinoSearch" should {
+    "NinoSearch" must {
       "serialize to JSON" when {
         "all fields are defined" in {
           val search: Search = NinoSearch(
@@ -178,7 +177,7 @@ class SearchSpec extends PlaySpec {
             StatusCheckRange(Some(date), Some(date))
           )
 
-          Json.toJson(search) shouldBe Json.obj(
+          Json.toJson(search) mustBe Json.obj(
             "nino"             -> nino,
             "givenName"        -> "given",
             "familyName"       -> "family",
@@ -198,14 +197,14 @@ class SearchSpec extends PlaySpec {
             "statusCheckRange" -> StatusCheckRange(Some(date), Some(date))
           )
 
-          json.validate[NinoSearch] shouldBe JsSuccess(
+          json.validate[NinoSearch] mustBe JsSuccess(
             NinoSearch(nino, "given", "family", date.toString, StatusCheckRange(Some(date), Some(date)))
           )
         }
 
         "fields are empty" in {
           val json = Json.obj()
-          json.validate[NinoSearch] shouldBe a[JsError]
+          json.validate[NinoSearch] mustBe a[JsError]
         }
 
         "invalid field types" in {
@@ -216,7 +215,7 @@ class SearchSpec extends PlaySpec {
             "dateOfBirth"      -> 0,
             "statusCheckRange" -> 0
           )
-          json.validate[NinoSearch] shouldBe a[JsError]
+          json.validate[NinoSearch] mustBe a[JsError]
         }
       }
     }

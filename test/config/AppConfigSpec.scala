@@ -59,7 +59,7 @@ class AppConfigSpec extends PlaySpec {
   val testEnv: Environment = Environment(mockFile, mockClassLoader, Mode.Test)
   val prodEnv: Environment = Environment(mockFile, mockClassLoader, Mode.Prod)
 
-  "AppConfig" should {
+  "AppConfig" must {
     "return isDevEnv as false" when {
 
       "env.Mode is set to test and run mode in config is test" in {

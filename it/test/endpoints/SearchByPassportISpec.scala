@@ -16,30 +16,40 @@
 
 package endpoints
 
-import play.api.http.Status.{OK, SEE_OTHER}
 import mocks.MockSessionCookie
+import org.mongodb.scala.model.Filters
+import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.libs.ws.DefaultBodyReadables.readableAsString
+import play.api.libs.ws.WSBodyWritables.writeableOf_urlEncodedSimpleForm
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import stubs.HomeOfficeImmigrationStatusStubs
 import support.ISpec
-import play.api.libs.ws.DefaultBodyReadables.readableAsString
-import play.api.libs.ws.WSBodyWritables.writeableOf_urlEncodedSimpleForm
 
 class SearchByPassportISpec extends ISpec with HomeOfficeImmigrationStatusStubs with MockSessionCookie {
 
-  "GET /check-immigration-status/search-by-passport" should {
-    "show the lookup page" in {
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    repository.collection.drop()
+    ()
+  }
+
+  "GET /check-immigration-status/search-by-passport" must {
+    "show the lookup page and have nothing stored in Mongo" in {
       givenAuthorisedForStride("TBC", "StrideUserId")
 
       val result = await(requestWithSession("/search-by-passport", "session-searchByPassportGet").get())
 
-      result.status                                       shouldBe OK
-      result.body                                           should include(htmlEscapedMessage("lookup.mrz.title"))
-      result.headers.get("Cache-Control").map(_.mkString) shouldBe Some("no-cache, no-store, must-revalidate")
+      result.status mustBe OK
+      result.body must include(htmlEscapedMessage("lookup.mrz.title"))
+      result.headers.get("Cache-Control").map(_.mkString) mustBe Some("no-cache, no-store, must-revalidate")
+      val actualRepositoryContent =
+        await(repository.collection.find(Filters.eq("_id", "nino-searchByPost")).headOption())
+      actualRepositoryContent.map(_.id) mustBe None
     }
   }
 
-  "POST /check-immigration-status/search-by-passport" should {
-    "redirect to the result page" in {
+  "POST /check-immigration-status/search-by-passport" must {
+    "redirect to the result page and store ID in Mongo" in {
       givenCheckByMrzSucceeds()
       givenAuthorisedForStride("TBC", "StrideUserId")
 
@@ -54,8 +64,11 @@ class SearchByPassportISpec extends ISpec with HomeOfficeImmigrationStatusStubs 
 
       val result = await(requestWithSession("/search-by-passport", "session-searchByPassportPost").post(payload))
 
-      result.status                 shouldBe SEE_OTHER
-      extractHeaderLocation(result) shouldBe Some(controllers.routes.StatusResultController.onPageLoad.url)
+      result.status mustBe SEE_OTHER
+      extractHeaderLocation(result) mustBe Some(controllers.routes.StatusResultController.onPageLoad.url)
+      val actualRepositoryContent =
+        await(repository.collection.find(Filters.eq("_id", "session-searchByPassportPost")).headOption())
+      actualRepositoryContent.map(_.id) mustBe Some("session-searchByPassportPost")
     }
   }
 }

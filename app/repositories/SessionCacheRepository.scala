@@ -16,24 +16,30 @@
 
 package repositories
 
-import java.util.concurrent.TimeUnit
-
-import com.google.inject.{Inject, Singleton}
+import com.google.inject.{ImplementedBy, Inject, Singleton}
 import config.AppConfig
 import models.FormQueryModel
-import org.mongodb.scala.MongoCollection
 import org.mongodb.scala.model.Filters.equal
-import org.mongodb.scala.model.{FindOneAndReplaceOptions, IndexModel, IndexOptions}
 import org.mongodb.scala.model.Indexes.ascending
-import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
-import repositories.SessionCacheRepository.CollectionName
+import org.mongodb.scala.model.{FindOneAndReplaceOptions, IndexModel, IndexOptions}
+import repositories.SessionCacheRepositoryImpl.CollectionName
 import uk.gov.hmrc.mongo.MongoComponent
-import org.mongodb.scala.ObservableFuture
+import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
+import java.util.concurrent.TimeUnit
 import scala.concurrent.{ExecutionContext, Future}
 
+@ImplementedBy(classOf[SessionCacheRepositoryImpl])
+trait SessionCacheRepository {
+  def get(id: String)(implicit ec: ExecutionContext): Future[Option[FormQueryModel]]
+
+  def set(formQueryModel: FormQueryModel)(implicit ec: ExecutionContext): Future[Unit]
+
+  def delete(id: String)(implicit ec: ExecutionContext): Future[Unit]
+}
+
 @Singleton
-class SessionCacheRepository @Inject() (
+class SessionCacheRepositoryImpl @Inject() (
   mongoComponent: MongoComponent,
   appConfig: AppConfig
 )(implicit ec: ExecutionContext)
@@ -50,20 +56,12 @@ class SessionCacheRepository @Inject() (
         )
       )
     )
-    with SearchableWithMongoCollection
+    with SessionCacheRepository {
 
-object SessionCacheRepository {
-  val CollectionName = "form-query"
-}
-
-trait SearchableWithMongoCollection {
-
-  def collection: MongoCollection[FormQueryModel]
-
-  def get(id: String)(implicit ec: ExecutionContext): Future[Option[FormQueryModel]] =
+  override def get(id: String)(implicit ec: ExecutionContext): Future[Option[FormQueryModel]] =
     collection.find(equal("_id", id)).toFuture().map(_.headOption)
 
-  def set(formQueryModel: FormQueryModel)(implicit ec: ExecutionContext): Future[Unit] = {
+  override def set(formQueryModel: FormQueryModel)(implicit ec: ExecutionContext): Future[Unit] = {
     val query = equal("_id", formQueryModel.id)
     collection
       .findOneAndReplace(query, formQueryModel, FindOneAndReplaceOptions().upsert(true))
@@ -71,7 +69,10 @@ trait SearchableWithMongoCollection {
       .map(_ => ())
   }
 
-  def delete(id: String)(implicit ec: ExecutionContext): Future[Unit] =
+  override def delete(id: String)(implicit ec: ExecutionContext): Future[Unit] =
     collection.deleteOne(equal("_id", id)).toFuture().map(_ => ())
+}
 
+object SessionCacheRepositoryImpl {
+  val CollectionName = "form-query"
 }
