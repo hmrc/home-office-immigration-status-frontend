@@ -111,7 +111,9 @@ class InputDateSpec extends ViewSpec {
         "have the error class for day" in {
           docWithInvalidForm
             .getElementById("dateOfBirth.day")
-            .attr("class").split(" +").toSeq mustBe Seq(
+            .attr("class")
+            .split(" +")
+            .toSeq mustBe Seq(
             "govuk-input",
             "govuk-date-input__input",
             "govuk-input--width-2",
