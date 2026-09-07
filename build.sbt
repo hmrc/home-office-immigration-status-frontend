@@ -13,7 +13,7 @@ val commonSettings: Seq[String] = Seq(
   "-deprecation",
   "-language:noAutoTupling",
   "-Wvalue-discard",
-//  "-Werror",
+  "-Werror",
   "-Wconf:src=routes/.*:s",
   "-Wconf:src=views/.*txt.*:s",
   "-Wconf:msg=unused import&src=conf/.*:s",
