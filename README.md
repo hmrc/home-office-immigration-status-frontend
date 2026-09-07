@@ -20,14 +20,6 @@ It should then be listening on port 10210
     
 When signing in with the auth stub, the test user must have a role of `TBC`
 
-## Shuttering
-
-As this is an internal service shuttering is handled within the application.\
-Configured by `isShuttered`.\
-To shutter the service in a given environment, add `isShuttered: 'true'` to 
-`app-config-ENV/home-office-immigration-status-frontend.yaml` and redeploy.
-
-
 ## Adding new content
 
 When the Home Office adds new product types or immigration statuses to the values returned by their API, 
