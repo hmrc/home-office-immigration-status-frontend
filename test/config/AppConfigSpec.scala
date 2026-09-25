@@ -42,7 +42,6 @@ class AppConfigSpec extends PlaySpec {
            |mongodb.ttl.seconds=1200
            |authorisedStrideGroup="TBC"
            |defaultQueryTimeRangeInMonths=12
-           |google-tag-manager.id="123"
            |it.helpdesk.url="URL"
            |httpHeaders.cacheControl="Cache"
            |mongodb.encryption.key="Key123"
