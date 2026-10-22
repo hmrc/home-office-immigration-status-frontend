@@ -6,3 +6,4 @@ service-type: Frontend
 test-repositories:
   - home-office-immigration-status-perf-tests
   - home-office-immigration-status-acceptance-tests
+serviceNowMapping: SNSVC0005330
