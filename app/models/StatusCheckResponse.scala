@@ -33,6 +33,15 @@ final case class StatusCheckSuccessfulResponse(
   result: StatusCheckResult
 ) extends StatusCheckResponse
 
+object StatusCheckNoContentResponse {
+  given statusCheckSuccessfulResponseFormat: OFormat[StatusCheckNoContentResponse] =
+    Json.format[StatusCheckNoContentResponse]
+}
+
+final case class StatusCheckNoContentResponse(
+                                                correlationId: Option[String]
+                                              ) extends StatusCheckResponse
+
 object StatusCheckSuccessfulResponse {
   given statusCheckSuccessfulResponseFormat: OFormat[StatusCheckSuccessfulResponse] =
     Json.format[StatusCheckSuccessfulResponse]

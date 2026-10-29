@@ -89,6 +89,19 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
         result mustBe expectedResponse
       }
 
+      "return no body when 204" in {
+        givenStatusWhenNoContent(correlationId)
+
+        val result = await(connector.statusPublicFundsByNino(ninoRequest))
+
+        val expectedResult = StatusCheckResponseWithStatus(
+          NO_CONTENT,
+          StatusCheckNoContentResponse(Some(correlationId))
+        )
+
+        result mustBe expectedResult
+      }
+
       "return check error when 400 response ERR_REQUEST_INVALID" in {
         givenCheckByNinoErrorWhenMissingInputField()
 
@@ -164,8 +177,9 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
 trait HomeOfficeImmigrationStatusConnectorISpecSetup extends BaseISpec with HomeOfficeImmigrationStatusStubs {
 
   private val HEADER_X_CORRELATION_ID = "X-Correlation-Id"
+  private val correlationId = UUID.randomUUID().toString
   given hc: HeaderCarrier =
-    HeaderCarrier().withExtraHeaders(HEADER_X_CORRELATION_ID -> UUID.randomUUID().toString)
+    HeaderCarrier().withExtraHeaders(HEADER_X_CORRELATION_ID -> correlationId)
 
   val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
 

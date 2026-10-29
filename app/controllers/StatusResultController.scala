@@ -62,12 +62,12 @@ class StatusResultController @Inject() (
     response match {
       case StatusCheckResponseWithStatus(_, success: StatusCheckSuccessfulResponse) =>
         displaySuccessfulResult(query, success)
-      case StatusCheckResponseWithStatus(status, _: StatusCheckErrorResponse) => handleError(query, status)
+      case StatusCheckResponseWithStatus(status, _) => handleError(query, status)
     }
 
   private def handleError(query: SearchFormModel, status: Int)(implicit request: Request[AnyContent]): Result =
     status match {
-      case CONFLICT | NOT_FOUND => Ok(statusCheckFailurePage(query))
+      case CONFLICT | NOT_FOUND | NO_CONTENT => Ok(statusCheckFailurePage(query))
       case _                    => InternalServerError(externalErrorPage())
     }
 
