@@ -42,7 +42,16 @@ class StatusCheckResponseHttpParserSpec extends BaseSpec {
 
       val result = StatusCheckResponseReads.read("POST", "some url", response)
       result mustBe expectedResponse
+    }
 
+    "a 204 is returned" in {
+      val statusCheckNoContentResponse = StatusCheckNoContentResponse(Some("correlationId"))
+      val response            = HttpResponse(NO_CONTENT, "", Map("X-Correlation-Id" -> Seq("correlationId")))
+
+      val expectedResponse = StatusCheckResponseWithStatus(NO_CONTENT, statusCheckNoContentResponse)
+
+      val result = StatusCheckResponseReads.read("POST", "some url", response)
+      result mustBe expectedResponse
     }
 
     "return an unknown error" when {
