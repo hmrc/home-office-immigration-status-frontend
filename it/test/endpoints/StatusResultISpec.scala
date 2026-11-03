@@ -38,8 +38,8 @@ class StatusResultISpec extends ISpec with HomeOfficeImmigrationStatusStubs {
 
       val result = await(requestWithSession("/status-result", sessionId).get())
 
-      result.status                                       mustBe OK
-      result.body                                           must include(htmlEscapedMessage("status-found.title"))
+      result.status mustBe OK
+      result.body must include(htmlEscapedMessage("status-found.title"))
       result.headers.get("Cache-Control").map(_.mkString) mustBe Some("no-cache, no-store, must-revalidate")
     }
 
@@ -54,10 +54,10 @@ class StatusResultISpec extends ISpec with HomeOfficeImmigrationStatusStubs {
       val result = await(requestWithSession("/status-result", sessionId).get())
 
       result.status mustBe INTERNAL_SERVER_ERROR
-      result.body     must include(htmlEscapedMessage("external.error.500.title"))
-      result.body     must include(htmlEscapedMessage("external.error.500.message"))
-      result.body     must include(htmlEscapedMessage("external.error.500.helpdesk-link"))
-      result.body     must include(htmlEscapedMessage("external.error.500.helpdesk-text"))
+      result.body must include(htmlEscapedMessage("external.error.500.title"))
+      result.body must include(htmlEscapedMessage("external.error.500.message"))
+      result.body must include(htmlEscapedMessage("external.error.500.helpdesk-link"))
+      result.body must include(htmlEscapedMessage("external.error.500.helpdesk-text"))
       result.headers.get("Cache-Control").map(_.mkString) mustBe Some("no-cache, no-store, must-revalidate")
     }
   }

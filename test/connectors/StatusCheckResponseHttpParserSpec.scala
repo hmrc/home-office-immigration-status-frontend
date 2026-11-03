@@ -46,7 +46,7 @@ class StatusCheckResponseHttpParserSpec extends BaseSpec {
 
     "a 204 is returned" in {
       val statusCheckNoContentResponse = StatusCheckNoContentResponse(Some("correlationId"))
-      val response            = HttpResponse(NO_CONTENT, "", Map("X-Correlation-Id" -> Seq("correlationId")))
+      val response                     = HttpResponse(NO_CONTENT, "", Map("X-Correlation-Id" -> Seq("correlationId")))
 
       val expectedResponse = StatusCheckResponseWithStatus(NO_CONTENT, statusCheckNoContentResponse)
 

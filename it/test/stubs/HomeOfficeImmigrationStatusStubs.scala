@@ -115,9 +115,8 @@ trait HomeOfficeImmigrationStatusStubs extends JourneyTestData {
     givenStatusPublicFundsCheckStub("nino", BAD_REQUEST, validByNinoRequestBody(), errorResponseBody)
   }
 
-  def givenStatusWhenNoContent(correlationId: String): StubMapping = {
+  def givenStatusWhenNoContent(correlationId: String): StubMapping =
     givenStatusPublicFundsCheckStub("nino", NO_CONTENT, validByNinoRequestBody(), "", correlationId)
-  }
 
   def givenStatusCheckErrorWhenStatusNotFound(): StubMapping = {
 
