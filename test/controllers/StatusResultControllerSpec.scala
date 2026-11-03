@@ -152,6 +152,26 @@ class StatusResultControllerSpec extends ControllerSpec {
         verify(mockSessionCacheService).get(any(), any())
       }
 
+      "has no content" in {
+        when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(query)))
+        mockProxyServiceWith(
+          StatusCheckResponseWithStatus(
+            NO_CONTENT,
+            StatusCheckNoContentResponse(correlationId)
+          )
+        )
+
+        val result = sut.onPageLoad()(request)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe app.injector
+          .instanceOf[StatusCheckFailurePage]
+          .apply(query)(request, messages)
+          .toString
+        verifyConnector()
+        verify(mockSessionCacheService).get(any(), any())
+      }
+
       "has not found error" in {
         when(mockSessionCacheService.get(any(), any())).thenReturn(Future.successful(Some(query)))
         mockProxyServiceWith(

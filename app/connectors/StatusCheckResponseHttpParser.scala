@@ -42,6 +42,8 @@ object StatusCheckResponseHttpParser extends Logging {
                 StatusCheckErrorResponse(correlationId, StatusCheckError(UNKNOWN_ERROR))
               )
           }
+        case NO_CONTENT =>
+          StatusCheckResponseWithStatus(NO_CONTENT, StatusCheckNoContentResponse(correlationId))
         case status =>
           Try(response.json.as[StatusCheckErrorResponse]) match {
             case Success(res) =>
