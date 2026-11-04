@@ -39,8 +39,8 @@ object StatusCheckNoContentResponse {
 }
 
 final case class StatusCheckNoContentResponse(
-                                                correlationId: Option[String]
-                                              ) extends StatusCheckResponse
+  correlationId: Option[String]
+) extends StatusCheckResponse
 
 object StatusCheckSuccessfulResponse {
   given statusCheckSuccessfulResponseFormat: OFormat[StatusCheckSuccessfulResponse] =

@@ -48,7 +48,7 @@ class ShutteredISpec extends ISpec {
           val result: WSResponse = await(request(path))
 
           result.status mustBe SERVICE_UNAVAILABLE
-          result.body     must include(htmlEscapedMessage("shuttering.title"))
+          result.body must include(htmlEscapedMessage("shuttering.title"))
         }
       }
     }

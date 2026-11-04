@@ -35,7 +35,7 @@ class AuthActionsISpec extends AuthActionISpecSetup {
 
       val result = TestController.test()(request)
 
-      status(result)          mustBe 200
+      status(result) mustBe 200
       contentAsString(result) mustBe "Passed Auth"
       verifyAuthoriseAttempt()
     }
@@ -44,7 +44,7 @@ class AuthActionsISpec extends AuthActionISpecSetup {
       givenRequestIsNotAuthorised("SessionRecordNotFound")
 
       val result = TestController.test()(request)
-      status(result)             mustBe 303
+      status(result) mustBe 303
       redirectLocation(result).get must include("/stride/sign-in")
       verifyAuthoriseAttempt()
     }
@@ -53,7 +53,7 @@ class AuthActionsISpec extends AuthActionISpecSetup {
       givenRequestIsNotAuthorised("UnsupportedAuthProvider")
 
       val result = TestController.test()(request)
-      status(result)             mustBe 303
+      status(result) mustBe 303
       redirectLocation(result).get must include("/stride/sign-in")
       verifyAuthoriseAttempt()
     }

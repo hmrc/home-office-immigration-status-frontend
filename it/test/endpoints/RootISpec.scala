@@ -29,7 +29,7 @@ class RootISpec extends ISpec {
 
       val result: WSResponse = await(requestWithSession("/", "session-root").get())
 
-      result.status                 mustBe SEE_OTHER
+      result.status mustBe SEE_OTHER
       extractHeaderLocation(result) mustBe Some(controllers.routes.SearchByNinoController.onPageLoad().url)
     }
   }

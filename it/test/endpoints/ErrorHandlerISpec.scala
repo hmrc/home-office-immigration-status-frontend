@@ -30,8 +30,8 @@ class ErrorHandlerISpec extends ISpec with HomeOfficeImmigrationStatusStubs {
 
       val result = await(request("/foo").get())
 
-      result.status                                       mustBe NOT_FOUND
-      result.body                                           must include("This page can’t be found")
+      result.status mustBe NOT_FOUND
+      result.body must include("This page can’t be found")
       result.headers.get("Cache-Control").map(_.mkString) mustBe Some("no-cache, no-store, must-revalidate")
     }
   }

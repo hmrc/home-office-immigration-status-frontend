@@ -183,10 +183,10 @@ class StatusResultControllerSpec extends ControllerSpec {
 
         val result = sut.onPageLoad()(request)
 
-        status(result) mustBe OK
+        status(result) mustBe INTERNAL_SERVER_ERROR
         contentAsString(result) mustBe app.injector
-          .instanceOf[StatusCheckFailurePage]
-          .apply(query)(request, messages)
+          .instanceOf[ExternalErrorPage]
+          .apply()(request, messages)
           .toString
         verifyConnector()
         verify(mockSessionCacheService).get(any(), any())
