@@ -19,14 +19,16 @@ package errors
 import com.google.inject.name.Named
 import config.AppConfig
 import controllers.actions.AuthRedirects
+import models.IsShutteredFlag
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND}
 import play.api.i18n.MessagesApi
-import play.api.mvc.Results._
+import play.api.mvc.Results.*
 import play.api.mvc.{Request, RequestHeader, Result}
 import play.api.{Configuration, Environment, Logging}
 import play.twirl.api.Html
 import uk.gov.hmrc.auth.core.{InsufficientEnrolments, NoActiveSession}
 import uk.gov.hmrc.http.{JsValidationException, NotFoundException}
+import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
@@ -46,6 +48,7 @@ class ErrorHandler @Inject() (
   shutteringPage: ShutteringPage,
   @Named("appName") val appName: String,
   appConfig: AppConfig,
+  featureFlagService: FeatureFlagService,
   val config: Configuration
 )(implicit val ec: ExecutionContext)
     extends FrontendErrorHandler
@@ -55,11 +58,14 @@ class ErrorHandler @Inject() (
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
     auditClientError(request, statusCode, message)
-    if (appConfig.shuttered) {
-      given r: Request[String] = Request(request, "")
-      Future.successful(ServiceUnavailable(shutteringPage()))
-    } else {
-      super.onClientError(request, statusCode, message)
+    featureFlagService.get(IsShutteredFlag).flatMap { toggle =>
+      if (toggle.isEnabled) {
+        given r: Request[String] = Request(request, "")
+
+        Future.successful(ServiceUnavailable(shutteringPage()))
+      } else {
+        super.onClientError(request, statusCode, message)
+      }
     }
   }
 

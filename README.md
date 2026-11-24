@@ -62,3 +62,10 @@ For example, where the new status is non-EUS and the value is NEW, three message
 ### License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html")
+
+
+
+
+
+
+TODO: Add INTERNAL_AUTH INTERNAL_AUTH_FRONTEND and DDCN_LIVE_ADMIN_FRONTEND to sm2

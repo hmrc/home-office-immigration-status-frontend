@@ -23,7 +23,6 @@ import com.google.inject.{Inject, Singleton}
 @Singleton
 class AppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Configuration, env: Environment) {
 
-  val shuttered: Boolean                              = servicesConfig.getBoolean("isShuttered")
   val homeOfficeImmigrationStatusProxyBaseUrl: String = servicesConfig.baseUrl("home-office-immigration-status-proxy")
   val mongoSessionExpiration: Int                     = servicesConfig.getInt("mongodb.ttl.seconds")
   val authorisedStrideGroup: String                   = servicesConfig.getString("authorisedStrideGroup")
