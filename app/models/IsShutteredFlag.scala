@@ -19,7 +19,5 @@ package models
 import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlagName
 
 case object IsShutteredFlag extends FeatureFlagName {
-  override val name: String                = "CIS-is-shuttered"
-  override val description: Option[String] = Some("When Enabled (set true) CIS is shuttered")
-  override val defaultState: Boolean       = false
+  override val name: String = "CIS-is-shuttered"
 }

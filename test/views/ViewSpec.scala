@@ -19,20 +19,13 @@ package views
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
-import org.mockito.Mockito.mock
 import org.scalatest.Assertion
 import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.Application
 import play.api.i18n.{Lang, Messages, MessagesApi}
-import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.AnyContentAsEmpty
-import play.api.test.{FakeRequest, Injecting}
+import play.api.test.FakeRequest
 import play.twirl.api.Html
-import repositories.SessionCacheRepository
 import support.BaseSpec
-import uk.gov.hmrc.mongo.play.PlayMongoModule
 
 trait ViewSpec extends BaseSpec {
 

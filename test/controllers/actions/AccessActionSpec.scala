@@ -24,7 +24,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Results.Ok
 import play.api.mvc.{ActionFunction, Request, Result}
 import repositories.SessionCacheRepository
-import uk.gov.hmrc.mongo.play.PlayMongoModule
+import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 
 import scala.concurrent.Future
 
@@ -42,9 +42,9 @@ class AccessActionSpec extends ControllerSpec {
     .overrides(
       bind[AuthAction].toInstance(mockAuthAction),
       bind[ShutterAction].toInstance(mockShutterAction),
-      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
+      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository),
+      bind[FeatureFlagService].toInstance(mockFeatureFlagService)
     )
-    .disable[PlayMongoModule]
     .build()
 
   val expected: Result                        = Ok("Invoked")

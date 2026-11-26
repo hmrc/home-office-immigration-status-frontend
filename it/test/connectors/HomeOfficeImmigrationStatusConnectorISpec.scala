@@ -17,18 +17,21 @@
 package connectors
 
 import models.*
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import support.BaseISpec
-import org.mockito.Mockito.mock
 import repositories.SessionCacheRepository
 import stubs.HomeOfficeImmigrationStatusStubs
 import uk.gov.hmrc.http.*
 import play.api.Application
 import play.api.http.Status.*
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 
 import java.time.{LocalDate, ZoneId}
 import java.util.UUID
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationStatusConnectorISpecSetup {
 
@@ -38,7 +41,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
 
       "return status when mrz request successful" in {
         givenCheckByMrzSucceeds()
-
+        when(mockFeatureFlagService.get(any())).thenReturn(Future(FeatureFlag(IsShutteredFlag, false)))
         val result = await(connector.statusPublicFundsByMrz(mrzRequest))
 
         val expectedResult = StatusCheckResult(
@@ -66,6 +69,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
 
       "return status when nino successful" in {
         givenCheckByNinoSucceeds()
+        when(mockFeatureFlagService.get(any())).thenReturn(Future(FeatureFlag(IsShutteredFlag, false)))
 
         val result = await(connector.statusPublicFundsByNino(ninoRequest))
 
@@ -91,6 +95,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
 
       "return no body when 204" in {
         givenStatusWhenNoContent(correlationId)
+        when(mockFeatureFlagService.get(any())).thenReturn(Future(FeatureFlag(IsShutteredFlag, false)))
 
         val result = await(connector.statusPublicFundsByNino(ninoRequest))
 
@@ -104,6 +109,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
 
       "return check error when 400 response ERR_REQUEST_INVALID" in {
         givenCheckByNinoErrorWhenMissingInputField()
+        when(mockFeatureFlagService.get(any())).thenReturn(Future(FeatureFlag(IsShutteredFlag, false)))
 
         val result = await(connector.statusPublicFundsByNino(ninoRequest))
 
@@ -117,6 +123,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
 
       "return check error when 404 response ERR_NOT_FOUND" in {
         givenStatusCheckErrorWhenStatusNotFound()
+        when(mockFeatureFlagService.get(any())).thenReturn(Future(FeatureFlag(IsShutteredFlag, false)))
 
         val result = await(connector.statusPublicFundsByNino(ninoRequest))
 
@@ -130,6 +137,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
 
       "return check error when 400 response ERR_VALIDATION" in {
         givenStatusCheckErrorWhenDOBInvalid()
+        when(mockFeatureFlagService.get(any())).thenReturn(Future(FeatureFlag(IsShutteredFlag, false)))
 
         val result = await(connector.statusPublicFundsByNino(ninoRequest))
 
@@ -146,6 +154,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
 
       "return check error if invalid JSON body return" in {
         givenStatusPublicFundsCheckStub("nino", CONFLICT, validByNinoRequestBody(), "", "some-correlation-id")
+        when(mockFeatureFlagService.get(any())).thenReturn(Future(FeatureFlag(IsShutteredFlag, false)))
 
         val result = await(connector.statusPublicFundsByNino(ninoRequest))
 
@@ -159,6 +168,7 @@ class HomeOfficeImmigrationStatusConnectorISpec extends HomeOfficeImmigrationSta
 
       "throw exception if 5xx response" in {
         givenAnExternalServiceErrorCheckByNino()
+        when(mockFeatureFlagService.get(any())).thenReturn(Future(FeatureFlag(IsShutteredFlag, false)))
 
         val result = await(connector.statusPublicFundsByNino(ninoRequest))
 
@@ -181,7 +191,7 @@ trait HomeOfficeImmigrationStatusConnectorISpecSetup extends BaseISpec with Home
   given hc: HeaderCarrier =
     HeaderCarrier().withExtraHeaders(HEADER_X_CORRELATION_ID -> correlationId)
 
-  val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
+  val mockSessionCacheRepository: SessionCacheRepository = mock[SessionCacheRepository]
 
   override lazy val app: Application = appBuilder.build()
 

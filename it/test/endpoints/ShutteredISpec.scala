@@ -16,19 +16,21 @@
 
 package endpoints
 
-import play.api.Application
+import models.IsShutteredFlag
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import play.api.http.Status.SERVICE_UNAVAILABLE
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import support.ISpec
 import play.api.libs.ws.DefaultBodyReadables.readableAsString
 import play.api.libs.ws.WSBodyWritables.writeableOf_urlEncodedSimpleForm
+import scala.concurrent.ExecutionContext.Implicits.global
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
 
 import scala.concurrent.Future
 
 class ShutteredISpec extends ISpec {
-
-  override lazy val app: Application = appBuilder.configure("isShuttered" -> true).build()
 
   val get: String => Future[WSResponse]  = request(_).get()
   val post: String => Future[WSResponse] = request(_).post(Map.empty[String, String])
@@ -45,6 +47,7 @@ class ShutteredISpec extends ISpec {
     ).foreach { case (path, request) =>
       s"path is $path and method is ${request.getClass.getName} and app is shuttered" must {
         "return the shutter page" in {
+          when(mockFeatureFlagService.get(any())).thenReturn(Future(FeatureFlag(IsShutteredFlag, true)))
           val result: WSResponse = await(request(path))
 
           result.status mustBe SERVICE_UNAVAILABLE

@@ -21,12 +21,19 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import stubs.HomeOfficeImmigrationStatusStubs
 import support.ISpec
 import play.api.libs.ws.DefaultBodyReadables.readableAsString
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
+import models.IsShutteredFlag
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class ErrorHandlerISpec extends ISpec with HomeOfficeImmigrationStatusStubs {
 
   "GET /check-immigration-status/foo" must {
     "return an error page not found" in {
       givenAuthorisedForStride("TBC", "StrideUserId")
+      when(mockFeatureFlagService.get(any())).thenReturn(Future(FeatureFlag(IsShutteredFlag, false)))
 
       val result = await(request("/foo").get())
 

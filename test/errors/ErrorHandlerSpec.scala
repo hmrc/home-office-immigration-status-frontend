@@ -18,16 +18,19 @@ package errors
 
 import config.AppConfig
 import controllers.ControllerSpec
-import org.mockito.ArgumentMatchers._
-import org.mockito.Mockito._
-import play.api._
-import play.api.http.Status._
+import org.mockito.ArgumentMatchers.*
+import org.mockito.Mockito.*
+import play.api.*
+import play.api.http.Status.*
 import play.api.mvc.Result
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
-import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.http._
+import uk.gov.hmrc.auth.core.*
+import uk.gov.hmrc.http.*
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
+import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
-import views.html._
+import views.html.*
+import models.IsShutteredFlag
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -55,6 +58,7 @@ class ErrorHandlerSpec extends ControllerSpec {
     reset(mockAuditConnector)
     reset(mockAppConfig)
     reset(mockConfiguration)
+    reset(mockFeatureFlagService)
   }
 
   private lazy val sut: ErrorHandler =
@@ -67,7 +71,8 @@ class ErrorHandlerSpec extends ControllerSpec {
       shutteringPage = shutteringPage,
       appName = "home-office-immigration-status-frontend",
       appConfig = mockAppConfig,
-      config = mockConfiguration
+      config = mockConfiguration,
+      featureFlagService = mockFeatureFlagService
     )
 
   "ErrorHandler" when {
@@ -139,7 +144,7 @@ class ErrorHandlerSpec extends ControllerSpec {
     ".onClientError" when {
       "service is shuttered" must {
         "return ShutteringPage with 503 SERVICE_UNAVAILABLE" in {
-          when(mockAppConfig.shuttered).thenReturn(true)
+          when(mockFeatureFlagService.get(any())).thenReturn(Future(FeatureFlag(IsShutteredFlag, true)))
 
           val result: Future[Result] = sut.onClientError(request, SERVICE_UNAVAILABLE, "test")
 
@@ -151,7 +156,7 @@ class ErrorHandlerSpec extends ControllerSpec {
       "service is unshuttered" must {
         def test(statusCode: Int): Unit =
           s"return $statusCode" in {
-            when(mockAppConfig.shuttered).thenReturn(false)
+            when(mockFeatureFlagService.get(any())).thenReturn(Future(FeatureFlag(IsShutteredFlag, false)))
 
             val result: Future[Result] = sut.onClientError(request, statusCode, "test")
 

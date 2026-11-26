@@ -20,39 +20,15 @@ import config.Countries
 import models.{MrzSearchFormModel, NinoSearchFormModel, StatusCheckResult}
 import org.mockito.ArgumentMatchers.{any, matches}
 import org.mockito.Mockito.{RETURNS_DEEP_STUBS, mock, reset, when}
-import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
-import org.scalatest.{BeforeAndAfterEach, OptionValues}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.Application
 import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
-import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.test.Injecting
-import repositories.SessionCacheRepository
-import uk.gov.hmrc.mongo.play.PlayMongoModule
 import utils.NinoGenerator
 import viewmodels.RowViewModel
 
 import java.time.LocalDate
 import java.util.Locale
 
-class StatusNotAvailablePageContextSpec
-    extends AnyWordSpecLike
-    with Matchers
-    with OptionValues
-    with BeforeAndAfterEach
-    with GuiceOneAppPerSuite
-    with Injecting {
-
-  val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
-
-  override implicit lazy val app: Application = new GuiceApplicationBuilder()
-    .overrides(
-      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
-    )
-    .disable[PlayMongoModule]
-    .build()
+class StatusNotAvailablePageContextSpec extends AnyWordSpecLike with ViewSpec {
 
   lazy val realMessages: Messages = app.injector.instanceOf[MessagesApi].preferred(Seq.empty[Lang])
   val mockMessages: Messages      = mock(classOf[MessagesImpl], RETURNS_DEEP_STUBS)

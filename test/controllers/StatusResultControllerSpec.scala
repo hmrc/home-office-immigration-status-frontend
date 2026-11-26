@@ -29,7 +29,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import repositories.SessionCacheRepository
 import services.{HomeOfficeImmigrationStatusProxyService, SessionCacheService}
-import uk.gov.hmrc.mongo.play.PlayMongoModule
+import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import utils.NinoGenerator.generateNino
 import views.html.*
 import views.{StatusFoundPageContext, StatusNotAvailablePageContext}
@@ -46,9 +46,9 @@ class StatusResultControllerSpec extends ControllerSpec {
       bind[AccessAction].to[FakeAccessAction],
       bind[HomeOfficeImmigrationStatusProxyService].toInstance(mockProxyService),
       bind[SessionCacheRepository].toInstance(mockSessionCacheRepository),
-      bind[SessionCacheService].toInstance(mockSessionCacheService)
+      bind[SessionCacheService].toInstance(mockSessionCacheService),
+      bind[FeatureFlagService].toInstance(mockFeatureFlagService)
     )
-    .disable[PlayMongoModule]
     .build()
 
   override def beforeEach(): Unit = {
