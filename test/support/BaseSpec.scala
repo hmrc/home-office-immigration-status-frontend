@@ -27,7 +27,7 @@ import play.api.inject.bind
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.test.Injecting
 import repositories.SessionCacheRepository
-import uk.gov.hmrc.mongo.play.PlayMongoModule
+import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import scala.concurrent.duration.*
 import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.{Await, Awaitable}
@@ -46,15 +46,16 @@ trait BaseSpec
   protected def await[T](future: Awaitable[T]): T = Await.result(future, timeoutDuration)
 
   protected val mockSessionCacheRepository: SessionCacheRepository = mock(classOf[SessionCacheRepository])
+  protected val mockFeatureFlagService: FeatureFlagService         = mock(classOf[FeatureFlagService])
 
   protected val modules: Seq[GuiceableModule] = Seq(
-    bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
+    bind[SessionCacheRepository].toInstance(mockSessionCacheRepository),
+    bind[FeatureFlagService].toInstance(mockFeatureFlagService)
   )
 
   protected def appBuilder: GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(modules*)
-      .disable[PlayMongoModule]
 
   override implicit lazy val app: Application = appBuilder.build()
 }

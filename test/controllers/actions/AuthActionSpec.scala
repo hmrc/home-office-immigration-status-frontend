@@ -19,17 +19,22 @@ package controllers.actions
 import config.AppConfig
 import controllers.actions.AuthActionSpec.AuthRetrievals
 import controllers.ControllerSpec
-import org.mockito.ArgumentMatchers._
-import org.mockito.Mockito._
-import play.api.mvc._
+import org.mockito.ArgumentMatchers.*
+import org.mockito.Mockito.*
+import play.api.mvc.*
 import play.api.mvc.Results.Ok
-import play.api._
+import play.api.*
+import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.{FORBIDDEN, OK, status}
+import repositories.SessionCacheRepository
+import services.SessionCacheService
 import support.CallOps
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
-import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve._
+import uk.gov.hmrc.auth.core.retrieve.*
+import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -42,7 +47,14 @@ class AuthActionSpec extends ControllerSpec with AuthRedirects {
   private lazy val mockAuthConnector: AuthConnector = mock(classOf[AuthConnector])
   private lazy val mockAppConfig: AppConfig         = mock(classOf[AppConfig])
   private lazy val parser: BodyParsers.Default      = app.injector.instanceOf[BodyParsers.Default]
-
+  override implicit lazy val app: Application = new GuiceApplicationBuilder()
+    .overrides(
+      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository),
+      bind[FeatureFlagService].toInstance(mockFeatureFlagService),
+      bind[SessionCacheService].toInstance(mockSessionCacheService),
+      bind[AppConfig].toInstance(mockAppConfig)
+    )
+    .build()
   private lazy val sut: AuthActionImpl = new AuthActionImpl(
     env = env,
     authConnector = mockAuthConnector,

@@ -1,3 +1,4 @@
 # Add all the application routes to the app.routes file
 ->         /check-immigration-status        app.Routes
+->         /admin                     admin.Routes
 ->         /                                health.Routes

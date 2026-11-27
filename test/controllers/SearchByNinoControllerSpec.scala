@@ -31,7 +31,7 @@ import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.{Html, HtmlFormat}
 import repositories.SessionCacheRepository
 import services.SessionCacheService
-import uk.gov.hmrc.mongo.play.PlayMongoModule
+import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import utils.NinoGenerator.generateNino
 import views.html.SearchByNinoView
 
@@ -45,9 +45,9 @@ class SearchByNinoControllerSpec extends ControllerSpec {
       bind[AccessAction].to[FakeAccessAction],
       bind[SearchByNinoView].toInstance(mockView),
       bind[SessionCacheRepository].toInstance(mockSessionCacheRepository),
-      bind[SessionCacheService].toInstance(mockSessionCacheService)
+      bind[SessionCacheService].toInstance(mockSessionCacheService),
+      bind[FeatureFlagService].toInstance(mockFeatureFlagService)
     )
-    .disable[PlayMongoModule]
     .build()
 
   lazy val sut: SearchByNinoController = app.injector.instanceOf[SearchByNinoController]

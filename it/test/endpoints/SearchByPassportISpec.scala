@@ -24,6 +24,12 @@ import play.api.libs.ws.WSBodyWritables.writeableOf_urlEncodedSimpleForm
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import stubs.HomeOfficeImmigrationStatusStubs
 import support.ISpec
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
+import models.IsShutteredFlag
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class SearchByPassportISpec extends ISpec with HomeOfficeImmigrationStatusStubs with MockSessionCookie {
 
@@ -36,6 +42,7 @@ class SearchByPassportISpec extends ISpec with HomeOfficeImmigrationStatusStubs 
   "GET /check-immigration-status/search-by-passport" must {
     "show the lookup page and have nothing stored in Mongo" in {
       givenAuthorisedForStride("TBC", "StrideUserId")
+      when(mockFeatureFlagService.get(any())).thenReturn(Future(FeatureFlag(IsShutteredFlag, false)))
 
       val result = await(requestWithSession("/search-by-passport", "session-searchByPassportGet").get())
 
@@ -52,6 +59,7 @@ class SearchByPassportISpec extends ISpec with HomeOfficeImmigrationStatusStubs 
     "redirect to the result page and store ID in Mongo" in {
       givenCheckByMrzSucceeds()
       givenAuthorisedForStride("TBC", "StrideUserId")
+      when(mockFeatureFlagService.get(any())).thenReturn(Future(FeatureFlag(IsShutteredFlag, false)))
 
       val payload = Map(
         "dateOfBirth.year"  -> "2001",

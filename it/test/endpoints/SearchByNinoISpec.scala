@@ -28,6 +28,12 @@ import support.ISpec
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
+import models.IsShutteredFlag
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class SearchByNinoISpec extends ISpec with HomeOfficeImmigrationStatusStubs with MockSessionCookie {
 
@@ -40,6 +46,7 @@ class SearchByNinoISpec extends ISpec with HomeOfficeImmigrationStatusStubs with
   "GET /check-immigration-status/search-by-nino" must {
     "show the lookup page and have nothing stored in Mongo" in {
       givenAuthorisedForStride("TBC", "StrideUserId")
+      when(mockFeatureFlagService.get(any())).thenReturn(Future(FeatureFlag(IsShutteredFlag, false)))
 
       val result = Await.result(requestWithSession("/search-by-nino", "session-searchByNinoGet").get(), Duration.Inf)
 
@@ -56,6 +63,7 @@ class SearchByNinoISpec extends ISpec with HomeOfficeImmigrationStatusStubs with
     "redirect to the result page and store ID in Mongo" in {
       givenCheckByNinoSucceeds()
       givenAuthorisedForStride("TBC", "StrideUserId")
+      when(mockFeatureFlagService.get(any())).thenReturn(Future(FeatureFlag(IsShutteredFlag, false)))
 
       val payload = Map(
         "dateOfBirth.year"  -> "2001",

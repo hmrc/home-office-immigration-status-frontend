@@ -18,6 +18,9 @@ package controllers.actions
 
 import config.AppConfig
 import controllers.ControllerSpec
+import controllers.Execution.trampoline
+import models.IsShutteredFlag
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import play.api.Application
 import play.api.i18n.Messages
@@ -28,7 +31,8 @@ import play.api.mvc.{AnyContentAsEmpty, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.contentAsString
 import repositories.SessionCacheRepository
-import uk.gov.hmrc.mongo.play.PlayMongoModule
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
+import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import views.html.ShutteringPage
 
 import scala.concurrent.Future
@@ -39,10 +43,9 @@ class ShutterActionSpec extends ControllerSpec {
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
-      bind[AppConfig].toInstance(mockAppConfig),
+      bind[FeatureFlagService].toInstance(mockFeatureFlagService),
       bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
     )
-    .disable[PlayMongoModule]
     .build()
 
   implicit val req: FakeRequest[AnyContentAsEmpty.type] = request
@@ -53,20 +56,20 @@ class ShutterActionSpec extends ControllerSpec {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockAppConfig)
+    reset(mockFeatureFlagService)
   }
   val block: Request[?] => Future[Result] = _ => Future.successful(Ok("Invoked"))
 
   "applyFiltering" must {
 
     "don't filter where shuttered is false" in {
-      when(mockAppConfig.shuttered).thenReturn(false)
+      when(mockFeatureFlagService.get(any())).thenReturn(Future(FeatureFlag(IsShutteredFlag, false)))
       val fut = shutterAction.invokeBlock(request, block)
       contentAsString(fut) mustEqual "Invoked"
     }
 
     "filter to the shutter page where shuttered is true" in {
-      when(mockAppConfig.shuttered).thenReturn(true)
+      when(mockFeatureFlagService.get(any())).thenReturn(Future(FeatureFlag(IsShutteredFlag, true)))
       val fut = shutterAction.invokeBlock(request, block)
       contentAsString(fut) mustEqual shutteringPage().toString
     }

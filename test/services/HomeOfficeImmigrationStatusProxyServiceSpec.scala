@@ -27,13 +27,14 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.AnyContentAsEmpty
 import repositories.SessionCacheRepository
 import support.BaseSpec
-import uk.gov.hmrc.mongo.play.PlayMongoModule
 import utils.NinoGenerator
 import play.api.test.FakeRequest
+
 import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 class HomeOfficeImmigrationStatusProxyServiceSpec extends BaseSpec {
@@ -52,9 +53,9 @@ class HomeOfficeImmigrationStatusProxyServiceSpec extends BaseSpec {
     .overrides(
       bind[AuditService].toInstance(mockAuditService),
       bind[HomeOfficeImmigrationStatusProxyConnector].toInstance(mockConnector),
-      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository)
+      bind[SessionCacheRepository].toInstance(mockSessionCacheRepository),
+      bind[FeatureFlagService].toInstance(mockFeatureFlagService)
     )
-    .disable[PlayMongoModule]
     .build()
 
   private lazy val sut: HomeOfficeImmigrationStatusProxyService =

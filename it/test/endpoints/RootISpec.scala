@@ -20,12 +20,19 @@ import play.api.http.Status.SEE_OTHER
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import support.ISpec
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
+import models.IsShutteredFlag
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class RootISpec extends ISpec {
 
   "GET /check-immigration-status/" must {
     "show the lookup page" in {
       givenAuthorisedForStride("TBC", "StrideUserId")
+      when(mockFeatureFlagService.get(any())).thenReturn(Future(FeatureFlag(IsShutteredFlag, false)))
 
       val result: WSResponse = await(requestWithSession("/", "session-root").get())
 

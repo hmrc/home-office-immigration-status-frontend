@@ -22,6 +22,7 @@ import org.scalatest.OptionValues
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.inject.bind
@@ -37,6 +38,7 @@ import stubs.AuthStubs
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
+import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.duration.*
@@ -51,7 +53,8 @@ trait BaseISpec
     with Injecting
     with ScalaFutures
     with IntegrationPatience
-    with DefaultPlayMongoRepositorySupport[FormQueryModel] {
+    with DefaultPlayMongoRepositorySupport[FormQueryModel]
+    with MockitoSugar {
 
   override protected def checkIndexedQueries = false
 
@@ -68,18 +71,19 @@ trait BaseISpec
       ec: ExecutionContext
     ): Unit = ()
   }
+  protected implicit lazy val mockFeatureFlagService: FeatureFlagService = mock[FeatureFlagService]
 
   protected def appBuilder: GuiceApplicationBuilder =
     GuiceApplicationBuilder(
       environment = Environment.simple(),
       overrides = Seq(
         bind[AuditService].toInstance(FakeAuditService),
-        bind[MongoComponent].toInstance(mongoComponent)
+        bind[MongoComponent].toInstance(mongoComponent),
+        bind[FeatureFlagService].toInstance(mockFeatureFlagService)
       )
     ).configure(
       "auditing.enabled"                                                -> false,
       "metrics.enabled"                                                 -> false,
-      "isShuttered"                                                     -> false,
       "play.filters.csrf.header.bypassHeaders.Csrf-Token"               -> "nocheck",
       "microservice.services.auth.host"                                 -> wireMockHost,
       "microservice.services.auth.port"                                 -> wireMockPort,

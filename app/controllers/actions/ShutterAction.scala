@@ -17,10 +17,11 @@
 package controllers.actions
 
 import com.google.inject.{ImplementedBy, Inject}
-import play.api.mvc._
-import config.AppConfig
+import models.IsShutteredFlag
+import play.api.mvc.*
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Results._
+import play.api.mvc.Results.*
+import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import views.html.ShutteringPage
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -29,23 +30,19 @@ class ShutterActionImpl @Inject() (
   val messagesApi: MessagesApi,
   val parser: BodyParsers.Default,
   shutteringPage: ShutteringPage
-)(implicit val executionContext: ExecutionContext, appConfig: AppConfig)
+)(implicit val executionContext: ExecutionContext, featureFlagService: FeatureFlagService)
     extends ShutterAction
     with I18nSupport {
 
-  def filter[A](request: Request[A]): Future[Option[Result]] = Future.successful(applyShuttering(request))
-
-  private def applyShuttering[A](implicit request: Request[A]): Option[Result] =
-    if (appConfig.shuttered) {
-      Some(
-        ServiceUnavailable(
-          shutteringPage()
-        )
-      )
-    } else {
-      None
-    }
-
+  def filter[A](implicit request: Request[A]): Future[Option[Result]] =
+    for {
+      isShuttered <- featureFlagService.get(IsShutteredFlag).map(_.isEnabled)
+    } yield
+      if (isShuttered) {
+        Some(ServiceUnavailable(shutteringPage()))
+      } else {
+        None
+      }
 }
 
 @ImplementedBy(classOf[ShutterActionImpl])

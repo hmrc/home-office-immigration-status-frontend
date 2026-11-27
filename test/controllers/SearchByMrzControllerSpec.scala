@@ -31,7 +31,7 @@ import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.{Html, HtmlFormat}
 import repositories.SessionCacheRepository
 import services.SessionCacheService
-import uk.gov.hmrc.mongo.play.PlayMongoModule
+import uk.gov.hmrc.mongoFeatureToggles.services.FeatureFlagService
 import views.html.SearchByMrzView
 
 import java.time.LocalDate
@@ -44,9 +44,9 @@ class SearchByMrzControllerSpec extends ControllerSpec {
       bind[AccessAction].to[FakeAccessAction],
       bind[SearchByMrzView].toInstance(mockView),
       bind[SessionCacheRepository].toInstance(mockSessionCacheRepository),
-      bind[SessionCacheService].toInstance(mockSessionCacheService)
+      bind[SessionCacheService].toInstance(mockSessionCacheService),
+      bind[FeatureFlagService].toInstance(mockFeatureFlagService)
     )
-    .disable[PlayMongoModule]
     .build()
 
   lazy val sut: SearchByMrzController = app.injector.instanceOf[SearchByMrzController]

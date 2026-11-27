@@ -19,6 +19,7 @@ package support
 import crypto.FormModelEncrypter
 import mocks.MockSessionCookie
 import models.{FormQueryModel, NinoSearchFormModel}
+import org.mockito.Mockito.reset
 import play.api.libs.ws.{WSClient, WSRequest, WSResponse}
 import play.api.test.Helpers.LOCATION
 import repositories.SessionCacheRepository
@@ -57,4 +58,8 @@ trait ISpec extends BaseISpec with MockSessionCookie {
   def extractHeaderLocation(wsResponse: WSResponse): Option[String] =
     wsResponse.headers.get(LOCATION).map(_.head)
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockFeatureFlagService)
+  }
 }

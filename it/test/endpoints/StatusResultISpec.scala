@@ -24,13 +24,19 @@ import support.ISpec
 import play.api.libs.ws.DefaultBodyReadables.readableAsString
 
 import java.time.LocalDate
-
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import uk.gov.hmrc.mongoFeatureToggles.model.FeatureFlag
+import models.IsShutteredFlag
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 class StatusResultISpec extends ISpec with HomeOfficeImmigrationStatusStubs {
 
   "GET /check-immigration-status/status-result" must {
     "POST to the HO and show match found" in {
       givenCheckByNinoSucceeds()
       givenAuthorisedForStride("TBC", "StrideUserId")
+      when(mockFeatureFlagService.get(any())).thenReturn(Future(FeatureFlag(IsShutteredFlag, false)))
 
       val sessionId = "session-statusResultGet"
       val query     = NinoSearchFormModel(nino, "Doe", "Jane", LocalDate.parse("2001-01-31"))
@@ -46,6 +52,7 @@ class StatusResultISpec extends ISpec with HomeOfficeImmigrationStatusStubs {
     "POST to the HO and show error page" in {
       givenAnExternalServiceErrorCheckByNino()
       givenAuthorisedForStride("TBC", "StrideUserId")
+      when(mockFeatureFlagService.get(any())).thenReturn(Future(FeatureFlag(IsShutteredFlag, false)))
 
       val sessionId = "session-statusResultErrorPage"
       val query     = NinoSearchFormModel(nino, "Doe", "Jane", LocalDate.parse("2001-01-31"))
