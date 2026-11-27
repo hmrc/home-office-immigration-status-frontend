@@ -60,7 +60,7 @@ class ErrorHandler @Inject() (
     auditClientError(request, statusCode, message)
     featureFlagService.get(IsShutteredFlag).flatMap { toggle =>
       if (toggle.isEnabled) {
-        given r: Request[String] = Request(request, "")
+        given Request[String] = Request(request, "")
 
         Future.successful(ServiceUnavailable(shutteringPage()))
       } else {
